@@ -1,5 +1,7 @@
 package com.campusdual.bfp.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -52,6 +54,7 @@ public class ProductDTO {
         this.active = active;
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     public Date getDate_added() {
         return date_added;
     }
