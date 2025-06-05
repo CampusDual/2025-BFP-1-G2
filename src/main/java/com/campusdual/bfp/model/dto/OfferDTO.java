@@ -43,7 +43,7 @@ public class OfferDTO {
         this.active = active;
     }
 
-    @JsonFormat (pattern = "yyyy-MM-dd")
+    @JsonFormat (pattern = "dd-MM-yyyy")
     public Date getDate() {
         return date;
     }
