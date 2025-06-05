@@ -1,0 +1,32 @@
+<form>
+    <div class="formdata">
+        <h2>Iniciar Sesión</h2>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Enter your email</mat-label>
+                <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
+                <mat-error *ngIf="email.invalid ">{{getEmailErrorMessage()}}</mat-error>
+            </mat-form-field>
+        </div>
+        <br>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Enter your password</mat-label>
+                <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
+                <mat-error *ngIf="password.invalid">{{getPasswordErrorMessage()}}</mat-error>
+            </mat-form-field>
+        </div>
+        <br>
+       
+
+        <p>¿Aún no tienes cuenta? </p>
+        <div class="login-link"> <a routerLink="/register">Registrarse</a></div>
+       
+
+    </div>
+    <br>
+    <div class="form-actions">
+        <button mat-raised-button color="primary" [disabled]="!formValid()" type="submit">Login</button>
+        <button mat-raised-button color="warn" type="reset">Cancel</button>
+    </div>
+</form>
