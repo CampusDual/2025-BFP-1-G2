@@ -1,0 +1,15 @@
+mat-toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+img {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  max-height: 58px;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
