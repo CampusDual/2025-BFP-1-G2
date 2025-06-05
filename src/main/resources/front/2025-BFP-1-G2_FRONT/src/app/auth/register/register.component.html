@@ -1,41 +1,43 @@
 <form>
-    <div class="formdata">
-        <h2>Registrarse</h2>
-        <div>
-            <mat-form-field appearance="outline">
-                <mat-label>Enter your email</mat-label>
-                <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
-                <mat-error *ngIf="email.invalid ">{{getEmailErrorMessage()}}</mat-error>
-            </mat-form-field>
-        </div>
-        <br>
-        <div>
-            <mat-form-field appearance="outline">
-                <mat-label>Enter your password</mat-label>
-                <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
-                <mat-error *ngIf="password.invalid">{{getPasswordErrorMessage()}}</mat-error>
-            </mat-form-field>
-        </div>
-        <br>
-        <div>
-            <mat-form-field appearance="outline">
-                <mat-label>Confirm your password</mat-label>
-                <input matInput type="password" placeholder="Confirm Password" [formControl]="confirmPassword" required>
-                <mat-error *ngIf="confirmPassword.invalid">
-                    {{getConfirmPasswordErrorMessage()}}
-                </mat-error>
-            </mat-form-field>
-        </div>
-        <br>
-
-        <p>¿Ya tienes una cuenta? </p>
-        <div class="login-link"> <a routerLink="/login">Inicia sesión</a></div>
-       
-
+  <div #registerForm id="registerForm" class="formdata">
+    <h2 #formTitle >Registrarse</h2>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Enter your email</mat-label>
+        <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
+        <mat-error *ngIf="email.invalid ">{{ getEmailErrorMessage() }}</mat-error>
+      </mat-form-field>
     </div>
     <br>
-    <div class="form-actions">
-        <button mat-raised-button color="primary" [disabled]="!formValid()" type="submit">Register</button>
-        <button mat-raised-button color="warn" type="reset">Cancel</button>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Enter your password</mat-label>
+        <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
+        <mat-error *ngIf="password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
+      </mat-form-field>
     </div>
+    <div #confirmPasswordField id="confirmPasswordField">
+      <br>
+
+      <mat-form-field appearance="outline" >
+        <mat-label>Confirm your password</mat-label>
+        <input matInput type="password" placeholder="Confirm Password" [formControl]="confirmPassword" required>
+        <mat-error *ngIf="confirmPassword.invalid">
+          {{ getConfirmPasswordErrorMessage() }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <br>
+
+    <p>¿Ya tienes una cuenta? </p>
+    <button mat-raised-button color="primary" routerLink="/login" class="login-link" >Inicia sesión</button>
+
+
+  </div>
+  <br>
+  <div class="form-actions">
+    <button mat-raised-button color="primary" [disabled]="!formValid()" type="submit">Register</button>
+    <button mat-raised-button color="warn" type="reset">Cancel</button>
+<!--    <button mat-raised-button color="warn" (click)="changeCard()">Cancel</button>-->  </div>
+
 </form>
