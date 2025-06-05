@@ -103,14 +103,12 @@ $m2-error: (
         A700 : #ffffff,
     )
 );
-
-
-
-
 $my-app-primary: mat-palette($m2-primary);
 $my-app-accent: mat-palette($m2-accent);
 $my-app-warn: mat-palette($m2-error);
 
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+
+
 
 @include angular-material-theme($my-app-theme);

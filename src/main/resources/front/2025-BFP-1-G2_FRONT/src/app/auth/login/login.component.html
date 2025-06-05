@@ -5,7 +5,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Enter your email</mat-label>
                 <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
-                <mat-error *ngIf="email.invalid ">{{getEmailErrorMessage()}}</mat-error>
+                <mat-error *ngIf="email.invalid || email.value === ''  ">{{getEmailErrorMessage()}}</mat-error>
             </mat-form-field>
         </div>
         <br>
@@ -13,15 +13,15 @@
             <mat-form-field appearance="outline">
                 <mat-label>Enter your password</mat-label>
                 <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
-                <mat-error *ngIf="password.invalid">{{getPasswordErrorMessage()}}</mat-error>
+                <mat-error *ngIf="password.invalid || password.value === '' ">{{getPasswordErrorMessage()}}</mat-error>
             </mat-form-field>
         </div>
         <br>
-       
+
 
         <p>¿Aún no tienes cuenta? </p>
-        <div class="login-link"> <a routerLink="/register">Registrarse</a></div>
-       
+      <button mat-raised-button color="primary" routerLink="/register" class="login-link" >Registrarse</button>
+
 
     </div>
     <br>

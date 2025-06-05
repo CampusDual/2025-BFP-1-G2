@@ -1,12 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 
+:root{
+  --primary-color: #9c0700;
+  --secondary-color: #9f9f9f;
+  --background-color: #ffffff4b;
+  --background-hover-color: #ffffff00;
+  --important-text-color: #9c0700;
+  --text-color: #000000;
+  --text-hover-color: #9c0700;
+}
+
 html,
 body {
-    margin: 0;
-    padding: 0;
-    font-family: "Rubik", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 16px;
+  margin: 0;
+  padding: 0;
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
 }

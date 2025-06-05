@@ -1,0 +1,19 @@
+.welcome-panel {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.welcome-panel h2 {
+  margin-bottom: 12px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.welcome-panel p {
+  font-size: 1.1rem;
+}
