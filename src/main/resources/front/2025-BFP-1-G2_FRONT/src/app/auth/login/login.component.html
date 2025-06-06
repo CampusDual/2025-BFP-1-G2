@@ -1,5 +1,5 @@
-<form>
-    <div class="formdata">
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+<div class="formdata">
         <h2>Iniciar Sesión</h2>
         <div>
             <mat-form-field appearance="outline">
@@ -20,13 +20,13 @@
 
 
         <p>¿Aún no tienes cuenta? </p>
-      <button mat-raised-button color="primary" routerLink="/register" class="login-link" >Registrarse</button>
+      <button mat-raised-button color="primary" routerLink="../register" class="login-link" >Registrarse</button>
 
 
     </div>
     <br>
     <div class="form-actions">
-        <button mat-raised-button color="primary" [disabled]="!formValid()" type="submit">Login</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()" >Login</button>
         <button mat-raised-button color="warn" type="reset">Cancel</button>
     </div>
 </form>

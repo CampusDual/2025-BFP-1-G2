@@ -9,8 +9,8 @@ CREATE TABLE offers
 CREATE TABLE users
 (
     id       SERIAL PRIMARY KEY,
-    login    VARCHAR(255),
-    password VARCHAR(255)
+    login    VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
 );
 
 
@@ -29,3 +29,5 @@ create table user_roles
     constraint fk_user foreign key (user_id) references users (id),
     constraint fk_role foreign key (role_id) references roles (id)
 );
+
+ALTER TABLE public.users ADD name varchar(255) NOT NULL;

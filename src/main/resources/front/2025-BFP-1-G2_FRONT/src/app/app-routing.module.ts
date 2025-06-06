@@ -7,8 +7,8 @@ import {CompanyPanelComponent} from "./company-panel/company-panel.component";
 const routes: Routes = [
   { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
   { path: '', redirectTo: 'auth/register', pathMatch: 'full' },
-  { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginComponent },
+  { path: 'register',  component: RegisterComponent },
+  { path: 'login',  component: LoginComponent },
   { path: 'company/:companyName', component: CompanyPanelComponent }
 ];
 

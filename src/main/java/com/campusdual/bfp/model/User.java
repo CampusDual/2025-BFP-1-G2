@@ -32,15 +32,18 @@ public class User implements UserDetails {
     @Column
     private String password;
 
+    @Column
+    private String name;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> userRoles = new HashSet<>();
 
     public User(){ }
 
-    public User(int id, String login, String password) {
-        this.id = id;
+    public User(String login, String password, String name) {
         this.login = login;
         this.password = password;
+        this.name = name;
     }
 
     public int getId() {
@@ -67,6 +70,14 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -78,7 +89,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.login;
+        return this.name;
     }
 
     @Override

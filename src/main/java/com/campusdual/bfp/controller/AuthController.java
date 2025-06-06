@@ -13,11 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -70,8 +66,34 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }
 
-        this.userService.registerNewUser(request.getLogin(), request.getPassword());
+        this.userService.registerNewUser(request.getLogin(), request.getPassword(), request.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
 
+    }
+
+    @GetMapping("/me")
+    public UserDetails getCurrentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null; // or throw an exception
+        }
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        if (username == null) {
+            return null; // or throw an exception
+        }
+        return userService.loadUserByUsername(username);
+    }
+
+    @GetMapping("/me/username")
+    public String getCurrentUsername(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return "Token no proporcionado.";
+        }
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        if (username == null) {
+            return "Token inválido.";
+        }
+        return username;
     }
 }

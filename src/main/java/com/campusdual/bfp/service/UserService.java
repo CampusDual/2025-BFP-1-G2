@@ -46,10 +46,11 @@ public class UserService implements UserDetailsService {
         return user != null;
     }
 
-    public void registerNewUser(String username, String password) {
+    public void registerNewUser(String username, String password, String name) {
         User user = new User();
         user.setLogin(username);
         user.setPassword(this.passwordEncoder().encode(password));
+        user.setName(name);
         User savedUser = this.userDao.saveAndFlush(user);
 
         Role role = this.roleDao.findByRoleName("ROLE_USER");
