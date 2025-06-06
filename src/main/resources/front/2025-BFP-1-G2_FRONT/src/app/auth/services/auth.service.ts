@@ -26,6 +26,8 @@ export class AuthService {
   }
 
   login(credentials: { login: string, password: string }): Observable<any> {
+    // borrar token si existe
+    localStorage.removeItem('authToken');
     const basicAuth = btoa(`${credentials.login}:${credentials.password}`);
     const headers = {Authorization: `Basic ${basicAuth}`};
     return this.http.post(`${this.baseUrl}/signin`, {}, {headers, responseType: 'text'})
@@ -34,7 +36,9 @@ export class AuthService {
       );
   }
 
-  register(userData: { login: string, password: string, name: string }): Observable<any> {
+  register(userData: { login: string, password: string, email: string }): Observable<any> {
+    // borrar token si existe
+    localStorage.removeItem('authToken');
     return this.http.post(`${this.baseUrl}/signup`, userData, {responseType: 'text'});
   }
 
@@ -63,7 +67,13 @@ export class AuthService {
   }
 
   getUserName(): Observable<string> {
-
+    return this.getUser().pipe(
+      map(user => user.username),
+      tap(username => {
+        this.username = username;
+        console.log('Username retrieved:', username);
+      })
+    );
   }
 
 

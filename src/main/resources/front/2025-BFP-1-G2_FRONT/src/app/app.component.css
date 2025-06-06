@@ -1,6 +1,8 @@
 .content {
   height: 100vh;
   display: grid;
-  grid-template-rows: 64px minmax(auto, 100%) 64px;
+  grid-template-rows: 75px minmax(auto, 100%) 75px;
   background: linear-gradient(to bottom, #969696, #ffffff);
+
 }
+

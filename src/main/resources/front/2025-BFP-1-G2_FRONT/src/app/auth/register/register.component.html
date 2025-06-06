@@ -1,9 +1,9 @@
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-<div #registerFormRef id="registerForm" class="formdata" >
-    <h2 #formTitle >Registrarse</h2>
+  <mat-card class="formdata">
+    <h2 #formTitle>Registrarse</h2>
     <div>
       <mat-form-field appearance="outline">
-        <mat-label>Nombre de la empresa</mat-label>
+        <mat-label>Login de la empresa</mat-label>
         <input matInput placeholder="nombre de la empresa" [formControl]="name" required>
         <mat-error *ngIf="name.invalid ">{{ getNameErrorMessage() }}</mat-error>
       </mat-form-field>
@@ -27,7 +27,7 @@
     <div #confirmPasswordField id="confirmPasswordField">
       <br>
 
-      <mat-form-field appearance="outline" >
+      <mat-form-field appearance="outline">
         <mat-label>Confirma la contraseña</mat-label>
         <input matInput type="password" placeholder="Confirm Password" [formControl]="confirmPassword" required>
         <mat-error *ngIf="confirmPassword.invalid">
@@ -37,15 +37,15 @@
     </div>
     <br>
 
-    <p>¿Ya tienes una cuenta? </p>
-    <button mat-raised-button color="primary" routerLink="../login" class="login-link" >Inicia sesión</button>
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Register</button>
+      <button mat-raised-button color="warn" type="reset">Cancel</button>
+    </div>
+    <br>
 
+  </mat-card>
 
-  </div>
-  <br>
-  <div class="form-actions">
-    <button mat-raised-button color="primary" type="submit"  [disabled]="!formValid()" >Register</button>
-    <button mat-raised-button color="warn" type="reset">Cancel</button>
-<!--    <button mat-raised-button color="warn" (click)="changeCard()">Cancel</button>-->  </div>
+  <p>¿Ya tienes una cuenta? </p>
+  <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
 
 </form>
