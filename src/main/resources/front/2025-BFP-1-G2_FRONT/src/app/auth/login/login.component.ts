@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AuthService} from '../services/auth.service';
+import {Router} from "@angular/router";
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -9,14 +11,33 @@ import { AuthService } from '../services/auth.service';
 export class LoginComponent {
   email = new FormControl('', [Validators.required, Validators.email]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
+  username!: string;
+  loginForm = new FormGroup({
+    email: this.email,
+    password: this.password,
+  });
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) {
+  }
 
-  onSubmit() {  
+  onSubmit() {
     if (this.email.value !== null && this.password.value !== null) {
-      this.authService.login({ login: this.email.value, password: this.password.value }).subscribe({
+      this.authService.login({login: this.email.value, password: this.password.value}).subscribe({
         next: (response) => {
           console.log('Login successful', response);
+          this.authService.getUserName().subscribe({
+            next: (username: string) => {
+              this.username = username;
+              console.log('Username retrieved:', this.username);
+              this.router.navigate([`../company/${this.username}`]).then(r => {
+              });
+            },
+            error: (error: any) => {
+              console.error('Error retrieving username', error);
+            }
+          });
+
+
         },
         error: (error) => {
           console.error('Login failed', error);
@@ -32,7 +53,9 @@ export class LoginComponent {
     this.password.reset();
   }
 
-  getEmailErrorMessage(): string {
+  getEmailErrorMessage()
+    :
+    string {
     if (this.email.hasError('required')) {
       return 'Debes introducir un valor';
     }
