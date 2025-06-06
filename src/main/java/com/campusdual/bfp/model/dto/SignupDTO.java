@@ -3,7 +3,7 @@ package com.campusdual.bfp.model.dto;
 public class SignupDTO {
     private String login;
     private String password;
-    private String name;
+    private String email;
 
     public String getLogin() {
         return this.login;
@@ -21,11 +21,11 @@ public class SignupDTO {
         this.password = password;
     }
 
-    public String getName() {
-        return this.name;
+    public String getEmail() {
+        return this.email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
