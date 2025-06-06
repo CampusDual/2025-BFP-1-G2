@@ -33,17 +33,17 @@ public class User implements UserDetails {
     private String password;
 
     @Column
-    private String name;
+    private String email;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> userRoles = new HashSet<>();
 
     public User(){ }
 
-    public User(String login, String password, String name) {
+    public User(String login, String password, String email) {
         this.login = login;
         this.password = password;
-        this.name = name;
+        this.email = email;
     }
 
     public int getId() {
@@ -70,12 +70,12 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getEmail() {
+        return email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String name) {
+        this.email = name;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.name;
+        return this.login;
     }
 
     @Override

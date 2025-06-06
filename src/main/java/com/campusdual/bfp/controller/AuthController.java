@@ -66,7 +66,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }
 
-        this.userService.registerNewUser(request.getLogin(), request.getPassword(), request.getName());
+        this.userService.registerNewUser(request.getLogin(), request.getPassword(), request.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
 
     }
