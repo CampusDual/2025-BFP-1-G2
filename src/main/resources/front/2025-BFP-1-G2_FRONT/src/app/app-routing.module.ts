@@ -4,6 +4,8 @@ import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
 import {CompanyPanelComponent} from "./company-panel/company-panel.component";
 
+
+//canActivate
 const routes: Routes = [
   { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
   { path: '', redirectTo: 'auth/register', pathMatch: 'full' },

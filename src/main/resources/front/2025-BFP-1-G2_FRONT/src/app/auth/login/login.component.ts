@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {Router} from "@angular/router";
@@ -9,11 +9,13 @@ import {Router} from "@angular/router";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  email = new FormControl('', [Validators.required, Validators.email]);
+  name = new FormControl('', [Validators.required]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
+  isLoading = false;
+
   username!: string;
   loginForm = new FormGroup({
-    email: this.email,
+    name: this.name,
     password: this.password,
   });
 
@@ -21,46 +23,44 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.email.value !== null && this.password.value !== null) {
-      this.authService.login({login: this.email.value, password: this.password.value}).subscribe({
+    this.isLoading = true;
+    if (this.name.value !== null && this.password.value !== null) {
+      this.authService.login({login: this.name.value, password: this.password.value}).subscribe({
         next: (response) => {
-          console.log('Login successful', response);
           this.authService.getUserName().subscribe({
             next: (username: string) => {
               this.username = username;
-              console.log('Username retrieved:', this.username);
-              this.router.navigate([`../company/${this.username}`]).then(r => {
+              this.router.navigate([`../company/${this.username}`]).then(() => {
+                this.isLoading = false;
               });
             },
             error: (error: any) => {
-              console.error('Error retrieving username', error);
+              this.isLoading = false;
             }
           });
-
-
         },
         error: (error) => {
-          console.error('Login failed', error);
+          this.isLoading = false;
         }
       });
     } else {
-      console.error('Email or password is null');
+      this.isLoading = false;
     }
   }
 
   onReset() {
-    this.email.reset();
+    this.name.reset();
     this.password.reset();
   }
 
-  getEmailErrorMessage()
+  getnameErrorMessage()
     :
     string {
-    if (this.email.hasError('required')) {
+    if (this.name.hasError('required')) {
       return 'Debes introducir un valor';
     }
-    if (this.email.hasError('email')) {
-      return 'Correo no válido';
+    if (this.name.hasError('name')) {
+      return 'Login no válido';
     }
     return '';
   }
@@ -74,7 +74,7 @@ export class LoginComponent {
 
 
   formValid() {
-    return this.email.valid && this.password.valid;
+    return this.name.valid && this.password.valid;
   }
 
 

@@ -6,9 +6,9 @@ import {CompanyPanelComponent} from "../company-panel/company-panel.component";
 
 
 const routes: Routes = [
-  {path: 'register', component: RegisterComponent},
-  {path: 'login',component: LoginComponent},
-  {path: 'company/:companyName',component: CompanyPanelComponent},
+  { path: 'register', component: RegisterComponent, data: { animation: 'RegisterPage' } },
+  { path: 'login', component: LoginComponent, data: { animation: 'LoginPage' } },
+  { path: 'company/:companyName', component: CompanyPanelComponent, data: { animation: 'CompanyPage' } },
 ];
 
 @NgModule({

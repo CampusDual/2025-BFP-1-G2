@@ -1,32 +1,35 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-<div class="formdata">
-        <h2>Iniciar Sesión</h2>
-        <div>
-            <mat-form-field appearance="outline">
-                <mat-label>Enter your email</mat-label>
-                <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
-                <mat-error *ngIf="email.invalid || email.value === ''  ">{{getEmailErrorMessage()}}</mat-error>
-            </mat-form-field>
-        </div>
-        <br>
-        <div>
-            <mat-form-field appearance="outline">
-                <mat-label>Enter your password</mat-label>
-                <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
-                <mat-error *ngIf="password.invalid || password.value === '' ">{{getPasswordErrorMessage()}}</mat-error>
-            </mat-form-field>
-        </div>
-        <br>
+  <mat-card class="formdata">
 
-
-        <p>¿Aún no tienes cuenta? </p>
-      <button mat-raised-button color="primary" routerLink="../register" class="login-link" >Registrarse</button>
-
-
+    <h2>Iniciar Sesión</h2>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Empresa</mat-label>
+        <input matInput placeholder="login" [formControl]="name" required>
+        <mat-error *ngIf="name.invalid || name.value === ''  ">{{ getnameErrorMessage() }}</mat-error>
+      </mat-form-field>
     </div>
     <br>
-    <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()" >Login</button>
-        <button mat-raised-button color="warn" type="reset">Cancel</button>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Enter your password</mat-label>
+        <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
+        <mat-error *ngIf="password.invalid || password.value === '' ">{{ getPasswordErrorMessage() }}</mat-error>
+      </mat-form-field>
     </div>
+    <br>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Login</button>
+      <button mat-raised-button color="warn" type="reset">Cancel</button>
+    </div>
+    <br>
+      <mat-progress-bar *ngIf="isLoading" mode="query"></mat-progress-bar>
+
+
+  </mat-card>
+
+  <p>¿Aún no tienes cuenta? </p>
+  <button mat-raised-button color="primary" routerLink="../register" class="login-link">Registrarse</button>
+
 </form>

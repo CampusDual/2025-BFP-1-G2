@@ -5,7 +5,6 @@ form {
   align-items: center;
   justify-content: center;
   place-self: center;
-  display: grid;
   place-content: center;
 }
 
@@ -18,8 +17,6 @@ form {
   border-radius: 10px;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
   background-color: #ffffff4b;
-  padding: 30px;
-
   h2 {
     color: var(--primary-color);
     letter-spacing: 1.4px;
@@ -49,3 +46,4 @@ form {
 
 
 }
+

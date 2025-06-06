@@ -1,5 +1,6 @@
-mat-toolbar{
-    justify-content: center;
-    height: 100%;
-    font-size: 1.2rem;
+mat-toolbar {
+  bottom: 0;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.2rem;
 }

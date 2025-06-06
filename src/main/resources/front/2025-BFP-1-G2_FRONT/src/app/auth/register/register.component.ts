@@ -12,11 +12,7 @@ import {Router} from '@angular/router';
 
 
 export class RegisterComponent {
-  // @ViewChild('registerForm') formContainer!: ElementRef;
-  // @ViewChild('formTitle', {static: false}) formTitle!: ElementRef<HTMLHeadingElement>;
-  // @ViewChild('confirmPasswordField', { static: false }) confirmPasswordField!: ElementRef<HTMLDivElement>;  private isAltTitle = false;
-  // private isFieldShown = true;
-  //
+
   name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   email = new FormControl('', [Validators.required, Validators.email]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
@@ -36,13 +32,23 @@ export class RegisterComponent {
   onSubmit(): void {
     if (this.email.value && this.password.value && this.name.value) {
       this.authService.register({
-        login: this.email.value,
+        login: this.name.value,
         password: this.password.value,
-        name: this.name.value
+        email: this.email.value
       }).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
-          this.router.navigate([`../company/${this.name.value}`]).then(r => {
+          this.authService.getUserName().subscribe({
+            next: (username: string) => {
+              console.log('Username retrieved:', username);
+              this.router.navigate([`../company/${username}`]).then(() => {
+                // Optionally, you can reset the form after successful registration
+                this.onReset();
+              });
+            },
+            error: (error: any) => {
+              console.error('Error retrieving username', error);
+            }
           });
 
         },
