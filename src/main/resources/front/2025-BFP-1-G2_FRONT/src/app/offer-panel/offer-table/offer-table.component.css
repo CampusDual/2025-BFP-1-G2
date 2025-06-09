@@ -1,0 +1,11 @@
+.grid-container {
+  color: rgb(0, 0, 0);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 50px;
+  padding: 40px;
+}
+.grid-container :hover {
+  transform: scale(1.05);
+  animation: transform 2s ease-in-out;
+}
