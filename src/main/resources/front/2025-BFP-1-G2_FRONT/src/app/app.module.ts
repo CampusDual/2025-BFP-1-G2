@@ -15,6 +15,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { CompanyPanelComponent } from './company-panel/company-panel.component';
 import {AuthInterceptor} from "./auth/interceptors/interceptor";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatCardModule} from "@angular/material/card";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -23,7 +27,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     HeaderComponent,
     FooterComponent,
     CompanyPanelComponent
-    ],
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -34,7 +38,11 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatTooltipModule,
     MatIconModule,
     HttpClientModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

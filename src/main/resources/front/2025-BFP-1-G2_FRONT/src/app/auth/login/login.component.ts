@@ -1,7 +1,8 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {Router} from "@angular/router";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-login',
@@ -14,13 +15,16 @@ export class LoginComponent {
   isLoading = false;
 
   username!: string;
+
   loginForm = new FormGroup({
     name: this.name,
     password: this.password,
   });
 
-  constructor(private authService: AuthService, private router: Router) {
-  }
+  constructor(private authService: AuthService,
+              private router: Router,
+              private snackBar: MatSnackBar
+  ) {}
 
   onSubmit() {
     this.isLoading = true;
@@ -33,6 +37,7 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
+          this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar');
         }
       });
     } else {
