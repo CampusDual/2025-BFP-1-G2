@@ -12,7 +12,8 @@ const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full' },
   { path: 'register',  component: RegisterComponent },
   { path: 'login',  component: LoginComponent },
-  { path: 'company/:companyName', component: CompanyPanelComponent, canActivate: [AuthGuard] }
+  { path: 'company/:companyName', component: CompanyPanelComponent, canActivate: [AuthGuard] },
+  { path: 'offer-panel', loadChildren: () => import('./offer-panel/offer-panel.module').then(m => m.OfferPanelModule) },
 ];
 
 @NgModule({
