@@ -4,11 +4,6 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {OfferService} from '../services/offer.service';
 
 
-interface Offer {
-  title: string;
-  description: string;
-}
-
 @Component({
   selector: 'app-company-panel',
   templateUrl: './company-panel.component.html',
