@@ -12,7 +12,7 @@ mat-card {
 
  mat-card-actions {
       display: flex;
-      gap: 16px; 
+      gap: 16px;
       align-items: center;
 }
 

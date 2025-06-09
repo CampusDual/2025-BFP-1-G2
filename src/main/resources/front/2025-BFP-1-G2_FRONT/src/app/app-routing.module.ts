@@ -4,7 +4,6 @@ import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
 import {CompanyPanelComponent} from "./company-panel/company-panel.component";
 import {AuthGuard} from "./auth/auth.guard";
-import { OfferCardComponent } from './offer-panel/offer-card/offer-card.component';
 
 
 //canActivate

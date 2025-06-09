@@ -9,18 +9,14 @@ import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
+    OfferTableComponent,
     OfferCardComponent
   ],
   imports: [
     CommonModule,
     MatCardModule,
-    MatButtonModule
-  ],
-  exports: [
-    OfferCardComponent
+    MatButtonModule,
+    OfferPanelRoutingModule
   ]
 })
-export class OfferPanelModule {
-
- }
-
+export class OfferPanelModule { }
