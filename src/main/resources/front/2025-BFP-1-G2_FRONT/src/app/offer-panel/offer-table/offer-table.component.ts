@@ -1,5 +1,4 @@
-import {Component} from '@angular/core';
-import {OfferService} from "../../services/offer.service";
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-offer-table',
@@ -7,38 +6,28 @@ import {OfferService} from "../../services/offer.service";
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent {
-  displayedColumns: string[] = ['title', 'description', 'email', 'companyName', 'dateAdded'];
-  dataSource: any[] = [];
+  offers = [
+    {
+      title: 'Software Engineer',
+      description: 'Develop and maintain software applications.',
+      email: 'aposfd@exmple',
+      companyName: 'Tech Solutions',
+      dateAdded: '2025-01-15'
+    },
+    {
+      title: 'Data Analyst',
+      description: 'Analyze data and generate reports.',
+      email: 'data@exmple',
+      companyName: 'Data Insights',
+      dateAdded: '2025-01-20'
+    },
+    {
+      title: 'Project Manager',
+      description: 'Manage projects and coordinate teams.',
+      email: 'pm@exmple',
+      companyName: 'Project Masters',
+      dateAdded: '2025-01-25'
+    }
+  ];
 
-  constructor(private offerService: OfferService) {
-
-    this.offerService.getOffers().subscribe({
-      next: (offers: any[]) => {
-        this.dataSource = offers.map((offer: any) => ({
-          id: offer.id,
-          title: offer.title,
-          description: offer.description,
-          email: offer.email,
-          companyName: offer.companyName,
-          dateAdded: new Date(offer.dateAdded).toLocaleDateString()
-        }));
-        console.log('Offers fetched successfully', this.dataSource);
-      },
-      error: (error: any) => {
-        // Manejo de errores aquí si es necesario
-      }
-    });
-
-
-    this.dataSource = [
-      {
-        title: 'Sample Offer',
-        description: 'This is a sample offer description.',
-        email: '',
-        companyName: 'Sample Company',
-        dateAdded: new Date().toLocaleDateString()
-      }];
-
-
-  }
 }
