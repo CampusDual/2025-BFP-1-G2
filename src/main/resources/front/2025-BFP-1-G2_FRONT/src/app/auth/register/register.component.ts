@@ -2,6 +2,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {Router} from '@angular/router';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -25,7 +26,9 @@ export class RegisterComponent {
   });
 
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService,
+              private router: Router,
+              private snackBar: MatSnackBar) {
     // this.applyTypingAnimation();
   }
 
@@ -38,6 +41,8 @@ export class RegisterComponent {
       }).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
+          this.snackBar.open('Regitro completado', 'Cerrar');
+
           this.authService.getUserName().subscribe({
             next: (username: string) => {
               console.log('Username retrieved:', username);
@@ -54,6 +59,7 @@ export class RegisterComponent {
         },
         error: (error) => {
           console.error('Registration failed', error);
+          this.snackBar.open('Nombre o correo ya registrado', 'Cerrar');
         }
       });
     } else {

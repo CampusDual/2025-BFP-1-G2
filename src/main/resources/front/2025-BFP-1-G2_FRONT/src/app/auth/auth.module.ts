@@ -16,6 +16,8 @@ import {MatCardModule} from "@angular/material/card";
 
 
 
+
+
 @NgModule({
   declarations: [
     RegisterComponent,
@@ -31,8 +33,7 @@ import {MatCardModule} from "@angular/material/card";
     HttpClientModule,
     MatDialogModule,
     MatProgressBarModule,
-    MatCardModule,
-    
+    MatCardModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

@@ -5,6 +5,7 @@ import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,11 @@ public class OfferController {
     @GetMapping (value = "/getAll")
     public List<OfferDTO> queryAllOffers() { return offerService.queryAllOffers(); }
     @PostMapping(value = "/add")
-    public int addOffer(@RequestBody OfferDTO OfferDTO) { return offerService.insertOffer(OfferDTO); }
+    public int addOffer(@RequestBody OfferDTO request, Principal principal) {
+        // Suponiendo que el nombre de usuario es el email o username
+        String username = principal.getName();
+        return offerService.insertOffer(request, username);
+    }
     @PutMapping(value = "/update")
     public int updateOffer(@RequestBody OfferDTO OfferDTO) { return offerService.updateOffer(OfferDTO); }
     @DeleteMapping(value = "/delete")

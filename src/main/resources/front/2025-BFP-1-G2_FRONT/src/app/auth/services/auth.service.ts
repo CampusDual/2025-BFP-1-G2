@@ -26,7 +26,6 @@ export class AuthService {
   }
 
   login(credentials: { login: string, password: string }): Observable<any> {
-    // borrar token si existe
     localStorage.removeItem('authToken');
     const basicAuth = btoa(`${credentials.login}:${credentials.password}`);
     const headers = {Authorization: `Basic ${basicAuth}`};
@@ -46,7 +45,7 @@ export class AuthService {
     return !!localStorage.getItem('authToken');
   }
 
-// Cerrar sesión
+
   logout(): void {
     localStorage.removeItem('authToken');
   }

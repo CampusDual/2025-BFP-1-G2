@@ -62,6 +62,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
