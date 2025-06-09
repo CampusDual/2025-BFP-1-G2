@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
 import {CompanyPanelComponent} from "./company-panel/company-panel.component";
+import {AuthGuard} from "./auth/auth.guard";
 
 
 //canActivate
@@ -11,7 +12,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'auth/register', pathMatch: 'full' },
   { path: 'register',  component: RegisterComponent },
   { path: 'login',  component: LoginComponent },
-  { path: 'company/:companyName', component: CompanyPanelComponent }
+  { path: 'company/:companyName', component: CompanyPanelComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

@@ -7,8 +7,6 @@
 
 .welcome-panel {
   max-width: 400px;
-  margin: 40px auto;
-  padding: 32px 24px;
   background: #f5f7fa;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -20,6 +18,7 @@
   font-size: 2rem;
   font-weight: 600;
 }
+
 
 .welcome-panel p {
   font-size: 1.1rem;
@@ -41,12 +40,19 @@ form {
 }
 
 .formdata{
-  width: 30%;
+  min-width: 40%;
   height: 70%;
-  padding: 10px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  border-radius: 10px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  background-color: rgba(255, 255, 255, 0.52);
+  h2{
+    color: var(--primary-color);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
 }
-
