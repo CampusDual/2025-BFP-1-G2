@@ -10,6 +10,7 @@ import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,19 @@ public class OfferService implements IOfferService {
 
     @Override
     public List<OfferDTO> queryAllOffers() {
-        return OfferMapper.INSTANCE.toDTOList(OfferDao.findAll());
+        List<Offer> offers = OfferDao.findAll();
+        List<OfferDTO> dtos = new ArrayList<>();
+        for (Offer offer : offers) {
+            OfferDTO dto = OfferMapper.INSTANCE.toDTO(offer);
+            User user = userDao.findUserById(offer.getCompanyId());
+            if (user != null) {
+                dto.setCompanyName(user.getLogin());
+                dto.setEmail(user.getEmail());
+            }
+            dto.setDateAdded(offer.getDate());
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     @Override
