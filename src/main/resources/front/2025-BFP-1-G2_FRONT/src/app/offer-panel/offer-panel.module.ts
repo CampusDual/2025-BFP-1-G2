@@ -22,8 +22,9 @@ export interface Offer {
   ],
   imports: [
     CommonModule,
-    OfferPanelRoutingModule,
-    MatCardModule
+    MatCardModule,
+    MatButtonModule,
+    OfferPanelRoutingModule
   ]
 })
 export class OfferPanelModule {
