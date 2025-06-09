@@ -5,24 +5,22 @@ import { OfferPanelRoutingModule } from './offer-panel-routing.module';
 import { OfferTableComponent } from './offer-table/offer-table.component';
 import { OfferCardComponent } from './offer-card/offer-card.component';
 import { MatCardModule } from '@angular/material/card';
-
-export interface Offer {
-  title: string;
-  description: string;
-  email: string;
-  companyName: string;
-  dateAdded: string;
-}
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
-    OfferTableComponent,
     OfferCardComponent
   ],
   imports: [
     CommonModule,
-    OfferPanelRoutingModule,
-    MatCardModule
+    MatCardModule,
+    MatButtonModule
+  ],
+  exports: [
+    OfferCardComponent
   ]
 })
-export class OfferPanelModule { }
+export class OfferPanelModule {
+
+ }
+
