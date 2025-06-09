@@ -76,5 +76,9 @@ export class AuthService {
     );
   }
 
+  getUsername(): string | null {
+    return this.username;
+  }
+
 
 }

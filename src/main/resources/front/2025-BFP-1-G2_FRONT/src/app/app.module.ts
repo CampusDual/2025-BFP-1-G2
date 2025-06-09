@@ -14,6 +14,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { CompanyPanelComponent } from './company-panel/company-panel.component';
 import {AuthInterceptor} from "./auth/interceptors/interceptor";
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 @NgModule({
   declarations: [
@@ -21,7 +23,7 @@ import {AuthInterceptor} from "./auth/interceptors/interceptor";
     HeaderComponent,
     FooterComponent,
     CompanyPanelComponent
-  ],
+    ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -31,7 +33,8 @@ import {AuthInterceptor} from "./auth/interceptors/interceptor";
     MatMenuModule,
     MatTooltipModule,
     MatIconModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
