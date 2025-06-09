@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 export interface Offer {
   title: string;
   description: string;
-  // otros campos que necesites...
 }
 
 @Injectable({
@@ -14,22 +13,12 @@ export interface Offer {
 })
 export class OfferService {
 
-  private baseUrl = 'http://localhost:8080/api/offers';
+  private baseUrl = 'http://localhost:30030/offer';
 
   constructor(private http: HttpClient) { }
 
-  createOffer(offer: Offer, companyName: string | null): Observable<any> {
-    if (!companyName) {
-      throw new Error('Company name is required');
-    }
-
-    const payload = {
-      ...offer,
-      companyName: companyName
-    };
-
-
-    return this.http.post(`${this.baseUrl}`, payload);
+  createOffer(offer: Offer): Observable<any> {
+    return this.http.post(`${this.baseUrl}/add`, offer, {responseType: 'text'});
   }
 }
 
