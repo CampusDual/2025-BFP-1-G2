@@ -1,3 +1,10 @@
+.companyName {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 .welcome-panel {
   max-width: 400px;
   margin: 40px auto;
@@ -17,3 +24,29 @@
 .welcome-panel p {
   font-size: 1.1rem;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.formdata{
+  width: 30%;
+  height: 70%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+

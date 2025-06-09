@@ -1,8 +1,18 @@
-
+<!--
+   <div class="menu">
+        <button mat-button [matMenuTriggerFor] = "menu" >User</button>
+            <mat-menu #menu="matMenu" [overlapTrigger]="false">
+                    <button mat-menu-item [routerLink]="['/main']">
+                        <mat-icon>home</mat-icon>
+                        <span>Inicio</span>
+                    </button>
+            </mat-menu>
+    </div>
+-->
 <form [formGroup]="offersForm" (ngSubmit)="onSubmit()">
 
   <mat-card class="formdata">
-    <h2 #formTitle>Ingresar Oferta, {{ companyName }} </h2>
+    <h2 #formTitle>Añadir una nueva oferta:</h2>
     <div>
       <mat-form-field appearance ="outline">
         <mat-label>Titulo</mat-label>
@@ -14,14 +24,22 @@
     <div>
       <mat-form-field appearance="outline">
         <mat-label>Descripcion</mat-label>
-        <input matInput placeholder="Ingresa la descripcion" [formControl]="description" required>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          placeholder="Ingresa la descripción"
+          [formControl]="description"
+          required
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="10"
+  ></textarea>
         <mat-error *ngIf="description.invalid "></mat-error>
       </mat-form-field>
     </div>
     <br>
 
     <div class="form-actions">
-      <button mat-raised-button color="primary" type="submit" >Publicar</button>
+      <button mat-raised-button color="primary" type="submit">Publicar</button>
       <button mat-raised-button color="warn" type="button" (click)="onReset()">Cancelar</button>
     </div>
   </mat-card>
