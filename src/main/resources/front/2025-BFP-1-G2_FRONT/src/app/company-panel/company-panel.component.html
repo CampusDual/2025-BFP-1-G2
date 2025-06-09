@@ -6,9 +6,7 @@
     <div>
       <mat-form-field appearance ="outline">
         <mat-label>Titulo</mat-label>
-        <label>
-          <input matInput placeholder="Titulo de la oferta" [formControl]="title" required>
-        </label>
+        <input matInput placeholder="Titulo de la oferta" [formControl]="title" required>
         <mat-error *ngIf="title.invalid "></mat-error>
       </mat-form-field>
     </div>
@@ -16,9 +14,7 @@
     <div>
       <mat-form-field appearance="outline">
         <mat-label>Descripcion</mat-label>
-        <label>
-          <input matInput placeholder="Ingresa la descripcion" [formControl]="description" required>
-        </label>
+        <input matInput placeholder="Ingresa la descripcion" [formControl]="description" required>
         <mat-error *ngIf="description.invalid "></mat-error>
       </mat-form-field>
     </div>
