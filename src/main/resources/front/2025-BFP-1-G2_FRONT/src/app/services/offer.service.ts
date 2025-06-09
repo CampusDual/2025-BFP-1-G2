@@ -1,17 +1,35 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {map, Observable, tap} from 'rxjs';
+// offer.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Offer {
+  title: string;
+  description: string;
+  // otros campos que necesites...
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class OfferService {
-  private baseUrl = 'http://localhost:30030/offer';
 
-  constructor(private http: HttpClient) {}
+  private baseUrl = 'http://localhost:8080/api/offers';
 
-  createOffer(offerData: { title: string, description: string }): Observable<any> {
+  constructor(private http: HttpClient) { }
 
-    return this.http.post(`${this.baseUrl}/signup`, userData, {responseType: 'text'});
+  createOffer(offer: Offer, companyName: string | null): Observable<any> {
+    if (!companyName) {
+      throw new Error('Company name is required');
+    }
+
+    const payload = {
+      ...offer,
+      companyName: companyName
+    };
+
+
+    return this.http.post(`${this.baseUrl}`, payload);
   }
 }
+
