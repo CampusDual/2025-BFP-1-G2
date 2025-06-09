@@ -1,14 +1,4 @@
-<!--
-   <div class="menu">
-        <button mat-button [matMenuTriggerFor] = "menu" >User</button>
-            <mat-menu #menu="matMenu" [overlapTrigger]="false">
-                    <button mat-menu-item [routerLink]="['/main']">
-                        <mat-icon>home</mat-icon>
-                        <span>Inicio</span>
-                    </button>
-            </mat-menu>
-    </div>
--->
+
 <form [formGroup]="offersForm" (ngSubmit)="onSubmit()">
 
   <mat-card class="formdata">
@@ -16,7 +6,9 @@
     <div>
       <mat-form-field appearance ="outline">
         <mat-label>Titulo</mat-label>
-        <input matInput placeholder="Titulo de la oferta" [formControl]="title" required>
+        <label>
+          <input matInput placeholder="Titulo de la oferta" [formControl]="title" required>
+        </label>
         <mat-error *ngIf="title.invalid "></mat-error>
       </mat-form-field>
     </div>
@@ -24,7 +16,9 @@
     <div>
       <mat-form-field appearance="outline">
         <mat-label>Descripcion</mat-label>
-        <input matInput placeholder="Ingresa la descripcion" [formControl]="description" required>
+        <label>
+          <input matInput placeholder="Ingresa la descripcion" [formControl]="description" required>
+        </label>
         <mat-error *ngIf="description.invalid "></mat-error>
       </mat-form-field>
     </div>
