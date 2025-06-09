@@ -9,7 +9,7 @@ import {AuthGuard} from "./auth/auth.guard";
 //canActivate
 const routes: Routes = [
   { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
-  { path: '', redirectTo: 'auth/register', pathMatch: 'full' },
+  { path: '', redirectTo: 'register', pathMatch: 'full' },
   { path: 'register',  component: RegisterComponent },
   { path: 'login',  component: LoginComponent },
   { path: 'company/:companyName', component: CompanyPanelComponent, canActivate: [AuthGuard] }
