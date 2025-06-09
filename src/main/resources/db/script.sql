@@ -32,4 +32,5 @@ create table user_roles
 );
 
 alter table offers
-    add company_id integer not null default -1;
+add company_id integer not null default -1,
+add constraint fk_offers_company foreign key (company_id) references users(id);
