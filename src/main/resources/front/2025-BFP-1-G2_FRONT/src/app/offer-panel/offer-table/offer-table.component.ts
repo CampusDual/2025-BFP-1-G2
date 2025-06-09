@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {OfferService} from "../../services/offer.service";
 
 @Component({
@@ -7,7 +7,7 @@ import {OfferService} from "../../services/offer.service";
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent {
-  displayedColumns: string[] = ['title', 'description', 'email', 'companyName', 'dateAdded'];
+
   dataSource: any[] = [];
 
   constructor(private offerService: OfferService) {
@@ -25,20 +25,9 @@ export class OfferTableComponent {
         console.log('Offers fetched successfully', this.dataSource);
       },
       error: (error: any) => {
-        // Manejo de errores aquí si es necesario
+        console.error('Error fetching offers', error);
       }
     });
-
-
-    this.dataSource = [
-      {
-        title: 'Sample Offer',
-        description: 'This is a sample offer description.',
-        email: '',
-        companyName: 'Sample Company',
-        dateAdded: new Date().toLocaleDateString()
-      }];
-
 
   }
 }
