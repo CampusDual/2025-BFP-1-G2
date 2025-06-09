@@ -31,3 +31,5 @@ create table user_roles
     constraint fk_role foreign key (role_id) references roles (id)
 );
 
+alter table offers
+    add company_id integer not null default -1;

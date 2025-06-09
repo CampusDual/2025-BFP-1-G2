@@ -7,9 +7,9 @@ import java.util.List;
 
 @Service
 public interface IOfferService {
-    OfferDTO queryOffer(OfferDTO offerDTO);
+    OfferDTO queryOffer(OfferDTO request);
     List<OfferDTO> queryAllOffers();
-    int insertOffer(OfferDTO offerDTO);
-    int updateOffer(OfferDTO offerDTO);
-    int deleteOffer(OfferDTO offerDTO);
+    int insertOffer(OfferDTO request, String username);
+    int updateOffer(OfferDTO request, String username);
+    int deleteOffer(OfferDTO request, String username);
 }
