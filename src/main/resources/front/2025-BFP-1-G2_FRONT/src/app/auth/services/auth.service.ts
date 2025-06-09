@@ -42,7 +42,20 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('authToken');
+    // Verifica si hay un token de autenticación en el almacenamiento local
+    //Y tambien si el token no ha expirado
+    if (!localStorage.getItem('authToken')) {
+      return false;
+    }
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return false;
+    }
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const isExpired = payload.exp < Date.now() / 1000;
+    return !isExpired;
+
   }
 
 
