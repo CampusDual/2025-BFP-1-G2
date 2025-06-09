@@ -18,6 +18,9 @@ public class Offer {
 
     //@Column(name = "company", nullable = false)
 
+    @Column(name = "company_id", nullable = false)
+    private int companyId;
+
     @Column(name = "active", nullable = false)
     private boolean active;
 
@@ -79,5 +82,13 @@ public class Offer {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setCompanyId(int id) {
+        this.companyId = id;
+    }
+
+    public int getCompanyId() {
+        return companyId;
     }
 }

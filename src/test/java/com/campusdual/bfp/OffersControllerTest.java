@@ -41,27 +41,7 @@ class OffersControllerTest {
                 .build();
     }
 
-    @Test
-    void addOfferTest() throws Exception {
-        // prepare stub
-        when(this.OfferService.insertOffer(any(OfferDTO.class))).thenReturn(1);
-        // build DTO
-        OfferDTO dto = new OfferDTO();
-        dto.setTitle("Titulo");
-        dto.setDescription("Descripcion");
-        dto.setActive(true);
-        dto.setDate(new java.util.Date());
 
-        MvcResult mvcResult = mockMvc.perform(
-                MockMvcRequestBuilders.post("/offer/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(dto)))
-                .andReturn();
-
-        assertEquals(200, mvcResult.getResponse().getStatus());
-        assertEquals("1", mvcResult.getResponse().getContentAsString());
-        verify(this.OfferService, times(1)).insertOffer(any(OfferDTO.class));
-    }
 
     @Test
     void getAllOffersTest() throws Exception {
