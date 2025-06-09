@@ -5,8 +5,10 @@ import { OfferPanelRoutingModule } from './offer-panel-routing.module';
 import { OfferTableComponent } from './offer-table/offer-table.component';
 import { OfferCardComponent } from './offer-card/offer-card.component';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 
 export interface Offer {
+  id: number;
   title: string;
   description: string;
   email: string;
@@ -21,8 +23,9 @@ export interface Offer {
   ],
   imports: [
     CommonModule,
-    OfferPanelRoutingModule,
-    MatCardModule
+    MatCardModule,
+    MatButtonModule,
+    OfferPanelRoutingModule
   ]
 })
 export class OfferPanelModule { }

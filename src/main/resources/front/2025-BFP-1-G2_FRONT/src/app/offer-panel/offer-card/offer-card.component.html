@@ -1,6 +1,16 @@
-<mat-card class="card">
-  <div class="card-content">
-    <h3 class="card-title">{{ offer.title }}</h3>
-    <p class="card-description">{{ offer.description }}</p>
-  </div>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{offer.title}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-subtitle> <strong>{{offer.companyName}}</strong> |
+  {{offer.email}}
+</mat-card-subtitle>
+    <mat-card-content>
+      <p>{{offer.description}}</p>
+      <p>{{offer.dateAdded}}</p>
+    </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" class="details">Ver Detalles</button>
+    <button mat-raised-button color="primary" class="applyOffer">Aplicar</button>
+  </mat-card-actions>
 </mat-card>

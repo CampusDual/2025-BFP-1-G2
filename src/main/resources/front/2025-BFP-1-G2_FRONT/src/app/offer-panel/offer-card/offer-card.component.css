@@ -1,8 +1,43 @@
-.card{
-    width: 300px;
-    height: 400px;
-    background-color: #ffffff,;
-    padding: 10px;
-    border-radius: 6px;
+mat-card-title {
+  color: var(--primary-color);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+mat-card {
+  max-width: 300px;
+  max-height: 400px;
+  margin: 16px auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.39);
+  padding: 10px;
+  transition: scale 0.1s ease-in-out;
+}
+
+mat-card:hover {
+  scale: 1.02;
+  transition: scale 0.1s ease-in-out;
+}
+
+ mat-card-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+}
+
+mat-raised-button {
+  display: flex;
+  justify-content: center;
+}
+
+.applyOffer {
+  background-color: var(--background-hover-color);
+  cursor: pointer;
+}
+
+.applyOffer:hover {
+  background-color: var(--primary-color);
+  color: #fff;
 }
 
