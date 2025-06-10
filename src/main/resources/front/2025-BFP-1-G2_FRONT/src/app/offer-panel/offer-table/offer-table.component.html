@@ -1,6 +1,7 @@
 <div class="grid-container">
   <app-offer-card
-    *ngFor="let offer of dataSource"
-    [offer]="offer">
+    *ngFor="let offer of dataSource; let i = index"
+    [offer]="offer"
+    [ngStyle]="{'--i': i}">
   </app-offer-card>
 </div>
