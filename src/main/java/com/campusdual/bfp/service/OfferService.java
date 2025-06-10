@@ -10,9 +10,7 @@ import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OfferService implements IOfferService {
@@ -43,6 +41,13 @@ public class OfferService implements IOfferService {
             dto.setDateAdded(offer.getDate());
             dtos.add(dto);
         }
+        Collections.sort(dtos, new Comparator<OfferDTO>() {
+            @Override
+            public int compare(OfferDTO o1, OfferDTO o2) {
+                return o1.getDateAdded().compareTo(o2.getDateAdded());
+            }
+        });
+        Collections.reverse(dtos);
         return dtos;
     }
 
