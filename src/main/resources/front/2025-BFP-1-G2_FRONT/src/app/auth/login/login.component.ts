@@ -37,7 +37,10 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', { duration: 3000 });
+            this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', {
+              duration: 6000,
+              panelClass: ['snackbar-error', 'mat-warn']
+            });
         }
       });
     } else {
