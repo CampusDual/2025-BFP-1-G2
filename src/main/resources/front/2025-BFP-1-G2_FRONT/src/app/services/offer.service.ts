@@ -33,4 +33,3 @@ export class OfferService {
     return this.http.get<Offer[]>(`${this.baseUrl}/company/${companyName}`);
   }
 }
-
