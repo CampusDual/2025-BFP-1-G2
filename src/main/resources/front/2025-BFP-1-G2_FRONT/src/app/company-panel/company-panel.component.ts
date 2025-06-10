@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {OfferService} from '../services/offer.service';
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -20,7 +21,7 @@ export class CompanyPanelComponent implements OnInit {
   });
 
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private offerService: OfferService) {
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private offerService: OfferService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -42,6 +43,7 @@ export class CompanyPanelComponent implements OnInit {
           description: this.description.value
         }).subscribe({
           next: response => {
+            this.router.navigate(["offers/portal"]);
             console.log('Offer created successfully', response);
             this.offersForm.reset();
           },
