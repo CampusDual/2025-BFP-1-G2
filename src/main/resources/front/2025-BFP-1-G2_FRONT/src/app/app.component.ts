@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {animate, group, query, style, transition, trigger} from "@angular/animations";
+import {animate, style, transition, trigger} from "@angular/animations";
 import {RouterOutlet} from "@angular/router";
 
 @Component({

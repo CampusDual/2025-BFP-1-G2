@@ -44,7 +44,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    TextFieldModule
+    TextFieldModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
