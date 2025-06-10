@@ -3,8 +3,8 @@
     <h2 #formTitle>Registrarse</h2>
     <div>
       <mat-form-field appearance="outline">
-        <mat-label>Login de la empresa</mat-label>
-        <input matInput placeholder="nombre de la empresa" [formControl]="name" required>
+        <mat-label>Empresa</mat-label>
+        <input matInput placeholder="nombre de usuario" [formControl]="name" required>
         <mat-error *ngIf="name.invalid ">{{ getNameErrorMessage() }}</mat-error>
       </mat-form-field>
     </div>
