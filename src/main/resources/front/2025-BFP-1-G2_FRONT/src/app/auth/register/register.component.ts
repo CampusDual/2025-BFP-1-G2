@@ -41,7 +41,7 @@ export class RegisterComponent {
       }).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
-          this.snackBar.open('Regitro completado', 'Cerrar');
+          this.snackBar.open('Regitro completado', 'Cerrar',{ duration: 600 });
 
           this.authService.getUserName().subscribe({
             next: (username: string) => {

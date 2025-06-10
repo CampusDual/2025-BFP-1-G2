@@ -2,7 +2,7 @@ mat-card-title {
   color: var(--primary-color);
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  margin-bottom: 2rem;
+  margin-bottom: 1.4rem;
 }
 
 mat-card {

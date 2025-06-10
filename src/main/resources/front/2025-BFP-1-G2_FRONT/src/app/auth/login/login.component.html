@@ -5,14 +5,14 @@
     <div>
       <mat-form-field appearance="outline">
         <mat-label>Empresa</mat-label>
-        <input matInput placeholder="login" [formControl]="name" required>
+        <input matInput placeholder="Nombre de usuario" [formControl]="name" required>
         <mat-error *ngIf="name.invalid || name.value === ''  ">{{ getnameErrorMessage() }}</mat-error>
       </mat-form-field>
     </div>
     <br>
     <div>
       <mat-form-field appearance="outline">
-        <mat-label>Enter your password</mat-label>
+        <mat-label>Ingresa tu contraseña</mat-label>
         <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
         <mat-error *ngIf="password.invalid || password.value === '' ">{{ getPasswordErrorMessage() }}</mat-error>
       </mat-form-field>
