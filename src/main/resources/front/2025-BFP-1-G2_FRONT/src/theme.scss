@@ -1,107 +1,106 @@
 /* These palettes are generated using https://themes.angular-material.dev/ */
 @import '@angular/material/theming';
+
 @include mat-core();
 
 
-
-
 $m2-primary: (
-    50 : #e8e8e8,
-    100 : #c5c5c5,
-    200 : #9f9f9f,
-    300 : #787878,
-    400 : #5b5b5b,
-    500 : #3e3e3e,
-    600 : #383838,
-    700 : #303030,
-    800 : #282828,
-    900 : #1b1b1b,
-    A100 : #f28686,
-    A200 : #ec5858,
-    A400 : #ff1313,
-    A700 : #f80000,
-    contrast: (
-        50 : #000000,
-        100 : #000000,
-        200 : #000000,
-        300 : #ffffff,
-        400 : #ffffff,
-        500 : #ffffff,
-        600 : #ffffff,
-        700 : #ffffff,
-        800 : #ffffff,
-        900 : #ffffff,
-        A100 : #000000,
-        A200 : #000000,
-        A400 : #ffffff,
-        A700 : #ffffff,
-    )
+  50 : #e8e8e8,
+  100 : #c5c5c5,
+  200 : #9f9f9f,
+  300 : #787878,
+  400 : #5b5b5b,
+  500 : #3e3e3e,
+  600 : #383838,
+  700 : #303030,
+  800 : #282828,
+  900 : #1b1b1b,
+  A100 : #f28686,
+  A200 : #ec5858,
+  A400 : #ff1313,
+  A700 : #f80000,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #ffffff,
+    A700 : #ffffff,
+  )
 );
 
 $m2-accent: (
-    50 : #f9f8f8,
-    100 : #efeeee,
-    200 : #e4e3e3,
-    300 : #d9d7d8,
-    400 : #d1cfcf,
-    500 : #c9c6c7,
-    600 : #c3c0c1,
-    700 : #bcb9ba,
-    800 : #b5b1b3,
-    900 : #a9a4a6,
-    A100 : #ffffff,
-    A200 : #ffffff,
-    A400 : #ffffff,
-    A700 : #ffffff,
-    contrast: (
-        50 : #000000,
-        100 : #000000,
-        200 : #000000,
-        300 : #000000,
-        400 : #000000,
-        500 : #000000,
-        600 : #000000,
-        700 : #000000,
-        800 : #000000,
-        900 : #000000,
-        A100 : #000000,
-        A200 : #000000,
-        A400 : #000000,
-        A700 : #000000,
-    )
+  50 : #f9f8f8,
+  100 : #efeeee,
+  200 : #e4e3e3,
+  300 : #d9d7d8,
+  400 : #d1cfcf,
+  500 : #c9c6c7,
+  600 : #c3c0c1,
+  700 : #bcb9ba,
+  800 : #b5b1b3,
+  900 : #a9a4a6,
+  A100 : #ffffff,
+  A200 : #ffffff,
+  A400 : #ffffff,
+  A700 : #ffffff,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #000000,
+    400 : #000000,
+    500 : #000000,
+    600 : #000000,
+    700 : #000000,
+    800 : #000000,
+    900 : #000000,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #000000,
+  )
 );
 
 $m2-error: (
-    50 : #f4e1e0,
-    100 : #e4b5b3,
-    200 : #d28480,
-    300 : #bf524d,
-    400 : #b22d26,
-    500 : #a40800,
-    600 : #9c0700,
-    700 : #920600,
-    800 : #890400,
-    900 : #780200,
-    A100 : #ffb3c5,
-    A200 : #ff809f,
-    A400 : #ff4d78,
-    A700 : #ff3464,
-    contrast: (
-        50 : #000000,
-        100 : #000000,
-        200 : #000000,
-        300 : #ffffff,
-        400 : #ffffff,
-        500 : #ffffff,
-        600 : #ffffff,
-        700 : #ffffff,
-        800 : #ffffff,
-        900 : #ffffff,
-        A100 : #000000,
-        A200 : #000000,
-        A400 : #000000,
-        A700 : #ffffff,
-    )
+  50 : #f4e1e0,
+  100 : #e4b5b3,
+  200 : #d28480,
+  300 : #bf524d,
+  400 : #b22d26,
+  500 : #a40800,
+  600 : #9c0700,
+  700 : #920600,
+  800 : #890400,
+  900 : #780200,
+  A100 : #ffb3c5,
+  A200 : #ff809f,
+  A400 : #ff4d78,
+  A700 : #ff3464,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #ffffff,
+  )
 );
 $my-app-primary: mat-palette($m2-primary);
 $my-app-accent: mat-palette($m2-accent);
@@ -110,5 +109,15 @@ $my-app-warn: mat-palette($m2-error);
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
 
 
-
 @include angular-material-theme($my-app-theme);
+
+
+.error-snackbar {
+  top: 30px;
+  border-radius: 10px;
+  background-color: #9c0700;
+  color: #ffffff;
+  --mdc-snackbar-container-color: #9c0700;
+  --mdc-snackbar-text-color: #ffffff;
+
+}

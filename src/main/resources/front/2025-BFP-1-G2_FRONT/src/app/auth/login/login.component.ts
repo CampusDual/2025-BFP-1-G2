@@ -23,7 +23,7 @@ export class LoginComponent {
 
   constructor(private authService: AuthService,
               private router: Router,
-              private snackBar: MatSnackBar
+              private snackBar: MatSnackBar,
   ) {}
 
   onSubmit() {
@@ -37,10 +37,7 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-            this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', {
-              duration: 6000,
-              panelClass: ['snackbar-error', 'mat-warn']
-            });
+          this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', { duration: 3000 });
         }
       });
     } else {
