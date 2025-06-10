@@ -6,8 +6,8 @@ mat-card-title {
 }
 
 mat-card {
-  max-width: 300px;
-  max-height: 400px;
+  min-width: 300px;
+  min-height: 400px;
   margin: 16px auto;
   border-radius: 10px;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
@@ -27,12 +27,17 @@ mat-card:hover {
   transition: scale 0.1s ease-in-out;
 }
 
- mat-card-actions {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: center;
+mat-card-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  width: 100%;
 }
+
 
 mat-raised-button {
   display: flex;
