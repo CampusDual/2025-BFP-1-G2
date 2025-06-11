@@ -41,7 +41,7 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.email.value && this.password.value && this.login.value && this.name.value 
+    if (this.email.value && this.password.value && this.login.value && this.name.value
       && this.surname1.value && this.surname2.value && this.phoneNumber.value) {
       this.authService.register({
         login: this.login.value,
@@ -51,7 +51,6 @@ export class RegisterComponent {
         surname1: this.surname1.value,
         surname2: this.surname2.value,
         phoneNumber: this.phoneNumber.value
-
       }).subscribe({
         next: (response) => {
           console.log('Registration successful', response);

@@ -38,4 +38,20 @@ public class CandidateDTO extends SignupDTO {
     public void setSurname2(String surname2) {
         this.surname2 = surname2;
     }
+
+    public String getLogin() {
+        return super.getLogin();
+    }
+
+    public void setLogin(String login) {
+        super.setLogin(login);
+    }
+
+    public String getPassword() {
+        return super.getPassword();
+    }
+
+    public void setPassword(String password) {
+        super.setPassword(password);
+    }
 }
