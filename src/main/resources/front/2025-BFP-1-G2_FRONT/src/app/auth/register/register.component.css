@@ -16,13 +16,32 @@ form {
   border-radius: 10px;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
   background-color: rgba(255, 255, 255, 0.52);
-  h2 {
-    color: var(--primary-color);
-    letter-spacing: 1.4px;
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-  }
+  padding: 30px;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
+
+.formdata h2 {
+  color: var(--primary-color);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.form-grid > *:nth-child(odd) {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  padding-right: 20px;
+}
+
 
 .form-actions {
   display: flex;
@@ -30,7 +49,6 @@ form {
   justify-content: center;
   gap: 15px;
 }
-
 
 .login-link {
   padding: 10px 20px;
@@ -42,8 +60,6 @@ form {
   background-color: var(--background-hover-color);
   cursor: pointer;
   color: var(--primary-color);
-
-
 }
 
 #confirmPasswordField {
