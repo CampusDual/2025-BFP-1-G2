@@ -35,8 +35,8 @@ export class AuthService {
       );
   }
 
-  register(userData: { login: string, password: string, email: string, name: string, surname1: string, surname2: string, phoneNumber: string }): Observable<any> {
-    // borrar token si existe
+  register(userData: { login: string, password: string, email: string, name: string,
+    surname1: string, surname2: string, phoneNumber: string }): Observable<any> {
     localStorage.removeItem('authToken');
     return this.http.post(`${this.baseUrl}/signup`, userData, {responseType: 'text'});
   }
