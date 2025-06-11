@@ -50,7 +50,7 @@ export class RegisterComponent {
         name: this.name.value,
         surname1: this.surname1.value,
         surname2: this.surname2.value,
-        phoneNumber: this.phoneNumber.value
+        phone_number: this.phoneNumber.value
       }).subscribe({
         next: (response) => {
           console.log('Registration successful', response);

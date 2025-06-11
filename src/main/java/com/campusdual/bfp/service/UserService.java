@@ -18,8 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 @Service
 @Lazy
 public class UserService implements UserDetailsService {
@@ -69,17 +67,17 @@ public class UserService implements UserDetailsService {
         return savedUser.getId();
     }
 
-    public int registerNewUser(String username, String password, String email, String name, String surname1, String surname2, String phoneNumber, String roleName) {
+    public void registerNewUser(String username, String password, String email, String name,
+                                String surname1, String surname2, String phone_number, String roleName) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
         candidate.setSurname1(surname1);
         candidate.setSurname2(surname2);
-        candidate.setPhoneNumber(phoneNumber);
+        candidate.setPhone_number(phone_number);
         id = this.registerNewUser(username, password, email, roleName);
         candidate.setUser_id(id);
         this.candidateDao.saveAndFlush(candidate);
-        return id;
     }
 
     public UserDao getUserDao() {

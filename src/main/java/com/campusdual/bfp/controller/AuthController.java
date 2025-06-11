@@ -85,7 +85,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@RequestBody CandidateDTO request) {
+    public ResponseEntity<String> registerCandidate(@RequestBody CandidateDTO request) {
         if (this.userService.existsByUsername(request.getLogin())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }

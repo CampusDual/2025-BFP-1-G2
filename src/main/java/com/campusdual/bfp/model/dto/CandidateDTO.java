@@ -2,6 +2,7 @@ package com.campusdual.bfp.model.dto;
 
 
 public class CandidateDTO extends SignupDTO {
+
     private String phoneNumber;
     private String name;
     private String surname1;
