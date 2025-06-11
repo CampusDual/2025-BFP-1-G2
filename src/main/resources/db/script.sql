@@ -34,3 +34,18 @@ create table user_roles
 alter table offers
 add company_id integer not null default -1,
 add constraint fk_offers_company foreign key (company_id) references users(id);
+
+insert into public.roles (role_name, role_description)
+values
+('candidate', ''),
+('company', '');
+
+create table candidates (
+candidate_id serial primary key,
+name varchar(30) not null,
+surname1 varchar(30) not null,
+surname2 varchar(30) not null,
+phoneNumber varchar(9) not null,
+user_id int not null,
+constraint fk_users foreign key (user_id) references users(id)
+);
