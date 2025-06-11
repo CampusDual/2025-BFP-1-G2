@@ -20,6 +20,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { CompanyLoginComponent } from './company-login/company-login.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    CompanyPanelComponent
+    CompanyPanelComponent,
+    CompanyLoginComponent
   ],
   imports: [
     BrowserModule,
