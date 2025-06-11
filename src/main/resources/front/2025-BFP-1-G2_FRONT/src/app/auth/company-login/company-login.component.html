@@ -1,1 +1,30 @@
-<p>company-login works!</p>
+
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <mat-card class="formdata">
+    <h2>Iniciar Sesión</h2>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario</mat-label>
+        <input matInput placeholder="Login" [formControl]="login" required>
+        <mat-error *ngIf="login.invalid || login.value === ''">{{ getLoginErrorMessage() }}</mat-error>
+      </mat-form-field>
+    </div>
+    <br>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
+        <mat-error *ngIf="password.invalid || password.value === ''">{{ getPasswordErrorMessage() }}</mat-error>
+      </mat-form-field>
+    </div>
+    <br>
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Login</button>
+      <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+    </div>
+    <br>
+    <mat-progress-bar *ngIf="isLoading" mode="query"></mat-progress-bar>
+  </mat-card>
+  <p>¿Aún no tienes cuenta?</p>
+  <button mat-raised-button color="primary" routerLink="../register-candidate" class="login-link">Registrarse</button>
+</form>

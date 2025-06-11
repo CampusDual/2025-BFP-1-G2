@@ -20,8 +20,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { CompanyLoginComponent } from './company-login/company-login.component';
-
+import {AuthModule} from "./auth/auth.module";
 
 @NgModule({
   declarations: [
@@ -29,7 +28,6 @@ import { CompanyLoginComponent } from './company-login/company-login.component';
     HeaderComponent,
     FooterComponent,
     CompanyPanelComponent,
-    CompanyLoginComponent
   ],
   imports: [
     BrowserModule,
@@ -47,6 +45,8 @@ import { CompanyLoginComponent } from './company-login/company-login.component';
     MatInputModule,
     ReactiveFormsModule,
     TextFieldModule,
+    AuthModule
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
