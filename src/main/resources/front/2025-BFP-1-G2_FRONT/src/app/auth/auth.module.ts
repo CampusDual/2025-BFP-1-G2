@@ -16,14 +16,10 @@ import {MatCardModule} from "@angular/material/card";
 import { CompanyLoginComponent } from './company-login/company-login.component';
 
 
-
-
-
 @NgModule({
   declarations: [
     RegisterComponent,
-    LoginComponent,
-    CompanyLoginComponent
+    LoginComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +31,9 @@ import { CompanyLoginComponent } from './company-login/company-login.component';
     HttpClientModule,
     MatDialogModule,
     MatProgressBarModule,
-    MatCardModule
+    MatCardModule,
+    CompanyLoginComponent
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
