@@ -3,29 +3,16 @@ package com.campusdual.bfp.model.dto;
 
 public class CandidateDTO extends SignupDTO {
     private String phoneNumber;
-    private String nombre;
-    private String apellido1;
-    private String apellido2;
+    private String name;
+    private String surname1;
+    private String surname2;
 
-    public CandidateDTO() {
-        // Default constructor
+    public String getName() {
+        return name;
     }
 
-    public CandidateDTO(String login, String password, String email, String phoneNumber, String nombre, String apellido1, String apellido2) {
-        super.setLogin(login);
-        this.phoneNumber = phoneNumber;
-        this.nombre = nombre;
-        this.apellido1 = apellido1;
-        this.apellido2 = apellido2;
-    }
-
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhoneNumber() {
@@ -36,19 +23,19 @@ public class CandidateDTO extends SignupDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getApellido1() {
-        return apellido1;
+    public String getSurname1() {
+        return surname1;
     }
 
-    public void setApellido1(String apellido1) {
-        this.apellido1 = apellido1;
+    public void setSurname1(String surname1) {
+        this.surname1 = surname1;
     }
 
-    public String getApellido2() {
-        return apellido2;
+    public String getSurname2() {
+        return surname2;
     }
 
-    public void setApellido2(String apellido2) {
-        this.apellido2 = apellido2;
+    public void setSurname2(String surname2) {
+        this.surname2 = surname2;
     }
 }

@@ -1,27 +1,33 @@
 package com.campusdual.bfp.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "candidates")
-public class Candidate extends User{
-    private String phoneNumber;
-    private String Nombre, Apellido1, Apellido2;
+public class Candidate {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
+
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String name;
+
+    @Column
+    private String surname1;
+
+    @Column
+    private String surname2;
+
+    @Column
+    private int user_id;
 
     public Candidate() {
-        super();
-    }
 
-    public Candidate(String login, String password, String email, String phoneNumber, String nombre, String apellido1, String apellido2) {
-        super(login, password, email);
-        this.phoneNumber = phoneNumber;
-        this.Nombre = nombre;
-        this.Apellido1 = apellido1;
-        this.Apellido2 = apellido2;
     }
-
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -31,27 +37,43 @@ public class Candidate extends User{
         this.phoneNumber = phoneNumber;
     }
 
-    public String getNombre() {
-        return Nombre;
+    public String getName() {
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        Nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getApellido1() {
-        return Apellido1;
+    public String getSurname2() {
+        return surname2;
     }
 
-    public void setApellido1(String apellido1) {
-        Apellido1 = apellido1;
+    public void setSurname2(String surname2) {
+        this.surname2 = surname2;
     }
 
-    public String getApellido2() {
-        return Apellido2;
+    public String getSurname1() {
+        return surname1;
     }
 
-    public void setApellido2(String apellido2) {
-        Apellido2 = apellido2;
+    public void setSurname1(String surname1) {
+        this.surname1 = surname1;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 }
