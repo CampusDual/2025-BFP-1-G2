@@ -13,6 +13,7 @@ import { LoginComponent } from './login/login.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatCardModule} from "@angular/material/card";
+import { CompanyLoginComponent } from './company-login/company-login.component';
 
 
 
@@ -21,7 +22,8 @@ import {MatCardModule} from "@angular/material/card";
 @NgModule({
   declarations: [
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    CompanyLoginComponent
   ],
   imports: [
     CommonModule,
