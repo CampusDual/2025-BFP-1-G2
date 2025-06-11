@@ -35,15 +35,13 @@ export class AuthService {
       );
   }
 
-  register(userData: { login: string, password: string, email: string }): Observable<any> {
+  register(userData: { login: string, password: string, email: string, name: string, surname1: string, surname2: string, phoneNumber: string }): Observable<any> {
     // borrar token si existe
     localStorage.removeItem('authToken');
     return this.http.post(`${this.baseUrl}/signup`, userData, {responseType: 'text'});
   }
 
   isLoggedIn(): boolean {
-    // Verifica si hay un token de autenticación en el almacenamiento local
-    //Y tambien si el token no ha expirado
     if (!localStorage.getItem('authToken')) {
       return false;
     }
