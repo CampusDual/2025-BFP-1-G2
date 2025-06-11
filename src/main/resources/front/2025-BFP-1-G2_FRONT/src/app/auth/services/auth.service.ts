@@ -36,8 +36,9 @@ export class AuthService {
   }
 
   register(userData: { login: string, password: string, email: string, name: string,
-    surname1: string, surname2: string, phoneNumber: string }): Observable<any> {
+    surname1: string, surname2: string, phone_number: string }): Observable<any> {
     localStorage.removeItem('authToken');
+    console.log('Registering user with data:', userData);
     return this.http.post(`${this.baseUrl}/signup`, userData, {responseType: 'text'});
   }
 
