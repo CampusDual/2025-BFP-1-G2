@@ -42,8 +42,6 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    // Verifica si hay un token de autenticación en el almacenamiento local
-    //Y tambien si el token no ha expirado
     if (!localStorage.getItem('authToken')) {
       return false;
     }
