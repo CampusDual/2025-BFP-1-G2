@@ -1,4 +1,3 @@
-// src/main/java/com/campusdual/bfp/controller/OfferController.java
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -49,6 +49,7 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
+    @PreAuthorize("hasRole('COMPANY')")
     @PostMapping(value = "/add")
     public ResponseEntity<Integer> addOffer(@RequestBody OfferDTO request, Principal principal) {
         String username = principal.getName();
