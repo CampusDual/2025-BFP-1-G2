@@ -16,6 +16,8 @@ export class AuthGuard implements CanActivate{
 
     const expectedRoles = route.data['roles'] as string[];
     if (expectedRoles && !this.auth.hasRole(expectedRoles)) {
+      console.warn('Acceso denegado. Usuario no tiene los roles necesarios:', expectedRoles);
+      console.warn('Roles del usuario:', this.auth.getRoles());
       this.router.navigate(['/no-autorizado']).then(r => {});
       return false;
     }

@@ -22,8 +22,9 @@ public class Candidate {
     @Column
     private String surname2;
 
-    @Column
-    private int user_id;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     public Candidate() {
 
@@ -69,11 +70,10 @@ public class Candidate {
         this.id = candidate_id;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
-}
+    public void setUser(User user) {
+        this.user = user;
+    }}

@@ -7,7 +7,8 @@ const routes: Routes = [
   {path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)},
   {path: 'offers', loadChildren: () => import('./offer-panel/offer-panel.module').then(m => m.OfferPanelModule)},
   {path: '', redirectTo: 'offers/portal', pathMatch: 'full' },
-  {path: 'user', component: UserPanelComponent, canActivate: [AuthGuard]}
+  {path: 'user', component: UserPanelComponent, canActivate: [AuthGuard], data: { roles: ['ROLE_CANDIDATE'] } },
+
 ];
 
 @NgModule({
