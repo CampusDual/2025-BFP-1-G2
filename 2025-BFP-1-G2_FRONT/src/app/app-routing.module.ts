@@ -5,6 +5,7 @@ import {LoginComponent} from './auth/login/login.component';
 import {CompanyPanelComponent} from "./company-panel/company-panel.component";
 import {AuthGuard} from "./auth/auth.guard";
 import {OfferTableComponent} from "./offer-panel/offer-table/offer-table.component";
+import { UserPanelComponent } from './user-panel/user-panel.component';
 
 
 //canActivate
@@ -15,7 +16,8 @@ const routes: Routes = [
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {path: 'company/:companyName', component: CompanyPanelComponent, canActivate: [AuthGuard]},
-  {path: 'offers/portal', component: OfferTableComponent}
+  {path: 'offers/portal', component: OfferTableComponent},
+  {path: 'user', component: UserPanelComponent, canActivate: [AuthGuard]},
 ];
 
 @NgModule({
