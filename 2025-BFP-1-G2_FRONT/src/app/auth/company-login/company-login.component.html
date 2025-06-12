@@ -1,10 +1,9 @@
-
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <mat-card class="formdata">
     <h2>Iniciar Sesión</h2>
     <div>
       <mat-form-field appearance="outline">
-        <mat-label>Usuario</mat-label>
+        <mat-label>Empresa</mat-label>
         <input matInput placeholder="Login" [formControl]="login" required>
         <mat-error *ngIf="login.invalid || login.value === ''">{{ getLoginErrorMessage() }}</mat-error>
       </mat-form-field>
@@ -25,6 +24,5 @@
     <br>
     <mat-progress-bar *ngIf="isLoading" mode="query"></mat-progress-bar>
   </mat-card>
-  <p>¿Aún no tienes cuenta?</p>
-  <button mat-raised-button color="primary" routerLink="../register-candidate" class="login-link">Registrarse</button>
+
 </form>

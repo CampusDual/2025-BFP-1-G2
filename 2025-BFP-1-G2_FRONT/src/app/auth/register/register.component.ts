@@ -21,7 +21,7 @@ export class RegisterComponent {
   name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   surname1 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   surname2 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
-  phoneNumber = new FormControl('', [Validators.required, Validators.pattern('^\\+?[0-9]{7,15}$')]);
+  phoneNumber = new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(9)]);
   registerForm = new FormGroup({
     login: this.login,
     email: this.email,
@@ -37,7 +37,7 @@ export class RegisterComponent {
   constructor(private authService: AuthService,
               private router: Router,
               private snackBar: MatSnackBar) {
-    // this.applyTypingAnimation();
+
   }
 
   onSubmit(): void {
@@ -50,7 +50,7 @@ export class RegisterComponent {
         name: this.name.value,
         surname1: this.surname1.value,
         surname2: this.surname2.value,
-        phone_number: this.phoneNumber.value
+        phoneNumber: this.phoneNumber.value
       }).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
@@ -59,8 +59,7 @@ export class RegisterComponent {
           this.authService.getUserName().subscribe({
             next: (username: string) => {
               console.log('Username retrieved:', username);
-              this.router.navigate([`../company/${username}`]).then(() => {
-                // Optionally, you can reset the form after successful registration
+              this.router.navigate([`offers/portal`]).then(() => {
                 this.onReset();
               });
             },
@@ -141,18 +140,6 @@ getPhoneNumberErrorMessage(): string {
     this.phoneNumber.reset();
   }
 
-  //
-  // changeCard() {
-  //   this.isAltTitle = !this.isAltTitle;
-  //   this.isFieldShown = !this.isFieldShown;
-  //   if (this.confirmPasswordField) {
-  //     if (!this.isFieldShown) {
-  //       this.confirmPasswordField.nativeElement.classList.add('hidden');
-  //     } else {
-  //       this.confirmPasswordField.nativeElement.classList.remove('hidden');
-  //     }
-  //   }
-  // }
 
   getLoginErrorMessage(): string {
     if (this.login.hasError('required')) {
@@ -205,47 +192,5 @@ getPhoneNumberErrorMessage(): string {
     return this.login.valid && this.email.valid && this.password.valid && this.confirmPassword.valid && this.password.value === this.confirmPassword.value
       && this.name.valid && this.surname1.valid && this.surname2.valid && this.phoneNumber.valid;
   }
-
-  // applyTypingAnimation() {
-  //
-  //   if (this.formTitle) {
-  //     const title = this.isAltTitle ? 'Iniciar Sesión' : 'Registrarse';
-  //     this.startTypingAnimation(this.formTitle.nativeElement, title);
-  //   }
-  // }
-  //
-  // startTypingAnimation(header: HTMLElement, text: string) {
-  //   header.classList.add('animated');
-  //   header.setAttribute('data-text', text);
-  //   header.textContent = '';
-  //   let index = 0;
-  //   const typingSpeed = 70;
-  //   const symbolSpeed = 60;
-  //   const symbols = ['_', '|', '/', '\\', '*', '<', '>', '.', '{', '}', ';', '!', '@', '#', '$', '%', '^', '&'];
-  //   const currentText = Array(text.length).fill('');
-  //
-  //   function typeLetter() {
-  //     if (index < text.length) {
-  //       let symbolIndex = 0;
-  //       const symbolInterval = setInterval(() => {
-  //         if (symbolIndex < symbolSpeed / typingSpeed) {
-  //           const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-  //           currentText[index] = randomSymbol;
-  //           header.textContent = currentText.join('');
-  //           symbolIndex++;
-  //         } else {
-  //           clearInterval(symbolInterval);
-  //           currentText[index] = text[index];
-  //           header.textContent = currentText.join('');
-  //           index++;
-  //           typeLetter();
-  //         }
-  //       }, symbolSpeed);
-  //     }
-  //   }
-  //
-  //   typeLetter();
-  // }
-
 
 }

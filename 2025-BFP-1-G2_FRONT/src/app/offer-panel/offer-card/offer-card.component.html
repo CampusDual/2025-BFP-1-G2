@@ -2,7 +2,8 @@
   <mat-card-header>
     <mat-card-title>{{offer.title}}</mat-card-title>
   </mat-card-header>
-  <mat-card-subtitle> <strong>{{offer.companyName}}</strong> |
+  <mat-card-subtitle>
+    <strong>{{offer.companyName}}</strong> |
   {{offer.email}}
 </mat-card-subtitle>
     <mat-card-content>
@@ -11,6 +12,6 @@
     </mat-card-content>
   <mat-card-actions>
     <button mat-raised-button color="primary" class="details">Ver Detalles</button>
-    <button mat-raised-button color="primary" class="applyOffer">Aplicar</button>
+    <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
   </mat-card-actions>
 </mat-card>

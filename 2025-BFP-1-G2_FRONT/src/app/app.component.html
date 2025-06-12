@@ -2,6 +2,7 @@
   <div class="content">
     <app-header></app-header>
     <div [@fadeAnimation]="getRouterOutletState(outlet)" ><router-outlet #outlet="outlet"></router-outlet></div>
+    <router-outlet name="overlay"></router-outlet>
     <app-footer></app-footer>
   </div>
 </body>
