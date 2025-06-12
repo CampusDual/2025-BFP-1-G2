@@ -15,6 +15,12 @@ img {
   object-fit: contain;
 }
 
+.rightSection {
+  margin-left: auto;
+  align-items: center;
+  justify-content: center;
+}
+
 .logout-button{
   margin-left: auto;
   margin-right: 20px;
@@ -22,5 +28,31 @@ img {
   font-size: 1.2rem;
   background-color: transparent;
   border: none;
-  cursor: pointer
+  cursor: pointer;
 }
+
+.enlaceEmpresa {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin-right: 20px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out, scale 0.3s;
+  border-radius: 50px;
+  max-width: fit-content;
+  max-height: fit-content;
+  padding: 7px;
+}
+
+.enlaceEmpresa:hover {
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.045);
+}
+
