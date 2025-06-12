@@ -10,8 +10,8 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column
-    private String phoneNumber;
+    @Column(name = "phone_number")
+    private String phone_number;
 
     @Column
     private String name;
@@ -22,19 +22,20 @@ public class Candidate {
     @Column
     private String surname2;
 
-    @Column
-    private int user_id;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     public Candidate() {
 
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone_number() {
+        return phone_number;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
     public String getName() {
@@ -61,19 +62,18 @@ public class Candidate {
         this.surname1 = surname1;
     }
 
-    public int getId() {
+    public int getCandidate_id() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCandidate_id(int candidate_id) {
+        this.id = candidate_id;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
-}
+    public void setUser(User user) {
+        this.user = user;
+    }}

@@ -1,6 +1,7 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.auth.JWTUtil;
+import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.SignupDTO;
 import com.campusdual.bfp.service.UserService;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -85,11 +88,11 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@RequestBody CandidateDTO request) {
+    public ResponseEntity<String> registerCandidate(@RequestBody CandidateDTO request) {
         if (this.userService.existsByUsername(request.getLogin())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }
-        this.userService.registerNewUser(request.getLogin(), request.getPassword(), request.getEmail(),
+        this.userService.registerNewCandidate(request.getLogin(), request.getPassword(), request.getEmail(),
                 request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE");
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
     }
@@ -119,4 +122,32 @@ public class AuthController {
         }
         return username;
     }
+
+    @GetMapping("/user/roles")
+    public List<String> getUserRoles(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return List.of("No roles available");
+        }
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/candidateDetails")
+    public ResponseEntity<CandidateDTO> getCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        CandidateDTO candidateDetails = userService.getCandidateDetails(username);
+        if (candidateDetails == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(candidateDetails);
+    }
+
 }

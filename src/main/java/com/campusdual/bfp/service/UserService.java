@@ -8,6 +8,7 @@ import com.campusdual.bfp.model.dao.CandidateDao;
 import com.campusdual.bfp.model.dao.RoleDao;
 import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dao.UserRoleDao;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
@@ -17,8 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 @Lazy
@@ -69,17 +68,17 @@ public class UserService implements UserDetailsService {
         return savedUser.getId();
     }
 
-    public int registerNewUser(String username, String password, String email, String name, String surname1, String surname2, String phoneNumber, String roleName) {
+    public void registerNewCandidate(String username, String password, String email, String name,
+                                String surname1, String surname2, String phoneNumber, String roleName) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
         candidate.setSurname1(surname1);
         candidate.setSurname2(surname2);
-        candidate.setPhoneNumber(phoneNumber);
+        candidate.setPhone_number(phoneNumber);
         id = this.registerNewUser(username, password, email, roleName);
-        candidate.setUser_id(id);
+        candidate.setUser(this.userDao.findUserById(id));
         this.candidateDao.saveAndFlush(candidate);
-        return id;
     }
 
     public UserDao getUserDao() {
@@ -104,5 +103,28 @@ public class UserService implements UserDetailsService {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    public CandidateDTO getCandidateDetails(String username) {
+        User user = this.userDao.findByLogin(username);
+        if (user == null) {
+            return null;
+        }
+        Candidate candidate = this.candidateDao.findCandidateByUser(user);
+        System.out.println("Candidate: " + candidate);
+        System.out.println("User: " + user);
+        if (candidate == null) {
+            return null;
+        }
+
+        CandidateDTO candidateDTO = new CandidateDTO();
+        candidateDTO.setLogin(user.getLogin());
+        candidateDTO.setEmail(user.getEmail());
+        candidateDTO.setName(candidate.getName());
+        candidateDTO.setSurname1(candidate.getSurname1());
+        candidateDTO.setSurname2(candidate.getSurname2());
+        candidateDTO.setPhoneNumber(candidate.getPhone_number());
+
+        return candidateDTO;
     }
 }

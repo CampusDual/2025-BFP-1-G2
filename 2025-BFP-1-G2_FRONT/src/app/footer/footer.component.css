@@ -1,0 +1,7 @@
+mat-toolbar {
+  bottom: 0;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.2rem;
+    background-color: transparent;
+}
