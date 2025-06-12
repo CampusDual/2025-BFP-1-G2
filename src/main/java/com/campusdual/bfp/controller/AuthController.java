@@ -1,6 +1,8 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.auth.JWTUtil;
+import com.campusdual.bfp.model.User;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.SignupDTO;
 import com.campusdual.bfp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -53,6 +58,19 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = this.jwtUtils.generateJWTToken(userDetails.getUsername());
 
+            System.out.println("User authenticated: " + userDetails.getUsername());
+            // Optionally, you can log the token or return it in the response
+            System.out.println("Generated JWT Token: " + token);
+                userService.addRoleToUser(15, (long)6); // Example of adding a role to a user, adjust as needed
+
+            // Return role
+            String role = userDetails.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .orElse("ROLE_USER");
+            // Log the role
+
+            System.out.println("User role: " + role);
             return ResponseEntity.ok(token);
 
         } catch (AuthenticationException ex) {
@@ -60,15 +78,23 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/signup/company")
     public ResponseEntity<String> registerUser(@RequestBody SignupDTO request) {
         if (this.userService.existsByUsername(request.getLogin())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }
-
-        this.userService.registerNewUser(request.getLogin(), request.getPassword(), request.getEmail());
+        this.userService.registerNewUser(request.getLogin(), request.getPassword(), request.getEmail(), "ROLE_COMPANY");
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
+    }
 
+    @PostMapping("/signup")
+    public ResponseEntity<String> registerCandidate(@RequestBody CandidateDTO request) {
+        if (this.userService.existsByUsername(request.getLogin())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
+        }
+        this.userService.registerNewCandidate(request.getLogin(), request.getPassword(), request.getEmail(),
+                request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE");
+        return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
     }
 
     @GetMapping("/me")
@@ -96,4 +122,32 @@ public class AuthController {
         }
         return username;
     }
+
+    @GetMapping("/user/roles")
+    public List<String> getUserRoles(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return List.of("No roles available");
+        }
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/candidateDetails")
+    public ResponseEntity<CandidateDTO> getCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        CandidateDTO candidateDetails = userService.getCandidateDetails(username);
+        if (candidateDetails == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(candidateDetails);
+    }
+
 }
