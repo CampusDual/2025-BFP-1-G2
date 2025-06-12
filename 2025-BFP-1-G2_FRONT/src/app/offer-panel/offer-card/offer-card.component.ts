@@ -7,5 +7,11 @@ import { Component, Input } from '@angular/core';
 })
 export class OfferCardComponent {
   @Input() offer: any;
+  isDisabled: boolean = false;
+
+  toggleActions() {
+    this.isDisabled = !this.isDisabled;
+  }
+
 }
 
