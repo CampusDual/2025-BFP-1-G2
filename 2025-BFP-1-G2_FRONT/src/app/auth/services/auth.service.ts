@@ -22,6 +22,22 @@ export class AuthService {
   username: string | null = null;
 
 
+
+  getRoles(): string[] {
+    this.getUser().subscribe(user => {
+      if (user && user.authorities) {
+        return user.authorities.map((a: any) => a.authority);
+      }
+      return [];
+    });
+    return [];
+  }
+
+
+  hasRole(expectedRoles: string[]): boolean {
+    return expectedRoles.some(role => this.getRoles().includes(role));
+  }
+
   constructor(private http: HttpClient) {
   }
 
@@ -35,8 +51,10 @@ export class AuthService {
       );
   }
 
-  register(userData: { login: string, password: string, email: string, name: string,
-    surname1: string, surname2: string, phone_number: string }): Observable<any> {
+  register(userData: {
+    login: string, password: string, email: string, name: string,
+    surname1: string, surname2: string, phoneNumber: string
+  }): Observable<any> {
     localStorage.removeItem('authToken');
     console.log('Registering user with data:', userData);
     return this.http.post(`${this.baseUrl}/signup`, userData, {responseType: 'text'});
@@ -67,8 +85,8 @@ export class AuthService {
   }
 
   getUser(): Observable<User> {
-      const token = this.getToken();
-      if (!token) {
+    const token = this.getToken();
+    if (!token) {
       return new Observable(observer => {
         observer.error('No hay token disponible');
       });
@@ -87,9 +105,9 @@ export class AuthService {
     );
   }
 
+
   getUsername(): string | null {
     return this.username;
   }
-
 
 }

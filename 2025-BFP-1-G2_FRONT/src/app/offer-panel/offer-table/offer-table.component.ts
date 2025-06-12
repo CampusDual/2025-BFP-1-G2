@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import {OfferService} from "../../services/offer.service";
 
 @Component({
@@ -28,6 +28,5 @@ export class OfferTableComponent {
         console.error('Error fetching offers', error);
       }
     });
-
   }
 }

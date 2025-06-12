@@ -45,12 +45,13 @@ mat-raised-button {
 }
 
 .applyOffer {
-  background-color: var(--background-hover-color);
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .applyOffer:hover {
   background-color: var(--primary-color);
   color: #fff;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 

@@ -4,7 +4,7 @@
     <h2>Iniciar Sesión</h2>
     <div>
       <mat-form-field appearance="outline">
-        <mat-label>Empresa</mat-label>
+        <mat-label>Usuario</mat-label>
         <input matInput placeholder="Nombre de usuario" [formControl]="name" required>
         <mat-error *ngIf="name.invalid || name.value === ''  ">{{ getnameErrorMessage() }}</mat-error>
       </mat-form-field>

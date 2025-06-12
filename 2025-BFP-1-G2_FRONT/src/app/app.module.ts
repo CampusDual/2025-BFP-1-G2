@@ -46,7 +46,6 @@ import {AuthModule} from "./auth/auth.module";
     ReactiveFormsModule,
     TextFieldModule,
     AuthModule
-
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

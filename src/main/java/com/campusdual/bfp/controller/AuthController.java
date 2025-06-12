@@ -1,6 +1,7 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.auth.JWTUtil;
+import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.SignupDTO;
 import com.campusdual.bfp.service.UserService;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -118,5 +121,15 @@ public class AuthController {
             return "Token inválido.";
         }
         return username;
+    }
+
+    @GetMapping("/user/roles")
+    public List<String> getUserRoles(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return List.of("No roles available");
+        }
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
     }
 }
