@@ -8,6 +8,7 @@ import com.campusdual.bfp.model.dao.CandidateDao;
 import com.campusdual.bfp.model.dao.RoleDao;
 import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dao.UserRoleDao;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
@@ -76,7 +77,7 @@ public class UserService implements UserDetailsService {
         candidate.setSurname2(surname2);
         candidate.setPhone_number(phoneNumber);
         id = this.registerNewUser(username, password, email, roleName);
-        candidate.setUser_id(id);
+        candidate.setUser(this.userDao.findUserById(id));
         this.candidateDao.saveAndFlush(candidate);
     }
 
@@ -102,5 +103,28 @@ public class UserService implements UserDetailsService {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    public CandidateDTO getCandidateDetails(String username) {
+        User user = this.userDao.findByLogin(username);
+        if (user == null) {
+            return null;
+        }
+        Candidate candidate = this.candidateDao.findCandidateByUser(user);
+        System.out.println("Candidate: " + candidate);
+        System.out.println("User: " + user);
+        if (candidate == null) {
+            return null;
+        }
+
+        CandidateDTO candidateDTO = new CandidateDTO();
+        candidateDTO.setLogin(user.getLogin());
+        candidateDTO.setEmail(user.getEmail());
+        candidateDTO.setName(candidate.getName());
+        candidateDTO.setSurname1(candidate.getSurname1());
+        candidateDTO.setSurname2(candidate.getSurname2());
+        candidateDTO.setPhoneNumber(candidate.getPhone_number());
+
+        return candidateDTO;
     }
 }

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {map, Observable, tap} from 'rxjs';
 
-interface User {
+export interface User {
   username: string;
   password: string;
   authorities: any[];
@@ -10,6 +10,11 @@ interface User {
   accountNonLocked: boolean;
   credentialsNonExpired: boolean;
   enabled: boolean;
+  name: string;
+  surname1: string;
+  surname2: string;
+  email: string;
+  phoneNumber: string;
 }
 
 @Injectable({
@@ -21,21 +26,15 @@ export class AuthService {
   private baseUrl = 'http://localhost:30030/auth';
   username: string | null = null;
 
-
-
-  getRoles(): string[] {
-    this.getUser().subscribe(user => {
-      if (user && user.authorities) {
-        return user.authorities.map((a: any) => a.authority);
-      }
-      return [];
-    });
-    return [];
+  getRoles(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/user/roles`);
   }
 
 
   hasRole(expectedRoles: string[]): boolean {
-    return expectedRoles.some(role => this.getRoles().includes(role));
+    return expectedRoles.some(role => this.getRoles().pipe(
+      map(roles => expectedRoles.some(role => roles.includes(role)))
+    ));
   }
 
   constructor(private http: HttpClient) {
@@ -85,14 +84,25 @@ export class AuthService {
   }
 
   getUser(): Observable<User> {
-    const token = this.getToken();
-    if (!token) {
-      return new Observable(observer => {
-        observer.error('No hay token disponible');
-      });
-    }
-    const headers = {Authorization: `Bearer ${token}`};
-    return this.http.get<User>(`${this.baseUrl}/me`, {headers});
+
+    return this.http.get<User>(`${this.baseUrl}/me`);
+  }
+
+  getCandidateDetails(): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/candidateDetails`);
+  }
+
+  getUserData(): User {
+    let user: User | null = null;
+    this.getUser().subscribe({
+      next: (data: User) => {
+        user = data;
+      },
+      error: (err) => {
+        console.error('Error fetching user data:', err);
+      }
+    });
+    return user || {username: '', password: '', authorities: [], accountNonExpired: true, accountNonLocked: true, credentialsNonExpired: true, enabled: true, name: '', surname1: '', surname2: '', email: '', phoneNumber: ''};
   }
 
   getUserName(): Observable<string> {
@@ -100,14 +110,8 @@ export class AuthService {
       map(user => user.username),
       tap(username => {
         this.username = username;
-        console.log('Username retrieved:', username);
       })
     );
-  }
-
-
-  getUsername(): string | null {
-    return this.username;
   }
 
 }

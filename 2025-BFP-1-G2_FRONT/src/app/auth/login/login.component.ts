@@ -31,7 +31,7 @@ export class LoginComponent {
     if (this.name.value !== null && this.password.value !== null) {
       this.authService.login({login: this.name.value, password: this.password.value}).subscribe({
         next: (response) => {
-            this.router.navigate([`../company/${this.name.value}`]).then(() => {
+            this.router.navigate([`../user`]).then(() => {
             this.isLoading = false;
           });
         },

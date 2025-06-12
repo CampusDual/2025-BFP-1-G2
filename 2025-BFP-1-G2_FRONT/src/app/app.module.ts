@@ -21,6 +21,7 @@ import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import { TextFieldModule } from '@angular/cdk/text-field';
 import {AuthModule} from "./auth/auth.module";
+import { UserPanelComponent } from './user-panel/user-panel.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import {AuthModule} from "./auth/auth.module";
     HeaderComponent,
     FooterComponent,
     CompanyPanelComponent,
+    UserPanelComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +47,7 @@ import {AuthModule} from "./auth/auth.module";
     MatInputModule,
     ReactiveFormsModule,
     TextFieldModule,
-    AuthModule
+    AuthModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
