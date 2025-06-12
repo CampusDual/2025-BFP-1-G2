@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
@@ -20,7 +20,6 @@ import { CommonModule } from '@angular/common';
     MatInputModule,
     MatProgressBarModule,
     MatButtonModule,
-    RouterLink,
     CommonModule
   ],
   styleUrls: ['./company-login.component.css']
