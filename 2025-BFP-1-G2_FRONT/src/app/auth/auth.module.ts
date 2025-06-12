@@ -33,7 +33,6 @@ import { CompanyLoginComponent } from './company-login/company-login.component';
     MatProgressBarModule,
     MatCardModule,
     CompanyLoginComponent
-
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

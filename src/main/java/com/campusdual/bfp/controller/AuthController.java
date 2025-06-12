@@ -89,7 +89,7 @@ public class AuthController {
         if (this.userService.existsByUsername(request.getLogin())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }
-        this.userService.registerNewUser(request.getLogin(), request.getPassword(), request.getEmail(),
+        this.userService.registerNewCandidate(request.getLogin(), request.getPassword(), request.getEmail(),
                 request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE");
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
     }

@@ -10,7 +10,7 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column
+    @Column(name = "phone_number")
     private String phone_number;
 
     @Column
@@ -61,12 +61,12 @@ public class Candidate {
         this.surname1 = surname1;
     }
 
-    public int getId() {
+    public int getCandidate_id() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCandidate_id(int candidate_id) {
+        this.id = candidate_id;
     }
 
     public int getUser_id() {
