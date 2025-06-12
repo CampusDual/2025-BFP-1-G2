@@ -11,12 +11,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent, data: { animation: 'RegisterPage' } },
   { path: 'login', component: LoginComponent, data: { animation: 'LoginPage' } },
   { path: 'company/login', component: CompanyLoginComponent},
-  {
-    path: 'company/:companyName',
-    component: CompanyPanelComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['ROLE_COMPANY'] }
-  }
+  {path: 'offers/portal', redirectTo: 'offers/portal', pathMatch: 'full'}
 ];
 
 @NgModule({
