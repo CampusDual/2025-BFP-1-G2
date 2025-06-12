@@ -67,14 +67,14 @@ public class UserService implements UserDetailsService {
         return savedUser.getId();
     }
 
-    public void registerNewUser(String username, String password, String email, String name,
-                                String surname1, String surname2, String phone_number, String roleName) {
+    public void registerNewCandidate(String username, String password, String email, String name,
+                                String surname1, String surname2, String phoneNumber, String roleName) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
         candidate.setSurname1(surname1);
         candidate.setSurname2(surname2);
-        candidate.setPhone_number(phone_number);
+        candidate.setPhone_number(phoneNumber);
         id = this.registerNewUser(username, password, email, roleName);
         candidate.setUser_id(id);
         this.candidateDao.saveAndFlush(candidate);
