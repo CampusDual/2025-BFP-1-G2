@@ -1,13 +1,7 @@
 package com.campusdual.bfp.service;
 
-import com.campusdual.bfp.model.Candidate;
-import com.campusdual.bfp.model.Role;
-import com.campusdual.bfp.model.User;
-import com.campusdual.bfp.model.UserRole;
-import com.campusdual.bfp.model.dao.CandidateDao;
-import com.campusdual.bfp.model.dao.RoleDao;
-import com.campusdual.bfp.model.dao.UserDao;
-import com.campusdual.bfp.model.dao.UserRoleDao;
+import com.campusdual.bfp.model.*;
+import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +28,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private CandidateDao candidateDao;
+
+    @Autowired
+    private OfferDao offerDao;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -126,5 +123,8 @@ public class UserService implements UserDetailsService {
         candidateDTO.setPhoneNumber(candidate.getPhone_number());
 
         return candidateDTO;
+    }
+    public void applyToOffer(int userId, int offer_id){
+        User user = this.userDao.findUserById(userId);
     }
 }
