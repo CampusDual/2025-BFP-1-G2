@@ -12,6 +12,5 @@ export class OfferCardComponent {
   toggleActions() {
     this.isDisabled = !this.isDisabled;
   }
-
 }
 
