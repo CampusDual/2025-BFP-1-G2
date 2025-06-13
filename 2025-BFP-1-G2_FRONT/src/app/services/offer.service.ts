@@ -32,7 +32,7 @@ export class OfferService {
   getCompanyOffers(companyName: string): Observable<Offer[]> {
     return this.http.get<Offer[]>(`${this.baseUrl}/company/${companyName}`);
   }
-  applyToOffer(id: number): Observable<String>{
-    return this.http.post<String>(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: 'text' as 'json' });
+  applyToOffer(id: number): Observable<JSON>{
+    return this.http.post<JSON>(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: "json" });
   }
 }
