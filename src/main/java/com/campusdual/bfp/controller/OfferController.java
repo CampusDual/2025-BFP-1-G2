@@ -71,11 +71,17 @@ public class OfferController {
     @PostMapping(value = "/apply")
     public ResponseEntity<String> applyForOffer(@RequestParam int offerId, Principal principal) {
         String username = principal.getName();
-        int appliedOfferId = offerService.userApplyOffer(offerId, username);
-        if (appliedOfferId > 0) {
-            return ResponseEntity.ok("Successfully applied for offer with ID: " + appliedOfferId);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to apply for offer.");
+        int appliedOfferId;
+        try {
+            appliedOfferId = offerService.userApplyOffer(offerId, username);
+            if (appliedOfferId > 0) {
+                return ResponseEntity.ok("Aplicado correctamente a la oferta");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo al aplicar.");
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
         }
+
     }
 }

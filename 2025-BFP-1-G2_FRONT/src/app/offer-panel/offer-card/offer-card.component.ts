@@ -10,7 +10,7 @@ import {OfferService} from "../../services/offer.service";
 export class OfferCardComponent {
   @Input() offer: any;
   constructor(protected authService: AuthService,
-              protected offerService: OfferService) { 
+              protected offerService: OfferService) {
   }
 
   applytoOffer() {
