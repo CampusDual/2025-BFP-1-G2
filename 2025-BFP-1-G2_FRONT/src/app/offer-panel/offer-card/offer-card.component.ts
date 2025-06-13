@@ -6,12 +6,14 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./offer-card.component.css']
 })
 export class OfferCardComponent {
+
   @Input() offer: any;
-  isDisabled: boolean = false;
-
-  toggleActions() {
-    this.isDisabled = !this.isDisabled;
-  }
-
+  isDisabled: boolean = true;
+  
+  constructor() {}
+toggleActions() {
+  this.isDisabled = !this.isDisabled;
 }
 
+
+}

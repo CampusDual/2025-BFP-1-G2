@@ -49,3 +49,6 @@ phone_number varchar(9) not null,
 user_id int not null,
 constraint fk_users foreign key (user_id) references users(candidate_id)
 );
+
+ALTER TABLE public.offers
+ALTER COLUMN description TYPE VARCHAR(2000);
