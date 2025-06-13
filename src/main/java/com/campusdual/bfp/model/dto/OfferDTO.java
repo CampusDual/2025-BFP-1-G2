@@ -10,7 +10,7 @@ public class OfferDTO {
     private String companyName;
     private String email;
     private Date dateAdded;
-    // Getters y setters
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getDescription() { return description; }

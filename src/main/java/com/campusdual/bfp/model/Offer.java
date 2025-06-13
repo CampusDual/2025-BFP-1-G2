@@ -16,8 +16,6 @@ public class Offer {
     @Column(name = "description", nullable = false)
     private String description;
 
-    //@Column(name = "company", nullable = false)
-
     @Column(name = "company_id", nullable = false)
     private int companyId;
 
