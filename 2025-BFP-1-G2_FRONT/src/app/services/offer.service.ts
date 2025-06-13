@@ -33,6 +33,6 @@ export class OfferService {
     return this.http.get<Offer[]>(`${this.baseUrl}/company/${companyName}`);
   }
   applyToOffer(id: number): Observable<String>{
-    return this.http.post<String>(`${this.baseUrl}/apply/offerId=${id}`, {responseType: 'text'});
+    return this.http.post<String>(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: 'text' as 'json' });
   }
 }
