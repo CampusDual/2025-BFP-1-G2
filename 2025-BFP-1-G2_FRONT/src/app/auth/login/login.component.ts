@@ -45,10 +45,6 @@ export class LoginComponent {
     }
   }
 
-  onReset() {
-    this.name.reset();
-    this.password.reset();
-  }
 
   getnameErrorMessage()
     :

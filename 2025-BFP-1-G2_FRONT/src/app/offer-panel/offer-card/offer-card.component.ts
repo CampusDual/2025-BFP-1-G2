@@ -24,7 +24,7 @@ export class OfferCardComponent {
         },
         error: (error) => {
           console.error('Error applying to offer:', error);
-          this.snackBar.open(error, 'Cerrar', { duration: 3000 ,
+          this.snackBar.open(error.error, 'Cerrar', { duration: 3000 ,
           panelClass: ['error-snackbar'] });
         }
       });
