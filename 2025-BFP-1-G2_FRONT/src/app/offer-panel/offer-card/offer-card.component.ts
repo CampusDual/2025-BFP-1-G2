@@ -20,10 +20,12 @@ export class OfferCardComponent {
       console.log(`Applying to offer: ${this.offer.title}`);
       this.offerService.applyToOffer(this.offer.id).subscribe({
         next: (response) => {
-          console.log('Application successful:'+ response);
+          this.snackBar.open(response, 'Cerrar', { duration: 3000 });
         },
         error: (error) => {
           console.error('Error applying to offer:', error);
+          this.snackBar.open(error, 'Cerrar', { duration: 3000 ,
+          panelClass: ['error-snackbar'] });
         }
       });
     } else {
