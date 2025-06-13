@@ -4,14 +4,16 @@
   </mat-card-header>
   <mat-card-subtitle>
     <strong>{{offer.companyName}}</strong> |
-  {{offer.email}}
-</mat-card-subtitle>
-    <mat-card-content>
-      <p>{{offer.description}}</p>
-      <p>{{offer.dateAdded}}</p>
-    </mat-card-content>
-  <mat-card-actions *ngIf="!isDisabled">
-    <button mat-raised-button color="primary" class="details">Ver Detalles</button>
-    <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
-  </mat-card-actions>
+    {{offer.email}}
+  </mat-card-subtitle>
+  <mat-card-content>
+    <p>{{offer.description}}</p>
+  </mat-card-content>
+  <div class="card-footer">
+    <mat-card-actions>
+      <button mat-raised-button color="primary" class="details">Ver Detalles</button>
+      <button mat-raised-button color="primary" [routerLink]="this.authService.isLoggedIn() ? null : ['/login']" class="applyOffer" (click)="applytoOffer()">Aplicar</button>
+    </mat-card-actions>
+    <p class="date">{{offer.dateAdded}}</p>
+  </div>
 </mat-card>

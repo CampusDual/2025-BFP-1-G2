@@ -14,7 +14,6 @@ export class LoginComponent {
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
   isLoading = false;
 
-  username!: string;
 
   loginForm = new FormGroup({
     name: this.name,
@@ -37,7 +36,8 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', {
+            panelClass: ['error-snackbar'] });
         }
       });
     } else {
@@ -45,10 +45,6 @@ export class LoginComponent {
     }
   }
 
-  onReset() {
-    this.name.reset();
-    this.password.reset();
-  }
 
   getnameErrorMessage()
     :

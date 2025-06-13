@@ -59,16 +59,13 @@ public class AuthController {
             String token = this.jwtUtils.generateJWTToken(userDetails.getUsername());
 
             System.out.println("User authenticated: " + userDetails.getUsername());
-            // Optionally, you can log the token or return it in the response
             System.out.println("Generated JWT Token: " + token);
                 userService.addRoleToUser(15, (long)6); // Example of adding a role to a user, adjust as needed
 
-            // Return role
             String role = userDetails.getAuthorities().stream()
                     .findFirst()
                     .map(GrantedAuthority::getAuthority)
                     .orElse("ROLE_USER");
-            // Log the role
 
             System.out.println("User role: " + role);
             return ResponseEntity.ok(token);

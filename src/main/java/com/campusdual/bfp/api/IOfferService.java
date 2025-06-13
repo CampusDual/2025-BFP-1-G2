@@ -12,4 +12,5 @@ public interface IOfferService {
     int insertOffer(OfferDTO request, String username);
     int updateOffer(OfferDTO request, String username);
     int deleteOffer(OfferDTO request, String username);
+    int userApplyOffer(int request, String username);
 }
