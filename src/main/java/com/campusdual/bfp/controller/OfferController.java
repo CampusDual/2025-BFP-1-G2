@@ -77,11 +77,11 @@ public class OfferController {
             if (appliedOfferId > 0) {
                 return ResponseEntity.ok("Aplicado correctamente a la oferta");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fallo al aplicar.");
+                return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
             }
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
         }
-
+       
     }
 }

@@ -90,7 +90,7 @@ public class OfferService implements IOfferService {
         User user = userDao.findByLogin(username);
         if (user == null) throw new RuntimeException("Usuario no encontrado");
         Offer offer = OfferDao.getReferenceById(offerId);
-        if (userOfferDao.findByUserIdAndOfferId(user.getId(), offer.getId())) {
+        if (userOfferDao.existsByUserIdAndOfferId(user.getId(), offer.getId())) {
             throw new RuntimeException("Ya has aplicado a esta oferta");
         }
         UserOffer userOffer = new UserOffer();
