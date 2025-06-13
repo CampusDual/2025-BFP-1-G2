@@ -7,13 +7,12 @@ mat-card-title {
 
 mat-card {
   min-width: 300px;
-  min-height: 400px;
+  height: 100%;
   margin: 16px auto;
   border-radius: 10px;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
   background-color: rgba(255, 255, 255, 0.52);
   padding: 10px;
-  transition: scale 0.1s ease-in-out;
   mat-card-subtitle {
     color: var(--secondary-color);
     font-size: 0.9rem;
@@ -27,14 +26,27 @@ mat-card:hover {
   transition: scale 0.1s ease-in-out;
 }
 
+
+div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: fit-content;
+  max-height: fit-content;
+  transition: max-height 0.3s ease;
+}
+
+
+div.details {
+  max-height: fit-content;
+}
+
 mat-card-actions {
   display: flex;
   gap: 16px;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  bottom: 16px;
-  left: 0;
   width: 100%;
 }
 
@@ -45,6 +57,8 @@ mat-raised-button {
 }
 
 .applyOffer {
+  display: display-block; 
+  
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
