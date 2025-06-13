@@ -24,17 +24,11 @@ export interface User {
 
 export class AuthService {
   private baseUrl = 'http://localhost:30030/auth';
-  username: string | null = null;
 
-  getRoles(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/user/roles`);
-  }
-
-
-  hasRole(expectedRoles: string[]): boolean {
-    return expectedRoles.some(role => this.getRoles().pipe(
-      map(roles => expectedRoles.some(role => roles.includes(role)))
-    ));
+  hasRole(expectedRoles: string[]): Observable<boolean> {
+    return this.http.get<string[]>(`${this.baseUrl}/user/roles`).pipe(
+        map(roles => roles.some(role => expectedRoles.includes(role)))
+    );
   }
 
   constructor(private http: HttpClient) {
@@ -74,44 +68,13 @@ export class AuthService {
 
   }
 
-
   logout(): void {
     localStorage.removeItem('authToken');
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('authToken');
-  }
-
-  getUser(): Observable<User> {
-
-    return this.http.get<User>(`${this.baseUrl}/me`);
   }
 
   getCandidateDetails(): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/candidateDetails`);
   }
 
-  getUserData(): User {
-    let user: User | null = null;
-    this.getUser().subscribe({
-      next: (data: User) => {
-        user = data;
-      },
-      error: (err) => {
-        console.error('Error fetching user data:', err);
-      }
-    });
-    return user || {username: '', password: '', authorities: [], accountNonExpired: true, accountNonLocked: true, credentialsNonExpired: true, enabled: true, name: '', surname1: '', surname2: '', email: '', phoneNumber: ''};
-  }
-
-  getUserName(): Observable<string> {
-    return this.getUser().pipe(
-      map(user => user.username),
-      tap(username => {
-        this.username = username;
-      })
-    );
-  }
 
 }

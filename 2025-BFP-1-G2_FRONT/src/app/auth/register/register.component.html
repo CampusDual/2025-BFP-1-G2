@@ -35,7 +35,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Teléfono</mat-label>
-        <input matInput placeholder="+34123456789" [formControl]="phoneNumber" required>
+        <input matInput placeholder="123456789" [formControl]="phoneNumber" required>
         <mat-error *ngIf="phoneNumber.invalid">{{ getPhoneNumberErrorMessage() }}</mat-error>
       </mat-form-field>
 

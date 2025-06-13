@@ -49,3 +49,11 @@ phone_number varchar(9) not null,
 user_id int not null,
 constraint fk_users foreign key (user_id) references users(candidate_id)
 );
+
+create table user_offers (
+id serial,
+user_id int,
+offer_id int,
+constraint fk_users foreign key (user_id) references users(id),
+constraint fk_offers foreign key (offer_id) references offers(id)
+)
