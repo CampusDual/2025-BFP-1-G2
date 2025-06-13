@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import {AuthService} from "../../auth/services/auth.service";
 import {OfferService} from "../../services/offer.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-offer-card',
@@ -10,7 +11,8 @@ import {OfferService} from "../../services/offer.service";
 export class OfferCardComponent {
   @Input() offer: any;
   constructor(protected authService: AuthService,
-              protected offerService: OfferService) {
+              protected offerService: OfferService,
+              private snackBar: MatSnackBar) {
   }
 
   applytoOffer() {
