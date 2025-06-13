@@ -7,6 +7,7 @@
   <img src="https://media.timtul.com/media/web_clustertic/logo-clustertic_20190412075104.png" alt="Logo">
 
 
+  <a class="enlaceEmpresa" href="company/login">Empresas</a>
 
   <button mat-icon-button *ngIf="authService.isLoggedIn()" routerLink="/offers/portal"  (click)="authService.logout()" class="logout-button">
     <mat-icon >logout</mat-icon>
@@ -14,7 +15,7 @@
   <button mat-icon-button *ngIf="!authService.isLoggedIn()" routerLink="/login" class="logout-button">
     <mat-icon>account_circle</mat-icon>
   </button>
-  <a class="enlaceEmpresa" href="company/login">Empresas</a>
+
 
 
 </mat-toolbar>
