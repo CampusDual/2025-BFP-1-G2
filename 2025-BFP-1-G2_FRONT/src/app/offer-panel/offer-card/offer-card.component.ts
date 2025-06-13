@@ -10,7 +10,7 @@ import {OfferService} from "../../services/offer.service";
 export class OfferCardComponent {
   @Input() offer: any;
   constructor(protected authService: AuthService,
-              protected offerService: OfferService) { // Replace 'any' with the actual type of offerService if available
+              protected offerService: OfferService) { 
   }
 
   applytoOffer() {
@@ -18,7 +18,7 @@ export class OfferCardComponent {
       console.log(`Applying to offer: ${this.offer.title}`);
       this.offerService.applyToOffer(this.offer.id).subscribe({
         next: (response) => {
-          console.log('Application successful:', response);
+          console.log('Application successful:'+ response);
         },
         error: (error) => {
           console.error('Error applying to offer:', error);
