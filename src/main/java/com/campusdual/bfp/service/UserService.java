@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found: " + username);
         }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(), user.getAuthorities());
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 
     public boolean existsByUsername(String username) {
@@ -66,7 +66,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerNewCandidate(String username, String password, String email, String name,
-                                String surname1, String surname2, String phoneNumber, String roleName) {
+                                     String surname1, String surname2, String phoneNumber, String roleName) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
@@ -123,8 +123,5 @@ public class UserService implements UserDetailsService {
         candidateDTO.setPhoneNumber(candidate.getPhone_number());
 
         return candidateDTO;
-    }
-    public void applyToOffer(int userId, int offer_id){
-        User user = this.userDao.findUserById(userId);
     }
 }

@@ -1,5 +1,6 @@
 package com.campusdual.bfp.model;
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "user_offers")
@@ -17,16 +18,11 @@ public class UserOffer {
     @JoinColumn(name="offer_id")
     private Offer offer;
 
+    @Column
+    private Date date;
+
     public UserOffer(){
-
     }
-
-    public UserOffer(long id, User user, Offer offer) {
-        this.id = id;
-        this.user = user;
-        this.offer = offer;
-    }
-
     public long getId() {
         return id;
     }
@@ -49,5 +45,11 @@ public class UserOffer {
 
     public void setOffer(Offer offer) {
         this.offer = offer;
+    }
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

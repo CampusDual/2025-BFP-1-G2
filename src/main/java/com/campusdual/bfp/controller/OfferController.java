@@ -2,8 +2,6 @@ package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
 import com.campusdual.bfp.model.dto.OfferDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/offer")
 public class OfferController {
-
-    private static final Logger log = LoggerFactory.getLogger(OfferController.class);
 
     @Autowired
     private IOfferService offerService;
@@ -69,5 +65,17 @@ public class OfferController {
         String username = principal.getName();
         int deletedId = offerService.deleteOffer(offerDTO, username);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedId);
+    }
+
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @PostMapping(value = "/apply")
+    public ResponseEntity<String> applyForOffer(@RequestParam int offerId, Principal principal) {
+        String username = principal.getName();
+        int appliedOfferId = offerService.userApplyOffer(offerId, username);
+        if (appliedOfferId > 0) {
+            return ResponseEntity.ok("Successfully applied for offer with ID: " + appliedOfferId);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to apply for offer.");
+        }
     }
 }

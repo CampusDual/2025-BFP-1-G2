@@ -3,8 +3,10 @@ package com.campusdual.bfp.service;
 import com.campusdual.bfp.api.IOfferService;
 import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.User;
+import com.campusdual.bfp.model.UserOffer;
 import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dao.UserDao;
+import com.campusdual.bfp.model.dao.UserOfferDao;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class OfferService implements IOfferService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserOfferDao userOfferDao;
 
     @Override
     public OfferDTO queryOffer(OfferDTO OfferDTO) {
@@ -74,12 +79,22 @@ public class OfferService implements IOfferService {
     public int deleteOffer(OfferDTO OfferDTO, String username) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new RuntimeException("Usuario no encontrado");
-        Offer existingOffer = OfferDao.findById(OfferDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Oferta no encontrada con ID: " + OfferDTO.getId()));
-
         int id = OfferDTO.getId();
         Offer Offer = OfferMapper.INSTANCE.toEntity(OfferDTO);
         OfferDao.delete(Offer);
         return id;
+    }
+
+    @Override
+    public int userApplyOffer(int offerId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        Offer offer = OfferDao.getReferenceById(offerId);
+        UserOffer userOffer = new UserOffer();
+        userOffer.setUser(user);
+        userOffer.setOffer(offer);
+        userOffer.setDate(new Date());
+        userOfferDao.saveAndFlush(userOffer);
+        return offer.getId();
     }
 }

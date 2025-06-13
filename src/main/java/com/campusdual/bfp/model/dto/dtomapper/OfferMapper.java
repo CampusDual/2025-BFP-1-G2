@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper
 public interface OfferMapper {
-
     OfferMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(OfferMapper.class);
     OfferDTO toDTO(Offer Offer);
     List<OfferDTO> toDTOList(List<Offer> Offers);
