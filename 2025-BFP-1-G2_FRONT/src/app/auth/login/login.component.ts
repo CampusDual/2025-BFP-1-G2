@@ -36,10 +36,10 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', { duration: 3000,
-            panelClass: ['error-snackbar'] });
+
         }
-      });
+      });this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', {
+        panelClass: ['error-snackbar'] });
     } else {
       this.isLoading = false;
     }

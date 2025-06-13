@@ -57,7 +57,6 @@ export class RegisterComponent {
         },
         error: (error) => {
           this.snackBar.open('Nombre o correo ya registrado', 'Cerrar', {
-            duration: 3000,
             panelClass: ['error-snackbar']
           });
         }
