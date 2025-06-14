@@ -1,19 +1,20 @@
-<div [class.details]="!isDisabled" >
-<mat-card  (click)="toggleActions()">
-  <mat-card-header>
-    <mat-card-title>{{offer?.title}}</mat-card-title>
-  </mat-card-header>
-  <mat-card-subtitle>
-    <strong>{{offer?.companyName}}</strong> |
-    <span class="email">{{offer?.email}}</span>
-  </mat-card-subtitle>
-  <mat-card-content>
-    <p *ngIf="!isDisabled">{{offer?.description}}</p>
-    <p>{{offer?.dateAdded | date:'mediumDate'}}</p>
-  </mat-card-content>
-  <mat-card-actions  *ngIf="!isDisabled">
-    <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
-  </mat-card-actions>
-</mat-card>
-
+<div [class.details]="!isDisabled">
+  <mat-card
+    (click)="toggleActions($event); toggleSelection($event);"
+    [ngClass]="{'selected': isSelected, 'not-selected': !isSelected}">
+<mat-card-header>
+      <mat-card-title>{{offer?.title}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-subtitle>
+      <strong>{{offer?.companyName}}</strong> |
+      <span class="email">{{offer?.email}}</span>
+    </mat-card-subtitle>
+    <mat-card-content>
+      <p *ngIf="!isDisabled">{{offer?.description}}</p>
+      <p class="data-offer">{{offer?.dateAdded | date:'mediumDate'}}</p>
+    </mat-card-content>
+    <mat-card-actions *ngIf="!isDisabled">
+      <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
+    </mat-card-actions>
+  </mat-card>
 </div>
