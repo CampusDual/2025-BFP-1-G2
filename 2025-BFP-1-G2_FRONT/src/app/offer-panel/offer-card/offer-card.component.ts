@@ -14,5 +14,7 @@ export class OfferCardComponent {
 
   closeCard() {
     this.isDisabled = !this.isDisabled;
+
+
   }
 }

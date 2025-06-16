@@ -6,8 +6,6 @@ mat-card-title {
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
-
-
 mat-card-subtitle {
   color: var(--secondary-color);
   font-size: 0.7rem;
@@ -15,7 +13,11 @@ mat-card-subtitle {
 }
 
 mat-card-content {
+  flex-grow: 1;
   margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 mat-card-actions {
@@ -36,11 +38,13 @@ mat-card-actions {
   background-color: var(--primary-color);
   color: white;
 }
-div {
+div:not(.details) {
   position: relative;
   width: 100%;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  height: 100%;
+  display: flex;
   z-index: 1;
+  transition: background-color 0.3s ease; /* Cambiado de scale a transform */
 }
 
 div.details {
@@ -54,17 +58,17 @@ div.details {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 32px;
   z-index: 9999;
-  animation: fadeIn 0.4s forwards;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease; /* Cambiado de scale a transform */
 }
 
 
 mat-card {
+  display: flex;
   align-self: center;
   width: 100%;
+  height: 100%;
   min-height: 200px;
-  margin: 16px auto;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: rgba(255, 255, 255, 0.7);
@@ -79,50 +83,35 @@ mat-card {
     align-self: flex-start;
   }
   transform-origin: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.62, 1.275);
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease;
 }
 
 mat-card:hover {
-  scale: 1.05;
+  transform: scale(1.05);
   background-color: white;
-  transition: scale 0.3s ease-in-out;
 }
 
 div.details mat-card {
+  height: fit-content;
   width: fit-content;
-  max-width: 70%;
+  max-height: 60%;
+  max-width: 50%;
   min-width: 40%;
   background-color: white;
   transform: scale(1.05);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: popIn 0.4s forwards;
+  cursor: default;
 }
 
 div.details mat-card:hover {
   scale: 1;
 }
 
-
-@keyframes popIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10;
+  color: var(--primary-color);
 }
-
-@keyframes fadeIn {
-  from {
-    background: rgba(30, 30, 30, 0);
-    backdrop-filter: blur(0) brightness(1);
-  }
-  to {
-    background: rgba(30, 30, 30, 0.55);
-    backdrop-filter: blur(6px) brightness(0.9);
-  }
-}
-
 
