@@ -18,6 +18,7 @@ export class OfferTableComponent {
           title: offer.title,
           description: offer.description,
           companyName: offer.companyName,
+          email: offer.email,
           location: offer.location,
           dateAdded: new Date(offer.dateAdded).toLocaleDateString()
         }));
