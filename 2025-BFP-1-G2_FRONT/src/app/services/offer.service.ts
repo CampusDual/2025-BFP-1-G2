@@ -29,8 +29,8 @@ export class OfferService {
   updateOffer(id: number, offer: Offer): Observable<any> {
     return this.http.put(`${this.baseUrl}/update/${id}`, offer, {responseType: 'text'});
   }
-  getCompanyOffers(companyName: string): Observable<Offer[]> {
-    return this.http.get<Offer[]>(`${this.baseUrl}/company/${companyName}`);
+  getCompanyOffers(): Observable<Offer[]> {
+    return this.http.get<Offer[]>(`${this.baseUrl}/companyOffers`);
   }
   applyToOffer(id: number): Observable<any>{
     return this.http.post(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: "text" });
