@@ -1,5 +1,5 @@
 <div [class.details]="!isDisabled">
-  <mat-card  (click)="isDisabled && closeCard()">
+  <mat-card (click)="isDisabled && closeCard()">
     <button
       *ngIf="!isDisabled"
       mat-icon-button
@@ -11,7 +11,7 @@
     <mat-card-header>
       <mat-card-title>{{ offer?.title }}</mat-card-title>
     </mat-card-header>
-    <mat-card-subtitle>
+    <mat-card-subtitle *ngIf="offer.companyName && offer.email">
       <strong>{{ offer?.companyName }}</strong> |
       <span class="email">{{ offer?.email }}</span>
     </mat-card-subtitle>
@@ -19,8 +19,9 @@
       <p *ngIf="!isDisabled">{{ offer?.description }}</p>
       <p class="data-offer">{{ offer?.dateAdded | date:'mediumDate' }}</p>
     </mat-card-content>
-    <mat-card-actions *ngIf="!isDisabled">
+    <mat-card-actions *ngIf="authService.hasRole('ROLE_USER') && !isDisabled">
       <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
     </mat-card-actions>
+    <p class="date">{{ offer.dateAdded }}</p>
   </mat-card>
 </div>

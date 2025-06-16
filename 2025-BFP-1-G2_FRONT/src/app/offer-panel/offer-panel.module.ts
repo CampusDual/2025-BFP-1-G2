@@ -22,12 +22,15 @@ export interface Offer {
     OfferTableComponent,
     OfferCardComponent
   ],
-    imports: [
-        CommonModule,
-        MatCardModule,
-        MatButtonModule,
-        OfferPanelRoutingModule,
-        MatIconModule
-    ]
+  exports: [
+    OfferTableComponent
+  ],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    OfferPanelRoutingModule,
+    MatIconModule
+  ]
 })
 export class OfferPanelModule { }
