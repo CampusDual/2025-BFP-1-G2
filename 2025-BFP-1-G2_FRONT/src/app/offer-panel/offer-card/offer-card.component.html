@@ -1,6 +1,13 @@
 <div [class.details]="!isDisabled">
-  <mat-card
-    (click)="closeCard()">
+  <mat-card  (click)="isDisabled && closeCard()">
+    <button
+      *ngIf="!isDisabled"
+      mat-icon-button
+      class="close-button"
+      (click)="closeCard(); $event.stopPropagation()"
+      aria-label="Close offer card">
+      <mat-icon>cancel</mat-icon>
+    </button>
     <mat-card-header>
       <mat-card-title>{{ offer?.title }}</mat-card-title>
     </mat-card-header>
