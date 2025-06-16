@@ -47,7 +47,7 @@ import { UserPanelComponent } from './user-panel/user-panel.component';
     MatInputModule,
     ReactiveFormsModule,
     TextFieldModule,
-    AuthModule,
+    AuthModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

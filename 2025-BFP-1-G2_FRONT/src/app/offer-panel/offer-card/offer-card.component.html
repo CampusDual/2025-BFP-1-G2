@@ -12,7 +12,7 @@
   <div class="card-footer">
     <mat-card-actions>
       <button mat-raised-button color="primary" class="details">Ver Detalles</button>
-      <button mat-raised-button color="primary" [routerLink]="this.authService.isLoggedIn() ? null : ['/login']" class="applyOffer" (click)="applytoOffer()">Aplicar</button>
+      <button mat-raised-button color="primary" class="applyOffer" (click)="applytoOffer()">Aplicar</button>
     </mat-card-actions>
     <p class="date">{{offer.dateAdded}}</p>
   </div>

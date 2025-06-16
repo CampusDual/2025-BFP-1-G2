@@ -30,6 +30,7 @@ export class OfferCardComponent {
       });
     } else {
       console.log('User is not authenticated. Redirecting to login.');
+      localStorage.setItem('pendingOfferId', this.offer.id);
     }
   }
 }
