@@ -1,19 +1,26 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>{{offer.title}}</mat-card-title>
-  </mat-card-header>
-  <mat-card-subtitle>
-    <strong>{{offer.companyName}}</strong> |
-    {{offer.email}}
-  </mat-card-subtitle>
-  <mat-card-content>
-    <p>{{offer.description}}</p>
-  </mat-card-content>
-  <div class="card-footer">
-    <mat-card-actions>
-      <button mat-raised-button color="primary" class="details">Ver Detalles</button>
-      <button mat-raised-button color="primary" class="applyOffer" (click)="applytoOffer()">Aplicar</button>
+<div [class.details]="!isDisabled">
+  <mat-card  (click)="isDisabled && closeCard()">
+    <button
+      *ngIf="!isDisabled"
+      mat-icon-button
+      class="close-button"
+      (click)="closeCard(); $event.stopPropagation()"
+      aria-label="Close offer card">
+      <mat-icon>cancel</mat-icon>
+    </button>
+    <mat-card-header>
+      <mat-card-title>{{ offer?.title }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-subtitle>
+      <strong>{{ offer?.companyName }}</strong> |
+      <span class="email">{{ offer?.email }}</span>
+    </mat-card-subtitle>
+    <mat-card-content>
+      <p *ngIf="!isDisabled">{{ offer?.description }}</p>
+      <p class="data-offer">{{ offer?.dateAdded | date:'mediumDate' }}</p>
+    </mat-card-content>
+    <mat-card-actions *ngIf="!isDisabled">
+      <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
     </mat-card-actions>
-    <p class="date">{{offer.dateAdded}}</p>
-  </div>
-</mat-card>
+  </mat-card>
+</div>
