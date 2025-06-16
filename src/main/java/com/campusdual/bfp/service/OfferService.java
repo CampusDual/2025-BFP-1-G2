@@ -46,12 +46,7 @@ public class OfferService implements IOfferService {
             dto.setDateAdded(offer.getDate());
             dtos.add(dto);
         }
-        Collections.sort(dtos, new Comparator<OfferDTO>() {
-            @Override
-            public int compare(OfferDTO o1, OfferDTO o2) {
-                return o1.getDateAdded().compareTo(o2.getDateAdded());
-            }
-        });
+        dtos.sort(Comparator.comparing(OfferDTO::getDateAdded));
         Collections.reverse(dtos);
         return dtos;
     }
@@ -108,20 +103,12 @@ public class OfferService implements IOfferService {
         List<OfferDTO> dtos = new ArrayList<>();
         for (Offer offer : offers) {
             OfferDTO dto = OfferMapper.INSTANCE.toDTO(offer);
-            User user = userDao.findUserById(offer.getCompanyId());
-            if (user != null) {
-                dto.setCompanyName(user.getLogin());
-                dto.setEmail(user.getEmail());
-            }
+            dto.setCompanyName("");
+            dto.setEmail("");
             dto.setDateAdded(offer.getDate());
             dtos.add(dto);
         }
-        Collections.sort(dtos, new Comparator<OfferDTO>() {
-            @Override
-            public int compare(OfferDTO o1, OfferDTO o2) {
-                return o1.getDateAdded().compareTo(o2.getDateAdded());
-            }
-        });
+        dtos.sort(Comparator.comparing(OfferDTO::getDateAdded));
         Collections.reverse(dtos);
         return dtos;
     }

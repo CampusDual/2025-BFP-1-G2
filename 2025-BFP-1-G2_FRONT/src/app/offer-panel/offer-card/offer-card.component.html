@@ -11,17 +11,16 @@
     <mat-card-header>
       <mat-card-title>{{ offer?.title }}</mat-card-title>
     </mat-card-header>
-    <mat-card-subtitle *ngIf="offer.companyName && offer.email">
+    <mat-card-subtitle *ngIf="!isCompany">
       <strong>{{ offer?.companyName }}</strong> |
       <span class="email">{{ offer?.email }}</span>
     </mat-card-subtitle>
     <mat-card-content>
       <p *ngIf="!isDisabled">{{ offer?.description }}</p>
-      <p class="data-offer">{{ offer?.dateAdded | date:'mediumDate' }}</p>
+      <p class="data-offer">{{ offer?.dateAdded }}</p>
     </mat-card-content>
-    <mat-card-actions *ngIf="authService.hasRole('ROLE_USER') && !isDisabled">
-      <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
+    <mat-card-actions *ngIf="!isCompany && !isDisabled">
+      <button mat-raised-button color="primary" (click)="applytoOffer()" class="applyOffer">Aplicar</button>
     </mat-card-actions>
-    <p class="date">{{ offer.dateAdded }}</p>
   </mat-card>
 </div>

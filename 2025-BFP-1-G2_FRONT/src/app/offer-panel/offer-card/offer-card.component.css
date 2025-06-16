@@ -78,11 +78,14 @@ mat-card {
     text-align: justify;
   }
   .data-offer{
+    color: var(--secondary-color);
     font-size: 0.7rem;
     margin-top: 12px;
     align-self: flex-start;
   }
+  overflow: auto;
   transform-origin: center;
+  scrollbar-color: var(--primary-color) transparent;
   transition: transform 0.3s ease-in-out, background-color 0.3s ease;
 }
 
