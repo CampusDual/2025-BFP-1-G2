@@ -1,57 +1,117 @@
 mat-card-title {
+  max-height: 100px;
   color: var(--primary-color);
+  font-size: 1.2rem;
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
+}
+mat-card-subtitle {
+  color: var(--secondary-color);
+  font-size: 0.7rem;
+  margin-left: 16px;
 }
 
-mat-card {
-  min-width: 300px;
-  min-height: 400px;
-  margin: 16px auto;
-  border-radius: 10px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
-  background-color: rgba(255, 255, 255, 0.52);
-  padding: 10px;
-  transition: scale 0.1s ease-in-out;
-  mat-card-subtitle {
-    color: var(--secondary-color);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    margin-left: 16px;
-  }
-}
-
-mat-card:hover {
-  scale: 1.02;
-  transition: scale 0.1s ease-in-out;
+mat-card-content {
+  flex-grow: 1;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 mat-card-actions {
   display: flex;
-  gap: 16px;
-  align-items: center;
   justify-content: center;
-  position: absolute;
-  bottom: 16px;
-  left: 0;
-  width: 100%;
-}
-
-
-mat-raised-button {
-  display: flex;
-  justify-content: center;
+  padding: 8px 0;
+  margin: 0;
 }
 
 .applyOffer {
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  min-width: 120px;
+  padding: 8px 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .applyOffer:hover {
   background-color: var(--primary-color);
-  color: #fff;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  color: white;
+}
+div:not(.details) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  z-index: 1;
+  transition: background-color 0.3s ease; /* Cambiado de scale a transform */
+}
+
+div.details {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(30, 30, 30, 0.55);
+  backdrop-filter: blur(6px) brightness(0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease; /* Cambiado de scale a transform */
+}
+
+
+mat-card {
+  display: flex;
+  align-self: center;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 20px;
+  cursor: pointer;
+  p {
+    text-align: justify;
+  }
+  .data-offer{
+    font-size: 0.7rem;
+    margin-top: 12px;
+    align-self: flex-start;
+  }
+  transform-origin: center;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease;
+}
+
+mat-card:hover {
+  transform: scale(1.05);
+  background-color: white;
+}
+
+div.details mat-card {
+  height: fit-content;
+  width: fit-content;
+  max-height: 60%;
+  max-width: 50%;
+  min-width: 40%;
+  background-color: white;
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  cursor: default;
+}
+
+div.details mat-card:hover {
+  scale: 1;
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10;
+  color: var(--primary-color);
 }
 
