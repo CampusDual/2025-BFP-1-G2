@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import {AuthService} from "../../auth/services/auth.service";
 import {OfferService} from "../../services/offer.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,11 +11,18 @@ import { Router } from '@angular/router';
 })
 export class OfferCardComponent {
   @Input() offer: any;
+
+  isDisabled: boolean = true;
+
   constructor(protected authService: AuthService,
               protected offerService: OfferService,
               private snackBar: MatSnackBar,
               private router: Router) {
   }
+
+  closeCard() {
+    this.isDisabled = !this.isDisabled;
+}
 
   applytoOffer() {
     if (this.authService.isLoggedIn()) {
