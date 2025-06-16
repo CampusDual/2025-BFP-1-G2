@@ -1,13 +1,7 @@
 package com.campusdual.bfp.service;
 
-import com.campusdual.bfp.model.Candidate;
-import com.campusdual.bfp.model.Role;
-import com.campusdual.bfp.model.User;
-import com.campusdual.bfp.model.UserRole;
-import com.campusdual.bfp.model.dao.CandidateDao;
-import com.campusdual.bfp.model.dao.RoleDao;
-import com.campusdual.bfp.model.dao.UserDao;
-import com.campusdual.bfp.model.dao.UserRoleDao;
+import com.campusdual.bfp.model.*;
+import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +29,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private CandidateDao candidateDao;
 
+    @Autowired
+    private OfferDao offerDao;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.userDao.findByLogin(username);
@@ -42,7 +39,7 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found: " + username);
         }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(), user.getAuthorities());
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 
     public boolean existsByUsername(String username) {
@@ -69,7 +66,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerNewCandidate(String username, String password, String email, String name,
-                                String surname1, String surname2, String phoneNumber, String roleName) {
+                                     String surname1, String surname2, String phoneNumber, String roleName) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
