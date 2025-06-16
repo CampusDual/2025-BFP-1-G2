@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import {AuthService} from "../../auth/services/auth.service";
 import {OfferService} from "../../services/offer.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-offer-card',
@@ -12,7 +14,8 @@ export class OfferCardComponent {
   @Input() offer: any;
   constructor(protected authService: AuthService,
               protected offerService: OfferService,
-              private snackBar: MatSnackBar) {
+              private snackBar: MatSnackBar,
+              private router: Router) {
   }
 
   applytoOffer() {
@@ -31,6 +34,7 @@ export class OfferCardComponent {
     } else {
       console.log('User is not authenticated. Redirecting to login.');
       localStorage.setItem('pendingOfferId', this.offer.id);
+      this.router.navigate([`../login`]);
     }
   }
 }
