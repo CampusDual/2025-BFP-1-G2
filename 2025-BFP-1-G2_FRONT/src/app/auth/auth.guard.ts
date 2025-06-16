@@ -18,14 +18,14 @@ export class AuthGuard implements CanActivate {
         if (!expectedRoles || expectedRoles.length === 0) {
             return true;
         }
-        this.auth.hasRole(expectedRoles).subscribe({
+        this.auth.hasRoles(expectedRoles).subscribe({
             next: (hasRole) => {
                 if (!hasRole) {
                     this.router.navigate(['../offers/portal']).then(r => {
                     });
-                    return false; // User does not have the required role
+                    return false;
                 }
-                return true; // User has the required role
+                return true;
             },
             error: (error) => {
                 console.error('Error checking roles', error);

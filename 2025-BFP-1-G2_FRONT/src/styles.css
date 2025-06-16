@@ -19,5 +19,7 @@ body {
   font-weight: 400;
   font-style: normal;
   font-size: 16px;
+  scrollbar-color: #ffffff #3e3e3e;
+  scrollbar-width: thin;
 }
 
