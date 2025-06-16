@@ -1,9 +1,10 @@
 package com.campusdual.bfp.model.dto;
 
 
+import java.util.Comparator;
 import java.util.Date;
 
-public class OfferDTO {
+public class OfferDTO implements Comparator <OfferDTO> {
     private int id;
     private String title;
     private String description;
@@ -40,5 +41,13 @@ public class OfferDTO {
 
     public void setDateAdded(Date dateAdded) {
         this.dateAdded = dateAdded;
+    }
+
+    @Override
+    public int compare(OfferDTO o1, OfferDTO o2) {
+        if (o1.getDateAdded() == null || o2.getDateAdded() == null) {
+            return 0;
+        }
+        return o1.getDateAdded().compareTo(o2.getDateAdded());
     }
 }
