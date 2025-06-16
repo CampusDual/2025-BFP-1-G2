@@ -1,4 +1,7 @@
 import { Component, Input } from '@angular/core';
+import {AuthService} from "../../auth/services/auth.service";
+import {OfferService} from "../../services/offer.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-offer-card',
@@ -7,11 +10,28 @@ import { Component, Input } from '@angular/core';
 })
 export class OfferCardComponent {
   @Input() offer: any;
-  isDisabled: boolean = false;
-
-  toggleActions() {
-    this.isDisabled = !this.isDisabled;
+  constructor(protected authService: AuthService,
+              protected offerService: OfferService,
+              private snackBar: MatSnackBar) {
   }
 
+  applytoOffer() {
+    if (this.authService.isLoggedIn()) {
+      console.log(`Applying to offer: ${this.offer.title}`);
+      this.offerService.applyToOffer(this.offer.id).subscribe({
+        next: (response) => {
+          this.snackBar.open(response, 'Cerrar', { duration: 3000 });
+        },
+        error: (error) => {
+          console.error('Error applying to offer:', error);
+          this.snackBar.open(error.error, 'Cerrar', { duration: 3000 ,
+          panelClass: ['error-snackbar'] });
+        }
+      });
+    } else {
+      console.log('User is not authenticated. Redirecting to login.');
+      localStorage.setItem('pendingOfferId', this.offer.id);
+    }
+  }
 }
 

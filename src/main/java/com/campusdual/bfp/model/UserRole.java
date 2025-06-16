@@ -27,12 +27,6 @@ public class UserRole {
 
     public UserRole() { }
 
-    public UserRole(Long id, User user, Role role) {
-        this.id = id;
-        this.user = user;
-        this.role = role;
-    }
-
     public Long getId() {
         return this.id;
     }
