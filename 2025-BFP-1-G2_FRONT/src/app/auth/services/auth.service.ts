@@ -25,9 +25,15 @@ export interface User {
 export class AuthService {
   private baseUrl = 'http://localhost:30030/auth';
 
-  hasRole(expectedRoles: string[]): Observable<boolean> {
+  hasRoles(expectedRoles: string[]): Observable<boolean> {
     return this.http.get<string[]>(`${this.baseUrl}/user/roles`).pipe(
         map(roles => roles.some(role => expectedRoles.includes(role)))
+    );
+  }
+
+  hasRole(expectedRole: string): Observable<boolean> {
+    return this.http.get<string[]>(`${this.baseUrl}/user/roles`).pipe(
+        map(roles => roles.includes(expectedRole))
     );
   }
 

@@ -1,7 +1,6 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
-import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
