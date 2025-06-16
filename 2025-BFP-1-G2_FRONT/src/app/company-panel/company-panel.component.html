@@ -8,7 +8,7 @@
       <mat-form-field appearance ="outline">
         <mat-label>Titulo</mat-label>
         <input matInput placeholder="Titulo de la oferta" [formControl]="title" required>
-        <mat-error *ngIf="title.invalid "></mat-error>
+        <mat-error *ngIf="title.invalid ">{{ getTitleErrorMessage() }}</mat-error>
       </mat-form-field>
     </div>
     <br>
@@ -23,7 +23,7 @@
           required
           cdkAutosizeMinRows="3"
   ></textarea>
-        <mat-error *ngIf="description.invalid "></mat-error>
+        <mat-error *ngIf="description.invalid">{{ getDescriptionErrorMessage() }}</mat-error>
       </mat-form-field>
     </div>
     <br>

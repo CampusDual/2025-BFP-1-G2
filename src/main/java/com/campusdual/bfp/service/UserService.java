@@ -87,8 +87,7 @@ public class UserService implements UserDetailsService {
         if (user != null) {
             Role role = this.roleDao.findById(roleName)
                     .orElse(null);
-            // Use Optional to handle the case where the role might not exist
-            if (role != null) {
+            if (userRoleDao.findUserRoleByUserAndRole(user, role) == null && role != null) {
                 UserRole userRole = new UserRole();
                 userRole.setUser(user);
                 userRole.setRole(role);
