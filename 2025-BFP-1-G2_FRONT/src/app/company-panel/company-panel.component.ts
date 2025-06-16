@@ -14,7 +14,7 @@ export class CompanyPanelComponent implements OnInit {
   companyName: string | null = null;
 
   title = new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(255)]);
-  description = new FormControl('', [Validators.required, Validators.minLength(20), Validators.maxLength(1000)]);
+  description = new FormControl('', [Validators.required, Validators.minLength(100), Validators.maxLength(2000)]);
   offersForm = new FormGroup({
     title: this.title,
     description: this.description
@@ -61,6 +61,32 @@ export class CompanyPanelComponent implements OnInit {
 
   onReset(): void {
     this.offersForm.reset();
+  }
+
+  getDescriptionErrorMessage(): string {
+    if (this.description.hasError('required')) {
+      return 'Debes ingresar una descripción';
+    }
+    if (this.description.hasError('minlength')) {
+      return 'La descripción debe tener al menos 100 caracteres';
+    }
+    if (this.description.hasError('maxlength')) {
+      return 'La descripción no puede exceder los 2000 caracteres';
+    }
+    return '';
+  }
+
+  getTitleErrorMessage(): string {
+    if (this.title.hasError('required')) {
+      return 'Debes ingresar un título';
+    }
+    if (this.title.hasError('minlength')) {
+      return 'El título debe tener al menos 5 caracteres';
+    }
+    if (this.title.hasError('maxlength')) {
+      return 'El título no puede exceder los 255 caracteres';
+    }
+    return '';
   }
 
 }
