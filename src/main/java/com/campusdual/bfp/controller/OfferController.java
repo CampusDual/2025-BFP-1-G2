@@ -1,6 +1,7 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
+import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,5 +84,12 @@ public class OfferController {
             return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
         }
        
+    }
+    @PreAuthorize("hasRole('COMPANY')")
+    @GetMapping(value="/companyOffers")
+    public ResponseEntity<List<OfferDTO>> queryCompanyOffers(Principal principal){
+        List<OfferDTO> offers = offerService.getCompanyOffers(principal.getName());
+        return ResponseEntity.ok(offers);
+
     }
 }
