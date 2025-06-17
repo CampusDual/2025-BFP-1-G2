@@ -8,12 +8,12 @@ import {OfferService} from "../../services/offer.service";
 })
 export class OfferTableComponent {
 
-  datasource!: any[];
+  offers!: any[];
 
   constructor(private offerService: OfferService) {
     this.offerService.getOffers().subscribe({
       next: (offers: any[]) => {
-        this.datasource = offers.map((offer: any) => ({
+        this.offers = offers.map((offer: any) => ({
           id: offer.id,
           title: offer.title,
           description: offer.description,
@@ -22,7 +22,7 @@ export class OfferTableComponent {
           location: offer.location,
           dateAdded: new Date(offer.dateAdded).toLocaleDateString()
         }));
-        console.log('Offers fetched successfully', this.datasource);
+        console.log('Offers fetched successfully', this.offers);
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
@@ -30,3 +30,4 @@ export class OfferTableComponent {
     });
   }
 }
+

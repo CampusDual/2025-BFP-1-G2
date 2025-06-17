@@ -15,6 +15,7 @@ export class OfferCardComponent implements OnInit {
   isDisabled: boolean = true;
   isCompany: any;
   candidates: any[] = [];
+  
 
   constructor(protected authService: AuthService,
               protected offerService: OfferService,
