@@ -56,7 +56,7 @@ user_id int,
 offer_id int,
 constraint fk_users foreign key (user_id) references users(id),
 constraint fk_offers foreign key (offer_id) references offers(id)
-)
+);
 
 ALTER TABLE public.offers
     ALTER COLUMN description TYPE VARCHAR(2000);

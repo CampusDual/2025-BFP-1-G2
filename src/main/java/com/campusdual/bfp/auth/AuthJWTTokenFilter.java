@@ -1,5 +1,6 @@
 package com.campusdual.bfp.auth;
 
+import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +20,7 @@ public class AuthJWTTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JWTUtil jwtUtil;
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

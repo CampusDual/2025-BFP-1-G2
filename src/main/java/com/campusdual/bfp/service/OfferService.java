@@ -96,6 +96,7 @@ public class OfferService implements IOfferService {
         return offer.getId();
     }
 
+    @Override
     public List<OfferDTO> getCompanyOffers(String companyName){
         User userCompany = userDao.findByLogin(companyName);
         int companyId = userCompany.getId();
@@ -111,5 +112,10 @@ public class OfferService implements IOfferService {
         dtos.sort(Comparator.comparing(OfferDTO::getDateAdded));
         Collections.reverse(dtos);
         return dtos;
+    }
+    @Override
+    public int getCompanyOffersCount(int offerID) {
+        Offer offer = OfferDao.getReferenceById(offerID);
+        return userOfferDao.countByOfferId(offer.getId());
     }
 }
