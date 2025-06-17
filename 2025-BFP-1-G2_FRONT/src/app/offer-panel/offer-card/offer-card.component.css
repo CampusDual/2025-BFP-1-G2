@@ -31,6 +31,7 @@ mat-card-actions {
   min-width: 120px;
   padding: 8px 24px;
   font-weight: 500;
+  gap: 10px;
   transition: all 0.3s ease;
 }
 
@@ -38,6 +39,15 @@ mat-card-actions {
   background-color: var(--primary-color);
   color: white;
 }
+
+.showCandidates {
+  margin-left: 10px;
+}
+.showCandidates{
+  background-color: #3e3e3e;
+  color: white;
+}
+
 div:not(.details) {
   position: relative;
   width: 100%;
