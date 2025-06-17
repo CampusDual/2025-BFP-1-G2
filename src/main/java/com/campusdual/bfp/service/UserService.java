@@ -1,5 +1,6 @@
 package com.campusdual.bfp.service;
 
+import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Lazy
-public class UserService implements UserDetailsService {
+public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private UserDao userDao;
@@ -29,24 +30,22 @@ public class UserService implements UserDetailsService {
     @Autowired
     private CandidateDao candidateDao;
 
-    @Autowired
-    private OfferDao offerDao;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.userDao.findByLogin(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
-
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 
+    @Override
     public boolean existsByUsername(String username) {
         User user = this.userDao.findByLogin(username);
         return user != null;
     }
 
+    @Override
     public int registerNewUser(String username, String password, String email, String roleName) {
         User user = new User();
         user.setLogin(username);
@@ -65,6 +64,7 @@ public class UserService implements UserDetailsService {
         return savedUser.getId();
     }
 
+    @Override
     public void registerNewCandidate(String username, String password, String email, String name,
                                      String surname1, String surname2, String phoneNumber, String roleName) {
         int id;
@@ -78,10 +78,8 @@ public class UserService implements UserDetailsService {
         this.candidateDao.saveAndFlush(candidate);
     }
 
-    public UserDao getUserDao() {
-        return userDao;
-    }
 
+    @Override
     public void addRoleToUser(int userId, Long roleName) {
         User user = this.userDao.findUserById(userId);
         if (user != null) {
@@ -96,11 +94,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
+    @Override
     public CandidateDTO getCandidateDetails(String username) {
         User user = this.userDao.findByLogin(username);
         if (user == null) {
@@ -122,5 +116,10 @@ public class UserService implements UserDetailsService {
         candidateDTO.setPhoneNumber(candidate.getPhone_number());
 
         return candidateDTO;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

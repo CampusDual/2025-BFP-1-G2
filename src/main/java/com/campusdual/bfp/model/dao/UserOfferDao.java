@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserOfferDao extends JpaRepository<UserOffer, Long> {
     boolean existsByUserIdAndOfferId(int userId, int offerId);
+    int countByOfferId(int offerId);
 }
