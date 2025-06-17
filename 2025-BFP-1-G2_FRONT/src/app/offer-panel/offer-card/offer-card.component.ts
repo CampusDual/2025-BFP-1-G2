@@ -13,6 +13,7 @@ export class OfferCardComponent {
   @Input() offer: any;
 
   isDisabled: boolean = true;
+  isCompany: any;
 
   constructor(protected authService: AuthService,
               protected offerService: OfferService,
@@ -42,6 +43,17 @@ export class OfferCardComponent {
       localStorage.setItem('pendingOfferId', this.offer.id);
       this.router.navigate([`../login`]);
     }
+  }
+  ngOnInit() {
+    this.authService.hasRole('ROLE_COMPANY').subscribe({
+      next: (hasRole) => {
+        this.isCompany = hasRole;
+      },
+      error: (error) => {
+        console.error('Error checking role:', error);
+        this.isCompany = false; // Default to false if there's an error
+      }
+    });
   }
 }
 

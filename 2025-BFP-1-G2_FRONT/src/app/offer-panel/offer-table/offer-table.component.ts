@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {OfferService} from "../../services/offer.service";
 
 @Component({
@@ -8,21 +8,21 @@ import {OfferService} from "../../services/offer.service";
 })
 export class OfferTableComponent {
 
-  dataSource: any[] = [];
+  datasource!: any[];
 
   constructor(private offerService: OfferService) {
-
     this.offerService.getOffers().subscribe({
       next: (offers: any[]) => {
-        this.dataSource = offers.map((offer: any) => ({
+        this.datasource = offers.map((offer: any) => ({
           id: offer.id,
           title: offer.title,
           description: offer.description,
-          email: offer.email,
           companyName: offer.companyName,
+          email: offer.email,
+          location: offer.location,
           dateAdded: new Date(offer.dateAdded).toLocaleDateString()
         }));
-        console.log('Offers fetched successfully', this.dataSource);
+        console.log('Offers fetched successfully', this.datasource);
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
