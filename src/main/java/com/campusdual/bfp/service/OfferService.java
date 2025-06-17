@@ -1,13 +1,17 @@
 package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.IOfferService;
+import com.campusdual.bfp.model.Candidate;
 import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.UserOffer;
+import com.campusdual.bfp.model.dao.CandidateDao;
 import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dao.UserOfferDao;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,9 @@ public class OfferService implements IOfferService {
 
     @Autowired
     private UserOfferDao userOfferDao;
+
+    @Autowired
+    private CandidateDao candidateDao;
 
     @Override
     public OfferDTO queryOffer(OfferDTO OfferDTO) {
@@ -114,8 +121,18 @@ public class OfferService implements IOfferService {
         return dtos;
     }
     @Override
-    public int getCompanyOffersCount(int offerID) {
-        Offer offer = OfferDao.getReferenceById(offerID);
-        return userOfferDao.countByOfferId(offer.getId());
+    public List<CandidateDTO> getCompanyOffersCandidates(int offerID) {
+        List<Integer> userIds = userOfferDao.findUserIdsByOfferId(offerID);
+        List<Candidate> candidates = new ArrayList<>();
+        for (Integer userId : userIds) {
+            User user = userDao.findUserById(userId);
+            if (user != null) {
+                Candidate candidate = candidateDao.findCandidateByUser(user);
+                if (candidate != null) {
+                    candidates.add(candidate);
+                }
+            }
+        }
+        return CandidateMapper.INSTANCE.toDTOList(candidates);
     }
 }
