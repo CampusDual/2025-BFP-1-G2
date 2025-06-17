@@ -55,5 +55,9 @@ export class OfferCardComponent {
       }
     });
   }
+
+  showCandidates(){
+    
+  }
 }
 

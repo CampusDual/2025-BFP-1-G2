@@ -21,6 +21,8 @@
     </mat-card-content>
     <mat-card-actions *ngIf="!isCompany && !isDisabled">
       <button mat-raised-button color="primary" (click)="applytoOffer()" class="applyOffer">Aplicar</button>
+      <br>
+      <button mat-raised-button color="secondary" (click)="showCandidates()" class="showCandidates">Ver candidatos</button>
     </mat-card-actions>
   </mat-card>
 </div>
