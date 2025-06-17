@@ -90,4 +90,11 @@ public class OfferController {
         List<OfferDTO> offers = offerService.getCompanyOffers(principal.getName());
         return ResponseEntity.ok(offers);
     }
+
+    @PreAuthorize("hasRole('COMPANY')")
+    @PostMapping(value = "/companyOffers/getCount")
+    public ResponseEntity<Integer> getCompanyOffersCount(int OfferID) {
+        int count = offerService.getCompanyOffersCount(OfferID);
+        return ResponseEntity.ok(count);
+    }
 }

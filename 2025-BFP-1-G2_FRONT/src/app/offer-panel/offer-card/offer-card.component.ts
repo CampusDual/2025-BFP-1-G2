@@ -1,15 +1,15 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {AuthService} from "../../auth/services/auth.service";
 import {OfferService} from "../../services/offer.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-offer-card',
   templateUrl: './offer-card.component.html',
   styleUrls: ['./offer-card.component.css']
 })
-export class OfferCardComponent {
+export class OfferCardComponent implements OnInit {
   @Input() offer: any;
 
   isDisabled: boolean = true;
@@ -23,19 +23,21 @@ export class OfferCardComponent {
 
   closeCard() {
     this.isDisabled = !this.isDisabled;
-}
+  }
 
   applytoOffer() {
     if (this.authService.isLoggedIn()) {
       console.log(`Applying to offer: ${this.offer.title}`);
       this.offerService.applyToOffer(this.offer.id).subscribe({
         next: (response) => {
-          this.snackBar.open(response, 'Cerrar', { duration: 3000 });
+          this.snackBar.open(response, 'Cerrar', {duration: 3000});
         },
         error: (error) => {
           console.error('Error applying to offer:', error);
-          this.snackBar.open(error.error, 'Cerrar', { duration: 3000 ,
-          panelClass: ['error-snackbar'] });
+          this.snackBar.open(error.error, 'Cerrar', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
         }
       });
     } else {
@@ -44,6 +46,7 @@ export class OfferCardComponent {
       this.router.navigate([`../login`]);
     }
   }
+
   ngOnInit() {
     this.authService.hasRole('ROLE_COMPANY').subscribe({
       next: (hasRole) => {
@@ -51,7 +54,7 @@ export class OfferCardComponent {
       },
       error: (error) => {
         console.error('Error checking role:', error);
-        this.isCompany = false; // Default to false if there's an error
+        this.isCompany = false;
       }
     });
   }

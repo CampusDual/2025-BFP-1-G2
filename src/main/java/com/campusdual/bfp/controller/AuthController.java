@@ -1,5 +1,6 @@
 package com.campusdual.bfp.controller;
 
+import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.auth.JWTUtil;
 import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dto.CandidateDTO;
@@ -29,9 +30,7 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    UserService userService;
-    @Autowired
-    PasswordEncoder encoder;
+    IUserService userService;
     @Autowired
     JWTUtil jwtUtils;
 
@@ -60,7 +59,7 @@ public class AuthController {
 
             System.out.println("User authenticated: " + userDetails.getUsername());
             System.out.println("Generated JWT Token: " + token);
-                userService.addRoleToUser(15, (long)6); // Example of adding a role to a user, adjust as needed
+                userService.addRoleToUser(15, (long)6);
 
             String role = userDetails.getAuthorities().stream()
                     .findFirst()
