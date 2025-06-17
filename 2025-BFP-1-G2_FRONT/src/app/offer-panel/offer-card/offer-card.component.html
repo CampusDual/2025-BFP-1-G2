@@ -23,15 +23,19 @@
       <button mat-raised-button color="primary" (click)="applytoOffer()" class="applyOffer">Aplicar</button>
     </mat-card-actions>
     <mat-card-actions *ngIf="isCompany && !isDisabled">
-      <button mat-raised-button color="secondary" (click)="showCandidates()" class="showCandidates"> Mostrar candidatos
+      <button mat-raised-button (click)="showCandidates()" class="showCandidates">
+        <div class="text-badge">
+          <span>Mostrar candidatos</span>
           <mat-icon class="person"
             style="font-size: 20px; color: #3e3e3e;" 
-            matBadge="candidateNumber" 
-            matBadgeColor="accent" 
+            matBadge="242" 
+            matBadgeColor="warn" 
             matBadgePosition="above after"
-            matBadgeOverlap="false">
+            matBadgeOverlap="false"
+            class="custom-badge">
             person
           </mat-icon>
+        </div>
       </button>
     </mat-card-actions>
   </mat-card>
