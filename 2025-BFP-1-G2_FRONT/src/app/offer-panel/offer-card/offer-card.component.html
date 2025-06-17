@@ -17,10 +17,10 @@
     </mat-card-subtitle>
     <mat-card-content>
       <p *ngIf="!isDisabled">{{ offer?.description }}</p>
-      <p class="data-offer">{{ offer?.dateAdded | date:'mediumDate' }}</p>
+      <p class="data-offer">{{ offer?.dateAdded }}</p>
     </mat-card-content>
     <mat-card-actions *ngIf="!isDisabled">
-      <button mat-raised-button color="primary" [routerLink]="['/login']" class="applyOffer">Aplicar</button>
+      <button mat-raised-button color="primary" (click)="applytoOffer()" class="applyOffer">Aplicar</button>
     </mat-card-actions>
   </mat-card>
 </div>
