@@ -58,5 +58,9 @@ export class OfferCardComponent implements OnInit {
       }
     });
   }
+
+  showCandidates(){
+    
+  }
 }
 
