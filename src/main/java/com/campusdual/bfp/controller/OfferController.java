@@ -1,6 +1,7 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -90,11 +91,11 @@ public class OfferController {
         List<OfferDTO> offers = offerService.getCompanyOffers(principal.getName());
         return ResponseEntity.ok(offers);
     }
-
     @PreAuthorize("hasRole('COMPANY')")
-    @PostMapping(value = "/companyOffers/getCount")
-    public ResponseEntity<Integer> getCompanyOffersCount(int OfferID) {
-        int count = offerService.getCompanyOffersCount(OfferID);
-        return ResponseEntity.ok(count);
+    @PostMapping(value = "/companyOffers/getCandidatesFromOffer")
+    public ResponseEntity<List<CandidateDTO>> getCandidatesFromOffer(int OfferID) {
+        List<CandidateDTO> candidates = offerService.getCompanyOffersCandidates(OfferID);
+        return ResponseEntity.ok(candidates);
     }
+
 }
