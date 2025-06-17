@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService, User} from "../auth/services/auth.service";
-
 @Component({
   selector: 'app-user-panel',
   templateUrl: './user-panel.component.html',
@@ -13,6 +12,7 @@ export class UserPanelComponent implements OnInit {
   userSurname2: string | null = null;
   userEmail: string | null = null;
   phoneNumber: string | null = null;
+
 
   constructor(private authService: AuthService) {
   }

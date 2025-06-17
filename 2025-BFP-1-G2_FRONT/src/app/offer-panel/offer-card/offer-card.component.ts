@@ -14,6 +14,7 @@ export class OfferCardComponent implements OnInit {
 
   isDisabled: boolean = true;
   isCompany: any;
+  candidates: any[] = [];
 
   constructor(protected authService: AuthService,
               protected offerService: OfferService,
@@ -57,10 +58,19 @@ export class OfferCardComponent implements OnInit {
         this.isCompany = false;
       }
     });
+    this.offerService.getCandidates(this.offer.id).subscribe({
+      next: (candidates) => {
+        this.candidates = candidates;
+        console.log('Candidates fetched successfully:', this.candidates);
+      },
+      error: (error) => {
+        console.error('Error fetching candidates:', error);
+      }
+    });
   }
 
   showCandidates(){
-    
+
   }
 }
 
