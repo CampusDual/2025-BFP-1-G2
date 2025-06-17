@@ -14,4 +14,5 @@ public interface IOfferService {
     int deleteOffer(OfferDTO request, String username);
     int userApplyOffer(int request, String username);
     List<OfferDTO> getCompanyOffers(String name);
+    int getCompanyOffersCount(int offerID);
 }
