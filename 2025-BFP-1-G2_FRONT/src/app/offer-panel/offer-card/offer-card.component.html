@@ -11,8 +11,8 @@
     <mat-card-header>
       <mat-card-title>{{ offer?.title }}</mat-card-title>
     </mat-card-header>
-    <mat-card-subtitle *ngIf="!isCompany || offer?.companyName || offer?.email">
-      <strong>{{ offer?.companyName }}</strong>
+    <mat-card-subtitle *ngIf="!isCompany">
+      <strong>{{ offer?.companyName }}</strong> |
       <span class="email">{{ offer?.email }}</span>
     </mat-card-subtitle>
     <mat-card-content>
