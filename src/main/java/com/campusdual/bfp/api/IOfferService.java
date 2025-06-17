@@ -1,5 +1,6 @@
 package com.campusdual.bfp.api;
 
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +15,5 @@ public interface IOfferService {
     int deleteOffer(OfferDTO request, String username);
     int userApplyOffer(int request, String username);
     List<OfferDTO> getCompanyOffers(String name);
-    int getCompanyOffersCount(int offerID);
+    List<CandidateDTO> getCompanyOffersCandidates(int offerID);
 }
