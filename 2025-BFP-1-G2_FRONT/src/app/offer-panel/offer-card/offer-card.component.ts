@@ -61,6 +61,7 @@ export class OfferCardComponent implements OnInit {
     this.offerService.getCandidates(this.offer.id).subscribe({
       next: (candidates) => {
         this.candidates = candidates;
+        this.offer.candidatesCount = candidates.length;
         console.log('Candidates fetched successfully:', this.candidates);
       },
       error: (error) => {
