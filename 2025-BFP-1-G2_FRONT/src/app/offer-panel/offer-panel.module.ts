@@ -7,6 +7,8 @@ import { OfferCardComponent } from './offer-card/offer-card.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import {MatIconModule} from "@angular/material/icon";
+import {MatBadgeModule} from '@angular/material/badge';
+
 
 export interface Offer {
   id: number;
@@ -30,7 +32,8 @@ export interface Offer {
     MatCardModule,
     MatButtonModule,
     OfferPanelRoutingModule,
-    MatIconModule
+    MatIconModule,
+    MatBadgeModule
   ]
 })
 export class OfferPanelModule { }

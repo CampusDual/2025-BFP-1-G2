@@ -46,6 +46,7 @@ mat-card-actions {
 .showCandidates{
   background-color: #3e3e3e;
   color: white;
+  gap: 5px;
 }
 
 div:not(.details) {
