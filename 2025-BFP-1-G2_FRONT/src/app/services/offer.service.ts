@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {AuthService} from "../auth/services/auth.service";
+import {AuthService, User} from "../auth/services/auth.service";
 
 export interface Offer {
   title: string;
@@ -45,5 +45,8 @@ export class OfferService {
   }
   applyToOffer(id: number): Observable<any>{
     return this.http.post(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: "text" });
+  }
+  getCandidates(offerId: number): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/candidates/${offerId}`);
   }
 }

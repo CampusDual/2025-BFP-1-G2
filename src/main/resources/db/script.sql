@@ -45,7 +45,7 @@ candidate_id serial primary key,
 name varchar(30) not null,
 surname1 varchar(30) not null,
 surname2 varchar(30) not null,
-phone_number varchar(9) not null,
+phoneNumber varchar(9) not null,
 user_id int not null,
 constraint fk_users foreign key (user_id) references users(candidate_id)
 );
