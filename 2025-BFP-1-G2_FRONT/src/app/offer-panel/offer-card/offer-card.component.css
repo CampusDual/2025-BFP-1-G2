@@ -40,14 +40,21 @@ mat-card-actions {
   color: white;
 }
 
+.text-badge{
+  gap: 7px;
+  justify-content: center;
+  align-items: center;
+}
+
 .showCandidates {
-  margin-left: 10px;
+  align-items: center;
+  justify-content: center;
 }
-.showCandidates{
-  background-color: #3e3e3e;
-  color: white;
-  gap: 5px;
+
+::ng-deep .custom-badge .mat-badge-content {
+  font-size: 11px;
 }
+
 
 div:not(.details) {
   position: relative;
