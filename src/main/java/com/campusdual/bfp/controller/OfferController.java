@@ -84,4 +84,10 @@ public class OfferController {
         }
        
     }
+    @PreAuthorize("hasRole('COMPANY')")
+    @GetMapping(value="/companyOffers")
+    public ResponseEntity<List<OfferDTO>> queryCompanyOffers(Principal principal){
+        List<OfferDTO> offers = offerService.getCompanyOffers(principal.getName());
+        return ResponseEntity.ok(offers);
+    }
 }
