@@ -12,6 +12,7 @@ import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detail
 })
 export class OfferTableComponent {
   offers!: any[];
+  searchTerm: string='';
   showDetailedCard = false;
   detailedCardData: DetailedCardData[] = [];
   currentDetailIndex = 0;
@@ -252,6 +253,13 @@ export class OfferTableComponent {
 
   closeDetailedCard() {
     this.showDetailedCard = false;
+  }
+  filterOffers(): any[] {
+    const searchTerm = this.searchTerm.toLowerCase();
+    return this.offers.filter((offer: any) =>
+      offer.title.toLowerCase().includes(searchTerm) ||
+      offer.description.toLowerCase().includes(searchTerm)
+    );
   }
 }
 
