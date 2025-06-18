@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,17 +13,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { CompanyPanelComponent } from './company-panel/company-panel.component';
-import { AuthInterceptor } from "./auth/interceptors/interceptor";
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { ReactiveFormsModule } from "@angular/forms";
+import {AuthInterceptor} from "./auth/interceptors/interceptor";
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatCardModule} from "@angular/material/card";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {ReactiveFormsModule} from "@angular/forms";
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { AuthModule } from "./auth/auth.module";
+import {AuthModule} from "./auth/auth.module";
 import { UserPanelComponent } from './user-panel/user-panel.component';
-import { OfferPanelModule } from "./offer-panel/offer-panel.module";
-import { FormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,6 +30,7 @@ import { FormsModule } from '@angular/forms';
     FooterComponent,
     CompanyPanelComponent,
     UserPanelComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -49,8 +49,7 @@ import { FormsModule } from '@angular/forms';
     ReactiveFormsModule,
     TextFieldModule,
     AuthModule,
-    OfferPanelModule,
-    FormsModule
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

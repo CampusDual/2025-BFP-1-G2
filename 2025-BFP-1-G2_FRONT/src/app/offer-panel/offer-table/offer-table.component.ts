@@ -10,8 +10,9 @@ import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detail
   templateUrl: './offer-table.component.html',
   styleUrls: ['./offer-table.component.css']
 })
-export class OfferTableComponent {
-  offers!: any[];
+export class OfferTableComponent  {
+  offers: any[] = [];
+  filteredOffers: any[] = [];
   searchTerm: string = '';
   showDetailedCard = false;
   detailedCardData: DetailedCardData[] = [];
@@ -28,6 +29,7 @@ export class OfferTableComponent {
     this.loadUserRole();
     this.loadOffers();
   }
+
 
   loadUserRole() {
     // Verificar rol de empresa
@@ -58,7 +60,7 @@ export class OfferTableComponent {
           dateAdded: new Date(offer.dateAdded).toLocaleDateString(),
           candidatesCount: offer.candidatesCount || 0
         }));
-        console.log('Offers fetched successfully', this.offers);
+        this.filteredOffers = [...this.offers];
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
