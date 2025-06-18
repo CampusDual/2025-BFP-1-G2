@@ -31,6 +31,7 @@ mat-card-actions {
   min-width: 120px;
   padding: 8px 24px;
   font-weight: 500;
+  gap: 10px;
   transition: all 0.3s ease;
 }
 
@@ -38,6 +39,23 @@ mat-card-actions {
   background-color: var(--primary-color);
   color: white;
 }
+
+.text-badge{
+  gap: 7px;
+  justify-content: center;
+  align-items: center;
+}
+
+.showCandidates {
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep .custom-badge .mat-badge-content {
+  font-size: 11px;
+}
+
+
 div:not(.details) {
   position: relative;
   width: 100%;
@@ -117,4 +135,3 @@ div.details mat-card:hover {
   z-index: 10;
   color: var(--primary-color);
 }
-

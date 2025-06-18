@@ -47,7 +47,7 @@ export class CompanyLoginComponent {
       this.authService.login({ login: this.login.value, password: this.password.value }).subscribe({
         next: () => {
 
-          this.router.navigate([`../company/${this.login.value}`]).then(() => {
+          this.router.navigate([`../company/myoffers`]).then(() => {
             this.isLoading = false;
           });
 
