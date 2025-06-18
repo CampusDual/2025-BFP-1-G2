@@ -1,0 +1,64 @@
+<div class="detailed-overlay" *ngIf="isVisible" (click)="close()">
+  <div class="detailed-container" (click)="$event.stopPropagation()">
+    <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <div class="navigation-header" *ngIf="showNavigation && data.length > 1">
+      <button mat-icon-button 
+              [disabled]="!canNavigatePrevious" 
+              (click)="navigatePrevious()"
+              aria-label="Anterior">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      
+      <span class="position-indicator">{{ currentPosition }}</span>
+      
+      <button mat-icon-button 
+              [disabled]="!canNavigateNext" 
+              (click)="navigateNext()"
+              aria-label="Siguiente">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <mat-card *ngIf="currentItem">
+      <mat-card-header>
+        <mat-card-title>{{ currentItem.title }}</mat-card-title>
+        <mat-card-subtitle *ngIf="currentItem.subtitle">
+          {{ currentItem.subtitle }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div [innerHTML]="currentItem.content"></div>
+        
+        <div class="metadata" *ngIf="currentItem.metadata">
+          <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
+            <strong>{{ item.key }}:</strong> {{ item.value }}
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0">
+        <button *ngFor="let action of currentItem.actions"
+                mat-raised-button
+                [color]="action.color || 'primary'"
+                (click)="executeAction(action)">
+          <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
+          {{ action.label }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <div class="navigation-dots" *ngIf="showNavigation && data.length > 1">
+      <button *ngFor="let item of data; let i = index"
+              mat-icon-button
+              class="dot"
+              [class.active]="i === currentIndex"
+              (click)="currentIndex = i; updateCurrentItem(); onNavigate.emit(currentIndex)">
+        <div class="dot-indicator"></div>
+      </button>
+    </div>
+  </div>
+</div>

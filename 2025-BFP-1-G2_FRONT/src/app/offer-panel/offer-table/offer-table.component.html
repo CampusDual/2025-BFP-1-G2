@@ -1,6 +1,17 @@
+
 <div class="grid-container">
   <app-offer-card
     *ngFor="let offer of offers; let i = index"
-    [offer]="offer">
+    [offer]="offer"
+    (click)="openDetailedCard(i)">
   </app-offer-card>
 </div>
+<app-detailed-card
+  [isVisible]="showDetailedCard"
+  [data]="detailedCardData"
+  [currentIndex]="currentDetailIndex"
+  [showNavigation]="true"
+  [cardType]="'offer'"
+  (onClose)="closeDetailedCard()"
+  (onAction)="onDetailedCardAction($event)">
+</app-detailed-card>

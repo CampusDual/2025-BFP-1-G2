@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
                 console.error('Error checking roles', error);
                 this.router.navigate(['../offers/portal']).then(r => {
                 });
-                return false; // Error occurred while checking roles
+                return false;
             }
         });
         return true;

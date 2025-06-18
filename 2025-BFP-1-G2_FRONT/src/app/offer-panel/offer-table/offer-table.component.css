@@ -10,6 +10,7 @@ app-offer-card {
   opacity: 0;
   transform: translateY(50px) scale(0.8);
   animation: slideInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  
 }
 
 app-offer-card:nth-child(1) { animation-delay: 0.1s; }
@@ -38,7 +39,6 @@ app-offer-card:nth-child(n+10) { animation-delay: 1s; }
   }
 }
 
-/* Animación cuando se carga el contenedor completo */
 .grid-container {
   animation: fadeInGrid 0.5s ease-out;
 }

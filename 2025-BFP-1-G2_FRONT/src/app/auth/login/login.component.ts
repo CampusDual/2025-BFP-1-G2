@@ -34,11 +34,8 @@ export class LoginComponent {
       this.authService.login({login: this.name.value, password: this.password.value}).subscribe({
         next: (response) => {
           const pendingOfferId = localStorage.getItem('pendingOfferId');
-
           if (pendingOfferId) {
             localStorage.removeItem('pendingOfferId');
-
-
             this.offerService.applyToOffer(Number(pendingOfferId)).subscribe({
               next: (applyResponse) => {
                 this.snackBar.open(applyResponse, 'Cerrar', {duration: 3000});
