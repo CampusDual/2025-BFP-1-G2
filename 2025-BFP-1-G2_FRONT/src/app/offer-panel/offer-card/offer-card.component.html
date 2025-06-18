@@ -1,42 +1,27 @@
-<div [class.details]="!isDisabled">
-  <mat-card (click)="isDisabled && closeCard()">
-    <button
-      *ngIf="!isDisabled"
-      mat-icon-button
-      class="close-button"
-      (click)="closeCard(); $event.stopPropagation()"
-      aria-label="Close offer card">
-      <mat-icon>cancel</mat-icon>
-    </button>
-    <mat-card-header>
-      <mat-card-title>{{ offer?.title }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-subtitle *ngIf="!isCompany">
-      <strong>{{ offer?.companyName }}</strong> |
-      <span class="email">{{ offer?.email }}</span>
-    </mat-card-subtitle>
-    <mat-card-content>
-      <p *ngIf="!isDisabled">{{ offer?.description }}</p>
-      <p class="data-offer">{{ offer?.dateAdded }}</p>
-    </mat-card-content>
-    <mat-card-actions *ngIf="!isCompany && !isDisabled">
-      <button mat-raised-button color="primary" (click)="applytoOffer()" class="applyOffer">Aplicar</button>
-    </mat-card-actions>
-    <mat-card-actions *ngIf="isCompany && !isDisabled">
-      <button mat-raised-button (click)="showCandidates()" class="showCandidates">
-        <div class="text-badge">
-          <span>Mostrar candidatos</span>
-          <mat-icon class="person"
-            style="font-size: 20px; color: #3e3e3e;"
-            matBadge="{{ offer?.candidatesCount }}"
-            matBadgeColor="warn"
-            matBadgePosition="above after"
-            matBadgeOverlap="false"
-            class="custom-badge">
-            person
-          </mat-icon>
-        </div>
-      </button>
-    </mat-card-actions>
-  </mat-card>
+<div>
+  <div [class.details]="!isDisabled">
+    <mat-card >
+      <mat-card-header>
+        <mat-card-title>{{ offer?.title }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-subtitle *ngIf="!isCompany">
+        <strong>{{ offer?.companyName }}</strong> |
+        <span class="email">{{ offer?.email }}</span>
+      </mat-card-subtitle>
+      <mat-card-content>
+        <p class="data-offer">{{ offer?.dateAdded }}</p>
+      </mat-card-content>
+      <mat-card-actions *ngIf="isCompany && !isDisabled">
+        <button mat-raised-button (click)="showCandidates()" class="showCandidates">
+          <div class="text-badge">
+            <span>Mostrar candidatos</span>
+            <mat-icon class="person" style="font-size: 20px; color: #3e3e3e;" matBadge="{{ offer?.candidatesCount }}"
+              matBadgeColor="warn" matBadgePosition="above after" matBadgeOverlap="false" class="custom-badge">
+              person
+            </mat-icon>
+          </div>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
 </div>

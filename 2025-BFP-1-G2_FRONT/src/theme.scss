@@ -119,5 +119,5 @@ $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
   color: #ffffff;
   --mdc-snackbar-container-color: #9c0700;
   --mdc-snackbar-text-color: #ffffff;
-
+  z-index: 1000;
 }
