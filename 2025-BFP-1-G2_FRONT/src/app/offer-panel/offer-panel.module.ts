@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import {MatIconModule} from "@angular/material/icon";
 import {MatBadgeModule} from '@angular/material/badge';
-import { DetailedCardComponent } from '../detailed-card/detailed-card.component';
+import {FormsModule} from '@angular/forms';
 
 
 export interface Offer {
@@ -23,8 +23,7 @@ export interface Offer {
 @NgModule({
   declarations: [
     OfferTableComponent,
-    OfferCardComponent,
-    DetailedCardComponent
+    OfferCardComponent
   ],
   exports: [
     OfferTableComponent,
@@ -36,7 +35,8 @@ export interface Offer {
     MatButtonModule,
     OfferPanelRoutingModule,
     MatIconModule,
-    MatBadgeModule
+    MatBadgeModule,
+    FormsModule
   ]
 })
 export class OfferPanelModule { }

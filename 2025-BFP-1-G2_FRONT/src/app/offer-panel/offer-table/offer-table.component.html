@@ -1,17 +1,7 @@
-
+<input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" class="search-input">
 <div class="grid-container">
   <app-offer-card
-    *ngFor="let offer of offers; let i = index"
-    [offer]="offer"
-    (click)="openDetailedCard(i)">
+    *ngFor="let offer of filterOffers(); let i = index"
+    [offer]="offer">
   </app-offer-card>
 </div>
-<app-detailed-card
-  [isVisible]="showDetailedCard"
-  [data]="detailedCardData"
-  [currentIndex]="currentDetailIndex"
-  [showNavigation]="true"
-  [cardType]="'offer'"
-  (onClose)="closeDetailedCard()"
-  (onAction)="onDetailedCardAction($event)">
-</app-detailed-card>
