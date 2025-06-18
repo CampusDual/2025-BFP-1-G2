@@ -9,6 +9,7 @@ import {OfferService} from "../../services/offer.service";
 export class OfferTableComponent {
 
   offers!: any[];
+  searchTerm: string='';
 
   constructor(private offerService: OfferService) {
     this.offerService.getOffers().subscribe({
@@ -29,5 +30,12 @@ export class OfferTableComponent {
       }
     });
   }
-}
 
+  filterOffers(): any[] {
+    const searchTerm = this.searchTerm.toLowerCase();
+    return this.offers.filter((offer: any) =>
+      offer.title.toLowerCase().includes(searchTerm) ||
+      offer.description.toLowerCase().includes(searchTerm)
+    );
+  }
+}
