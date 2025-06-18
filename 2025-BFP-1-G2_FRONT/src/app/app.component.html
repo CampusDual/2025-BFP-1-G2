@@ -1,7 +1,27 @@
 <body>
   <div class="content">
-    <app-header></app-header>
-    <div [@fadeAnimation]="getRouterOutletState(outlet)" ><router-outlet #outlet="outlet"></router-outlet></div>
+    <app-header  [drawer]="drawer"></app-header>
+    <mat-drawer-container autosize>
+      <mat-drawer #drawer mode="side" >
+        <div class="nav-item" *ngIf="isCandidate" routerLink="../user">
+          <mat-icon>person</mat-icon>
+          <span >Perfil Profesional</span>
+        </div>
+        <div class="nav-item" *ngIf="isCandidate" routerLink="../offers/portal">
+          <mat-icon>work</mat-icon>
+          <span >Empleos</span>
+        </div>
+        <div class="nav-item" *ngIf="isCompany" routerLink="../company/myoffers">
+          <mat-icon>business_center</mat-icon>
+          <span >Vacantes</span>
+        </div>
+        <div class="nav-item" *ngIf="isCompany" routerLink="../company/Cinfo">
+          <mat-icon>business_center</mat-icon>
+          <span >Vacantes</span>
+        </div>
+      </mat-drawer>
+      <div [@fadeAnimation]="getRouterOutletState(outlet)"><router-outlet #outlet="outlet"></router-outlet></div>
+    </mat-drawer-container>
     <app-footer></app-footer>
   </div>
 </body>

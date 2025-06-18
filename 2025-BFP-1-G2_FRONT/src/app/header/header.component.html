@@ -1,6 +1,9 @@
 <mat-toolbar color="primary">
 
-  <button mat-icon-button routerLink="/offers/portal">
+  <button *ngIf="authService.isLoggedIn()" mat-icon-button (click)="drawer.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <button *ngIf="!authService.isLoggedIn()" mat-icon-button routerLink="/offers/portal">
     <mat-icon>home</mat-icon>
   </button>
 
@@ -15,7 +18,5 @@
   <button mat-icon-button *ngIf="!authService.isLoggedIn()" routerLink="/login" class="logout-button">
     <mat-icon>account_circle</mat-icon>
   </button>
-
-
 
 </mat-toolbar>
