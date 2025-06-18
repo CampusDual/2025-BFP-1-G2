@@ -12,7 +12,7 @@ import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detail
 })
 export class OfferTableComponent {
   offers!: any[];
-  searchTerm: string='';
+  searchTerm: string = '';
   showDetailedCard = false;
   detailedCardData: DetailedCardData[] = [];
   currentDetailIndex = 0;
@@ -67,7 +67,7 @@ export class OfferTableComponent {
   }
 
   openDetailedCard(offerIndex: number) {
-    this.detailedCardData = this.offers.map(offer => ({
+    this.detailedCardData = this.filterOffers().map(offer => ({
       id: offer.id,
       title: offer.title,
       subtitle: `${offer.companyName}  ${offer.email}`,
@@ -100,7 +100,6 @@ export class OfferTableComponent {
 
   private getActionsForOffer(offer: any): DetailedCardAction[] {
     const actions: DetailedCardAction[] = [];
-
     if (this.isCompany) {
       // Acciones para empresas
       actions.push({
