@@ -23,6 +23,8 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import {AuthModule} from "./auth/auth.module";
 import { UserPanelComponent } from './user-panel/user-panel.component';
 import {OfferPanelModule} from "./offer-panel/offer-panel.module";
+import { SideNavComponent } from './side-nav/side-nav.component';
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   declarations: [
@@ -30,27 +32,29 @@ import {OfferPanelModule} from "./offer-panel/offer-panel.module";
     HeaderComponent,
     FooterComponent,
     CompanyPanelComponent,
-    UserPanelComponent
+    UserPanelComponent,
+    SideNavComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatIconModule,
-    HttpClientModule,
-    MatSnackBarModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    TextFieldModule,
-    AuthModule,
-    OfferPanelModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatIconModule,
+        HttpClientModule,
+        MatSnackBarModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        TextFieldModule,
+        AuthModule,
+        OfferPanelModule,
+        MatSidenavModule
+    ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
