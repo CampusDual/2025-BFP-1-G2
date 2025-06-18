@@ -7,7 +7,7 @@ import {AuthService} from "../auth/services/auth.service";
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  @Input() drawer: any;
+  @Input() drawer!: any;
 
   constructor(protected authService: AuthService) {
   }
