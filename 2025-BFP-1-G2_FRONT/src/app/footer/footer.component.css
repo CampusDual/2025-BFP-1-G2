@@ -3,6 +3,6 @@ mat-toolbar {
   justify-content: center;
   height: 75px ;
   font-size: 1.2rem;
-  background-color: #3e3e3e;
-  color: #ffffff;
+  background: transparent;
+  color: #000000;
 }

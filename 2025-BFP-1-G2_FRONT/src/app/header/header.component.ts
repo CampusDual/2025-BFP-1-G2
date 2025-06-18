@@ -8,8 +8,8 @@ import {AuthService} from "../auth/services/auth.service";
 })
 export class HeaderComponent {
   @Input() drawer!: any;
+  
 
   constructor(protected authService: AuthService) {
   }
-
 }

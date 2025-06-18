@@ -5,13 +5,12 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-rows: 75px minmax(auto, 100%) 75px;
+  grid-template-rows: 75px minmax(auto, 100%) 0px;
   grid-template-columns: 0px 1fr;
   grid-template-areas:
     "header header"
-    "mat-drawer-container main"
-    "footer footer";
-  background: linear-gradient(to bottom, #969696, #ffffff);
+    "mat-drawer-container main";
+  background: transparent
 }
 
 app-header {
@@ -20,34 +19,48 @@ app-header {
 
 mat-drawer-container {
   grid-area: main;
+  background: transparent;
+  background-color: transparent;
 }
+
 
 app-footer {
-  grid-area: footer;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
-mat-drawer{
-  background-color: #3e3e3e;
+mat-drawer {
+  background: #3e3e3e
 }
 
 router-outlet {
-  display: flex;
-  flex-direction: column;
-  padding-block: 20px;
+  align-self: center;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
+.main{  
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  margin-bottom: 75px;
+}
 
 .nav-item {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 12px 16px;
-  margin : 8px;
+  margin: 8px;
   cursor: pointer;
   border-radius: 5px;
   color: #ffffff;
   transition: all 0.3s ease;
 }
+
 .nav-item:hover {
   margin-block: 15px;
   scale: 1.05;

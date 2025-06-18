@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from '../services/auth.service';
-import {Router} from "@angular/router";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {OfferService} from "../../services/offer.service";
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { OfferService } from "../../services/offer.service";
 
 @Component({
   selector: 'app-login',
@@ -15,41 +15,43 @@ export class LoginComponent {
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
   isLoading = false;
 
-
   loginForm = new FormGroup({
     name: this.name,
     password: this.password,
   });
 
   constructor(private authService: AuthService,
-              private router: Router,
-              private snackBar: MatSnackBar,
-              private offerService: OfferService
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private offerService: OfferService
   ) {
   }
 
   onSubmit() {
     this.isLoading = true;
     if (this.name.value !== null && this.password.value !== null) {
-      this.authService.login({login: this.name.value, password: this.password.value}).subscribe({
+      this.authService.login({ login: this.name.value, password: this.password.value }).subscribe({
         next: () => {
           const pendingOfferId = localStorage.getItem('pendingOfferId');
           if (pendingOfferId) {
             localStorage.removeItem('pendingOfferId');
-            this.offerService.applyToOffer(Number(pendingOfferId)).subscribe({
-              next: (applyResponse) => {
-                this.snackBar.open(applyResponse, 'Cerrar', {duration: 3000});
-                this.router.navigate([`../offers/portal`]);
-              },
-              error: (error) => {
-                this.snackBar.open(error.error, 'Cerrar', {
-                  panelClass: ['error-snackbar']
-                });
-                this.router.navigate([`../user`]);
-              }
-            });
+            if (this.authService.isCandidate()) {
+              this.offerService.applyToOffer(Number(pendingOfferId)).subscribe({
+                next: (applyResponse) => {
+                  this.snackBar.open(applyResponse, 'Cerrar', { duration: 3000 });
+                  this.router.navigate([`../offers/portal`]);
+                },
+                error: (error) => {
+                  this.snackBar.open(error.error, 'Cerrar', {
+                    panelClass: ['error-snackbar']
+                  });
+                  this.router.navigate([`../user`]);
+                }
+              });
+            }
+            else this.snackBar.open("Solo los candidatos pueden aplicar a ofertas", 'Cerrar', { duration: 3000, panelClass: ['error-snackbar'] });
           } else {
-            this.router.navigate([`../user`]);
+            this.router.navigate([`../offers/portal`]);
           }
           this.isLoading = false;
         },
