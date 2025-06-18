@@ -1,4 +1,6 @@
-<input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" class="search-input">
+<input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+  (ngModelChange)="filterOffers()"
+class="search-input">
 <div class="grid-container">
   <app-offer-card
     *ngFor="let offer of filterOffers(); let i = index"
