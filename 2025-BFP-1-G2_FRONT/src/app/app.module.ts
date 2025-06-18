@@ -23,7 +23,6 @@ import {TextFieldModule} from '@angular/cdk/text-field';
 import {AuthModule} from "./auth/auth.module";
 import {UserPanelComponent} from './user-panel/user-panel.component';
 import {OfferPanelModule} from "./offer-panel/offer-panel.module";
-import {SideNavComponent} from './side-nav/side-nav.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
@@ -32,9 +31,8 @@ import {MatSidenavModule} from "@angular/material/sidenav";
     HeaderComponent,
     FooterComponent,
     CompanyPanelComponent,
-    UserPanelComponent,
-    SideNavComponent
-  ],
+    UserPanelComponent
+    ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -52,7 +50,8 @@ import {MatSidenavModule} from "@angular/material/sidenav";
     ReactiveFormsModule,
     TextFieldModule,
     AuthModule,
-    MatSidenavModule
+    MatSidenavModule,
+    OfferPanelModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}

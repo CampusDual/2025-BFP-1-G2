@@ -1,65 +1,67 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-  <mat-card class="formdata">
-    <h2 #formTitle>Registrarse</h2>
+<div class="register-container">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <mat-card class="formdata">
+      <h2 #formTitle>Registrarse</h2>
 
-    <div class="form-grid">
-      <mat-form-field appearance="outline">
-        <mat-label>Nombre de usuario</mat-label>
-        <input matInput placeholder="usuario123" [formControl]="login" required>
-        <mat-error *ngIf="login.invalid">{{ getLoginErrorMessage() }}</mat-error>
-      </mat-form-field>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre de usuario</mat-label>
+          <input matInput placeholder="usuario123" [formControl]="login" required>
+          <mat-error *ngIf="login.invalid">{{ getLoginErrorMessage() }}</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Nombre</mat-label>
-        <input matInput placeholder="Nombre" [formControl]="name" required>
-        <mat-error *ngIf="name.invalid">{{ getNameErrorMessage() }}</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput placeholder="Nombre" [formControl]="name" required>
+          <mat-error *ngIf="name.invalid">{{ getNameErrorMessage() }}</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Primer apellido</mat-label>
-        <input matInput placeholder="Apellido 1" [formControl]="surname1" required>
-        <mat-error *ngIf="surname1.invalid">{{ getSurname1ErrorMessage() }}</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Primer apellido</mat-label>
+          <input matInput placeholder="Apellido 1" [formControl]="surname1" required>
+          <mat-error *ngIf="surname1.invalid">{{ getSurname1ErrorMessage() }}</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Segundo apellido</mat-label>
-        <input matInput placeholder="Apellido 2" [formControl]="surname2" required>
-        <mat-error *ngIf="surname2.invalid">{{ getSurname2ErrorMessage() }}</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Segundo apellido</mat-label>
+          <input matInput placeholder="Apellido 2" [formControl]="surname2" required>
+          <mat-error *ngIf="surname2.invalid">{{ getSurname2ErrorMessage() }}</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
-        <mat-error *ngIf="email.invalid">{{ getEmailErrorMessage() }}</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
+          <mat-error *ngIf="email.invalid">{{ getEmailErrorMessage() }}</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Teléfono</mat-label>
-        <input matInput placeholder="123456789" [formControl]="phoneNumber" required>
-        <mat-error *ngIf="phoneNumber.invalid">{{ getPhoneNumberErrorMessage() }}</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput placeholder="123456789" [formControl]="phoneNumber" required>
+          <mat-error *ngIf="phoneNumber.invalid">{{ getPhoneNumberErrorMessage() }}</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Contraseña</mat-label>
-        <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
-        <mat-error *ngIf="password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Contraseña</mat-label>
+          <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
+          <mat-error *ngIf="password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Confirma la contraseña</mat-label>
-        <input matInput type="password" placeholder="Confirmar contraseña" [formControl]="confirmPassword" required>
-        <mat-error *ngIf="confirmPassword.invalid || password.value !== confirmPassword.value">
-          {{ getConfirmPasswordErrorMessage() }}
-        </mat-error>
-      </mat-form-field>
-    </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Confirma la contraseña</mat-label>
+          <input matInput type="password" placeholder="Confirmar contraseña" [formControl]="confirmPassword" required>
+          <mat-error *ngIf="confirmPassword.invalid || password.value !== confirmPassword.value">
+            {{ getConfirmPasswordErrorMessage() }}
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-    <div class="form-actions">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Registrarse</button>
-      <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
-    </div>
-  </mat-card>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Registrarse</button>
+        <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+      </div>
+    </mat-card>
 
-  <p>¿Ya tienes una cuenta?</p>
-  <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
-</form>
+    <p>¿Ya tienes una cuenta?</p>
+    <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
+  </form>
+</div>
