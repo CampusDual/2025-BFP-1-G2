@@ -8,8 +8,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import {MatIconModule} from "@angular/material/icon";
 import {MatBadgeModule} from '@angular/material/badge';
-import { DetailedCardComponent } from '../detailed-card/detailed-card.component';
 import {FormsModule} from '@angular/forms';
+import { DetailedCardComponent } from '../detailed-card/detailed-card.component';
 
 
 export interface Offer {
@@ -30,7 +30,7 @@ export interface Offer {
   exports: [
     OfferTableComponent,
     OfferCardComponent
-  ],
+    ],
   imports: [
     CommonModule,
     MatCardModule,
@@ -39,6 +39,6 @@ export interface Offer {
     MatIconModule,
     MatBadgeModule,
     FormsModule
-  ]
+  ],
 })
 export class OfferPanelModule { }

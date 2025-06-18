@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {map, Observable, tap} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 
 export interface User {
   username: string;
@@ -23,17 +23,20 @@ export interface User {
 
 
 export class AuthService {
+  
   private baseUrl = 'http://localhost:30030/auth';
+  private authStatusSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
+  public isAuthenticated$ = this.authStatusSubject.asObservable();
 
   hasRoles(expectedRoles: string[]): Observable<boolean> {
     return this.http.get<string[]>(`${this.baseUrl}/user/roles`).pipe(
-        map(roles => roles.some(role => expectedRoles.includes(role)))
+      map(roles => roles.some(role => expectedRoles.includes(role)))
     );
   }
 
   hasRole(expectedRole: string): Observable<boolean> {
     return this.http.get<string[]>(`${this.baseUrl}/user/roles`).pipe(
-        map(roles => roles.includes(expectedRole))
+      map(roles => roles.includes(expectedRole))
     );
   }
 
@@ -43,11 +46,18 @@ export class AuthService {
   login(credentials: { login: string, password: string }): Observable<any> {
     localStorage.removeItem('authToken');
     const basicAuth = btoa(`${credentials.login}:${credentials.password}`);
-    const headers = {Authorization: `Basic ${basicAuth}`};
-    return this.http.post(`${this.baseUrl}/signin`, {}, {headers, responseType: 'text'})
-      .pipe(
-        tap(token => localStorage.setItem('authToken', token))
-      );
+    const headers = { Authorization: `Basic ${basicAuth}` };
+    return this.http.post(`${this.baseUrl}/signin`, {}, { headers, responseType: 'text' }).pipe(
+      tap({
+        next: (token: any) => {
+          this.authStatusSubject.next(true); // ¡Importante!
+          localStorage.setItem('authToken', token);
+        },
+        error: () => {
+          this.authStatusSubject.next(false); // ¡Importante!
+        }
+      })
+    );
   }
 
   register(userData: {
@@ -56,7 +66,7 @@ export class AuthService {
   }): Observable<any> {
     localStorage.removeItem('authToken');
     console.log('Registering user with data:', userData);
-    return this.http.post(`${this.baseUrl}/signup`, userData, {responseType: 'text'});
+    return this.http.post(`${this.baseUrl}/signup`, userData, { responseType: 'text' });
   }
 
   isLoggedIn(): boolean {
@@ -82,5 +92,11 @@ export class AuthService {
     return this.http.get<User>(`${this.baseUrl}/candidateDetails`);
   }
 
+  isCandidate() {
+    return this.hasRole('ROLE_CANDIDATE');
+  }
+  isCompany() {
+    return this.hasRole('ROLE_COMPANY');
+  }
 
 }
