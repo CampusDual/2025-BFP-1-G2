@@ -1,9 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AuthService} from "../../auth/services/auth.service";
 import {OfferService} from "../../services/offer.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {Router} from '@angular/router';
-
 @Component({
   selector: 'app-offer-card',
   templateUrl: './offer-card.component.html',

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -84,7 +84,7 @@ export class OfferTableComponent {
   }
 
   private getMetadataForOffer(offer: any): { [key: string]: any } {
-    if (this.isCompany) 
+    if (this.isCompany)
       return {
         'Fecha de publicación': new Date(offer.dateAdded).toLocaleDateString(),
         'Ubicación': offer.location
@@ -194,7 +194,7 @@ export class OfferTableComponent {
   private applyToOffer(offer: any) {
     if (this.authService.isLoggedIn()) {
       this.offerService.applyToOffer(offer.id).subscribe({
-        next: (response) => {
+        next: () => {
           this.snackBar.open('Aplicación enviada exitosamente', 'Cerrar', { duration: 3000 });
           this.closeDetailedCard();
         },
