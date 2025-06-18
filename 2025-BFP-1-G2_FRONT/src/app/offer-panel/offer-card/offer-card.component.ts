@@ -15,16 +15,10 @@ export class OfferCardComponent implements OnInit {
   isDisabled: boolean = true;
   isCompany: any;
   candidates: any[] = [];
-  
+
 
   constructor(protected authService: AuthService,
-              protected offerService: OfferService,
-              private snackBar: MatSnackBar,
-              private router: Router) {
-  }
-
-  closeCard() {
-    this.isDisabled = !this.isDisabled;
+              protected offerService: OfferService) {
   }
 
 

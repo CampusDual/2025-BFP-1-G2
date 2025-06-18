@@ -32,7 +32,7 @@ export class LoginComponent {
     this.isLoading = true;
     if (this.name.value !== null && this.password.value !== null) {
       this.authService.login({login: this.name.value, password: this.password.value}).subscribe({
-        next: (response) => {
+        next: () => {
           const pendingOfferId = localStorage.getItem('pendingOfferId');
           if (pendingOfferId) {
             localStorage.removeItem('pendingOfferId');
@@ -53,7 +53,7 @@ export class LoginComponent {
           }
           this.isLoading = false;
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
           this.snackBar.open('Usuario o contraseña incorrectos', 'Cerrar', {
             panelClass: ['error-snackbar']
