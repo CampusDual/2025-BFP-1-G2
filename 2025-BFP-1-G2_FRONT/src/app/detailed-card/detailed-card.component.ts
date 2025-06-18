@@ -1,4 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+
 
 export interface DetailedCardData {
   id: string | number;
