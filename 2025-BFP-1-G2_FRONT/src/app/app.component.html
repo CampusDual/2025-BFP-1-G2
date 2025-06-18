@@ -1,8 +1,32 @@
 <body>
   <div class="content">
-    <app-header></app-header>
-    <app-side-nav> </app-side-nav>
-    <div [@fadeAnimation]="getRouterOutletState(outlet)" ><router-outlet #outlet="outlet"></router-outlet></div>
+    <app-header [drawer]="drawer"></app-header>
+    <mat-drawer-container autosize>
+      <mat-drawer #drawer mode="side">
+        <div class="nav-item">
+          <mat-icon>home</mat-icon>
+          <span *ngIf="!showFiller">Inicio</span>
+        </div>
+        <ng-container>
+          <div class="nav-item">
+            <mat-icon>person</mat-icon>
+            <span *ngIf="!showFiller">Perfil Profesional</span>
+          </div>
+          <div class="nav-item">
+            <mat-icon>work</mat-icon>
+            <span *ngIf="!showFiller">Empleos</span>
+          </div>
+        </ng-container>
+
+        <ng-container>
+          <div class="nav-item">
+            <mat-icon>business_center</mat-icon>
+            <span *ngIf="!showFiller">Vacantes</span>
+          </div>
+        </ng-container>
+      </mat-drawer>
+      <div [@fadeAnimation]="getRouterOutletState(outlet)"><router-outlet #outlet="outlet"></router-outlet></div>
+    </mat-drawer-container>
     <app-footer></app-footer>
-  </div>>
+  </div>
 </body>

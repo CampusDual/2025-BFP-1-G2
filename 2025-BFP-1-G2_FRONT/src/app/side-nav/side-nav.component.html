@@ -1,18 +1,18 @@
-<mat-drawer-container class="drawer-container" *ngIf="shouldRun">
-  <mat-drawer #drawer class="side-nav" mode="side" opened>
+
+<mat-drawer-container autosize>
+  <mat-drawer #drawer mode="side">
     <div class="nav-header">
-      <button mat-icon-button class="menu-toggle" (click)="collapsedSideBar()">
+      <button mat-icon-button class="menu-toggle" (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
     </div>
-
     <div class="nav-content">
       <div class="nav-item" (click)="navigateTo('/')">
         <mat-icon>home</mat-icon>
         <span *ngIf="!showFiller">Inicio</span>
       </div>
 
-      <ng-container *ngIf="isCandidate">
+      <ng-container>
         <div class="nav-item" (click)="navigateTo('/user')">
           <mat-icon>person</mat-icon>
           <span *ngIf="!showFiller">Perfil Profesional</span>
@@ -23,7 +23,7 @@
         </div>
       </ng-container>
 
-      <ng-container *ngIf="isCompany">
+      <ng-container>
         <div class="nav-item" (click)="navigateTo('/offers/portal')">
           <mat-icon>business_center</mat-icon>
           <span *ngIf="!showFiller">Vacantes</span>
@@ -32,7 +32,8 @@
     </div>
   </mat-drawer>
 
-  <mat-drawer-content class="main-content">
+  <div class="example-sidenav-content">
 
-  </mat-drawer-content>
+  </div>
+
 </mat-drawer-container>
