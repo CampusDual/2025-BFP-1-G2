@@ -5,17 +5,17 @@
     </button>
 
     <div class="navigation-header" *ngIf="showNavigation && data.length > 1">
-      <button mat-icon-button 
-              [disabled]="!canNavigatePrevious" 
+      <button mat-icon-button
+              [disabled]="!canNavigatePrevious"
               (click)="navigatePrevious()"
               aria-label="Anterior">
         <mat-icon>chevron_left</mat-icon>
       </button>
-      
+
       <span class="position-indicator">{{ currentPosition }}</span>
-      
-      <button mat-icon-button 
-              [disabled]="!canNavigateNext" 
+
+      <button mat-icon-button
+              [disabled]="!canNavigateNext"
               (click)="navigateNext()"
               aria-label="Siguiente">
         <mat-icon>chevron_right</mat-icon>
@@ -32,7 +32,7 @@
 
       <mat-card-content>
         <div [innerHTML]="currentItem.content"></div>
-        
+
         <div class="metadata" *ngIf="currentItem.metadata">
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
             <strong>{{ item.key }}:</strong> {{ item.value }}

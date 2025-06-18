@@ -11,17 +11,6 @@
       <mat-card-content>
         <p class="data-offer">{{ offer?.dateAdded }}</p>
       </mat-card-content>
-      <mat-card-actions *ngIf="isCompany && !isDisabled">
-        <button mat-raised-button (click)="showCandidates()" class="showCandidates">
-          <div class="text-badge">
-            <span>Mostrar candidatos</span>
-            <mat-icon class="person" style="font-size: 20px; color: #3e3e3e;" matBadge="{{ offer?.candidatesCount }}"
-              matBadgeColor="warn" matBadgePosition="above after" matBadgeOverlap="false" class="custom-badge">
-              person
-            </mat-icon>
-          </div>
-        </button>
-      </mat-card-actions>
     </mat-card>
   </div>
 </div>
