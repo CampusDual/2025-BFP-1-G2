@@ -1,7 +1,10 @@
 <mat-toolbar color="primary">
 
-  <button mat-icon-button (click)="drawer.toggle()">
+  <button *ngIf="authService.isLoggedIn()" mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
+  </button>
+  <button *ngIf="!authService.isLoggedIn()" mat-icon-button routerLink="/offers/portal">
+    <mat-icon>home</mat-icon>
   </button>
 
   <img src="https://media.timtul.com/media/web_clustertic/logo-clustertic_20190412075104.png" alt="Logo">
