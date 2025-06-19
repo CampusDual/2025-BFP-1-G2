@@ -10,8 +10,7 @@ export class AuthGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot): boolean {
         if (!this.auth.isLoggedIn()) {
-            this.router.navigate(['/login']).then(r => {
-            });
+            this.router.navigate(['/login'])
             return false;
         }
         const expectedRoles = route.data['roles'] as string[];
@@ -21,17 +20,15 @@ export class AuthGuard implements CanActivate {
         this.auth.hasRoles(expectedRoles).subscribe({
             next: (hasRole) => {
                 if (!hasRole) {
-                    this.router.navigate(['../offers/portal']).then(r => {
-                    });
+                    this.router.navigate(['../offers/portal'])
                     return false;
                 }
                 return true;
             },
             error: (error) => {
                 console.error('Error checking roles', error);
-                this.router.navigate(['../offers/portal']).then(r => {
-                });
-                return false; // Error occurred while checking roles
+                this.router.navigate(['../offers/portal'])
+                return false;
             }
         });
         return true;

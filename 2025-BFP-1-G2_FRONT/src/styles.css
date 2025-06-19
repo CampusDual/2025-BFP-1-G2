@@ -21,5 +21,6 @@ body {
   font-size: 16px;
   scrollbar-color: #ffffff #3e3e3e;
   scrollbar-width: thin;
+  background: linear-gradient(to bottom, #a1a1a1, #cacaca);
 }
 

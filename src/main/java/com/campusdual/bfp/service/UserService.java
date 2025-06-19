@@ -72,7 +72,7 @@ public class UserService implements UserDetailsService, IUserService {
         candidate.setName(name);
         candidate.setSurname1(surname1);
         candidate.setSurname2(surname2);
-        candidate.setPhone_number(phoneNumber);
+        candidate.setPhoneNumber(phoneNumber);
         id = this.registerNewUser(username, password, email, roleName);
         candidate.setUser(this.userDao.findUserById(id));
         this.candidateDao.saveAndFlush(candidate);
@@ -106,15 +106,13 @@ public class UserService implements UserDetailsService, IUserService {
         if (candidate == null) {
             return null;
         }
-
         CandidateDTO candidateDTO = new CandidateDTO();
         candidateDTO.setLogin(user.getLogin());
         candidateDTO.setEmail(user.getEmail());
         candidateDTO.setName(candidate.getName());
         candidateDTO.setSurname1(candidate.getSurname1());
         candidateDTO.setSurname2(candidate.getSurname2());
-        candidateDTO.setPhoneNumber(candidate.getPhone_number());
-
+        candidateDTO.setPhoneNumber(candidate.getPhoneNumber());
         return candidateDTO;
     }
 

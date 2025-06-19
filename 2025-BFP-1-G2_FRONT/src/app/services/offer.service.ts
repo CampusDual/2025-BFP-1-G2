@@ -1,8 +1,8 @@
 // offer.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {AuthService} from "../auth/services/auth.service";
+import { Observable, switchMap } from 'rxjs';
+import {AuthService, User} from "../auth/services/auth.service";
 
 export interface Offer {
   title: string;
@@ -13,6 +13,7 @@ export interface Offer {
   providedIn: 'root'
 })
 export class OfferService {
+  
 
   private baseUrl = 'http://localhost:30030/offer';
 
@@ -23,20 +24,18 @@ export class OfferService {
     return this.http.post(`${this.baseUrl}/add`, offer, {responseType: 'text'});
   }
   getOffers(): Observable<Offer[]> {
-    this.authService.hasRole('ROLE_COMPANY').subscribe({
-      next: (hasRole) => {
-        if (hasRole) {
-          return this.http.get<Offer[]>(`${this.baseUrl}/companyOffers`);
-        } else {
-          return this.http.get<Offer[]>(`${this.baseUrl}/getAll`);
-        }
-      },
-      error: (error) => {
+  return this.authService.hasRole('ROLE_COMPANY').pipe(
+    switchMap(hasRole => {
+      if (hasRole) {
+        console.log('Usuario es empresa, cargando ofertas de empresa');
+        return this.http.get<Offer[]>(`${this.baseUrl}/companyOffers`);
+      } else {
+        console.log('Usuario no es empresa, cargando todas las ofertas');
         return this.http.get<Offer[]>(`${this.baseUrl}/getAll`);
       }
-    });
-    return this.http.get<Offer[]>(`${this.baseUrl}/getAll`);
-  }
+    })
+  );
+}
   deleteOffer(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/delete/${id}`, {responseType: 'text'});
   }
@@ -45,5 +44,8 @@ export class OfferService {
   }
   applyToOffer(id: number): Observable<any>{
     return this.http.post(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: "text" });
+  }
+  getCandidates(offerId: number): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/candidates/${offerId}`);
   }
 }
