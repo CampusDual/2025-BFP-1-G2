@@ -32,14 +32,11 @@ export class OfferTableComponent  {
 
 
   loadUserRole() {
-    // Verificar rol de empresa
     this.authService.hasRole('ROLE_COMPANY').subscribe({
       next: (hasRole) => {
         this.isCompany = hasRole;
       }
     });
-
-    // Verificar rol de candidato
     this.authService.hasRole('ROLE_CANDIDATE').subscribe({
       next: (hasRole) => {
         this.isCandidate = hasRole;
