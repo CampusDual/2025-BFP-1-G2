@@ -7,7 +7,8 @@ public class CandidateDTO extends SignupDTO {
     private String name;
     private String surname1;
     private String surname2;
-    private boolean valid;
+    private Boolean valid;
+
 
     public String getName() {
         return name;
@@ -58,11 +59,11 @@ public class CandidateDTO extends SignupDTO {
     }
 
 
-    public boolean isValid() {
+    public Boolean isValid() {
         return valid;
     }
 
-    public void setValid(boolean valid) {
+    public void setValid(Boolean valid) {
         this.valid = valid;
     }
 }

@@ -22,7 +22,7 @@ public class UserOffer {
     private Date date;
 
     @Column
-    private boolean valid;
+    private Boolean valid;
 
     public UserOffer(){
     }
@@ -55,6 +55,6 @@ public class UserOffer {
     public void setDate(Date date) {
         this.date = date;
     }
-    public boolean isValid() { return valid; }
-    public void setValid(boolean valid) { this.valid = valid; }
+    public Boolean isValid() { return valid; }
+    public void setValid(Boolean valid) { this.valid = valid; }
 }
