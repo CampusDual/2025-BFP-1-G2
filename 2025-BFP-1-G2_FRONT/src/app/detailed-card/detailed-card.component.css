@@ -20,7 +20,6 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
-
 }
 
 .close-button {
@@ -131,6 +130,7 @@ mat-card-actions {
 }
 
 .candidates-panel {
+  overflow-y: auto;
   width: 80%;
   margin: auto;
   margin-top: 16px;
@@ -149,6 +149,66 @@ mat-card-actions {
   display: flex;
 }
 
+.candidates-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.candidates-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+}
+
+.candidates-list li {
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  font-size: 1rem;
+  line-height: 1.6;
+  transition: box-shadow 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.candidates-list li:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  background: #f1f7ff;
+}
+
+.candidates-list strong {
+  color: var(--primary-color, #1976d2);
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* Contenedor para los datos y los botones */
+.candidate-info {
+  flex: 1 1 auto;
+}
+
+.candidate-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 16px;
+  height: 100%;
+  align-self: center;
+  margin-top: 8px;
+}
+
+.candidates-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
 
 @keyframes fadeIn {
   from {

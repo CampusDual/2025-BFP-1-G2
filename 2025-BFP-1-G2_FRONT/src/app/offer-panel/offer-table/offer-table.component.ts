@@ -55,7 +55,8 @@ export class OfferTableComponent  {
           email: offer.email,
           location: offer.location,
           dateAdded: new Date(offer.dateAdded).toLocaleDateString(),
-          candidatesCount: offer.candidatesCount || 0
+          candidatesCount: offer.candidatesCount || 0,
+          candidates: offer.candidates || []
         }));
         this.filteredOffers = [...this.offers];
       },
@@ -76,7 +77,8 @@ export class OfferTableComponent  {
         <p><strong>Ubicación:</strong> ${offer.location}</p>
       `,
       metadata: this.getMetadataForOffer(offer),
-      actions: this.getActionsForOffer(offer)
+      actions: this.getActionsForOffer(offer),
+      candidates: offer.candidates
     }));
 
     this.currentDetailIndex = offerIndex;
@@ -100,14 +102,6 @@ export class OfferTableComponent  {
   private getActionsForOffer(offer: any): DetailedCardAction[] {
     const actions: DetailedCardAction[] = [];
     if (this.isCompany) {
-      // Acciones para empresas
-      actions.push({
-        label: `Ver candidatos (${offer.candidatesCount})`,
-        action: 'viewCandidates',
-        color: 'primary',
-        icon: 'people',
-        data: { offer: offer }
-      });
 
       actions.push({
         label: 'Editar oferta',
