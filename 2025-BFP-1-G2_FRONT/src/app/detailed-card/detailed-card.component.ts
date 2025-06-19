@@ -1,6 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
+import { User } from '../auth/services/auth.service';
 
+export interface Candidate {
+  name: string;
+  surname1: string;
+  surname2: string;
+  email: string;
+  phoneNumber: string;
+  date: string;
+}
 
 
 export interface DetailedCardData {
@@ -10,6 +18,7 @@ export interface DetailedCardData {
   content: string;
   actions?: DetailedCardAction[];
   metadata?: { [key: string]: any };
+  candidates?: any[];
 }
 
 export interface DetailedCardAction {
@@ -37,7 +46,8 @@ export class DetailedCardComponent implements OnInit {
   @Output() onNavigate = new EventEmitter<number>();
 
   currentItem: DetailedCardData | null = null;
-
+  displayedColumns: string[] = ['name', 'surname1', 'surname2', 'email', 'phoneNumber', 'date'];
+  
   ngOnInit() {
     this.updateCurrentItem();
   }
