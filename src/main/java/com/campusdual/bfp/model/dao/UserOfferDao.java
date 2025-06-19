@@ -12,4 +12,7 @@ public interface UserOfferDao extends JpaRepository<UserOffer, Long> {
     int countByOfferId(int offerId);
     @Query("SELECT uo.user.id FROM UserOffer uo WHERE uo.offer.id = :offerId")
     List<Integer> findUserIdsByOfferId(@Param("offerId") int offerId);
+
+    Boolean isValidUserOfferId(int userId, int offerId );
+
 }
