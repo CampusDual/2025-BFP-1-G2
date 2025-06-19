@@ -133,6 +133,10 @@ public class OfferService implements IOfferService {
                 }
             }
         }
-        return CandidateMapper.INSTANCE.toDTOList(candidates);
+        List<CandidateDTO> candidateDTOS = CandidateMapper.INSTANCE.toDTOList(candidates);
+        candidateDTOS.forEach(candidateDTO ->
+                candidateDTO.setValid(userOfferDao.isValidUserOfferId(userDao.findByLogin(candidateDTO.getLogin()).getId(), offerID))
+        );
+        return candidateDTOS;
     }
 }
