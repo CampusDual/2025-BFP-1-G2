@@ -129,6 +129,24 @@ mat-card-actions {
   padding: 16px;
 }
 
+.candidates-panel {
+  margin-top: 16px;
+}
+
+.candidates-panel mat-expansion-panel-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.candidates-panel mat-panel-title {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+}
+
+
 @keyframes fadeIn {
   from {
     opacity: 0;

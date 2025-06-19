@@ -39,7 +39,12 @@
           </div>
         </div>
       </mat-card-content>
-
+      <mat-expansion-panel class="candidates-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Candidatos</mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>...</p>
+      </mat-expansion-panel>
       <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0">
         <button *ngFor="let action of currentItem.actions"
                 mat-raised-button
