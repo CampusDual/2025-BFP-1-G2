@@ -60,3 +60,5 @@ constraint fk_offers foreign key (offer_id) references offers(id)
 
 ALTER TABLE public.offers
     ALTER COLUMN description TYPE VARCHAR(2000);
+
+ALTER TABLE public.user_offers ADD "valid" boolean NULL;
