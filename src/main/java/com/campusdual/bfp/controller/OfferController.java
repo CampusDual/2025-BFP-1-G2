@@ -1,6 +1,7 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,19 +83,25 @@ public class OfferController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
         }
-       
+
     }
+
     @PreAuthorize("hasRole('COMPANY')")
-    @GetMapping(value="/companyOffers")
-    public ResponseEntity<List<OfferDTO>> queryCompanyOffers(Principal principal){
+    @GetMapping(value = "/companyOffers")
+    public ResponseEntity<List<OfferDTO>> queryCompanyOffers(Principal principal) {
         List<OfferDTO> offers = offerService.getCompanyOffers(principal.getName());
         return ResponseEntity.ok(offers);
     }
 
     @PreAuthorize("hasRole('COMPANY')")
-    @PostMapping(value = "/companyOffers/getCount")
-    public ResponseEntity<Integer> getCompanyOffersCount(int OfferID) {
-        int count = offerService.getCompanyOffersCount(OfferID);
-        return ResponseEntity.ok(count);
+    @GetMapping(value = "/candidates/{OfferID}")
+    public ResponseEntity<List<CandidateDTO>> getCandidatesFromOffer(
+            @PathVariable("OfferID") int OfferID) {
+        if (OfferID <= 0) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        List<CandidateDTO> candidates = offerService.getCompanyOffersCandidates(OfferID);
+        return ResponseEntity.ok(candidates);
     }
+
 }

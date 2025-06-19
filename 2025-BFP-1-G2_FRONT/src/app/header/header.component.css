@@ -1,9 +1,10 @@
 mat-toolbar {
   top: 0;
+  height: 100%;
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   flex-direction: row;
 }
 
@@ -18,30 +19,12 @@ img {
 }
 
 .logout-button{
-  margin-left: 0;
-  margin-right: 20px;
+  margin-left: auto;
+  margin-right: 0;
   font-weight: bold;
   font-size: 1.2rem;
   background-color: transparent;
   border: none;
   cursor: pointer;
-}
-
-.enlaceEmpresa {
-  color: rgb(255, 255, 255);
-  text-decoration: none;
-  border-radius: 5px;
-  padding: 7px;
-  margin-left: auto;
-  margin-right: 10px;
-  font-weight: 560;
-  transition: font-weight 0.3s ease, background 0.3s ease, color 0.3s ease
-              , scale 0.3s ease;
-}
-
-.enlaceEmpresa:hover {
-  color: var(--primary-color);
-  scale: 1.05;
-  background: rgb(255, 255, 255);
 }
 
