@@ -6,13 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserOfferDao extends JpaRepository<UserOffer, Long> {
     boolean existsByUserIdAndOfferId(int userId, int offerId);
     int countByOfferId(int offerId);
     @Query("SELECT uo.user.id FROM UserOffer uo WHERE uo.offer.id = :offerId")
     List<Integer> findUserIdsByOfferId(@Param("offerId") int offerId);
-
-    Boolean isValidUserOfferId(int userId, int offerId );
-
+    UserOffer findByUserIdAndOfferId(int userId, int offerId);
 }

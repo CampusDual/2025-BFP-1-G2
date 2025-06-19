@@ -104,4 +104,22 @@ public class OfferController {
         return ResponseEntity.ok(candidates);
     }
 
+    @PreAuthorize("hasRole('COMPANY')")
+    @PostMapping(value = "/update/{OfferID}")
+    public ResponseEntity<String> updateValidUser(
+            @PathVariable("OfferID") int OfferID,
+            @RequestBody CandidateDTO candidateDTO) {
+        if (OfferID <= 0) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        if (candidateDTO.getLogin() == null) {
+            return ResponseEntity.badRequest().body("Invalid candidate data");
+        }
+        try {
+            offerService.updateCandidateValidity(OfferID, candidateDTO);
+        }catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("Candidato actualizado correctamente");
+    }
 }
