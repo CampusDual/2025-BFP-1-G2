@@ -10,6 +10,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatBadgeModule} from '@angular/material/badge';
 import {FormsModule} from '@angular/forms';
 import { DetailedCardComponent } from '../detailed-card/detailed-card.component';
+import {MatExpansionModule} from "@angular/material/expansion";
 
 
 export interface Offer {
@@ -38,7 +39,8 @@ export interface Offer {
     OfferPanelRoutingModule,
     MatIconModule,
     MatBadgeModule,
-    FormsModule
+    FormsModule,
+    MatExpansionModule
   ],
 })
 export class OfferPanelModule { }

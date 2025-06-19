@@ -20,6 +20,7 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
+
 }
 
 .close-button {
@@ -130,6 +131,8 @@ mat-card-actions {
 }
 
 .candidates-panel {
+  width: 80%;
+  margin: auto;
   margin-top: 16px;
 }
 
