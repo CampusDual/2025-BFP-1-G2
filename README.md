@@ -1,42 +1,46 @@
-# Getting Started
+# Portal de Empleo - Cluster TIC Galicia
 
-## First init and after modify any DTO or Entity
-```
-mvn clean install
-```
-## Launch database
-```
-mvn exec:java -Prun_database
-```
-## Launch backend
+![Vista de la aplicación](src\main\resources\vista.png)
 
-We strongly recommend launching the server in debug mode when you are doing active development. To do this, go to the Application class inside your <code>src/main/java</code> folder.
+## Descripción
 
-![Launch in debug](https://i.imgur.com/t4ACRB0.gif)
+Este proyecto es un portal de empleo desarrollado para el **Cluster TIC de Galicia**, orientado a facilitar la conexión entre empresas del sector tecnológico y profesionales en busca de oportunidades laborales en la región.
 
-If you are no longer doing active development on the backend (e.g.: you are developing the frontend), you can launch the backend by running the <code>mvn spring-boot:run</code> command.   To make sure that you are launching the backend with the source code up to date, you can first run a <code>mvn clean install</code> command.
+El portal permite a los usuarios:
+- Consultar ofertas de empleo publicadas por empresas asociadas.
+- Gestionar y editar su perfil profesional.
+- Buscar y filtrar ofertas de trabajo de manera sencilla.
 
-```
-mvn clean install
-mvn spring-boot:run
-```
+Este proyecto ha sido realizado por estudiantes del programa Dual del **IES Wirtz**, como parte de su formación práctica.
 
+## Características principales
 
-### Reference Documentation
-For further reference, please consider the following sections:
+- **Gestión de ofertas de empleo:** Publicación, visualización y búsqueda de vacantes tecnológicas.
+- **Perfil profesional:** Cada usuario puede editar y mantener actualizado su currículum y datos de contacto.
+- **Interfaz intuitiva:** Menú lateral con navegación entre perfil profesional y ofertas, junto a un buscador centralizado.
+- **Diseño responsive:** Adaptado a diferentes resoluciones y dispositivos.
+- **Orientado a la comunidad TIC de Galicia.**
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.7.7/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.7.7/maven-plugin/reference/html/#build-image)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/2.7.7/reference/htmlsingle/#web)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/2.7.7/reference/htmlsingle/#data.sql.jpa-and-spring-data)
-* [Spring Session](https://docs.spring.io/spring-session/reference/)
+## Tecnologías utilizadas
 
-### Guides
-The following guides illustrate how to use some features concretely:
+- **Backend:** Java
+- **Frontend:** TypeScript, HTML, CSS, SCSS
+- **Frameworks y librerías:** Angular, Spring Boot
 
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
+## Captura de pantalla
 
+La siguiente imagen muestra una vista del portal, con el listado de ofertas de empleo y el menú de navegación lateral:
+
+![Vista de la aplicación](src\main\resources\vista.png)
+
+## Créditos
+
+Proyecto desarrollado por estudiantes de la Dual del IES Wirtz para el Cluster TIC Galicia.
+
+## Licencia
+
+Este proyecto es de uso educativo y para la comunidad TIC de Galicia. Para más información sobre su uso o contribución, contacta con los responsables del Cluster TIC Galicia.
+
+---
+
+*Para cualquier duda o sugerencia, no dudes en abrir una issue en este repositorio.*
