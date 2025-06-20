@@ -4,6 +4,7 @@ import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.CompanyDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +14,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Lazy
@@ -29,6 +34,9 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private CandidateDao candidateDao;
+
+    @Autowired
+    private CompanyDao companyDao;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -119,5 +127,42 @@ public class UserService implements UserDetailsService, IUserService {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+
+
+    @Override
+    public List<CompanyDTO> getAllCompanies() {
+        return companyRepository.findAll().stream()
+                .map(CompanyDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public CompanyDTO addCompany(CompanyDTO companyDTO) {
+        User user = this.userDao.findByLogin(companyDTO.getLogin());
+        if (user != null) {
+            throw new RuntimeException("Empresa ya registrada");
+        }
+        CompanyDTO company = new CompanyDTO();
+        company.setLogo(companyDTO.getLogo());
+        company.setDescription(companyDTO.getDescription());
+        company.setPhone(companyDTO.getPhone());
+        company.setUrl(companyDTO.getUrl());
+        company.setAddress(companyDTO.getAddress());
+        company.setYearFounded(companyDTO.getYearFounded());
+        return this.updateCompany(company);
+    }
+
+    @Override
+    public int updateCompany(CompanyDTO companyDTO) {
+
+    }
+
+    @Override
+    public int deleteCompany(CompanyDTO companyDTO) {
+        companyRepository.deleteById(companyDTO.getId());
+        return companyDTO.getId();
     }
 }

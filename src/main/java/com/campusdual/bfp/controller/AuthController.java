@@ -2,8 +2,8 @@ package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.auth.JWTUtil;
-import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.dto.SignupDTO;
 import com.campusdual.bfp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -59,7 +58,7 @@ public class AuthController {
 
             System.out.println("User authenticated: " + userDetails.getUsername());
             System.out.println("Generated JWT Token: " + token);
-                userService.addRoleToUser(15, (long)6);
+            userService.addRoleToUser(15, (long) 6);
 
             String role = userDetails.getAuthorities().stream()
                     .findFirst()
@@ -146,4 +145,27 @@ public class AuthController {
         return ResponseEntity.ok(candidateDetails);
     }
 
+    @GetMapping("/listCompanies")
+    public ResponseEntity<List<CompanyDTO>> listCompanies() {
+        List<CompanyDTO> companies = userService.getAllCompanies();
+        return ResponseEntity.ok(companies);
+    }
+
+    @PostMapping("/companies/add")
+    public ResponseEntity<Integer> addCompany(@RequestBody CompanyDTO companyDTO) {
+        CompanyDTO idNewCompany = userService.addCompany(companyDTO);
+        return ResponseEntity.ok(companyDTO.getId());
+    }
+
+    @PutMapping("/companies/edit")
+    public ResponseEntity<Integer> editCompany(@RequestBody CompanyDTO companyDTO) {
+        int updatedId = userService.updateCompany(companyDTO);
+        return ResponseEntity.ok(updatedId);
+    }
+
+    @DeleteMapping("/companies/delete")
+    public ResponseEntity<Integer> deleteCompany(@RequestBody CompanyDTO companyDTO) {
+        int deletedId = userService.deleteCompany(companyDTO);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedId);
+    }
 }

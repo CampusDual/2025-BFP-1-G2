@@ -1,7 +1,10 @@
 package com.campusdual.bfp.api;
 
-import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.*;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Date;
+import java.util.List;
 
 public interface IUserService {
 
@@ -17,4 +20,12 @@ public interface IUserService {
     CandidateDTO getCandidateDetails(String username);
 
     UserDetails loadUserByUsername(String username);
+
+    List<CompanyDTO> getAllCompanies();
+
+    CompanyDTO addCompany(CompanyDTO companyDTO);
+
+    int updateCompany(CompanyDTO companyDTO);
+
+    int deleteCompany(CompanyDTO companyDTO);
 }
