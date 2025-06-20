@@ -16,9 +16,13 @@
           <span>Vacantes</span>
         </div>
         <div class="nav-item" *ngIf="isCompany" routerLink="../company/Cinfo">
-          <mat-icon>business_center</mat-icon>
-          <span>Vacantes</span>
+          <mat-icon>add_add</mat-icon>
+          <span>Añadir Ofertas</span>
         </div>
+        <div class="nav-item" *ngIf="isAdmin" routerLink="../admin/admin">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>Panel Administrador</span>
+        </div>>
       </mat-drawer>
         <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
             #outlet="outlet"></router-outlet></div>
