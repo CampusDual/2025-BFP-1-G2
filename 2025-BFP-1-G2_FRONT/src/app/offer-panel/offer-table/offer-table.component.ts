@@ -3,14 +3,14 @@ import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
-import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
+import { DetailedCardData, DetailedCardAction, Candidate } from "../../detailed-card/detailed-card.component";
 
 @Component({
   selector: 'app-offer-table',
   templateUrl: './offer-table.component.html',
   styleUrls: ['./offer-table.component.css']
 })
-export class OfferTableComponent  {
+export class OfferTableComponent {
   offers: any[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
@@ -102,7 +102,6 @@ export class OfferTableComponent  {
   private getActionsForOffer(offer: any): DetailedCardAction[] {
     const actions: DetailedCardAction[] = [];
     if (this.isCompany) {
-
       actions.push({
         label: 'Editar oferta',
         action: 'editOffer',
@@ -120,7 +119,6 @@ export class OfferTableComponent  {
       });
 
     } else if (this.isCandidate) {
-      // Acciones para candidatos
       actions.push({
         label: 'Aplicar a oferta',
         action: 'apply',
@@ -138,7 +136,6 @@ export class OfferTableComponent  {
       });
 
     } else {
-      // Usuario no autenticado o sin rol específico
       actions.push({
         label: 'Iniciar sesión para aplicar',
         action: 'loginToApply',
@@ -179,10 +176,77 @@ export class OfferTableComponent  {
         this.redirectToLogin(data.offer);
         break;
 
+      case 'accept':
+        this.aceptCandidate(data.candidate, data.offerId);
+        break;
+
+      case 'reject':
+        this.rejectCandidate(data.candidate, data.offerId);
+        break;
+
+      case 'deleteOption':
+        this.deleteOptionCandidate(data.candidate, data.offerId);
+        break;
+
       default:
         console.log('Acción no reconocida:', action);
     }
   }
+
+  aceptCandidate(candidate: Candidate, offerId: number) {
+    const lastOption = candidate.valid;
+    candidate.valid = true;
+    this.offerService.updateCandidateStatus(offerId, candidate).subscribe({
+      next: () => {
+        this.snackBar.open('Candidato aceptado exitosamente', 'Cerrar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error accepting candidate:', error);
+        this.snackBar.open('Error al aceptar candidato', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        candidate.valid = lastOption;
+      }
+    });
+  }
+
+  rejectCandidate(candidate: Candidate, offerId: number) {
+    const lastOption = candidate.valid;
+    candidate.valid = false;
+    this.offerService.updateCandidateStatus(offerId, candidate).subscribe({
+      next: () => {
+        this.snackBar.open('Candidato rechazado exitosamente', 'Cerrar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error rejecting candidate:', error);
+        this.snackBar.open('Error al rechazar candidato', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        candidate.valid = lastOption;
+      }
+    });
+  }
+
+  deleteOptionCandidate(candidate: Candidate, offerId: number) {
+    const lastOption = candidate.valid;
+    candidate.valid = null;
+    this.offerService.updateCandidateStatus(offerId, candidate).subscribe({
+      next: () => {
+        this.snackBar.open('Candidato actualizado', 'Cerrar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error deleting candidate option:', error);
+        this.snackBar.open('Error al actualizar candidato', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        candidate.valid = lastOption;
+      }
+    });
+  }
+
 
   private applyToOffer(offer: any) {
     if (this.authService.isLoggedIn()) {

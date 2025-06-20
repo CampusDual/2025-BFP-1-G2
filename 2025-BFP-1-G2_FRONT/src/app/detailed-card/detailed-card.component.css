@@ -32,6 +32,16 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+.close-button:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.close-button mat-icon {
+  color: inherit;
+}
+
+
 .navigation-header {
   display: flex;
   justify-content: space-between;
@@ -122,6 +132,17 @@ mat-card {
   transform: scale(1.4);
 }
 
+mat-card-content {
+  transition: opacity 0.3s ease, height 0.3s ease;
+}
+
+mat-card-content.invisible {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, height 0.3s ease;
+}
+
 mat-card-actions {
   display: flex;
   gap: 12px;
@@ -172,6 +193,16 @@ mat-card-actions {
   justify-content: space-between;
   align-items: flex-start;
   transition: all 0.15s;
+}
+
+.candidates-list li.validated {
+  background-color: #e0f7e9;
+  border-left: 4px solid #4caf50;
+}
+
+.candidates-list li.rejected {
+  background-color: #ffebee;
+  border-left: 4px solid #f44336;
 }
 
 .candidates-list li:hover {
@@ -230,6 +261,19 @@ mat-card-actions {
   color: inherit;
 }
 
+.undo {
+  background-color: white;
+  color: var(--primary-color);
+  transition: background-color 0.15s, color 0.15s;
+}
+.undo:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+.undo mat-icon {
+  color: inherit;
+}
+
 
 .candidates-container {
   display: flex;
@@ -240,6 +284,10 @@ mat-card-actions {
 
 mat-expansion-panel.mat-expanded {
   overflow-y: auto;
+}
+
+::ng-deep .mat-expansion-panel:not(.mat-expanded) {
+  margin-bottom: 0 !important;
 }
 
 
