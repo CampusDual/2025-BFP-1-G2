@@ -26,14 +26,13 @@ public class Company {
     @Column
     private String address;
 
-    @Column
+    @Column (name = "founded_date")
     private Date foundedDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -82,6 +81,14 @@ public class Company {
         this.address = address;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Date getFoundedDate() {
         return foundedDate;
     }
@@ -89,13 +96,6 @@ public class Company {
     public void setFoundedDate(Date foundedDate) {
         this.foundedDate = foundedDate;
     }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }}
+}
 
 

@@ -1,19 +1,15 @@
 package com.campusdual.bfp.model.dto;
 
-
-import com.campusdual.bfp.model.Company;
-
 import java.util.Date;
 
 public class CompanyDTO extends SignupDTO {
     private int id;
-    private String login;
     private String logo;
     private String description;
     private String phone;
     private String url;
     private String address;
-    private Date yearFounded;
+    private Date foundedDate;
 
     public int getId() {return id;}
 
@@ -69,12 +65,12 @@ public class CompanyDTO extends SignupDTO {
         this.address = address;
     }
 
-    public Date getYearFounded() {
-        return yearFounded;
+    public Date getFoundedDate() {
+        return foundedDate;
     }
 
-    public void setYearFounded(Date yearFounded) {
-        this.yearFounded = yearFounded;
+    public void setFoundedDate(Date foundedDate) {
+        this.foundedDate = foundedDate;
     }
 
     public String getLogin() {

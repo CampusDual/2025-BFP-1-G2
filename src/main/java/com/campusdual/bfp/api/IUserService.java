@@ -23,9 +23,9 @@ public interface IUserService {
 
     List<CompanyDTO> getAllCompanies();
 
-    CompanyDTO addCompany(CompanyDTO companyDTO);
+    int addCompany(CompanyDTO companyDTO);
 
     int updateCompany(CompanyDTO companyDTO);
 
-    int deleteCompany(CompanyDTO companyDTO);
+    int deleteCompany(int companyId);
 }

@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRoleDao extends JpaRepository<UserRole, Long> {
     UserRole findUserRoleByUserAndRole(User user, Role roleName);
+    UserRole findUserRoleByUserId(int user);
 }
