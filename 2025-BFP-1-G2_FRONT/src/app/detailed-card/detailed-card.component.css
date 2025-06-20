@@ -130,7 +130,6 @@ mat-card-actions {
 }
 
 .candidates-panel {
-  overflow-y: auto;
   width: 80%;
   margin: auto;
   margin-top: 16px;
@@ -172,11 +171,11 @@ mat-card-actions {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  transition: all 0.15s;
 }
 
 .candidates-list li:hover {
   box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-  background: #f1f7ff;
 }
 
 .candidates-list strong {
@@ -185,7 +184,6 @@ mat-card-actions {
   margin-right: 4px;
 }
 
-/* Contenedor para los datos y los botones */
 .candidate-info {
   flex: 1 1 auto;
 }
@@ -202,13 +200,49 @@ mat-card-actions {
   margin-top: 8px;
 }
 
+.check {
+  background-color: white;
+  color: green;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.check:hover {
+  background-color: green;
+  color: white;
+}
+
+.check mat-icon {
+  color: inherit;
+}
+
+.close {
+  background-color: white;
+  color: var(--primary-color);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.close:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.close mat-icon {
+  color: inherit;
+}
+
+
 .candidates-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+mat-expansion-panel.mat-expanded {
   overflow-y: auto;
 }
+
+
 
 @keyframes fadeIn {
   from {
@@ -239,4 +273,5 @@ mat-card-actions {
   mat-card {
     min-width: 300px;
   }
+
 }

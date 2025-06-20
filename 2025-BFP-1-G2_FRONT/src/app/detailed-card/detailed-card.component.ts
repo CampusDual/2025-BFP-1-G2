@@ -1,15 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { User } from '../auth/services/auth.service';
 
-export interface Candidate {
-  name: string;
-  surname1: string;
-  surname2: string;
-  email: string;
-  phoneNumber: string;
-  date: string;
-}
-
 
 export interface DetailedCardData {
   id: string | number;
@@ -46,7 +37,6 @@ export class DetailedCardComponent implements OnInit {
   @Output() onNavigate = new EventEmitter<number>();
 
   currentItem: DetailedCardData | null = null;
-  displayedColumns: string[] = ['name', 'surname1', 'surname2', 'email', 'phoneNumber', 'date'];
   
   ngOnInit() {
     this.updateCurrentItem();
