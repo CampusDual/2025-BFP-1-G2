@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import {AuthService, User} from "../auth/services/auth.service";
+import { Candidate } from '../detailed-card/detailed-card.component';
 
 export interface Offer {
   title: string;
@@ -13,7 +14,7 @@ export interface Offer {
   providedIn: 'root'
 })
 export class OfferService {
-  
+
 
   private baseUrl = 'http://localhost:30030/offer';
 
@@ -47,5 +48,8 @@ export class OfferService {
   }
   getCandidates(offerId: number): Observable<User[]> {
     return this.http.get<User[]>(`${this.baseUrl}/candidates/${offerId}`);
+  }
+  updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
+    return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
   }
 }

@@ -51,7 +51,11 @@ export class LoginComponent {
             }
             else this.snackBar.open("Solo los candidatos pueden aplicar a ofertas", 'Cerrar', { duration: 3000, panelClass: ['error-snackbar'] });
           } else {
-            this.router.navigate([`../offers/portal`]);
+            if (this.authService.isCandidate()) {
+              this.router.navigate([`../offers/portal`]);
+            }else if (this.authService.isCompany()) {
+              this.router.navigate([`../company/myoffers`]);
+            }
           }
           this.isLoading = false;
         },

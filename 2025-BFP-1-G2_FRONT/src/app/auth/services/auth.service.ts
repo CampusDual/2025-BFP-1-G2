@@ -100,4 +100,13 @@ export class AuthService {
     return this.hasRole('ROLE_COMPANY');
   }
 
+  getLogin(): string {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return '';
+    }
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub || '';
+  }
+
 }
