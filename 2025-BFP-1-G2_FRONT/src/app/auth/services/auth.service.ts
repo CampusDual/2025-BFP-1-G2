@@ -15,6 +15,7 @@ export interface User {
   surname2: string;
   email: string;
   phoneNumber: string;
+  date: string;
 }
 
 @Injectable({
@@ -97,6 +98,15 @@ export class AuthService {
   }
   isCompany() {
     return this.hasRole('ROLE_COMPANY');
+  }
+
+  getLogin(): string {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return '';
+    }
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub || '';
   }
 
 }

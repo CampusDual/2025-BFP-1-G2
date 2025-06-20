@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {OfferService} from '../services/offer.service';
 import {Router} from "@angular/router";
+import { AuthService } from '../auth/services/auth.service';
 
 
 @Component({
@@ -21,11 +22,15 @@ export class CompanyPanelComponent implements OnInit {
   });
 
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private offerService: OfferService, private router: Router) {
+  constructor(private route: ActivatedRoute,
+     private fb: FormBuilder, 
+     private offerService: OfferService,
+     private router: Router,
+     private authService: AuthService) {
   }
 
   ngOnInit(): void {
-    this.companyName = this.route.snapshot.paramMap.get('companyName');
+    this.companyName = this.authService.getLogin();
   }
 
   onSubmit(): void {

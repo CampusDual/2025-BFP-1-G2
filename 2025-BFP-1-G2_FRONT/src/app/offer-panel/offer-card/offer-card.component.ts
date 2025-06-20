@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {AuthService} from "../../auth/services/auth.service";
-import {OfferService} from "../../services/offer.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { AuthService } from "../../auth/services/auth.service";
+import { OfferService } from "../../services/offer.service";
 @Component({
   selector: 'app-offer-card',
   templateUrl: './offer-card.component.html',
@@ -15,7 +15,7 @@ export class OfferCardComponent implements OnInit {
 
 
   constructor(protected authService: AuthService,
-              protected offerService: OfferService) {
+    protected offerService: OfferService) {
   }
 
 
@@ -23,26 +23,24 @@ export class OfferCardComponent implements OnInit {
     this.authService.hasRole('ROLE_COMPANY').subscribe({
       next: (hasRole) => {
         this.isCompany = hasRole;
+        if (this.isCompany) {
+          this.offerService.getCandidates(this.offer.id).subscribe({
+            next: (candidates) => {
+              this.offer.candidates = candidates;
+              this.offer.candidatesCount = candidates.length;
+              console.log('Candidates fetched successfully:', this.candidates);
+            },
+            error: (error) => {
+              console.error('Error fetching candidates:', error);
+            }
+          });
+        }
       },
       error: (error) => {
         console.error('Error checking role:', error);
         this.isCompany = false;
       }
     });
-    this.offerService.getCandidates(this.offer.id).subscribe({
-      next: (candidates) => {
-        this.candidates = candidates;
-        this.offer.candidatesCount = candidates.length;
-        console.log('Candidates fetched successfully:', this.candidates);
-      },
-      error: (error) => {
-        console.error('Error fetching candidates:', error);
-      }
-    });
-  }
-
-  showCandidates(){
-
   }
 }
 

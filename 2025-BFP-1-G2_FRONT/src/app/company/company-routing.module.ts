@@ -6,8 +6,7 @@ import { OffersComponent } from './offers/offers.component';
 const routes: Routes = [
   {path: '', redirectTo: '/company/myoffers', pathMatch: 'full' },
   {path: 'myoffers', component: OffersComponent },
-  {path: ':companyName', component: CompanyPanelComponent },
-  
+  {path: 'addOffer', component: CompanyPanelComponent },
 ];
 
 @NgModule({

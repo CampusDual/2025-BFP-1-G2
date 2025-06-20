@@ -24,6 +24,7 @@ import {AuthModule} from "./auth/auth.module";
 import {UserPanelComponent} from './user-panel/user-panel.component';
 import {OfferPanelModule} from "./offer-panel/offer-panel.module";
 import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import {MatSidenavModule} from "@angular/material/sidenav";
     TextFieldModule,
     AuthModule,
     MatSidenavModule,
-    OfferPanelModule
+    OfferPanelModule,
+    MatExpansionModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}

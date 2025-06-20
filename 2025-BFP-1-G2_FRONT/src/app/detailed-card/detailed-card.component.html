@@ -5,24 +5,18 @@
     </button>
 
     <div class="navigation-header" *ngIf="showNavigation && data.length > 1">
-      <button mat-icon-button
-              [disabled]="!canNavigatePrevious"
-              (click)="navigatePrevious()"
-              aria-label="Anterior">
+      <button mat-icon-button [disabled]="!canNavigatePrevious" (click)="navigatePrevious()" aria-label="Anterior">
         <mat-icon>chevron_left</mat-icon>
       </button>
 
       <span class="position-indicator">{{ currentPosition }}</span>
 
-      <button mat-icon-button
-              [disabled]="!canNavigateNext"
-              (click)="navigateNext()"
-              aria-label="Siguiente">
+      <button mat-icon-button [disabled]="!canNavigateNext" (click)="navigateNext()" aria-label="Siguiente">
         <mat-icon>chevron_right</mat-icon>
       </button>
     </div>
 
-    <mat-card *ngIf="currentItem">
+    <mat-card  *ngIf="currentItem">
       <mat-card-header>
         <mat-card-title>{{ currentItem.title }}</mat-card-title>
         <mat-card-subtitle *ngIf="currentItem.subtitle">
@@ -30,9 +24,8 @@
         </mat-card-subtitle>
       </mat-card-header>
 
-      <mat-card-content>
+      <mat-card-content [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
         <div [innerHTML]="currentItem.content"></div>
-
         <div class="metadata" *ngIf="currentItem.metadata">
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
             <strong>{{ item.key }}:</strong> {{ item.value }}
@@ -40,11 +33,38 @@
         </div>
       </mat-card-content>
 
+      <mat-expansion-panel (opened)="panelOpenState=true" (closed)="panelOpenState=false" class="candidates-panel"
+        *ngIf="currentItem.candidates && currentItem.candidates.length > 0"
+        [expanded]="panelOpenState">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Candidatos ({{ currentItem.candidates.length}})</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="candidates-container">
+          <ul class="candidates-list">
+            <li *ngFor="let candidate of currentItem.candidates"
+              [ngClass]="candidate.valid === true ? 'validated' : (candidate.valid === false ? 'rejected' : '')">
+              <div class="candidate-info">
+                <strong>Nombre:</strong> {{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}<br>
+                <strong>Email:</strong> {{candidate.email}}<br>
+                <strong>Teléfono:</strong> {{candidate.phoneNumber}}<br>
+                <strong>Fecha de registro:</strong> {{candidate.date}}
+              </div>
+              <div class="candidate-actions">
+                <button mat-icon-button class="undo" *ngIf="candidate.valid !== null"
+                  (click)="deleteOptionCandidate(candidate)"><mat-icon>undo</mat-icon></button>
+                <button mat-icon-button class="check" *ngIf="candidate.valid !== true"
+                  (click)="aceptCandidate(candidate)"><mat-icon>check</mat-icon></button>
+                <button mat-icon-button class="close" *ngIf="candidate.valid !== false"
+                  (click)="rejectCandidate(candidate)"><mat-icon>close</mat-icon></button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </mat-expansion-panel>
+
       <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0">
-        <button *ngFor="let action of currentItem.actions"
-                mat-raised-button
-                [color]="action.color || 'primary'"
-                (click)="executeAction(action)">
+        <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
+          (click)="executeAction(action)">
           <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
           {{ action.label }}
         </button>
@@ -52,11 +72,8 @@
     </mat-card>
 
     <div class="navigation-dots" *ngIf="showNavigation && data.length > 1">
-      <button *ngFor="let item of data; let i = index"
-              mat-icon-button
-              class="dot"
-              [class.active]="i === currentIndex"
-              (click)="currentIndex = i; updateCurrentItem(); onNavigate.emit(currentIndex)">
+      <button *ngFor="let item of data; let i = index" mat-icon-button class="dot" [class.active]="i === currentIndex"
+        (click)="currentIndex = i; updateCurrentItem(); onNavigate.emit(currentIndex)">
         <div class="dot-indicator"></div>
       </button>
     </div>

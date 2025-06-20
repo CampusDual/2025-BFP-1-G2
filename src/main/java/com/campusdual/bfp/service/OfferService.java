@@ -123,16 +123,38 @@ public class OfferService implements IOfferService {
     @Override
     public List<CandidateDTO> getCompanyOffersCandidates(int offerID) {
         List<Integer> userIds = userOfferDao.findUserIdsByOfferId(offerID);
-        List<Candidate> candidates = new ArrayList<>();
+        List<CandidateDTO> candidateDTOS = new ArrayList<>();
         for (Integer userId : userIds) {
             User user = userDao.findUserById(userId);
             if (user != null) {
                 Candidate candidate = candidateDao.findCandidateByUser(user);
                 if (candidate != null) {
-                    candidates.add(candidate);
+                    candidateDTOS.add(CandidateMapper.INSTANCE.toDTO(candidate));
+                    UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(userId, offerID);
+                    Boolean valid = userOffer != null ? userOffer.isValid() : null;
+                    candidateDTOS.get(candidateDTOS.size() - 1).setValid(valid);
                 }
             }
         }
-        return CandidateMapper.INSTANCE.toDTOList(candidates);
+        return candidateDTOS;
+    }
+
+    @Override
+    public void updateCandidateValidity(int offerID, CandidateDTO candidateDTO) {
+        if (candidateDTO == null || candidateDTO.getLogin() == null) {
+            throw new RuntimeException("Invalid candidate data");
+        }
+        User user = userDao.findByLogin(candidateDTO.getLogin());
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+        UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(user.getId(), offerID);
+        if (userOffer == null) {
+            System.out.println("No se encontró la oferta para el usuario: " + user.getLogin());
+            System.out.println("offerID: " + offerID + ", userId: " + user.getId());
+            throw new RuntimeException("No se encontró la oferta para el usuario");
+        }
+        userOffer.setValid(candidateDTO.isValid());
+        userOfferDao.saveAndFlush(userOffer);
     }
 }
