@@ -4,6 +4,9 @@ import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.CompanyDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +16,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Lazy
@@ -29,6 +36,13 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private CandidateDao candidateDao;
+
+    @Autowired
+    private OfferDao offerDao;
+
+    @Autowired
+    private CompanyDao companyDao;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -119,5 +133,47 @@ public class UserService implements UserDetailsService, IUserService {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+
+
+    @Override
+    public List<CompanyDTO> getAllCompanies() {
+        return companyDao.findAll().stream()
+                .map(CompanyMapper.INSTANCE::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int addCompany(CompanyDTO companyDTO) {
+        User user = this.userDao.findByLogin(companyDTO.getLogin());
+        if (user != null) {
+            throw new RuntimeException("Empresa ya registrada");
+        }
+        registerNewUser(companyDTO.getName(), "changeMe", companyDTO.getEmail(), "ROLE_COMPANY");
+        Company company = CompanyMapper.INSTANCE.toEntity(companyDTO);
+        company.setUser(this.userDao.findByLogin(companyDTO.getLogin()));
+        this.companyDao.saveAndFlush(company);
+        return company.getId();
+    }
+
+    @Override
+    public int updateCompany(CompanyDTO companyDTO) {
+        Company company = this.companyDao.findById(companyDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+        BeanUtils.copyProperties(companyDTO, company, "user_id");
+        this.companyDao.saveAndFlush(company);
+        return company.getId();
+    }
+
+    @Override
+    public int deleteCompany(int companyId) {
+        Company company = this.companyDao.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+        this.userRoleDao.delete(userRoleDao.findUserRoleByUserId(company.getUser().getId()));
+        this.offerDao.deleteAllByCompanyId(companyId);
+        this.companyDao.deleteById(companyId);
+        this.userDao.delete(company.getUser());
+        return companyId;
     }
 }
