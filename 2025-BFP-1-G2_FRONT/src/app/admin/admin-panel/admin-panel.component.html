@@ -1,1 +1,26 @@
-<p>admin-panel works!</p>
+<div class="table-container">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Sitio web</th>
+        <th>Dirección</th>
+        <th>Año de fundación</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let company of dataSource" (click)="openCard(company)" tabindex="0">
+        <td>{{ company.name }}</td>
+        <td>{{ company.description }}</td>
+        <td>{{ company.email }}</td>
+        <td>{{ company.phone }}</td>
+        <td><a [href]="company.website" target="_blank">{{ company.website }}</a></td>
+        <td>{{ company.address }}</td>
+        <td>{{ company.foundationYear }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

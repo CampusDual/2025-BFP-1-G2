@@ -13,7 +13,9 @@ const routes: Routes = [
     canActivate: [AuthGuard], data: { roles: ['ROLE_COMPANY'] }
   },
   {path: '', redirectTo: 'offers/portal', pathMatch: 'full' },
-  {path: 'user', component: UserPanelComponent, canActivate: [AuthGuard], data: { roles: ['ROLE_CANDIDATE'] } }
+  {path: 'user', component: UserPanelComponent, canActivate: [AuthGuard], data: { roles: ['ROLE_CANDIDATE'] } },
+
+  {path:'admin', loadChildren:() => import('./admin/admin.module').then(m=>m.AdminModule)}
 ];
 
 @NgModule({

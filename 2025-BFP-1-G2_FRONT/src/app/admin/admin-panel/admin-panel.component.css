@@ -1,0 +1,70 @@
+.table-container {
+  width: 90vw;
+  max-width: 1200px;
+  margin: 32px auto;
+  background: var(--background-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(156, 7, 0, 0.08);
+  overflow: hidden;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Rubik', sans-serif;
+  background-color: #fff;
+}
+
+.custom-table th {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--secondary-color);
+  border-left: 6px solid transparent;
+}
+
+.custom-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--secondary-color);
+  color: var(--text-color);
+  vertical-align: middle;
+  font-size: 1rem;
+}
+
+.custom-table tbody tr {
+  transition: background-color 0.2s, box-shadow 0.2s, border-left 0.2s;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+}
+
+.custom-table tbody tr:hover,
+.custom-table tbody tr:focus {
+  background-color: var(--background-hover-color);
+  box-shadow: 0 4px 16px rgba(156, 7, 0, 0.10);
+  border-left: 6px solid var(--primary-color);
+  outline: none;
+  z-index: 2;
+  color: var(--text-hover-color);
+}
+
+.custom-table tbody tr:active {
+  background-color: #fbeaea;
+  border-left: 6px solid var(--important-text-color);
+}
+
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.custom-table a {
+  color: var(--primary-color);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.custom-table a:hover {
+  text-decoration: underline;
+  color: var(--important-text-color);
+}
