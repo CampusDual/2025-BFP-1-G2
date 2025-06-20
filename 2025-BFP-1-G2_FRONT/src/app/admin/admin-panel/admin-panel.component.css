@@ -10,66 +10,54 @@
 
 .custom-table {
   width: 100%;
+  height: 100%;
   border-collapse: collapse;
   font-family: 'Rubik', sans-serif;
   background-color: #fff;
 }
 
-.custom-table th {
+thead th {
   background-color: var(--primary-color);
   color: #fff;
   font-weight: 600;
   padding: 1rem;
   text-align: left;
-  border-left: 6px var(--primary-color);
+    border-left: 6px solid var(--primary-color);
+
 }
 
-.custom-table thead tr:first-child th:first-child {
-  border-left: none;
-  border-top-left-radius: 12px;
-}
-
-
-.custom-table td {
+tbody td {
+  margin: 0;
   padding: 1rem;
   color: var(--text-color);
   vertical-align: middle;
   font-size: 1rem;
 }
 
-.custom-table tbody tr {
-  transition: background-color 0.2s, box-shadow 0.2s, border-left 0.2s;
-  cursor: pointer;
-  border-left: 4px solid transparent;
+tbody tr{
+  border: colapse;
+  border-left: 0;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, 
+              border-left 0.3s ease, color 0.3s ease, translate 0.3s ease;
 }
-
-.custom-table tbody tr:hover,
-.custom-table tbody tr:focus {
+tbody tr:hover {
   background-color: var(--background-hover-color);
   box-shadow: 0 4px 16px rgba(156, 7, 0, 0.10);
   border-left: 6px solid var(--primary-color);
-  outline: none;
-  z-index: 2;
+  translate: 6px 0;
   color: var(--text-hover-color);
 }
 
-.custom-table tbody tr:active {
-  background-color: #fbeaea;
-  border-left: 6px solid var(--important-text-color);
+tbody tr:nth-child(even) {
+  background-color: #a1a1a198;
 }
-
-.custom-table tbody tr:nth-child(even) {
-  background-color: #f8fafc;
-}
-
-.custom-table a {
+a {
   color: var(--primary-color);
   text-decoration: none;
   word-break: break-all;
+  transition: color 0.3s ease;
 }
 
-.custom-table a:hover {
-  text-decoration: underline;
+a:hover {
   color: var(--important-text-color);
 }
-
