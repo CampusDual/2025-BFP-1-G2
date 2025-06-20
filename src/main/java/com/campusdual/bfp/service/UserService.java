@@ -139,10 +139,21 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public List<CompanyDTO> getAllCompanies() {
-        return companyDao.findAll().stream()
+        List<CompanyDTO> companies =  companyDao.findAll().stream()
                 .map(CompanyMapper.INSTANCE::toDTO)
                 .collect(Collectors.toList());
+        for (CompanyDTO company : companies) {
+            User user = this.userDao.findByLogin(company.getLogin());
+            if (user != null) {
+                company.setLogin(user.getLogin());
+                company.setEmail(user.getEmail());
+            } else {
+                company.setEmail("No email found");
+            }
+        }
+        return companies;
     }
+
 
     @Override
     public int addCompany(CompanyDTO companyDTO) {

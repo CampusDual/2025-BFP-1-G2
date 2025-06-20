@@ -31,7 +31,8 @@ export interface Offer {
   ],
   exports: [
     OfferTableComponent,
-    OfferCardComponent
+    OfferCardComponent,
+    DetailedCardComponent
     ],
   imports: [
     CommonModule,

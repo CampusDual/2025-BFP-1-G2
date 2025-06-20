@@ -23,6 +23,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasRole;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -145,8 +147,12 @@ public class AuthController {
         return ResponseEntity.ok(candidateDetails);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listCompanies")
-    public ResponseEntity<List<CompanyDTO>> listCompanies() {
+    public ResponseEntity<List<CompanyDTO>> listCompanies(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         List<CompanyDTO> companies = userService.getAllCompanies();
         return ResponseEntity.ok(companies);
     }
@@ -166,9 +172,9 @@ public class AuthController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/companies/delete")
-    public ResponseEntity<Integer> deleteCompany(@RequestBody CompanyDTO companyDTO) {
-        int deletedId = userService.deleteCompany(companyDTO.getId());
+    @DeleteMapping("/companies/delete/{companyId}")
+    public ResponseEntity<Integer> deleteCompany(@PathVariable("companyId") int companyId) {
+        int deletedId = userService.deleteCompany(companyId);
         return ResponseEntity.ok(deletedId);
     }
 }
