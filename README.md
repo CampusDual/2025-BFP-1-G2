@@ -1,6 +1,6 @@
 # Portal de Empleo - Cluster TIC Galicia
 
-![Vista de la aplicación](src\main\resources\vista.png)
+![Vista de la aplicación](src/main/resources/vista.png)
 
 ## Descripción
 
@@ -31,7 +31,7 @@ Este proyecto ha sido realizado por estudiantes del programa Dual del **IES Wirt
 
 La siguiente imagen muestra una vista del portal, con el listado de ofertas de empleo y el menú de navegación lateral:
 
-![Vista de la aplicación](src\main\resources\vista.png)
+![Vista de la aplicación](src/main/resources/vista.png)
 
 ## Créditos
 
