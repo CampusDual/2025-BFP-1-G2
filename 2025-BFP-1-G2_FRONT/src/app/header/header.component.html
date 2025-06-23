@@ -9,7 +9,10 @@
 
   <img src="https://media.timtul.com/media/web_clustertic/logo-clustertic_20190412075104.png" alt="Logo">
 
-
+  <span class="spacer"></span>
+  <span *ngIf="authService.isLoggedIn()" class="username-header">
+    {{ username }}
+  </span>
 
   <button mat-icon-button *ngIf="authService.isLoggedIn()" routerLink="/offers/portal"  (click)="authService.logout()" class="logout-button">
     <mat-icon >logout</mat-icon>

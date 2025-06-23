@@ -28,3 +28,13 @@ img {
   cursor: pointer;
 }
 
+.spacer {
+  flex: 1 1 auto;
+}
+
+.username-header {
+  font-weight: bold;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+

@@ -8,8 +8,12 @@ import {AuthService} from "../auth/services/auth.service";
 })
 export class HeaderComponent {
   @Input() drawer!: any;
+  username: string = '';
   
 
   constructor(protected authService: AuthService) {
+    if (this.authService.isLoggedIn()) {
+      this.username = this.authService.getLogin();
+    }
   }
 }
