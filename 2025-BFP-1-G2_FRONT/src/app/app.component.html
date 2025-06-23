@@ -23,6 +23,12 @@
           <mat-icon>admin_panel_settings</mat-icon>
           <span>Panel Administrador</span>
         </div>
+
+        <div class="nav-item" *ngIf="isAdmin" routerLink="../offers/portal">
+          <mat-icon>home</mat-icon>
+          <span>Home</span>
+        </div>
+
       </mat-drawer>
         <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
             #outlet="outlet"></router-outlet></div>
