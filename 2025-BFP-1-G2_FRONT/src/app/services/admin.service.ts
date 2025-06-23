@@ -8,21 +8,25 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AdminService {
+
   deleteCompany(companyId: any): Observable<any> {
     return this.http.delete(`${this.baseUrl}/companies/delete/${companyId}`);
   }
 
   private baseUrl = 'http://localhost:30030/auth';
 
-    constructor(private http: HttpClient,
-                private authService: AuthService) { }
+    constructor(private http: HttpClient) { }
 
   getCompanies(): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.baseUrl}/listCompanies`);
   }
 
-  updateCompany(company: Company): Observable<Company> {
-    return this.http.put<Company>(`${this.baseUrl}/companies/update/${company.id}`, company);
+  updateCompany(company: Company): Observable<number> {
+    return this.http.put<number>(`${this.baseUrl}/companies/edit`, company);
+  }
+
+  createCompany(company: Company): Observable<number> {
+    return this.http.post<number>(`${this.baseUrl}/companies/add`, company);
   }
 
 }

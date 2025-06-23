@@ -157,6 +157,7 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public int addCompany(CompanyDTO companyDTO) {
+        companyDTO.setId(0);
         User user = this.userDao.findByLogin(companyDTO.getLogin());
         if (user != null) {
             throw new RuntimeException("Empresa ya registrada");
@@ -173,6 +174,11 @@ public class UserService implements UserDetailsService, IUserService {
         Company company = this.companyDao.findById(companyDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
         BeanUtils.copyProperties(companyDTO, company, "user_id");
+        if (!company.getUser().getEmail().equals(companyDTO.getEmail()) || !company.getUser().getLogin().equals(companyDTO.getLogin())) {
+            company.getUser().setEmail(companyDTO.getEmail());
+            company.getUser().setLogin(companyDTO.getLogin());
+            this.userDao.saveAndFlush(company.getUser());
+        }
         this.companyDao.saveAndFlush(company);
         return company.getId();
     }

@@ -69,7 +69,7 @@ a:hover {
 
 .add-company {
   position: fixed;
-  z-index: 2000;
+  z-index: 500;
   bottom: 30px;
   right: 30px;
   width: 50px;

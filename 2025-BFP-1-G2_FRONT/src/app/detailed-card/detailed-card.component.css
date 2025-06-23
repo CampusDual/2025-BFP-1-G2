@@ -78,6 +78,18 @@
   font-weight: 500;
 }
 
+.add-title{
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  display: block;
+  padding: 16px 0;
+  text-transform: uppercase;
+}
+
 mat-card {
   max-height: 80vh;
   min-height: 40vh;

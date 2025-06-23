@@ -13,7 +13,11 @@
       <tr *ngFor="let company of companies; let i = index" (click)="openDetailedCard(i)" tabindex="0">
         <td>{{ company.login }}</td>
         <td>{{ company.email }}</td>
-        <td><a [href]="company.url" target="_blank">{{ company.url }}</a></td>
+        <td>
+          <a [href]="company.url" target="_blank" (click)="$event.stopPropagation()">
+            {{ company.url }}
+          </a>
+        </td>
         <td>{{ company.address }}</td>
         <td>{{ company.foundedDate }}</td>
       </tr>
@@ -32,7 +36,7 @@
   (onSave)="onSaveCompany($event)">
 </app-detailed-card>
 
-<button mat-fab class="add-company" aria-label="Añadir empresa">
+<button mat-fab class="add-company" aria-label="Añadir empresa" (click)="addCompany()">
   <mat-icon>add</mat-icon>
 </button>
 
