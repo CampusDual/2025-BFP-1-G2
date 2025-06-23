@@ -71,8 +71,13 @@
         </div>
       </mat-card-content>
 
-      <mat-expansion-panel (opened)="panelOpenState=true" (closed)="panelOpenState=false" class="candidates-panel"
-        *ngIf="currentItem.candidates && currentItem.candidates.length > 0" [expanded]="panelOpenState">
+      <mat-expansion-panel
+        #expPanel
+        (opened)="panelOpenState=true"
+        (closed)="panelOpenState=false; resetPanelScroll()"
+        class="candidates-panel"
+        *ngIf="currentItem.candidates && currentItem.candidates.length > 0"
+        [expanded]="panelOpenState">
         <mat-expansion-panel-header>
           <mat-panel-title>Candidatos ({{ currentItem.candidates.length}})</mat-panel-title>
         </mat-expansion-panel-header>

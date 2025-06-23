@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 export interface Candidate {
   name: string;
@@ -51,6 +51,9 @@ export class DetailedCardComponent implements OnInit {
   @Output() onAction = new EventEmitter<{ action: string, data: any }>();
   @Output() onNavigate = new EventEmitter<number>();
   @Output() onSave = new EventEmitter<DetailedCardData>();
+
+  @ViewChild('expPanelHeader', { read: ElementRef }) expPanelHeader?: ElementRef;
+  @ViewChild('expPanel', { read: ElementRef }) expPanel?: ElementRef;
 
   currentItem: DetailedCardData | null = null;
   editedItem: DetailedCardData | null = null;
@@ -118,6 +121,7 @@ export class DetailedCardComponent implements OnInit {
     this.isEditing = false;
     this.addingNewItem = false;
     this.panelOpenState = false;
+    this.resetPanelScroll();
     this.onClose.emit();
   }
 
@@ -185,6 +189,15 @@ export class DetailedCardComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Método para resetear el scroll del panel de expansión
+  resetPanelScroll() {
+    setTimeout(() => {
+      if (this.expPanel && this.expPanel.nativeElement) {
+        this.expPanel.nativeElement.scrollTop = 0;
+      }
+    }, 50);
   }
 
   get canNavigatePrevious(): boolean {
