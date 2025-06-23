@@ -1,0 +1,42 @@
+<div class="table-container">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Sitio web</th>
+        <th>Dirección</th>
+        <th>Año de fundación</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let company of companies; let i = index" (click)="openDetailedCard(i)" tabindex="0">
+        <td>{{ company.login }}</td>
+        <td>{{ company.email }}</td>
+        <td>
+          <a [href]="company.url" target="_blank" (click)="$event.stopPropagation()">
+            {{ company.url }}
+          </a>
+        </td>
+        <td>{{ company.address }}</td>
+        <td>{{ company.foundedDate }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<app-detailed-card
+  [isVisible]="showDetailedCard"
+  [data]="detailedCardData"
+  [currentIndex]="currentDetailIndex"
+  [showNavigation]="true"
+  [editMode]="true"
+  [cardType]="'offer'"
+  (onClose)="closeDetailedCard()"
+  (onAction)="onDetailedCardAction($event)"
+  (onSave)="onSaveCompany($event)">
+</app-detailed-card>
+
+<button mat-fab class="add-company" aria-label="Añadir empresa" (click)="addCompany()">
+  <mat-icon>add</mat-icon>
+</button>
+

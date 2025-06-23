@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showFiller = false;
   isCompany = false;
   isCandidate = false;
+  isAdmin = false;
   private authSubscription?: Subscription;
   private routerSubscription?: Subscription;
 
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
         } else {
           this.isCompany = false;
           this.isCandidate = false;
+          this.isAdmin = false;
         }
       }
     });
@@ -74,6 +76,7 @@ export class AppComponent implements OnInit, OnDestroy {
     } else {
       this.isCompany = false;
       this.isCandidate = false;
+      this.isAdmin = false;
     }
   }
 
@@ -101,8 +104,17 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isCandidate = false;
       }
     });
+    this.authService.hasRole('ROLE_ADMIN').subscribe({
+      next: (hasRole) => {
+        console.log('Is Admin:', hasRole); // Debug
+        this.isAdmin = hasRole;
+      },
+      error: (error) => {
+        console.error('Error checking admin role:', error);
+        this.isAdmin = false;
+      }
+    });
   }
-
   getRouterOutletState(outlet: RouterOutlet) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }

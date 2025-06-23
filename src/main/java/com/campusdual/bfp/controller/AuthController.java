@@ -2,21 +2,20 @@ package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.auth.JWTUtil;
-import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.dto.SignupDTO;
-import com.campusdual.bfp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -59,7 +58,7 @@ public class AuthController {
 
             System.out.println("User authenticated: " + userDetails.getUsername());
             System.out.println("Generated JWT Token: " + token);
-                userService.addRoleToUser(15, (long)6);
+            userService.addRoleToUser(15, (long) 6);
 
             String role = userDetails.getAuthorities().stream()
                     .findFirst()
@@ -146,4 +145,34 @@ public class AuthController {
         return ResponseEntity.ok(candidateDetails);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/listCompanies")
+    public ResponseEntity<List<CompanyDTO>> listCompanies(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<CompanyDTO> companies = userService.getAllCompanies();
+        return ResponseEntity.ok(companies);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/companies/add")
+    public ResponseEntity<Integer> addCompany(@RequestBody CompanyDTO companyDTO) {
+        int idNewCompany = userService.addCompany(companyDTO);
+        return ResponseEntity.ok(idNewCompany);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/companies/edit")
+    public ResponseEntity<Integer> editCompany(@RequestBody CompanyDTO companyDTO) {
+        int updatedId = userService.updateCompany(companyDTO);
+        return ResponseEntity.ok(updatedId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/companies/delete/{companyId}")
+    public ResponseEntity<Integer> deleteCompany(@PathVariable("companyId") int companyId) {
+        int deletedId = userService.deleteCompany(companyId);
+        return ResponseEntity.ok(deletedId);
+    }
 }

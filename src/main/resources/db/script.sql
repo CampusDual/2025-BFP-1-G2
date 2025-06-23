@@ -62,3 +62,18 @@ ALTER TABLE public.offers
     ALTER COLUMN description TYPE VARCHAR(2000);
 
 ALTER TABLE public.user_offers ADD "valid" boolean NULL;
+
+
+CREATE TABLE companies (
+    id SERIAL PRIMARY KEY,
+    logo VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(1000),
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    address VARCHAR(155) NOT NULL,
+    founded_date DATE NOT NULL,
+    user_id INTEGER,
+    CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users(id)
+);

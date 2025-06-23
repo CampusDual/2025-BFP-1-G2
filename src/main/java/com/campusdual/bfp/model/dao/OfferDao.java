@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface OfferDao extends JpaRepository<Offer, Integer> {
     List<Offer> findOfferByCompanyId(int companyId);
+    int deleteAllByCompanyId(int companyId);
 }
