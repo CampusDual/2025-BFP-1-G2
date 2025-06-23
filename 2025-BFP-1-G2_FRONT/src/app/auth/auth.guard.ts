@@ -9,32 +9,18 @@ export class AuthGuard implements CanActivate {
     }
 
     canActivate(route: ActivatedRouteSnapshot): boolean {
-        if (!this.auth.isLoggedIn()) {
-            this.router.navigate(['/login'])
+        if (route.routeConfig?.path === 'offers' && !this.auth.isLoggedIn()) {
+            return true;
+        }
+        else if(!this.auth.isLoggedIn()) {
+            this.router.navigate(['/login']);
             return false;
         }
         const expectedRoles = route.data['roles'] as string[];
         if (!expectedRoles || expectedRoles.length === 0) {
             return true;
         }
-        this.auth.hasRoles(expectedRoles).subscribe({
-            next: (hasRole) => {
-                if (!hasRole) {
-                    this.router.navigate(['../offers/portal'])
-                    return false;
-                }else if (hasRole) {
-                    if (route.routeConfig?.path === 'admin') {
-                        this.router.navigate(['../admin']);
-                    }
-                }
-                return true;
-            },
-            error: (error) => {
-                console.error('Error checking roles', error);
-                this.router.navigate(['../offers/portal'])
-                return false;
-            }
-        });
+        this.auth.redirectToUserHome();
         return true;
     }
 }

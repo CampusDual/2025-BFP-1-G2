@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 export interface User {
   username: string;
@@ -25,6 +26,7 @@ export interface User {
 
 export class AuthService {
   
+  
   private baseUrl = 'http://localhost:30030/auth';
   private authStatusSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
   public isAuthenticated$ = this.authStatusSubject.asObservable();
@@ -41,7 +43,9 @@ export class AuthService {
     );
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private router: Router
+  ) {
   }
 
   login(credentials: { login: string, password: string }): Observable<any> {
@@ -107,6 +111,36 @@ export class AuthService {
     }
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.sub || '';
+  }
+
+   redirectToUserHome() {
+    this.hasRole('ROLE_CANDIDATE').subscribe({
+      next: (isCandidate) => {
+        if (isCandidate) {
+          this.router.navigate([`../offers/portal`]);
+          return;
+        }
+        this.hasRole('ROLE_COMPANY').subscribe({
+          next: (isCompany) => {
+            if (isCompany) {
+              console.log("Redirecting to company panel");
+              this.router.navigate([`../company/myoffers`]);
+              return;
+            }
+
+            this.hasRole('ROLE_ADMIN').subscribe({
+              next: (isAdmin) => {
+                if (isAdmin) {
+                  this.router.navigate([`../admin`]);
+                } else {
+                  this.router.navigate([`../offers/portal`]);
+                }
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
 }

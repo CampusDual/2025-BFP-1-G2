@@ -35,27 +35,33 @@ export class LoginComponent {
           const pendingOfferId = localStorage.getItem('pendingOfferId');
           if (pendingOfferId) {
             localStorage.removeItem('pendingOfferId');
-            if (this.authService.isCandidate()) {
-              this.offerService.applyToOffer(Number(pendingOfferId)).subscribe({
-                next: (applyResponse) => {
-                  this.snackBar.open(applyResponse, 'Cerrar', { duration: 3000 });
-                  this.router.navigate([`../offers/portal`]);
-                },
-                error: (error) => {
-                  this.snackBar.open(error.error, 'Cerrar', {
+            // Verificar rol usando el servicio directamente
+            this.authService.hasRole('ROLE_CANDIDATE').subscribe({
+              next: (isCandidate) => {
+                if (isCandidate) {
+                  this.offerService.applyToOffer(Number(pendingOfferId)).subscribe({
+                    next: (applyResponse) => {
+                      this.snackBar.open(applyResponse, 'Cerrar', { duration: 3000 });
+                      this.router.navigate([`../offers/portal`]);
+                    },
+                    error: (error) => {
+                      this.snackBar.open(error.error, 'Cerrar', {
+                        panelClass: ['error-snackbar']
+                      });
+                      this.router.navigate([`../user`]);
+                    }
+                  });
+                } else {
+                  this.snackBar.open("Solo los candidatos pueden aplicar a ofertas", 'Cerrar', {
+                    duration: 3000,
                     panelClass: ['error-snackbar']
                   });
-                  this.router.navigate([`../user`]);
+                  this.authService.redirectToUserHome();
                 }
-              });
-            }
-            else this.snackBar.open("Solo los candidatos pueden aplicar a ofertas", 'Cerrar', { duration: 3000, panelClass: ['error-snackbar'] });
+              }
+            });
           } else {
-            if (this.authService.isCandidate()) {
-              this.router.navigate([`../offers/portal`]);
-            }else if (this.authService.isCompany()) {
-              this.router.navigate([`../company/myoffers`]);
-            }
+            this.authService.redirectToUserHome();
           }
           this.isLoading = false;
         },
@@ -71,6 +77,7 @@ export class LoginComponent {
     }
   }
 
+ 
 
   getnameErrorMessage()
     :
@@ -95,6 +102,5 @@ export class LoginComponent {
   formValid() {
     return this.name.valid && this.password.valid;
   }
-
 
 }
