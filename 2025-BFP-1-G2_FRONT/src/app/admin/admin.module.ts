@@ -4,6 +4,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { MatTableModule } from '@angular/material/table';
 import { OfferPanelModule } from '../offer-panel/offer-panel.module';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { OfferPanelModule } from '../offer-panel/offer-panel.module';
     CommonModule,
     AdminRoutingModule,
     MatTableModule,
-    OfferPanelModule
+    OfferPanelModule,
+    MatIconModule
   ]
 })
 export class AdminModule { }
