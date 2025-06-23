@@ -13,18 +13,22 @@ export interface Candidate {
 export interface DetailedCardData {
   id: string | number;
   title: string;
+  titleLabel?: string;
   subtitle?: string;
+  subtitleLabel?: string;
   content: string;
+  contentLabel?: string;
   actions?: DetailedCardAction[];
   metadata?: { [key: string]: any };
   candidates?: any[];
+  editable?: boolean;
 }
 
 export interface DetailedCardAction {
   label: string;
   action: string;
   color?: 'primary' | 'accent' | 'warn';
-  icon?: string; // Nuevo campo para íconos
+  icon?: string;
   data?: any;
 }
 
@@ -40,13 +44,17 @@ export class DetailedCardComponent implements OnInit {
   @Input() currentIndex: number = 0;
   @Input() showNavigation: boolean = true;
   @Input() cardType: 'offer' | 'candidate' | 'generic' = 'generic';
+  @Input() editMode: boolean = false;
 
   @Output() onClose = new EventEmitter<void>();
   @Output() onAction = new EventEmitter<{ action: string, data: any }>();
   @Output() onNavigate = new EventEmitter<number>();
+  @Output() onSave = new EventEmitter<DetailedCardData>();
 
   currentItem: DetailedCardData | null = null;
+  editedItem: DetailedCardData | null = null;
   panelOpenState: boolean = false;
+  isEditing: boolean = false;
 
   ngOnInit() {
     this.updateCurrentItem();
@@ -60,14 +68,46 @@ export class DetailedCardComponent implements OnInit {
     if (this.data.length > 0 && this.currentIndex >= 0 && this.currentIndex < this.data.length) {
       this.panelOpenState = false;
       this.currentItem = this.data[this.currentIndex];
+      this.editedItem = { ...this.currentItem };
+    }
+  }
+
+  trackByMetadata(index: number, item: any): any {
+    return item.key;
+  }
+  
+  startEdit() {
+    this.isEditing = true;
+    this.editedItem = { ...this.currentItem! };
+    if (this.currentItem!.metadata) {
+      this.editedItem!.metadata = { ...this.currentItem!.metadata };
+    }
+  }
+
+  cancelEdit() {
+    this.isEditing = false;
+    this.editedItem = { ...this.currentItem! };
+  }
+
+  saveEdit() {
+    if (this.editedItem) {
+      this.onSave.emit(this.editedItem);
+      this.currentItem = { ...this.editedItem };
+      this.isEditing = false;
     }
   }
 
   close() {
+    if (this.isEditing) {
+      this.cancelEdit();
+    }
     this.onClose.emit();
   }
 
   navigatePrevious() {
+    if (this.isEditing) {
+      this.cancelEdit();
+    }
     if (this.currentIndex > 0) {
       this.currentIndex--;
       this.updateCurrentItem();
@@ -76,6 +116,9 @@ export class DetailedCardComponent implements OnInit {
   }
 
   navigateNext() {
+    if (this.isEditing) {
+      this.cancelEdit();
+    }
     if (this.currentIndex < this.data.length - 1) {
       this.currentIndex++;
       this.updateCurrentItem();

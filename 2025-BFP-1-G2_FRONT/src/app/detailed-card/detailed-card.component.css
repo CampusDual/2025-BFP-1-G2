@@ -20,6 +20,7 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
+  
 }
 
 .close-button {
@@ -40,6 +41,25 @@
 .close-button mat-icon {
   color: inherit;
 }
+
+.edit-button {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  z-index: 10;
+  background-color: white;
+  color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.edit-button:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.edit-button mat-icon {
+  color: inherit;
+}
+
 
 
 .navigation-header {
@@ -65,6 +85,7 @@ mat-card {
   min-width: 50vw;
   margin: 0;
   border-radius: 0 0 8px 8px;
+  overflow: auto;
   scrollbar-color: var(--primary-color) transparent;
 }
 
@@ -118,7 +139,6 @@ mat-card {
   transform: scale(1.2);
 }
 
-/* Mejorar el efecto hover */
 .dot:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
@@ -291,8 +311,109 @@ mat-expansion-panel.mat-expanded {
   margin-bottom: 0 !important;
 }
 
+mat-label {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+.edit-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.edit-field.full-width {
+  width: 100%;
+}
+
+.edit-field .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.metadata-edit {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.metadata-edit h4 {
+  margin: 0 0 16px 0;
+  color: var(--primary-color);
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.metadata-edit-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.metadata-edit-item:last-child {
+  margin-bottom: 0;
+}
+
+.metadata-key {
+  flex: 0 0 200px;
+  min-width: 150px;
+}
+
+.metadata-value {
+  flex: 1;
+  min-width: 200px;
+}
 
 
+::ng-deep .edit-field .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: var(--primary-color);
+}
+
+::ng-deep .edit-field .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: var(--primary-color);
+}
+
+::ng-deep .edit-field .mat-form-field-label {
+  color: var(--secondary-color);
+}
+
+::ng-deep .edit-field.mat-focused .mat-form-field-label {
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .metadata-edit-item {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .metadata-key,
+  .metadata-value {
+    flex: 1;
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .edit-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .close-button {
+    order: 1;
+    position: relative;
+    top: 0;
+    right: 0;
+  }
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -311,16 +432,4 @@ mat-expansion-panel.mat-expanded {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-@media (max-width: 768px) {
-  .detailed-container {
-    max-width: 95vw;
-    max-height: 90vh;
-  }
-  
-  mat-card {
-    min-width: 300px;
-  }
-
 }

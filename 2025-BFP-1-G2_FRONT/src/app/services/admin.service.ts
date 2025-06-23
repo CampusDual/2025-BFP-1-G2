@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/services/auth.service';
 import { Company } from '../admin/admin-panel/admin-panel.component';
 import { Observable } from 'rxjs';
-import {Candidate} from "../detailed-card/detailed-card.component";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +21,8 @@ export class AdminService {
     return this.http.get<Company[]>(`${this.baseUrl}/listCompanies`);
   }
 
-  updateCompanies(companyId: number, company: Company): Observable<any> {
-    return this.http.post(`${this.baseUrl}/companies/edit/${companyId}`, company, {responseType: 'text'});
+  updateCompany(company: Company): Observable<Company> {
+    return this.http.put<Company>(`${this.baseUrl}/companies/update/${company.id}`, company);
   }
+
 }
