@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { DetailedCardData } from "../../detailed-card/detailed-card.component";
 import { AdminService } from 'src/app/services/admin.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 export interface Company {
@@ -29,11 +29,16 @@ export class AdminPanelComponent {
   showDetailedCard = false;
   detailedCardData: DetailedCardData[] = [];
   currentDetailIndex = 0;
+  companyForm: FormGroup;
+  isAddingNewCompany = false;
 
-  constructor(private adminService: AdminService,
-    private snackBar: MatSnackBar
+  constructor(
+    private adminService: AdminService,
+    private snackBar: MatSnackBar,
+    private fb: FormBuilder
   ) {
     this.loadCompanies();
+    this.companyForm = this.createCompanyForm();
   }
 
   selectedCompany: Company | null = null;
@@ -63,131 +68,108 @@ export class AdminPanelComponent {
             address: company.address,
             foundedDate: new Date(company.foundedDate).getFullYear()
           }));
+        
+        // Solo recrear detailedCardData si no estamos añadiendo una nueva empresa
+        if (!this.isAddingNewCompany) {
+          this.createDetailedCardData();
+        }
       },
       error: (error: any) => {
-        console.error('Error fetching offers', error);
+        console.error('Error fetching companies', error);
       }
     });
   }
 
+  private createDetailedCardData() {
+    this.detailedCardData = this.companies.map(company => ({
+      id: company.id,
+      title: company.login.toUpperCase(),
+      editableTitle: company.login,
+      titleLabel: 'Empresa',
+      subtitle: company.email,
+      subtitleLabel: 'Email',
+      content: company.description,
+      contentLabel: 'Descripción',
+      editable: true,
+      form: this.createCompanyFormForEdit(company),
+      metadata: {
+        logo: company.logo,
+        telefono: company.phone,
+        web: company.url,
+        direccion: company.address,
+        fundación: company.foundedDate
+      },
+      actions: [
+        {
+          label: 'Eliminar empresa',
+          action: 'deleteCompany',
+          color: 'warn',
+          icon: 'delete',
+          data: { Company: company }
+        }
+      ]
+    }));
+  }
+
+  private createCompanyForm(): FormGroup {
+    return this.fb.group({
+      login: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      email: ['', [Validators.required, Validators.email]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      phone: ['', [Validators.required, Validators.pattern(/^[+]?[\d\s\-\(\)]+$/)]],
+      url: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
+      address: ['', [Validators.required, Validators.minLength(5)]],
+      foundedDate: ['', [Validators.required, Validators.min(1800), Validators.max(new Date().getFullYear())]],
+      logo: ['']
+    });
+  }
+
+  private createCompanyFormForEdit(company: Company): FormGroup {
+    const form = this.createCompanyForm();
+    form.patchValue({
+      login: company.login,
+      email: company.email,
+      description: company.description,
+      phone: company.phone,
+      url: company.url,
+      address: company.address,
+      foundedDate: company.foundedDate,
+      logo: company.logo
+    });
+    return form;
+  }
+
   openDetailedCard(companyIndex: number) {
-    this.detailedCardData = this.companies
-      .slice()
-      .sort((a, b) => a.login.localeCompare(b.login))
-      .map(company => ({
-        id: company.id,
-        title: company.login.toUpperCase(),
-        editableTitle: company.login,
-        titleLabel: 'Empresa',
-        subtitle: company.email,
-        subtitleLabel: 'Email',
-        content: company.description,
-        contentLabel: 'Descripción',
-        editable: true,
-        metadata: {
-          logo: company.logo,
-          telefono: company.phone,
-          web: company.url,
-          direccion: company.address,
-          fundación: new Date(company.foundedDate).getFullYear()
-        },
-        actions: [
-          {
-            label: 'Eliminar empresa',
-            action: 'deleteCompany',
-            color: 'warn',
-            icon: 'delete',
-            data: { Company: company }
-          }
-        ]
-      }));
+    this.isAddingNewCompany = false;
+    this.createDetailedCardData();
     this.currentDetailIndex = companyIndex;
     this.showDetailedCard = true;
   }
 
-  onDetailedCardAction(event: { action: string, data: any }) {
-    const { action, data } = event;
-    switch (action) {
-      case 'editCompany':
-        console.log('Editar empresa:', data.Company);
-        break;
-      case 'deleteCompany':
-        if (confirm(`¿Estás seguro de que quieres eliminar la empresa "${data.Company.login}"?`)) {
-          this.adminService.deleteCompany(data.Company.id).subscribe({
-            next: () => {
-              this.showDetailedCard = false;
-              this.companies = this.companies.filter(company => company !== data.Company);
-              this.loadCompanies();
-            },
-            error: (error: any) => {
-              console.error('Error eliminando empresa', error);
-            }
-          });
-        }
-
-        break;
-      default:
-        console.log('Acción no reconocida:', action);
-    }
-  }
-
   closeDetailedCard() {
     this.showDetailedCard = false;
-  }
-
-  onSaveCompany(editedData: DetailedCardData) {
-    console.log('Guardando cambios:', editedData);
-
-    if (editedData.id === 0) {
-      if (confirm(`¿Crear nueva empresa "${editedData.editableTitle}"?`)) {
-        this.adminService.createCompany({
-          id: editedData.id as number,
-          logo: editedData.metadata?.['logo'] || '',
-          login: editedData.editableTitle || '',
-          description: editedData.content,
-          email: editedData.subtitle || '',
-          phone: editedData.metadata?.['telefono'] || '',
-          url: editedData.metadata?.['web'] || '',
-          address: editedData.metadata?.['direccion'] || '',
-          foundedDate: new Date(editedData.metadata?.['fundación'] || new Date()).getTime()
-        }).subscribe({
-          next: () => {
-            this.snackBar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
-            this.loadCompanies();
-            this.closeDetailedCard();
-          },
-          error: () => {
-            this.snackBar.open('Error al crear la empresa', 'Cerrar', { duration: 3000, panelClass: 'error-snackbar' });
-          }
-        });
-      }
-    } else {
-      if (confirm(`¿Actualizar empresa "${editedData.title}"?`)) {
-        this.adminService.updateCompany({
-          id: editedData.id as number,
-          logo: editedData.metadata?.['logo'] || '',
-          login: editedData.editableTitle || '',
-          description: editedData.content,
-          email: editedData.subtitle || '',
-          phone: editedData.metadata?.['telefono'] || '',
-          url: editedData.metadata?.['web'] || '',
-          address: editedData.metadata?.['direccion'] || '',
-          foundedDate: new Date(editedData.metadata?.['fundación'] || '').getTime()
-        }).subscribe({
-          next: () => {
-            this.snackBar.open('Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
-            this.loadCompanies();
-            this.closeDetailedCard();
-          },
-          error: () => {
-            this.snackBar.open('Error al actualizar la empresa', 'Cerrar', { duration: 3000, panelClass: 'error-snackbar' });
-          }
-        });
-      }
-    }
+    this.isAddingNewCompany = false;
+    // Resetear el índice para limpiar el estado
+    this.currentDetailIndex = 0;
   }
 
   addCompany() {
+    this.isAddingNewCompany = true;
+    
+    // Crear nuevo formulario limpio
+    const newCompanyForm = this.createCompanyForm();
+    newCompanyForm.reset({
+      login: '',
+      email: '',
+      description: '',
+      phone: '',
+      url: 'https://',
+      address: '',
+      foundedDate: new Date().getFullYear(),
+      logo: ''
+    });
+
+    // Crear datos para nueva empresa - IMPORTANTE: Solo un elemento
     this.detailedCardData = [{
       id: 0,
       title: '',
@@ -198,6 +180,7 @@ export class AdminPanelComponent {
       content: '',
       contentLabel: 'Descripción de la Empresa',
       editable: true,
+      form: newCompanyForm,
       metadata: {
         logo: '',
         telefono: '',
@@ -206,8 +189,115 @@ export class AdminPanelComponent {
         fundación: new Date().getFullYear()
       }
     }];
-
+    
+    // IMPORTANTE: Resetear el índice a 0 para la nueva empresa
     this.currentDetailIndex = 0;
     this.showDetailedCard = true;
+  }
+
+  onSaveCompany(editedData: DetailedCardData) {
+    const form = editedData.form!;
+    
+    if (form.invalid) {
+      form.markAllAsTouched();
+      this.snackBar.open('Por favor, corrija los errores en el formulario', 'Cerrar', {
+        duration: 3000,
+        panelClass: 'error-snackbar'
+      });
+      return;
+    }
+
+    const formValue = form.value;
+
+    if (this.isAddingNewCompany) {
+      // Crear nueva empresa
+      if (confirm(`¿Crear nueva empresa "${formValue.login}"?`)) {
+        this.adminService.createCompany({
+          id: 0,
+          logo: formValue.logo || '',
+          login: formValue.login,
+          description: formValue.description,
+          email: formValue.email,
+          phone: formValue.phone,
+          url: formValue.url,
+          address: formValue.address,
+          foundedDate: new Date(formValue.foundedDate, 0, 1).getTime()
+        }).subscribe({
+          next: () => {
+            this.snackBar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
+            this.isAddingNewCompany = false;
+            this.currentDetailIndex = 0; // Resetear índice
+            this.loadCompanies();
+            this.closeDetailedCard();
+          },
+          error: () => {
+            this.snackBar.open('Error al crear la empresa', 'Cerrar', { 
+              duration: 3000, 
+              panelClass: 'error-snackbar' 
+            });
+          }
+        });
+      }
+    } else {
+      // Actualizar empresa existente
+      if (confirm(`¿Actualizar empresa "${formValue.login}"?`)) {
+        this.adminService.updateCompany({
+          id: editedData.id as number,
+          logo: formValue.logo || '',
+          login: formValue.login,
+          description: formValue.description,
+          email: formValue.email,
+          phone: formValue.phone,
+          url: formValue.url,
+          address: formValue.address,
+          foundedDate: new Date(formValue.foundedDate, 0, 1).getTime()
+        }).subscribe({
+          next: () => {
+            this.snackBar.open('Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
+            this.loadCompanies();
+            this.closeDetailedCard();
+          },
+          error: () => {
+            this.snackBar.open('Error al actualizar la empresa', 'Cerrar', { 
+              duration: 3000, 
+              panelClass: 'error-snackbar' 
+            });
+          }
+        });
+      }
+    }
+  }
+
+  onDetailedCardAction(event: { action: string, data: any }) {
+    const { action, data } = event;
+    switch (action) {
+      case 'deleteCompany':
+        if (confirm(`¿Estás seguro de que quieres eliminar la empresa "${data.Company.login}"?`)) {
+          this.adminService.deleteCompany(data.Company.id).subscribe({
+            next: () => {
+              this.showDetailedCard = false;
+              this.isAddingNewCompany = false;
+              this.currentDetailIndex = 0; // Resetear índice después de eliminar
+              this.loadCompanies();
+              this.snackBar.open('Empresa eliminada correctamente', 'Cerrar', { duration: 3000 });
+            },
+            error: (error: any) => {
+              console.error('Error eliminando empresa', error);
+              this.snackBar.open('Error al eliminar la empresa', 'Cerrar', { 
+                duration: 3000, 
+                panelClass: 'error-snackbar' 
+              });
+            }
+          });
+        }
+        break;
+      case 'reloadCompanies':
+        this.isAddingNewCompany = false;
+        this.currentDetailIndex = 0; // Resetear índice
+        this.loadCompanies();
+        break;
+      default:
+        console.log('Acción no reconocida:', action);
+    }
   }
 }

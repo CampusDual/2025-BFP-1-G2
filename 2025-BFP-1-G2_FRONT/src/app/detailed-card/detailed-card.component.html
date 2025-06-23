@@ -1,21 +1,21 @@
 <div class="detailed-overlay" *ngIf="isVisible">
   <div class="detailed-container" (click)="$event.stopPropagation()">
     <div class="header-actions">
-      <button mat-icon-button class="close-button" (click)="close() " aria-label="Cerrar">
+      <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
         <mat-icon>close</mat-icon>
       </button>
-      <button mat-icon-button class="edit-button"  *ngIf="currentItem?.editable && !isEditing" (click)="startEdit()" aria-label="Editar">
+      <button mat-icon-button class="edit-button" *ngIf="currentItem?.editable && !isEditing && !addingNewItem" (click)="startEdit()" aria-label="Editar">
         <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button class="edit-button" *ngIf="isEditing" (click)="saveEdit()" aria-label="Guardar" color="primary">
         <mat-icon>save</mat-icon>
       </button>
-      <button mat-icon-button  class="close-button" *ngIf="!addingNewItem && isEditing" (click)="cancelEdit()" aria-label="Cancelar" color="warn">
-        <mat-icon>cancel</mat-icon>
+      <button mat-icon-button class="close-button" *ngIf="isEditing && !addingNewItem" (click)="cancelEdit()" aria-label="Cancelar" color="warn">
+        <mat-icon>arrow_back</mat-icon>
       </button>
     </div>
 
-    <div class="navigation-header" *ngIf="showNavigation && data.length > 1">
+    <div class="navigation-header" *ngIf="showNavigation && data.length > 1 && !addingNewItem">
       <button mat-icon-button [disabled]="!canNavigatePrevious" (click)="navigatePrevious()" aria-label="Anterior">
         <mat-icon>chevron_left</mat-icon>
       </button>
@@ -27,45 +27,133 @@
       </button>
     </div>
 
-    <mat-card *ngIf="currentItem">
-    <mat-card-title  *ngIf="addingNewItem" class="add-title">Añadir nueva empresa</mat-card-title>
+    <mat-card *ngIf="currentItem" [formGroup]="currentItem.form!">
+      <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva empresa</mat-card-title>
       <mat-card-header>
         <mat-card-title *ngIf="!isEditing">{{ currentItem.title }}</mat-card-title>
+        
         <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
           <mat-label>{{currentItem.titleLabel}}</mat-label>
-          <input matInput [(ngModel)]="editedItem!.editableTitle">
+          <input matInput formControlName="login">
+          <mat-error *ngIf="currentItem.form?.get('login')?.hasError('required')">
+            El nombre de la empresa es obligatorio
+          </mat-error>
+          <mat-error *ngIf="currentItem.form?.get('login')?.hasError('minlength')">
+            Mínimo 2 caracteres
+          </mat-error>
+          <mat-error *ngIf="currentItem.form?.get('login')?.hasError('maxlength')">
+            Máximo 50 caracteres
+          </mat-error>
         </mat-form-field>
 
         <mat-card-subtitle *ngIf="currentItem.subtitle && !isEditing">
           {{ currentItem.subtitle }}
         </mat-card-subtitle>
+        
+        <!-- Campo Email -->
         <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
           <mat-label>{{currentItem.subtitleLabel}}</mat-label>
-          <input matInput [(ngModel)]="editedItem!.subtitle">
+          <input matInput formControlName="email" type="email">
+          <mat-error *ngIf="currentItem.form?.get('email')?.hasError('required')">
+            El email es obligatorio
+          </mat-error>
+          <mat-error *ngIf="currentItem.form?.get('email')?.hasError('email')">
+            Ingrese un email válido
+          </mat-error>
         </mat-form-field>
       </mat-card-header>
 
-      <mat-card-content
-        [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
+      <mat-card-content [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
         <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
+        
+        <!-- Campo Descripción -->
         <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field full-width">
           <mat-label>{{currentItem.contentLabel}}</mat-label>
-          <textarea matInput [(ngModel)]="editedItem!.content" rows="4"></textarea>
+          <textarea matInput formControlName="description" rows="4"></textarea>
+          <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
+            La descripción es obligatoria
+          </mat-error>
+          <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
+            Mínimo 10 caracteres
+          </mat-error>
+          <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
+            Máximo 500 caracteres
+          </mat-error>
         </mat-form-field>
 
+        <!-- Metadatos normales -->
         <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
             <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
           </div>
         </div>
 
-        <div class="metadata-edit" *ngIf="isEditing && editedItem!.metadata">
-          <h4>Metadatos:</h4>
-          <div *ngFor="let item of editedItem!.metadata | keyvalue; trackBy: trackByMetadata"
-            class="metadata-edit-item">
+        <!-- Metadatos en modo edición -->
+        <div class="metadata-edit" *ngIf="isEditing && currentItem.form">
+          <h4>Información adicional:</h4>
+          
+          <!-- Campo Teléfono -->
+          <div class="metadata-edit-item">
             <mat-form-field appearance="outline" class="metadata-value">
-              <mat-label><strong>{{ item.key }}</strong></mat-label>
-              <input matInput [(ngModel)]="editedItem!.metadata![item.key]">
+              <mat-label>Teléfono</mat-label>
+              <input matInput formControlName="phone">
+              <mat-error *ngIf="currentItem.form?.get('phone')?.hasError('required')">
+                El teléfono es obligatorio
+              </mat-error>
+              <mat-error *ngIf="currentItem.form?.get('phone')?.hasError('pattern')">
+                Formato de teléfono inválido
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Campo URL -->
+          <div class="metadata-edit-item">
+            <mat-form-field appearance="outline" class="metadata-value">
+              <mat-label>Sitio Web</mat-label>
+              <input matInput formControlName="url">
+              <mat-error *ngIf="currentItem.form?.get('url')?.hasError('required')">
+                La URL es obligatoria
+              </mat-error>
+              <mat-error *ngIf="currentItem.form?.get('url')?.hasError('pattern')">
+                Debe comenzar con http:// o https://
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Campo Dirección -->
+          <div class="metadata-edit-item">
+            <mat-form-field appearance="outline" class="metadata-value">
+              <mat-label>Dirección</mat-label>
+              <input matInput formControlName="address">
+              <mat-error *ngIf="currentItem.form?.get('address')?.hasError('required')">
+                La dirección es obligatoria
+              </mat-error>
+              <mat-error *ngIf="currentItem.form?.get('address')?.hasError('minlength')">
+                Mínimo 5 caracteres
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Campo Año de Fundación -->
+          <div class="metadata-edit-item">
+            <mat-form-field appearance="outline" class="metadata-value">
+              <mat-label>Año de Fundación</mat-label>
+              <input matInput formControlName="foundedDate" type="number">
+              <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('required')">
+                El año de fundación es obligatorio
+              </mat-error>
+              <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('min')">
+                Año mínimo: 1800
+              </mat-error>
+              <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('max')">
+                Año máximo: 2025</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="metadata-edit-item">
+            <mat-form-field appearance="outline" class="metadata-value">
+              <mat-label>URL del Logo</mat-label>
+              <input matInput formControlName="logo">
             </mat-form-field>
           </div>
         </div>
@@ -108,7 +196,7 @@
       </mat-card-actions>
     </mat-card>
 
-    <div class="navigation-dots" *ngIf="showNavigation && data.length > 1">
+    <div class="navigation-dots" *ngIf="showNavigation && data.length > 1 && !addingNewItem">
       <button *ngFor="let item of data; let i = index" mat-icon-button class="dot" [class.active]="i === currentIndex"
         (click)="currentIndex = i; updateCurrentItem(); onNavigate.emit(currentIndex)">
         <div class="dot-indicator"></div>

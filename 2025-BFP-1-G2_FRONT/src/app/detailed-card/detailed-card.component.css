@@ -91,6 +91,7 @@
 }
 
 mat-card {
+  padding: 16px;
   max-height: 80vh;
   min-height: 40vh;
   max-width: 65vw;
@@ -392,6 +393,29 @@ mat-label {
 
 ::ng-deep .edit-field.mat-focused .mat-form-field-label {
   color: var(--primary-color);
+}
+
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-outline-thick {
+  color: #f44336 !important;
+}
+
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label {
+  color: #f44336 !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.form-validation-message {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #ffebee;
+  border-left: 4px solid #f44336;
+  border-radius: 4px;
+  color: #c62828;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 768px) {

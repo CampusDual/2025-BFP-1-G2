@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 export interface Candidate {
   name: string;
@@ -11,7 +12,7 @@ export interface Candidate {
 }
 
 export interface DetailedCardData {
-  id: string | number;
+  id: number | string;
   title: string;
   editableTitle?: string;
   titleLabel?: string;
@@ -19,10 +20,11 @@ export interface DetailedCardData {
   subtitleLabel?: string;
   content: string;
   contentLabel?: string;
-  actions?: DetailedCardAction[];
+  editable?: boolean;
+  form?: FormGroup;
   metadata?: { [key: string]: any };
   candidates?: any[];
-  editable?: boolean | false;
+  actions?: DetailedCardAction[];
 }
 
 export interface DetailedCardAction {
@@ -67,66 +69,59 @@ export class DetailedCardComponent implements OnInit {
   }
 
   updateCurrentItem() {
-    // Resetear estados primero
-    this.addingNewItem = false;
-    this.isEditing = false;
+    if (this.data.length > 0) {
+      // Asegurar que el índice esté dentro del rango válido
+      if (this.currentIndex < 0) {
+        this.currentIndex = 0;
+      } else if (this.currentIndex >= this.data.length) {
+        this.currentIndex = this.data.length - 1;
+      }
 
-    if (this.data.length > 0 && this.currentIndex >= 0 && this.currentIndex < this.data.length) {
-      this.panelOpenState = false;
       this.currentItem = this.data[this.currentIndex];
       this.editedItem = { ...this.currentItem };
+      
+      // Detectar si es un nuevo item
+      this.addingNewItem = this.currentItem.id === 0 && !this.currentItem.title;
+      this.isEditing = this.addingNewItem;
+      this.panelOpenState = false;
+    }
+  }
 
-      // Solo activar modo "añadir" si específicamente es un elemento nuevo
-      if (this.currentIndex === 0 && this.currentItem.id === 0 && !this.currentItem.title) {
-        this.addingNewItem = true;
-        this.isEditing = true;
+  startEdit() {
+    if (!this.addingNewItem) {
+      this.isEditing = true;
+      this.editedItem = { ...this.currentItem! };
+      if (this.currentItem!.metadata) {
+        this.editedItem!.metadata = { ...this.currentItem!.metadata };
       }
     }
   }
 
-  trackByMetadata(index: number, item: any): any {
-    return item.key;
-  }
-
-  startEdit() {
-    this.isEditing = true;
-    this.editedItem = { ...this.currentItem! };
-    if (this.currentItem!.metadata) {
-      this.editedItem!.metadata = { ...this.currentItem!.metadata };
+  cancelEdit() {
+    if (this.addingNewItem) {
+      this.close();
+    } else {
+      this.isEditing = false;
+      this.editedItem = { ...this.currentItem! };
     }
-  }
-
-  cancelEdit(detailed: DetailedCardData | null = null) {
-    this.isEditing = false;
-    if (detailed) {
-      this.currentItem = detailed;
-    }
-    this.editedItem = { ...this.currentItem! };
   }
 
   saveEdit() {
     if (this.editedItem) {
       this.onSave.emit(this.editedItem);
-      this.currentItem = { ...this.editedItem };
-      this.isEditing = false;
     }
   }
 
-  // Agregar método para resetear estados cuando se cierra
   close() {
-    // Resetear todos los estados al cerrar
     this.isEditing = false;
     this.addingNewItem = false;
     this.panelOpenState = false;
     this.onClose.emit();
   }
 
-  // Método para navegación que también resetee estados
   navigatePrevious() {
-    this.isEditing = false;
-    this.addingNewItem = false;
-    
-    if (this.currentIndex > 0) {
+    if (!this.addingNewItem && this.canNavigatePrevious) {
+      this.isEditing = false;
       this.currentIndex--;
       this.updateCurrentItem();
       this.onNavigate.emit(this.currentIndex);
@@ -134,14 +129,27 @@ export class DetailedCardComponent implements OnInit {
   }
 
   navigateNext() {
-    this.isEditing = false;
-    this.addingNewItem = false;
-    
-    if (this.currentIndex < this.data.length - 1) {
+    if (!this.addingNewItem && this.canNavigateNext) {
+      this.isEditing = false;
       this.currentIndex++;
       this.updateCurrentItem();
       this.onNavigate.emit(this.currentIndex);
     }
+  }
+
+  get canNavigatePrevious(): boolean {
+    return !this.addingNewItem && this.currentIndex > 0;
+  }
+
+  get canNavigateNext(): boolean {
+    return !this.addingNewItem && this.currentIndex < this.data.length - 1;
+  }
+
+  get currentPosition(): string {
+    if (this.addingNewItem) {
+      return 'Nueva empresa';
+    }
+    return `${this.currentIndex + 1} de ${this.data.length}`;
   }
 
   executeAction(action: DetailedCardAction) {
@@ -185,17 +193,5 @@ export class DetailedCardComponent implements OnInit {
         }
       });
     }
-  }
-
-  get canNavigatePrevious(): boolean {
-    return this.currentIndex > 0;
-  }
-
-  get canNavigateNext(): boolean {
-    return this.currentIndex < this.data.length - 1;
-  }
-
-  get currentPosition(): string {
-    return `${this.currentIndex + 1} de ${this.data.length}`;
   }
 }

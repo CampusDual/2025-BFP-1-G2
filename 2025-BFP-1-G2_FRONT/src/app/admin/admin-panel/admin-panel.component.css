@@ -1,13 +1,3 @@
-.table-container {
-  width: 90vw;
-  max-width: 1200px;
-  margin: 32px auto;
-  background: var(--background-color);
-  border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(156, 7, 0, 0.08);
-  overflow: hidden;
-}
-
 .custom-table {
   width: 100%;
   height: 100%;
