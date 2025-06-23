@@ -78,7 +78,8 @@ export class OfferTableComponent {
       `,
       metadata: this.getMetadataForOffer(offer),
       actions: this.getActionsForOffer(offer),
-      candidates: offer.candidates
+      candidates: offer.candidates,
+      editable: false,
     }));
 
     this.currentDetailIndex = offerIndex;

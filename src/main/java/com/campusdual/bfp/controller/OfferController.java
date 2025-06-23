@@ -61,10 +61,11 @@ public class OfferController {
         return ResponseEntity.ok(updatedId);
     }
 
-    @DeleteMapping(value = "/delete")
-    public ResponseEntity<Integer> deleteOffer(@RequestBody OfferDTO offerDTO, Principal principal) {
+    @PreAuthorize("hasRole('COMPANY')")
+    @DeleteMapping(value = "/delete/{offerId}")
+    public ResponseEntity<Integer> deleteOffer(Principal principal, @PathVariable int offerId) {
         String username = principal.getName();
-        int deletedId = offerService.deleteOffer(offerDTO, username);
+        int deletedId = offerService.deleteOffer(offerId, username);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedId);
     }
 

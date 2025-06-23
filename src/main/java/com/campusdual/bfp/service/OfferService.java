@@ -15,6 +15,7 @@ import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -78,11 +79,12 @@ public class OfferService implements IOfferService {
     }
 
     @Override
-    public int deleteOffer(OfferDTO OfferDTO, String username) {
+    @Transactional
+    public int deleteOffer(int id, String username) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new RuntimeException("Usuario no encontrado");
-        int id = OfferDTO.getId();
-        Offer Offer = OfferMapper.INSTANCE.toEntity(OfferDTO);
+        Offer Offer =OfferDao.getReferenceById(id);
+        userOfferDao.deleteUserOfferByOffer(Offer);
         OfferDao.delete(Offer);
         return id;
     }
