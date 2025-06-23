@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { DetailedCardData } from "../../detailed-card/detailed-card.component";
 import { AdminService } from 'src/app/services/admin.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 export interface Company {
@@ -15,7 +17,6 @@ export interface Company {
   foundedDate: number;
 }
 
-
 @Component({
   selector: 'app-admin-panel',
   templateUrl: './admin-panel.component.html',
@@ -23,12 +24,15 @@ export interface Company {
 })
 
 export class AdminPanelComponent {
+
   companies: Company[] = [];
   showDetailedCard = false;
   detailedCardData: DetailedCardData[] = [];
   currentDetailIndex = 0;
 
-  constructor(private adminService: AdminService) {
+  constructor(private adminService: AdminService,
+              private snackBar: MatSnackBar
+  ) {
     this.loadCompanies();
   }
 
@@ -67,14 +71,18 @@ export class AdminPanelComponent {
     this.detailedCardData = this.companies.map(company => ({
       id: company.id,
       title: company.login.toUpperCase(),
+      titleLabel: 'Empresa',
       subtitle: company.email,
-      content: "",
+      subtitleLabel: 'Email',
+      content: company.description,
+      contentLabel: 'Descripción',
+      editable: true,
       metadata: {
+        logo: company.logo,
         telefono: company.phone,
         web: company.url,
         direccion: company.address,
-        fundación: new Date(company.foundedDate).getFullYear(),
-        descripción: company.description
+        fundación: new Date(company.foundedDate).getFullYear()
       },
       actions: [
         {
@@ -119,5 +127,31 @@ export class AdminPanelComponent {
 
   closeDetailedCard() {
     this.showDetailedCard = false;
+  }
+
+  onSaveCompany(editedData: DetailedCardData) {
+    console.log('Guardando cambios:', editedData);
+    if (confirm(`¿Estás seguro de que actualizar esta empresa? "${editedData.title}"?`)) {
+      this.adminService.updateCompany({
+        id: editedData.id as number,
+        logo: editedData.metadata?.['logo'] || '',
+        login: editedData.title,
+        description: editedData.content,
+        email: editedData.subtitle || '',
+        phone: editedData.metadata?.['telefono'] || '',
+        url: editedData.metadata?.['web'] || '',
+        address: editedData.metadata?.['direccion'] || '',
+        foundedDate: new Date(editedData.metadata?.['fundación'] || '').getTime()
+      }).subscribe({
+        next: () => {
+          this.snackBar.open('Empresa actualizada correctamente', 'Cerrar', {duration: 3000});
+          this.loadCompanies();
+          this.closeDetailedCard();
+        },
+        error: () => {
+          this.snackBar.open('Error al actualizar la empresa', 'Cerrar', {duration: 3000, panelClass: 'error-snackbar'});
+        }
+      });
+    }
   }
 }

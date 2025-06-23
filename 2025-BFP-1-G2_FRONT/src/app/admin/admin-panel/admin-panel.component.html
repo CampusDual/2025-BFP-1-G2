@@ -25,9 +25,11 @@
   [data]="detailedCardData"
   [currentIndex]="currentDetailIndex"
   [showNavigation]="true"
+  [editMode]="true"
   [cardType]="'offer'"
   (onClose)="closeDetailedCard()"
-  (onAction)="onDetailedCardAction($event)">
+  (onAction)="onDetailedCardAction($event)"
+  (onSave)="onSaveCompany($event)">
 </app-detailed-card>
 
 <button mat-fab class="add-company" aria-label="Añadir empresa">

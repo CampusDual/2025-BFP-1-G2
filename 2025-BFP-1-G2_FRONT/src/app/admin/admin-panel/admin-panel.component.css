@@ -14,6 +14,7 @@
   border-collapse: collapse;
   font-family: 'Rubik', sans-serif;
   background-color: #fff;
+  padding: 0;
 }
 
 thead th {
@@ -22,8 +23,7 @@ thead th {
   font-weight: 600;
   padding: 1rem;
   text-align: left;
-    border-left: 6px solid var(--primary-color);
-
+  border-left: 6px solid var(--primary-color);
 }
 
 tbody td {
@@ -34,23 +34,28 @@ tbody td {
   font-size: 1rem;
 }
 
-tbody tr{
-  border: colapse;
-  border-left: 0;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, 
-              border-left 0.3s ease, color 0.3s ease, translate 0.3s ease;
+tbody tr {
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  >td:first-child {
+    transition: border-left 0.3s ease, color 0.3s ease;
+  }
 }
-tbody tr:hover {
-  background-color: var(--background-hover-color);
-  box-shadow: 0 4px 16px rgba(156, 7, 0, 0.10);
-  border-left: 6px solid var(--primary-color);
-  translate: 6px 0;
-  color: var(--text-hover-color);
+
+tbody tr:hover{
+  box-shadow: 0 2px 16px rgba(156, 7, 0, 0.08);
+      background-color: var(--background-hover-color);
+
+  >td:first-child {
+    border-left: 6px solid var(--primary-color);
+    color: var(--text-hover-color);
+  }
 }
 
 tbody tr:nth-child(even) {
-  background-color: #a1a1a198;
+  background-color: #e7e7e798;
 }
+
 a {
   color: var(--primary-color);
   text-decoration: none;

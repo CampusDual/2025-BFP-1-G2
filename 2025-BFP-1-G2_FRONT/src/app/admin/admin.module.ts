@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { OfferPanelModule } from '../offer-panel/offer-panel.module';
 import { MatIconModule } from '@angular/material/icon';
 
+
 @NgModule({
   declarations: [
     AdminPanelComponent
