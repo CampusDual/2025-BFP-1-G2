@@ -41,7 +41,7 @@ router-outlet {
   height: 100%;
 }
 
-.main{  
+.main{
   align-items: center;
   justify-content: center;
   width: 100%;
