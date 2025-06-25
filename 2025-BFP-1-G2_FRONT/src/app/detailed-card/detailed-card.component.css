@@ -51,6 +51,7 @@
   color: var(--primary-color);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
 .edit-button:hover {
   background-color: var(--primary-color);
   color: white;
@@ -78,7 +79,7 @@
   font-weight: 500;
 }
 
-.add-title{
+.add-title {
   font-size: 1.2rem;
   color: var(--primary-color);
   font-weight: 600;
@@ -190,153 +191,16 @@ mat-card-actions {
   padding: 16px;
 }
 
-.candidates-panel {
-  width: 80%;
-  margin: auto;
-  margin-top: 16px;
-}
-
-.candidates-panel mat-expansion-panel-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.candidates-panel mat-panel-title {
-  width: 100%;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-}
-
-.candidates-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.candidates-list {
-  list-style: none;
-  padding: 0;
-  margin: 16px 0 0 0;
-}
-
-.candidates-list li {
-  background: #f9f9f9;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  padding: 16px 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-  font-size: 1rem;
-  line-height: 1.6;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  transition: all 0.15s;
-}
-
-.candidates-list li.validated {
-  background-color: #e0f7e9;
-  border-left: 4px solid #4caf50;
-}
-
-.candidates-list li.rejected {
-  background-color: #ffebee;
-  border-left: 4px solid #f44336;
-}
-
-.candidates-list li:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-}
-
-.candidates-list strong {
-  color: var(--primary-color, #1976d2);
-  font-weight: 600;
-  margin-right: 4px;
-}
-
-.candidate-info {
-  flex: 1 1 auto;
-}
-
-.candidate-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  margin-left: 16px;
-  height: 100%;
-  align-self: center;
-  margin-top: 8px;
-}
-
-.check {
-  background-color: white;
-  color: green;
-  transition: background-color 0.15s, color 0.15s;
-}
-
-.check:hover {
-  background-color: green;
-  color: white;
-}
-
-.check mat-icon {
-  color: inherit;
-}
-
-.close {
-  background-color: white;
-  color: var(--primary-color);
-  transition: background-color 0.15s, color 0.15s;
-}
-
-.close:hover {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.close mat-icon {
-  color: inherit;
-}
-
-.undo {
-  background-color: white;
-  color: var(--primary-color);
-  transition: background-color 0.15s, color 0.15s;
-}
-.undo:hover {
-  background-color: var(--primary-color);
-  color: white;
-}
-.undo mat-icon {
-  color: inherit;
-}
-
-
-.candidates-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-mat-expansion-panel.mat-expanded {
-  overflow-y: auto;
-}
-
-::ng-deep .mat-expansion-panel:not(.mat-expanded) {
-  margin-bottom: 0 !important;
-}
 
 mat-label {
-    text-transform: uppercase;
-    font-weight: 500;
-  }
+  text-transform: uppercase;
+  font-weight: 500;
+}
 
 .edit-field {
   width: 100%;
   margin-bottom: 16px;
+  margin-inline: 16px;
 }
 
 .edit-field.full-width {
@@ -455,10 +319,12 @@ mat-label {
     right: 0;
   }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -469,6 +335,7 @@ mat-label {
     opacity: 0;
     transform: translateY(50px) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);

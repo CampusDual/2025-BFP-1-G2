@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CompanyPanelComponent } from '../company-panel/company-panel.component';
 import { OffersComponent } from './offers/offers.component';
+import { AddOfferComponent } from './add-offer/add-offer.component';
+import { CandidatesComponent } from './candidates/candidates.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/company/myoffers', pathMatch: 'full' },
   {path: 'myoffers', component: OffersComponent },
-  {path: 'addOffer', component: CompanyPanelComponent },
+  {path: 'addOffer', component: AddOfferComponent },
+  {path: 'candidates', component: CandidatesComponent},
 ];
 
 @NgModule({

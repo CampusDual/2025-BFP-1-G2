@@ -29,7 +29,6 @@ tbody td {
 tbody tr {
   cursor: pointer;
   transition: box-shadow 0.3s ease, background-color 0.3s ease;
-
   >td:first-child {
     border-left: 6px solid transparent;
     transition: border-left 0.3s ease;
