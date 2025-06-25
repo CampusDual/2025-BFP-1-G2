@@ -131,9 +131,11 @@ public class OfferService implements IOfferService {
             if (user != null) {
                 Candidate candidate = candidateDao.findCandidateByUser(user);
                 if (candidate != null) {
-                    candidateDTOS.add(CandidateMapper.INSTANCE.toDTO(candidate));
                     UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(userId, offerID);
-                    Boolean valid = userOffer != null ? userOffer.isValid() : null;
+                    CandidateDTO candidateDTO = CandidateMapper.INSTANCE.toDTO(candidate);
+                    candidateDTO.setDateAdded(new java.text.SimpleDateFormat("dd/MM/yyyy").format(userOffer.getDate()));
+                    candidateDTOS.add(candidateDTO);
+                    Boolean valid = userOffer.isValid();
                     candidateDTOS.get(candidateDTOS.size() - 1).setValid(valid);
                 }
             }

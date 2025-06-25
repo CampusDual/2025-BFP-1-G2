@@ -4,17 +4,39 @@ import { CommonModule } from '@angular/common';
 import { CompanyRoutingModule } from './company-routing.module';
 import { OffersComponent } from './offers/offers.component';
 import { OfferPanelModule } from "../offer-panel/offer-panel.module";
-import { OfferCardComponent } from '../offer-panel/offer-card/offer-card.component';
+import { AddOfferComponent } from './add-offer/add-offer.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import {  MatCardModule } from '@angular/material/card';
+import {  MatButtonModule } from '@angular/material/button';
+import { CandidatesComponent } from './candidates/candidates.component';
+import {  MatIconModule } from '@angular/material/icon';
+import {  MatMenuModule } from '@angular/material/menu';
 
 
 @NgModule({
   declarations: [
-    OffersComponent
+    OffersComponent,
+    AddOfferComponent,
+    CandidatesComponent
   ],
   imports: [
     CommonModule,
     CompanyRoutingModule,
     OfferPanelModule,
-]
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    TextFieldModule,
+    MatTableModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+  ]
 })
 export class CompanyModule { }

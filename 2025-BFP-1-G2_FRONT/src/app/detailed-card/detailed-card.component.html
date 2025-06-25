@@ -159,33 +159,6 @@
         </div>
       </mat-card-content>
 
-      <mat-expansion-panel #expPanel (opened)="panelOpenState=true" (closed)="panelOpenState=false" class="candidates-panel"
-        *ngIf="currentItem.candidates && currentItem.candidates.length > 0" [expanded]="panelOpenState">
-        <mat-expansion-panel-header>
-          <mat-panel-title>Candidatos ({{ currentItem.candidates.length}})</mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="candidates-container">
-          <ul class="candidates-list">
-            <li *ngFor="let candidate of currentItem.candidates"
-              [ngClass]="candidate.valid === true ? 'validated' : (candidate.valid === false ? 'rejected' : '')">
-              <div class="candidate-info">
-                <strong>Nombre:</strong> {{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}<br>
-                <strong>Email:</strong> {{candidate.email}}<br>
-                <strong>Teléfono:</strong> {{candidate.phoneNumber}}<br>
-                <strong>Fecha de registro:</strong> {{candidate.date}}
-              </div>
-              <div class="candidate-actions" *ngIf="!isEditing">
-                <button mat-icon-button class="undo" *ngIf="candidate.valid !== null"
-                  (click)="deleteOptionCandidate(candidate)"><mat-icon>undo</mat-icon></button>
-                <button mat-icon-button class="check" *ngIf="candidate.valid !== true"
-                  (click)="aceptCandidate(candidate)"><mat-icon>check</mat-icon></button>
-                <button mat-icon-button class="close" *ngIf="candidate.valid !== false"
-                  (click)="rejectCandidate(candidate)"><mat-icon>close</mat-icon></button>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </mat-expansion-panel>
 
       <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
         <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
@@ -213,39 +186,6 @@
           </div>
         </div>
       </mat-card-content>
-
-      <mat-expansion-panel
-        #expPanel
-        (opened)="panelOpenState=true"
-        (closed)="panelOpenState=false; resetPanelScroll()"
-        class="candidates-panel"
-        *ngIf="currentItem.candidates && currentItem.candidates.length > 0"
-        [expanded]="panelOpenState">
-        <mat-expansion-panel-header>
-          <mat-panel-title>Candidatos ({{ currentItem.candidates.length}})</mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="candidates-container">
-          <ul class="candidates-list">
-            <li *ngFor="let candidate of currentItem.candidates"
-              [ngClass]="candidate.valid === true ? 'validated' : (candidate.valid === false ? 'rejected' : '')">
-              <div class="candidate-info">
-                <strong>Nombre:</strong> {{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}<br>
-                <strong>Email:</strong> {{candidate.email}}<br>
-                <strong>Teléfono:</strong> {{candidate.phoneNumber}}<br>
-                <strong>Fecha de registro:</strong> {{candidate.date}}
-              </div>
-              <div class="candidate-actions" *ngIf="!isEditing">
-                <button mat-icon-button class="undo" *ngIf="candidate.valid !== null"
-                  (click)="deleteOptionCandidate(candidate)"><mat-icon>undo</mat-icon></button>
-                <button mat-icon-button class="check" *ngIf="candidate.valid !== true"
-                  (click)="aceptCandidate(candidate)"><mat-icon>check</mat-icon></button>
-                <button mat-icon-button class="close" *ngIf="candidate.valid !== false"
-                  (click)="rejectCandidate(candidate)"><mat-icon>close</mat-icon></button>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </mat-expansion-panel>
 
       <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
         <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"

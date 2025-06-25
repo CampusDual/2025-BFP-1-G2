@@ -8,6 +8,8 @@ export interface Candidate {
   email: string;
   phoneNumber: string;
   date: string;
+  Linkedin?: string;
+  dateAdded: string;
   valid: boolean | null;
 }
 
@@ -53,8 +55,6 @@ export class DetailedCardComponent implements OnInit {
   @Output() onAction = new EventEmitter<{ action: string, data: any }>();
   @Output() onNavigate = new EventEmitter<number>();
   @Output() onSave = new EventEmitter<DetailedCardData>();
-
-  @ViewChild('expPanel', { read: ElementRef }) expPanel?: ElementRef;
 
   currentItem: DetailedCardData | null = null;
   editedItem: DetailedCardData | null = null;
@@ -193,7 +193,6 @@ export class DetailedCardComponent implements OnInit {
     this.isEditing = false;
     this.addingNewItem = false;
     this.panelOpenState = false;
-    this.resetPanelScroll();
     this.onClose.emit();
   }
 
@@ -271,14 +270,6 @@ export class DetailedCardComponent implements OnInit {
         }
       });
     }
-  }
-
-  resetPanelScroll() {
-    setTimeout(() => {
-      if (this.expPanel && this.expPanel.nativeElement) {
-        this.expPanel.nativeElement.scrollTop = 0;
-      }
-    }, 50);
   }
 
 }

@@ -46,8 +46,8 @@ export class OfferService {
   applyToOffer(id: number): Observable<any>{
     return this.http.post(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: "text" });
   }
-  getCandidates(offerId: number): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/candidates/${offerId}`);
+  getCandidates(offerId: number): Observable<Candidate[]> {
+    return this.http.get<Candidate[]>(`${this.baseUrl}/candidates/${offerId}`);
   }
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });

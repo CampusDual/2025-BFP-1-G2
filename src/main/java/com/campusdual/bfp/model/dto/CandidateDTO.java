@@ -1,6 +1,8 @@
 package com.campusdual.bfp.model.dto;
 
 
+import java.util.Date;
+
 public class CandidateDTO extends SignupDTO {
 
     private String phoneNumber;
@@ -8,6 +10,7 @@ public class CandidateDTO extends SignupDTO {
     private String surname1;
     private String surname2;
     private Boolean valid;
+    private String dateAdded;
 
 
     public String getName() {
@@ -65,5 +68,12 @@ public class CandidateDTO extends SignupDTO {
 
     public void setValid(Boolean valid) {
         this.valid = valid;
+    }
+
+    public void setDateAdded(String date) {
+        this.dateAdded = date;
+    }
+    public String getDateAdded() {
+        return dateAdded;
     }
 }
