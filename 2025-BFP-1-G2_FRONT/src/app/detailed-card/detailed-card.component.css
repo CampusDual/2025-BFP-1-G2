@@ -20,7 +20,7 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
-  
+
 }
 
 .close-button {
@@ -95,11 +95,17 @@ mat-card {
   max-height: 80vh;
   min-height: 40vh;
   max-width: 65vw;
-  min-width: 50vw;
+  min-width: 65vw;
   margin: 0;
   border-radius: 0 0 8px 8px;
   overflow: auto;
   scrollbar-color: var(--primary-color) transparent;
+}
+
+mat-card-title {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 8px;
 }
 
 .metadata {
@@ -222,7 +228,6 @@ mat-card-actions {
   box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   font-size: 1rem;
   line-height: 1.6;
-  transition: box-shadow 0.2s;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -423,14 +428,14 @@ mat-label {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .metadata-key,
   .metadata-value {
     flex: 1;
     width: 100%;
     min-width: unset;
   }
-  
+
   .edit-buttons {
     flex-wrap: wrap;
     justify-content: center;

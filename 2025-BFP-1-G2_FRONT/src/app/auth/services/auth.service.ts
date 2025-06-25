@@ -25,11 +25,14 @@ export interface User {
 
 
 export class AuthService {
-  
-  
+
+
   private baseUrl = 'http://localhost:30030/auth';
   private authStatusSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
   public isAuthenticated$ = this.authStatusSubject.asObservable();
+  private userNameSubject = new BehaviorSubject<string>(this.getLogin());
+  public userName$ = this.userNameSubject.asObservable();
+
 
   hasRoles(expectedRoles: string[]): Observable<boolean> {
     return this.http.get<string[]>(`${this.baseUrl}/user/roles`).pipe(
@@ -44,7 +47,7 @@ export class AuthService {
   }
 
   constructor(private http: HttpClient,
-              private router: Router
+    private router: Router
   ) {
   }
 
@@ -55,11 +58,14 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/signin`, {}, { headers, responseType: 'text' }).pipe(
       tap({
         next: (token: any) => {
-          this.authStatusSubject.next(true); // ¡Importante!
+          this.authStatusSubject.next(true);
           localStorage.setItem('authToken', token);
+          this.userNameSubject.next(this.getLogin());
+
         },
         error: () => {
-          this.authStatusSubject.next(false); // ¡Importante!
+          this.authStatusSubject.next(false);
+          this.userNameSubject.next('');
         }
       })
     );
@@ -82,15 +88,14 @@ export class AuthService {
     if (!token) {
       return false;
     }
-
     const payload = JSON.parse(atob(token.split('.')[1]));
     const isExpired = payload.exp < Date.now() / 1000;
     return !isExpired;
-
   }
 
   logout(): void {
     localStorage.removeItem('authToken');
+    this.userNameSubject.next('');
   }
 
   getCandidateDetails(): Observable<User> {
@@ -113,7 +118,7 @@ export class AuthService {
     return payload.sub || '';
   }
 
-   redirectToUserHome() {
+  redirectToUserHome() {
     this.hasRole('ROLE_CANDIDATE').subscribe({
       next: (isCandidate) => {
         if (isCandidate) {

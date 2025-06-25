@@ -28,9 +28,9 @@
           <span>Panel Administrador</span>
         </div>
       </mat-drawer>
-      <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
-          #outlet="outlet"></router-outlet></div>
-      <app-footer></app-footer>
+        <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
+            #outlet="outlet"></router-outlet></div>
+        <app-footer></app-footer>
     </mat-drawer-container>
   </div>
 </body>

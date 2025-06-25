@@ -24,7 +24,6 @@ export interface Company {
 })
 
 export class AdminPanelComponent {
-
   companies: Company[] = [];
   showDetailedCard = false;
   detailedCardData: DetailedCardData[] = [];
@@ -68,8 +67,6 @@ export class AdminPanelComponent {
             address: company.address,
             foundedDate: new Date(company.foundedDate).getFullYear()
           }));
-        
-        // Solo recrear detailedCardData si no estamos añadiendo una nueva empresa
         if (!this.isAddingNewCompany) {
           this.createDetailedCardData();
         }
@@ -149,14 +146,12 @@ export class AdminPanelComponent {
   closeDetailedCard() {
     this.showDetailedCard = false;
     this.isAddingNewCompany = false;
-    // Resetear el índice para limpiar el estado
     this.currentDetailIndex = 0;
   }
 
   addCompany() {
     this.isAddingNewCompany = true;
-    
-    // Crear nuevo formulario limpio
+
     const newCompanyForm = this.createCompanyForm();
     newCompanyForm.reset({
       login: '',
@@ -169,7 +164,6 @@ export class AdminPanelComponent {
       logo: ''
     });
 
-    // Crear datos para nueva empresa - IMPORTANTE: Solo un elemento
     this.detailedCardData = [{
       id: 0,
       title: '',
@@ -189,15 +183,14 @@ export class AdminPanelComponent {
         fundación: new Date().getFullYear()
       }
     }];
-    
-    // IMPORTANTE: Resetear el índice a 0 para la nueva empresa
+
     this.currentDetailIndex = 0;
     this.showDetailedCard = true;
   }
 
   onSaveCompany(editedData: DetailedCardData) {
     const form = editedData.form!;
-    
+
     if (form.invalid) {
       form.markAllAsTouched();
       this.snackBar.open('Por favor, corrija los errores en el formulario', 'Cerrar', {
@@ -210,7 +203,6 @@ export class AdminPanelComponent {
     const formValue = form.value;
 
     if (this.isAddingNewCompany) {
-      // Crear nueva empresa
       if (confirm(`¿Crear nueva empresa "${formValue.login}"?`)) {
         this.adminService.createCompany({
           id: 0,
@@ -226,20 +218,19 @@ export class AdminPanelComponent {
           next: () => {
             this.snackBar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
             this.isAddingNewCompany = false;
-            this.currentDetailIndex = 0; // Resetear índice
+            this.currentDetailIndex = 0;
             this.loadCompanies();
             this.closeDetailedCard();
           },
           error: () => {
-            this.snackBar.open('Error al crear la empresa', 'Cerrar', { 
-              duration: 3000, 
-              panelClass: 'error-snackbar' 
+            this.snackBar.open('Error al crear la empresa', 'Cerrar', {
+              duration: 3000,
+              panelClass: 'error-snackbar'
             });
           }
         });
       }
     } else {
-      // Actualizar empresa existente
       if (confirm(`¿Actualizar empresa "${formValue.login}"?`)) {
         this.adminService.updateCompany({
           id: editedData.id as number,
@@ -258,9 +249,9 @@ export class AdminPanelComponent {
             this.closeDetailedCard();
           },
           error: () => {
-            this.snackBar.open('Error al actualizar la empresa', 'Cerrar', { 
-              duration: 3000, 
-              panelClass: 'error-snackbar' 
+            this.snackBar.open('Error al actualizar la empresa', 'Cerrar', {
+              duration: 3000,
+              panelClass: 'error-snackbar'
             });
           }
         });
@@ -277,15 +268,15 @@ export class AdminPanelComponent {
             next: () => {
               this.showDetailedCard = false;
               this.isAddingNewCompany = false;
-              this.currentDetailIndex = 0; // Resetear índice después de eliminar
+              this.currentDetailIndex = 0;
               this.loadCompanies();
               this.snackBar.open('Empresa eliminada correctamente', 'Cerrar', { duration: 3000 });
             },
             error: (error: any) => {
               console.error('Error eliminando empresa', error);
-              this.snackBar.open('Error al eliminar la empresa', 'Cerrar', { 
-                duration: 3000, 
-                panelClass: 'error-snackbar' 
+              this.snackBar.open('Error al eliminar la empresa', 'Cerrar', {
+                duration: 3000,
+                panelClass: 'error-snackbar'
               });
             }
           });
@@ -293,7 +284,7 @@ export class AdminPanelComponent {
         break;
       case 'reloadCompanies':
         this.isAddingNewCompany = false;
-        this.currentDetailIndex = 0; // Resetear índice
+        this.currentDetailIndex = 0;
         this.loadCompanies();
         break;
       default:
