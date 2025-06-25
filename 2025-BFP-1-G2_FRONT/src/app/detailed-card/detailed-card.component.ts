@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 export interface Candidate {
@@ -54,6 +54,8 @@ export class DetailedCardComponent implements OnInit {
   @Output() onNavigate = new EventEmitter<number>();
   @Output() onSave = new EventEmitter<DetailedCardData>();
 
+  @ViewChild('expPanel', { read: ElementRef }) expPanel?: ElementRef;
+
   currentItem: DetailedCardData | null = null;
   editedItem: DetailedCardData | null = null;
   panelOpenState: boolean = false;
@@ -70,7 +72,6 @@ export class DetailedCardComponent implements OnInit {
 
   updateCurrentItem() {
     if (this.data.length > 0) {
-      // Asegurar que el índice esté dentro del rango válido
       if (this.currentIndex < 0) {
         this.currentIndex = 0;
       } else if (this.currentIndex >= this.data.length) {
@@ -79,8 +80,7 @@ export class DetailedCardComponent implements OnInit {
 
       this.currentItem = this.data[this.currentIndex];
       this.editedItem = { ...this.currentItem };
-      
-      // Detectar si es un nuevo item
+
       this.addingNewItem = this.currentItem.id === 0 && !this.currentItem.title;
       this.isEditing = this.addingNewItem;
       this.panelOpenState = false;
@@ -106,6 +106,37 @@ export class DetailedCardComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.isEditing) {
+        this.saveEdit();
+      }
+      else if (this.currentItem?.editable) {
+        this.startEdit();
+      }
+    }
+    else if (event.key === 'Escape') {
+      event.preventDefault();
+      if (this.isEditing) {
+        this.cancelEdit();
+      }
+      else if (this.addingNewItem) {
+        this.close();
+      }
+      else this.close();
+    }
+    else if (event.key === 'ArrowLeft' && this.showNavigation && !this.isEditing) {
+      event.preventDefault();
+      this.navigatePrevious();
+    }
+    else if (event.key === 'ArrowRight' && this.showNavigation && !this.isEditing) {
+      event.preventDefault();
+      this.navigateNext();
+    }
+  }
+
   saveEdit() {
     if (this.editedItem) {
       this.onSave.emit(this.editedItem);
@@ -116,6 +147,7 @@ export class DetailedCardComponent implements OnInit {
     this.isEditing = false;
     this.addingNewItem = false;
     this.panelOpenState = false;
+    this.resetPanelScroll();
     this.onClose.emit();
   }
 
@@ -194,4 +226,13 @@ export class DetailedCardComponent implements OnInit {
       });
     }
   }
+
+  resetPanelScroll() {
+    setTimeout(() => {
+      if (this.expPanel && this.expPanel.nativeElement) {
+        this.expPanel.nativeElement.scrollTop = 0;
+      }
+    }, 50);
+  }
+
 }

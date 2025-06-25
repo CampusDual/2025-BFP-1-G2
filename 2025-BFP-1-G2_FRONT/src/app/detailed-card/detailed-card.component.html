@@ -1,5 +1,5 @@
 <div class="detailed-overlay" *ngIf="isVisible">
-  <div class="detailed-container" (click)="$event.stopPropagation()">
+  <div  class="detailed-container" (click)="$event.stopPropagation()">
     <div class="header-actions">
       <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
         <mat-icon>close</mat-icon>
@@ -29,9 +29,10 @@
 
     <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
       <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva empresa</mat-card-title>
+      <mat-card-title *ngIf="!isEditing">{{ currentItem.title }}</mat-card-title>
+
       <mat-card-header>
-        <mat-card-title *ngIf="!isEditing">{{ currentItem.title }}</mat-card-title>
-        
+
         <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
           <mat-label>{{currentItem.titleLabel}}</mat-label>
           <input matInput formControlName="login">
@@ -49,7 +50,7 @@
         <mat-card-subtitle *ngIf="currentItem.subtitle && !isEditing">
           {{ currentItem.subtitle }}
         </mat-card-subtitle>
-        
+
         <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
           <mat-label>{{currentItem.subtitleLabel}}</mat-label>
           <input matInput formControlName="email" type="email">
@@ -64,7 +65,7 @@
 
       <mat-card-content [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
         <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
-        
+
         <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field full-width">
           <mat-label>{{currentItem.contentLabel}}</mat-label>
           <textarea matInput formControlName="description" rows="4"></textarea>
@@ -87,7 +88,7 @@
 
         <div class="metadata-edit" *ngIf="isEditing && currentItem.form">
           <h4>Información adicional:</h4>
-          
+
           <div class="metadata-edit-item">
             <mat-form-field appearance="outline" class="metadata-value">
               <mat-label>Teléfono</mat-label>
@@ -151,7 +152,7 @@
         </div>
       </mat-card-content>
 
-      <mat-expansion-panel (opened)="panelOpenState=true" (closed)="panelOpenState=false" class="candidates-panel"
+      <mat-expansion-panel #expPanel (opened)="panelOpenState=true" (closed)="panelOpenState=false" class="candidates-panel"
         *ngIf="currentItem.candidates && currentItem.candidates.length > 0" [expanded]="panelOpenState">
         <mat-expansion-panel-header>
           <mat-panel-title>Candidatos ({{ currentItem.candidates.length}})</mat-panel-title>
@@ -189,6 +190,7 @@
     </mat-card>
 
     <mat-card *ngIf="currentItem && !currentItem.editable">
+      <mat-card-title >{{ currentItem.title }}</mat-card-title>
       <mat-card-header>
         <mat-card-subtitle *ngIf="currentItem.subtitle">
           {{ currentItem.subtitle }}
@@ -197,7 +199,7 @@
 
       <mat-card-content [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
         <div [innerHTML]="currentItem.content"></div>
-      
+
         <div class="metadata" *ngIf="currentItem.metadata">
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
             <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}

@@ -53,7 +53,6 @@ export class OfferTableComponent {
           description: offer.description,
           companyName: offer.companyName,
           email: offer.email,
-          location: offer.location,
           dateAdded: new Date(offer.dateAdded).toLocaleDateString(),
           candidatesCount: offer.candidatesCount || 0,
           candidates: offer.candidates || []
@@ -73,9 +72,7 @@ export class OfferTableComponent {
       subtitle: `${offer.companyName}  ${offer.email}`,
       content: `
         <p><strong>Descripción:</strong></p>
-        <p>${offer.description}</p>
-        <p><strong>Ubicación:</strong> ${offer.location}</p>
-      `,
+        <p>${offer.description}</p>`,
       metadata: this.getMetadataForOffer(offer),
       actions: this.getActionsForOffer(offer),
       candidates: offer.candidates,
@@ -89,14 +86,12 @@ export class OfferTableComponent {
   private getMetadataForOffer(offer: any): { [key: string]: any } {
     if (this.isCompany)
       return {
-        'Fecha de publicación': new Date(offer.dateAdded).toLocaleDateString(),
-        'Ubicación': offer.location
+        'Fecha de publicación': offer.dateAdded,
       };
     else return {
-      'Fecha de publicación': new Date(offer.dateAdded).toLocaleDateString(),
+      'Fecha de publicación': offer.dateAdded,
       'Empresa': offer.companyName,
       'Email': offer.email,
-      'Ubicación': offer.location
     };
   }
 

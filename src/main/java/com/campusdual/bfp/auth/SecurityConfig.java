@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/**","/test/all", "/public/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/offer/getAll").permitAll()
-                .antMatchers(HttpMethod.DELETE).hasRole("COMPANY")
+                .antMatchers(HttpMethod.DELETE, "/offer/delete/**").hasRole("COMPANY")
+                .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(this.authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
