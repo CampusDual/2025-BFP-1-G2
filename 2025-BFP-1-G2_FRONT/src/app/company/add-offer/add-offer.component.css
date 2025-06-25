@@ -1,0 +1,66 @@
+.companyName {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.welcome-panel {
+  max-width: 400px;
+  background: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.welcome-panel h2 {
+  margin-bottom: 12px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+
+.welcome-panel p {
+  font-size: 1.1rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.formdata{
+  min-width: 50%;
+  height: 70%;
+  padding: 15px;
+  padding-inline: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  background-color: rgba(255, 255, 255, 0.52);
+  h2{
+    color: var(--primary-color);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  .description{
+    width: 100%;
+    mat-form-field {
+      width: 100%;
+    }
+
+  } 
+}
