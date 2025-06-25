@@ -26,6 +26,9 @@ import {OfferPanelModule} from "./offer-panel/offer-panel.module";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule } from '@angular/material/table';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
   declarations: [
@@ -54,7 +57,9 @@ import {MatTableModule } from '@angular/material/table';
     AuthModule,
     MatSidenavModule,
     OfferPanelModule,
-    MatTableModule
+    MatTableModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
