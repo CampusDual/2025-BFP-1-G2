@@ -10,7 +10,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let company of companies; let i = index" (click)="openDetailedCard(i)">
-        <td>{{ company.login }}</td>
+        <td>{{ company.login.charAt(0).toUpperCase() + company.login.substring(1) }}</td>
         <td>{{ company.email }}</td>
         <td>
           <a [href]="company.url" target="_blank" (click)="$event.stopPropagation()">

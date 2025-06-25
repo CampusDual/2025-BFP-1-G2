@@ -99,14 +99,6 @@ export class OfferTableComponent {
     const actions: DetailedCardAction[] = [];
     if (this.isCompany) {
       actions.push({
-        label: 'Editar oferta',
-        action: 'editOffer',
-        color: 'accent',
-        icon: 'edit',
-        data: { offer: offer }
-      });
-
-      actions.push({
         label: 'Eliminar oferta',
         action: 'deleteOffer',
         color: 'warn',
@@ -120,14 +112,6 @@ export class OfferTableComponent {
         action: 'apply',
         color: 'primary',
         icon: 'send',
-        data: { offer: offer }
-      });
-
-      actions.push({
-        label: 'Guardar en favoritos',
-        action: 'saveToFavorites',
-        color: 'accent',
-        icon: 'favorite_border',
         data: { offer: offer }
       });
 
@@ -152,22 +136,10 @@ export class OfferTableComponent {
         this.applyToOffer(data.offer);
         break;
 
-      case 'viewCandidates':
-        this.viewCandidates(data.offer);
-        break;
-
-      case 'editOffer':
-        this.editOffer(data.offer);
-        break;
-
       case 'deleteOffer':
         this.deleteOffer(data.offer);
         break;
-
-      case 'saveToFavorites':
-        this.saveToFavorites(data.offer);
-        break;
-
+        
       case 'loginToApply':
         this.redirectToLogin(data.offer);
         break;
@@ -264,15 +236,6 @@ export class OfferTableComponent {
     }
   }
 
-  private viewCandidates(offer: any) {
-    console.log('Ver candidatos para la oferta:', offer.title);
-    this.router.navigate(['/candidates', offer.id]);
-  }
-
-  private editOffer(offer: any) {
-    console.log('Editar oferta:', offer.title);
-    this.router.navigate(['/edit-offer', offer.id]);
-  }
 
   private deleteOffer(offer: any) {
     if (confirm(`¿Estás seguro de que quieres eliminar la oferta "${offer.title}"?`)) {
@@ -293,11 +256,6 @@ export class OfferTableComponent {
     }
   }
 
-  private saveToFavorites(offer: any) {
-    console.log('Guardar en favoritos:', offer.title);
-    this.snackBar.open('Oferta guardada en favoritos', 'Cerrar', { duration: 3000 });
-  }
-
   private redirectToLogin(offer: any) {
     localStorage.setItem('pendingOfferId', offer.id);
     this.router.navigate(['/login']);
@@ -314,4 +272,3 @@ export class OfferTableComponent {
     );
   }
 }
-

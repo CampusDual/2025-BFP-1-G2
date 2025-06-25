@@ -22,13 +22,18 @@ tbody td {
   color: var(--text-color);
   vertical-align: middle;
   font-size: 1rem;
+  border-left: 6px solid transparent;
+  white-space: wrap;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease, border-left 0.3s ease;
 }
 
 tbody tr {
   cursor: pointer;
+  
   transition: box-shadow 0.3s ease, background-color 0.3s ease;
   >td:first-child {
-    transition: border-left 0.3s ease, color 0.3s ease;
+    transition: border-left 0.3s ease;
   }
 }
 
@@ -60,12 +65,13 @@ tbody tr:nth-child(9) { animation-delay: 0.61s; }
 tbody tr:nth-child(10) { animation-delay: 0.68s; }
 
 tbody tr:hover{
-  box-shadow: 0 2px 16px rgba(156, 7, 0, 0.08);
-      background-color: var(--background-hover-color);
-
+  box-shadow: 0 2px 16px rgba(151, 151, 151, 0.648);
+  background-color: var(--background-hover-color);
   >td:first-child {
     border-left: 6px solid var(--primary-color);
-    color: var(--text-hover-color);
+  }
+  >td {
+    color: var(--primary-color);
   }
 }
 
