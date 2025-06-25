@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 export interface Candidate {
   name: string;
@@ -61,6 +61,10 @@ export class DetailedCardComponent implements OnInit {
   panelOpenState: boolean = false;
   isEditing: boolean = false;
   addingNewItem: boolean = false;
+  maxDate: Date = new Date(); // Fecha máxima será la actual
+  minDate: Date = new Date(1800, 0, 1); // Fecha mínima será el año 1800
+  private fb: any;
+
 
   ngOnInit() {
     this.updateCurrentItem();
@@ -137,9 +141,51 @@ export class DetailedCardComponent implements OnInit {
     }
   }
 
+  private createCompanyForm(): FormGroup {
+    return this.fb.group({
+      // ... otros campos
+      foundedDate: ['', [
+        Validators.required,
+        this.dateValidator()
+      ]]
+    });
+  }
+
+  private dateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const date = control.value;
+      if (!date) {
+        return null;
+      }
+
+      const minDate = new Date(1800, 0, 1);
+      const maxDate = new Date();
+
+      if (date < minDate) {
+        return { 'matDatepickerMin': true };
+      }
+      if (date > maxDate) {
+        return { 'matDatepickerMax': true };
+      }
+
+      return null;
+    };
+  }
+
   saveEdit() {
-    if (this.editedItem) {
-      this.onSave.emit(this.editedItem);
+    if (this.editedItem && this.editedItem.form) {
+      const formValue = this.editedItem.form.value;
+
+      // Convertir la fecha a timestamp si es necesario
+      if (formValue.foundedDate) {
+        const date = new Date(formValue.foundedDate);
+        formValue.foundedDate = date.getFullYear();
+      }
+
+      this.onSave.emit({
+        ...this.editedItem,
+        form: this.editedItem.form
+      });
     }
   }
 

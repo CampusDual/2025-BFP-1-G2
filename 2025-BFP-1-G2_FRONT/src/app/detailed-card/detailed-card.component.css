@@ -379,8 +379,7 @@ mat-label {
 }
 
 .metadata-value {
-  flex: 1;
-  min-width: 200px;
+  width: 100%;
 }
 
 
@@ -473,4 +472,13 @@ mat-label {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+.mat-datepicker-toggle {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+/* Ajusta el ancho del campo de fecha */
+.metadata-edit-item mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
 }
