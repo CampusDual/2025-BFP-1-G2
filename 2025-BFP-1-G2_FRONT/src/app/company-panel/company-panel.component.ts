@@ -48,7 +48,7 @@ export class CompanyPanelComponent implements OnInit {
           description: this.description.value
         }).subscribe({
           next: response => {
-            this.router.navigate(["offers/portal"]);
+            this.router.navigate(["company/myoffers"]);
             console.log('Offer created successfully', response);
             this.offersForm.reset();
           },

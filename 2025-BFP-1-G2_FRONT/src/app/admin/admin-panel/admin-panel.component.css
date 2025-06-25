@@ -22,23 +22,30 @@ tbody td {
   color: var(--text-color);
   vertical-align: middle;
   font-size: 1rem;
+  min-height: 80px;
+  transition: color 0.3s ease, border-left 0.3s ease;
 }
 
 tbody tr {
   cursor: pointer;
   transition: box-shadow 0.3s ease, background-color 0.3s ease;
+
   >td:first-child {
-    transition: border-left 0.3s ease, color 0.3s ease;
+    border-left: 6px solid transparent;
+    transition: border-left 0.3s ease;
   }
 }
 
-tbody tr:hover{
-  box-shadow: 0 2px 16px rgba(156, 7, 0, 0.08);
-      background-color: var(--background-hover-color);
+tbody tr:hover {
+  box-shadow: 0 2px 16px rgba(151, 151, 151, 0.648);
+  background-color: var(--background-hover-color);
 
   >td:first-child {
     border-left: 6px solid var(--primary-color);
-    color: var(--text-hover-color);
+  }
+
+  >td {
+    color: var(--primary-color);
   }
 }
 
