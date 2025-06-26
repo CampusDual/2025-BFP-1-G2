@@ -2,12 +2,15 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    gap: 8px;
+    gap: 16px;
+    padding: 16px;
+    height: calc(100vh - 32px);
 }
 
 .div1 {
     grid-row: span 5 / span 5;
 }
+
 
 .div2 {
     grid-column: span 2 / span 2;
@@ -18,5 +21,114 @@
     grid-column: span 2 / span 2;
     grid-row: span 5 / span 5;
     grid-column-start: 4;
+}
+   
+
+.mat-mdc-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* El contenido de tags debe ser scrolleable si es necesario */
+.tags-content {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0; /* Importante para que flex funcione correctamente */
+}
+
+/* Las acciones (formulario) tienen altura fija */
+.mat-card-actions.add-tag-section {
+    flex-shrink: 0; /* No se reduce */
+    padding: 16px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Contenedor para input y botón en línea */
+.input-button-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+.tags-display {
+    margin-bottom: 16px;
+}
+
+.mat-chip-listbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+
+
+.no-tags-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 20px 0;
+    padding: 20px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+}
+
+.tag-input {
+    flex: 1; /* Ocupa todo el espacio disponible */
+}
+
+.add-button {
+    margin-top: 8px; /* Alineación con el input */
+    flex-shrink: 0; /* No se reduce */
+}
+
+
+@media (max-width: 1200px) {
+    .parent {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+    }
+    
+    .div1 {
+        grid-column: span 3 / span 3;
+        grid-row: span 4 / span 4;
+    }
+    
+    .div2 {
+        grid-column: span 1 / span 1;
+        grid-row: span 2 / span 2;
+        grid-row-start: 5;
+    }
+    
+    .div3 {
+        grid-column: span 2 / span 2;
+        grid-row: span 2 / span 2;
+        grid-column-start: 2;
+        grid-row-start: 5;
+    }
+}
+
+@media (max-width: 768px) {
+    .parent {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 12px;
+        height: auto;
+    }
+    
+    .div1, .div2, .div3 {
+        grid-column: 1;
+        grid-row: auto;
+    }
+    
+    .mat-card-actions.add-tag-section {
+        gap: 8px;
+    }
 }
         
