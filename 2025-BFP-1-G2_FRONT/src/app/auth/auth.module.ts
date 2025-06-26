@@ -13,6 +13,7 @@ import { LoginComponent } from './login/login.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatCardModule} from "@angular/material/card";
+import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import {MatCardModule} from "@angular/material/card";
     HttpClientModule,
     MatDialogModule,
     MatProgressBarModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
     ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

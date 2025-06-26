@@ -19,7 +19,6 @@ export class HeaderComponent {
   constructor(protected authService: AuthService) {
     this.sub = this.authService.userName$.subscribe(name => {
       this.username = name;
-      this.startTypingAnimation();
     });
   }
 
@@ -27,21 +26,4 @@ export class HeaderComponent {
     this.sub.unsubscribe();
   }
 
-   startTypingAnimation() {
-    this.animatedName = '';
-    let i = 0;
-    this.showCursor = true;
-    if (this.typingInterval) {
-      clearInterval(this.typingInterval);
-    }
-    this.typingInterval = setInterval(() => {
-      if (i < this.username.length) {
-        this.animatedName += this.username[i];
-        i++;
-      } else {
-        clearInterval(this.typingInterval);
-        this.showCursor = false;
-      }
-    }, 70);
-  }
 }

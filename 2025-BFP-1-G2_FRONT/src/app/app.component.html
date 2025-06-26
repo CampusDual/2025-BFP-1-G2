@@ -1,6 +1,6 @@
-<body>
+<body [ngClass]="{ 'login-bg': !showHeader }">
   <div class="content">
-    <app-header [drawer]="drawer"></app-header>
+    <app-header *ngIf="showHeader" [drawer]="drawer"></app-header>
     <mat-drawer-container autosize>
       <mat-drawer #drawer mode="side">
         <div class="nav-item" *ngIf="isAdmin" routerLink="../offers/portal" (click)="drawer.close()">
@@ -30,7 +30,7 @@
       </mat-drawer>
         <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
             #outlet="outlet"></router-outlet></div>
-        <app-footer></app-footer>
+        <app-footer *ngIf="showFooter"></app-footer>
     </mat-drawer-container>
   </div>
 </body>

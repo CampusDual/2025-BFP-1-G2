@@ -35,5 +35,17 @@ img {
 .username-header {
   margin-right: 20px;
   white-space: nowrap;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+  background-color: rgba(255, 255, 255, 0.755);
+  padding: 6px 18px 6px 12px;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(30,60,114,0.10);
+  display: flex;
+  align-items: center;
+  cursor:pointer
 }
+
+
 
