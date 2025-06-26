@@ -7,20 +7,24 @@ import { OfferPanelModule } from '../offer-panel/offer-panel.module';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import {MatButtonModule} from "@angular/material/button";
+import { AdminTagsComponent } from './admin-tags/admin-tags.component';
+import {MatChipsModule} from "@angular/material/chips";
 
 
 @NgModule({
   declarations: [
-    AdminPanelComponent
+    AdminPanelComponent,
+    AdminTagsComponent
   ],
-    imports: [
-        CommonModule,
-        AdminRoutingModule,
-        MatTableModule,
-        OfferPanelModule,
-        MatIconModule,
-        ReactiveFormsModule,
-        MatButtonModule
-    ]
+  imports: [
+    CommonModule,
+    AdminRoutingModule,
+    MatTableModule,
+    OfferPanelModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatChipsModule
+  ]
 })
 export class AdminModule { }
