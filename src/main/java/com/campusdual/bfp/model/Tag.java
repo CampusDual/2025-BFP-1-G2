@@ -14,14 +14,11 @@ public class Tag {
     private String name;
 
     public Tag() {
-
     }
 
     public Tag(String name) {
         this.name = name;
     }
-
-
 
     public void setId(Long id) {
         this.id = id;

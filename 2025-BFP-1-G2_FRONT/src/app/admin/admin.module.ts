@@ -7,14 +7,14 @@ import { OfferPanelModule } from '../offer-panel/offer-panel.module';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import {MatButtonModule} from "@angular/material/button";
-import { AdminTagsComponent } from './admin-tags/admin-tags.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import {MatChipsModule} from "@angular/material/chips";
 
 
 @NgModule({
   declarations: [
     AdminPanelComponent,
-    AdminTagsComponent
+    AdminDashboardComponent
   ],
   imports: [
     CommonModule,
