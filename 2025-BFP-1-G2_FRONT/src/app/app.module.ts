@@ -24,7 +24,6 @@ import {UserPanelComponent} from './user-panel/user-panel.component';
 import {OfferPanelModule} from "./offer-panel/offer-panel.module";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatTableModule } from '@angular/material/table';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 
@@ -55,7 +54,6 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSidenavModule,
     OfferPanelModule,
     MatTableModule,
-    MatDatepickerModule,
     MatNativeDateModule
   ],
   providers: [

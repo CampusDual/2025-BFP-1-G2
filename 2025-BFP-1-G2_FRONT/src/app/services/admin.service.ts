@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from '../auth/services/auth.service';
 import { Company } from '../admin/admin-panel/admin-panel.component';
 import { Observable } from 'rxjs';
 
