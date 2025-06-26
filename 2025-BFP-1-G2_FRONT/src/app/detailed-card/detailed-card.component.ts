@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from "@angular/material/core";
+import {MatDatepicker} from "@angular/material/datepicker";
 
 export interface Candidate {
   name: string;
@@ -8,6 +10,8 @@ export interface Candidate {
   email: string;
   phoneNumber: string;
   date: string;
+  Linkedin?: string;
+  dateAdded: string;
   valid: boolean | null;
 }
 
@@ -35,10 +39,37 @@ export interface DetailedCardAction {
   data?: any;
 }
 
+const YEAR_FORMATS = {
+  parse: {
+    dateInput: 'YYYY',
+  },
+  display: {
+    dateInput: 'YYYY',
+    monthYearLabel: 'YYYY',
+    dateA11yLabel: 'YYYY',
+    monthYearA11yLabel: 'YYYY',
+  },
+};
+
+export class CustomDateAdapter extends NativeDateAdapter {
+  override format(date: Date): string {
+    return date ? date.getFullYear().toString() : '';
+  }
+
+  override parse(value: string): Date | null {
+    const year = parseInt(value, 10);
+    return isNaN(year) ? null : new Date(year, 0, 1);
+  }
+}
+
 @Component({
   selector: 'app-detailed-card',
   templateUrl: './detailed-card.component.html',
-  styleUrls: ['./detailed-card.component.css']
+  styleUrls: ['./detailed-card.component.css'],
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: YEAR_FORMATS },
+  ],
 })
 export class DetailedCardComponent implements OnInit {
 
@@ -54,13 +85,18 @@ export class DetailedCardComponent implements OnInit {
   @Output() onNavigate = new EventEmitter<number>();
   @Output() onSave = new EventEmitter<DetailedCardData>();
 
-  @ViewChild('expPanel', { read: ElementRef }) expPanel?: ElementRef;
+  @ViewChild('foundedDatePicker') foundedDatePicker!: MatDatepicker<Date>;
+  startYear = new Date();
 
   currentItem: DetailedCardData | null = null;
   editedItem: DetailedCardData | null = null;
   panelOpenState: boolean = false;
   isEditing: boolean = false;
   addingNewItem: boolean = false;
+  maxDate: Date = new Date();
+  minDate: Date = new Date(1800, 0, 1);
+  private fb: any;
+  private dateAdapter: DateAdapter<Date> = new CustomDateAdapter('es');
 
   ngOnInit() {
     this.updateCurrentItem();
@@ -137,9 +173,33 @@ export class DetailedCardComponent implements OnInit {
     }
   }
 
+  private createCompanyForm(): FormGroup {
+    return this.fb.group({
+      // ... otros campos
+      foundedDate: ['', [
+        Validators.required,
+        this.dateValidator()
+      ]]
+    });
+  }
+
+  private dateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const date = control.value;
+      if (!date) return null;
+      if (date < this.minDate) return {matDatepickerMin: true};
+      if (date > this.maxDate) return {matDatepickerMax: true};
+      return null;
+    };
+  }
+
   saveEdit() {
-    if (this.editedItem) {
-      this.onSave.emit(this.editedItem);
+    if (this.editedItem?.form) {
+      const formValue = this.editedItem.form.value;
+      if (formValue.foundedDate instanceof Date) {
+        formValue.foundedDate = formValue.foundedDate.getFullYear();
+      }
+      this.onSave.emit({...this.editedItem, form: this.editedItem.form});
     }
   }
 
@@ -147,7 +207,6 @@ export class DetailedCardComponent implements OnInit {
     this.isEditing = false;
     this.addingNewItem = false;
     this.panelOpenState = false;
-    this.resetPanelScroll();
     this.onClose.emit();
   }
 
@@ -226,13 +285,12 @@ export class DetailedCardComponent implements OnInit {
       });
     }
   }
-
-  resetPanelScroll() {
-    setTimeout(() => {
-      if (this.expPanel && this.expPanel.nativeElement) {
-        this.expPanel.nativeElement.scrollTop = 0;
-      }
-    }, 50);
+  yearSelected(normalizedYear: Date) {
+    const ctrl = this.currentItem?.form?.get('foundedDate');
+    if (ctrl) {
+      ctrl.setValue(new Date(normalizedYear.getFullYear(), 0, 1));
+      this.foundedDatePicker?.close(); // cierre inmediato
+    }
   }
 
 }

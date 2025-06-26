@@ -106,6 +106,16 @@ export class OfferTableComponent {
         data: { offer: offer }
       });
 
+      if (offer.candidates && offer.candidates.length > 0) {
+        actions.push({
+          label: 'Ver candidatos' + ` (${offer.candidates.length})`,
+          action: 'viewCandidates',
+          color: 'primary',
+          icon: 'people',
+          data: { offerId: offer.id, offerTitle: offer.title }
+        });
+      }
+
     } else if (this.isCandidate) {
       actions.push({
         label: 'Aplicar a oferta',
@@ -139,21 +149,15 @@ export class OfferTableComponent {
       case 'deleteOffer':
         this.deleteOffer(data.offer);
         break;
+
+      case 'viewCandidates':
+        this.router.navigate(['/company/candidates'], {
+          queryParams: { offerId: data.offerId, offerTitle: data.offerTitle }
+        });
+        break;
         
       case 'loginToApply':
         this.redirectToLogin(data.offer);
-        break;
-
-      case 'accept':
-        this.aceptCandidate(data.candidate, data.offerId);
-        break;
-
-      case 'reject':
-        this.rejectCandidate(data.candidate, data.offerId);
-        break;
-
-      case 'deleteOption':
-        this.deleteOptionCandidate(data.candidate, data.offerId);
         break;
 
       default:
@@ -161,59 +165,6 @@ export class OfferTableComponent {
     }
   }
 
-  aceptCandidate(candidate: Candidate, offerId: number) {
-    const lastOption = candidate.valid;
-    candidate.valid = true;
-    this.offerService.updateCandidateStatus(offerId, candidate).subscribe({
-      next: () => {
-        this.snackBar.open('Candidato aceptado exitosamente', 'Cerrar', { duration: 3000 });
-      },
-      error: (error) => {
-        console.error('Error accepting candidate:', error);
-        this.snackBar.open('Error al aceptar candidato', 'Cerrar', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-        candidate.valid = lastOption;
-      }
-    });
-  }
-
-  rejectCandidate(candidate: Candidate, offerId: number) {
-    const lastOption = candidate.valid;
-    candidate.valid = false;
-    this.offerService.updateCandidateStatus(offerId, candidate).subscribe({
-      next: () => {
-        this.snackBar.open('Candidato rechazado exitosamente', 'Cerrar', { duration: 3000 });
-      },
-      error: (error) => {
-        console.error('Error rejecting candidate:', error);
-        this.snackBar.open('Error al rechazar candidato', 'Cerrar', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-        candidate.valid = lastOption;
-      }
-    });
-  }
-
-  deleteOptionCandidate(candidate: Candidate, offerId: number) {
-    const lastOption = candidate.valid;
-    candidate.valid = null;
-    this.offerService.updateCandidateStatus(offerId, candidate).subscribe({
-      next: () => {
-        this.snackBar.open('Candidato actualizado', 'Cerrar', { duration: 3000 });
-      },
-      error: (error) => {
-        console.error('Error deleting candidate option:', error);
-        this.snackBar.open('Error al actualizar candidato', 'Cerrar', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-        candidate.valid = lastOption;
-      }
-    });
-  }
 
 
   private applyToOffer(offer: any) {
@@ -242,7 +193,7 @@ export class OfferTableComponent {
       this.offerService.deleteOffer(offer.id).subscribe({
         next: () => {
           this.snackBar.open('Oferta eliminada exitosamente', 'Cerrar', { duration: 3000 });
-          this.loadOffers(); // Recargar ofertas
+          this.loadOffers(); 
           this.closeDetailedCard();
         },
         error: (error) => {

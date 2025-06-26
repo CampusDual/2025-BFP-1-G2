@@ -25,6 +25,8 @@ export class AppComponent implements OnInit, OnDestroy {
   isCompany = false;
   isCandidate = false;
   isAdmin = false;
+  showHeader = true;
+  showFooter = true;
   private authSubscription?: Subscription;
   private routerSubscription?: Subscription;
 
@@ -51,12 +53,20 @@ export class AppComponent implements OnInit, OnDestroy {
     // También escuchar cambios de ruta para verificar el estado
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
+      .subscribe((event) => {
         this.checkAuthStatus();
+        const url = (event as NavigationEnd).urlAfterRedirects || (event as NavigationEnd).url;
+        const isLoginOrRegister = url.includes('/login') || url === '/auth/login' || url === '/login' || url.includes('/register') || url === '/auth/register' || url === '/register';
+        this.showHeader = !isLoginOrRegister;
+        this.showFooter = !isLoginOrRegister;
       });
 
     // Verificar estado inicial
     this.checkAuthStatus();
+    const initialUrl = this.router.url;
+    const isLoginOrRegister = initialUrl.includes('/login') || initialUrl === '/auth/login' || initialUrl === '/login' || initialUrl.includes('/register') || initialUrl === '/auth/register' || initialUrl === '/register';
+    this.showHeader = !isLoginOrRegister;
+    this.showFooter = !isLoginOrRegister;
   }
 
   ngOnDestroy() {

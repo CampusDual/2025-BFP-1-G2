@@ -3,8 +3,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 85vh;
   width: 100%;
+}
+
+.login-box{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #3e3e3e;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 
+              0px 4px 5px 0px rgba(0,0,0,0.14), 
+              0px 1.5px 10px 0px rgba(0,0,0,0.12);
+}
+
+.login-box img {
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  padding: 20px;
+  max-width: 300px;
+  cursor: pointer;
 }
 
 form {
@@ -23,15 +45,17 @@ form {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
-  background-color: rgba(255, 255, 255, 0.52);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  background-color: rgba(255, 255, 255, 0.9);
 
   h2 {
     color: var(--primary-color);
     letter-spacing: 1.4px;
     text-transform: uppercase;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -40,6 +64,7 @@ form {
   align-items: center;
   justify-content: center;
   gap: 15px;
+  margin-bottom: 1rem;
 }
 
 

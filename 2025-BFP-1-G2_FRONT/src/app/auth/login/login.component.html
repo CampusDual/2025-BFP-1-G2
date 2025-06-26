@@ -1,6 +1,10 @@
 
 <div class="login-container">
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <div class="login-box">
+    <div class="login-img">
+      <img src="https://media.timtul.com/media/web_clustertic/logo-clustertic_20190412075104.png" alt="Logo" routerLink="/offers/portal">
+    </div>
   <mat-card class="formdata">
 
     <h2>Iniciar Sesión</h2>
@@ -26,14 +30,13 @@
       <button mat-raised-button color="warn" type="reset">Cancel</button>
     </div>
     <br>
-      <mat-progress-bar *ngIf="isLoading" mode="query"></mat-progress-bar>
-
-
   </mat-card>
-
+    <mat-progress-bar *ngIf="isLoading" mode="query"></mat-progress-bar>
+  </div>
   <p>¿Aún no tienes cuenta? </p>
   <button mat-raised-button color="primary" routerLink="../register" class="login-link">Registrarse</button>
 
 </form>
 
 </div>
+

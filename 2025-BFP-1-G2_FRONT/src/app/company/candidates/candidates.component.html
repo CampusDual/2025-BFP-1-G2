@@ -1,0 +1,76 @@
+<table class="custom-table">
+    <thead>
+        <tr>
+            <th>Oferta</th>
+            <th class="sortable-header" 
+                [class]="getSortClass('name')" 
+                (click)="sortBy('name')">
+                <div class="header-content">
+                    <span>Nombre</span>
+                    <mat-icon class="sort-icon">{{ getSortIcon('name') }}</mat-icon>
+                </div>
+            </th>
+            <th>Email</th>
+            <th>Linkedin</th>
+            <th class="sortable-header" 
+                [class]="getSortClass('date')" 
+                (click)="sortBy('date')">
+                <div class="header-content">
+                    <span>Fecha</span>
+                    <mat-icon class="sort-icon">{{ getSortIcon('date') }}</mat-icon>
+                </div>
+            </th>
+            <th class="sortable-header" 
+                [class]="getSortClass('status')" 
+                (click)="sortBy('status')">
+                <div class="header-content">
+                    <span>Estado</span>
+                    <mat-icon class="sort-icon">{{ getSortIcon('status') }}</mat-icon>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let candidate of sortedCandidates; let i = index"  
+            [ngClass]="candidate.valid === true ? 'validated' : (candidate.valid === false ? 'rejected' : '')">
+            <td>{{ offerTitle }}</td>
+            <td>{{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}</td>
+            <td>{{ candidate.email }}</td>
+            <td>
+                <a [href]="candidate.Linkedin" target="_blank" (click)="$event.stopPropagation()">
+                    Linkedin
+                </a>
+            </td>
+            <td>{{ candidate.dateAdded}}</td>
+            <td>
+                <div class="actions">
+                    <div class="status-indicator">
+                        <span *ngIf="candidate.valid === true" class="status-badge accepted">Aceptado</span>
+                        <span *ngIf="candidate.valid === false" class="status-badge rejected">Rechazado</span>
+                        <span *ngIf="candidate.valid === null" class="status-badge pending">Pendiente</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button mat-icon-button class="undo" 
+                                *ngIf="candidate.valid !== null"
+                                (click)="deleteOptionCandidate(candidate)"
+                                matTooltip="Resetear estado">
+                            <mat-icon>undo</mat-icon>
+                        </button>
+                        <button mat-icon-button class="check" 
+                                *ngIf="candidate.valid !== true"
+                                (click)="aceptCandidate(candidate)"
+                                matTooltip="Aceptar candidato">
+                            <mat-icon>check</mat-icon>
+                        </button>
+                        <button mat-icon-button class="close" 
+                                *ngIf="candidate.valid !== false"
+                                (click)="rejectCandidate(candidate)"
+                                matTooltip="Rechazar candidato">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

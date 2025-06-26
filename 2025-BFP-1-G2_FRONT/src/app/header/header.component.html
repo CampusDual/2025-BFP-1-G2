@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
 
-  <button *ngIf="authService.isLoggedIn()" mat-icon-button (click)="drawer.toggle()">
+  <button class="menuButton" *ngIf="authService.isLoggedIn()" mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
   <button *ngIf="!authService.isLoggedIn()" mat-icon-button routerLink="/offers/portal">
@@ -11,7 +11,8 @@
 
   <span class="spacer"></span>
   <span *ngIf="authService.isLoggedIn()" class="username-header">
-    {{ animatedName }}
+    <mat-icon style="margin-right: 5px; font-size: 22px; vertical-align: middle;">account_circle</mat-icon>
+    {{ username }}
   </span>
 
   <button mat-icon-button *ngIf="authService.isLoggedIn()" routerLink="/offers/portal"  (click)="authService.logout()" class="logout-button">

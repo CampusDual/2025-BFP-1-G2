@@ -6,21 +6,32 @@ import { MatTableModule } from '@angular/material/table';
 import { OfferPanelModule } from '../offer-panel/offer-panel.module';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import {MatButtonModule} from "@angular/material/button";
-
+import { MatButtonModule } from "@angular/material/button";
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { MatChipsModule } from "@angular/material/chips";
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
-    AdminPanelComponent
+    AdminPanelComponent,
+    AdminDashboardComponent
   ],
-    imports: [
-        CommonModule,
-        AdminRoutingModule,
-        MatTableModule,
-        OfferPanelModule,
-        MatIconModule,
-        ReactiveFormsModule,
-        MatButtonModule
-    ]
+  imports: [
+    CommonModule,
+    AdminRoutingModule,
+    MatTableModule,
+    OfferPanelModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTooltipModule
+  ]
 })
 export class AdminModule { }

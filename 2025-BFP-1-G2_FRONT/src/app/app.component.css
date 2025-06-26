@@ -28,6 +28,7 @@ app-footer {
   position: absolute;
   bottom: 0;
   width: 100%;
+  margin-top: 20px;
 }
 
 mat-drawer {
@@ -41,12 +42,10 @@ router-outlet {
   height: 100%;
 }
 
-.main{  
+.main{
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 100vh;
-  margin-bottom: 75px;
 }
 
 .nav-item {
@@ -66,4 +65,18 @@ router-outlet {
   scale: 1.05;
   color: var(--primary-color);
   background: rgb(255, 255, 255);
+}
+
+.login-bg {
+  background:
+  linear-gradient(
+      rgba(255, 255, 255, 0.838), /* blanco semitransparente */
+      rgba(255, 255, 255, 0.667)
+    ),
+  url('https://media.timtul.com/media/web_clustertic/background-2462431_1920_20190429120035.jpg') center center no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+  width: 100vw;
+  position: fixed;
+  z-index: -1;
 }

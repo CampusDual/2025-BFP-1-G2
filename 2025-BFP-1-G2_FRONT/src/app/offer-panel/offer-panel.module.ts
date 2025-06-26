@@ -14,6 +14,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {MatTableModule} from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 
 export interface Offer {
@@ -48,7 +49,8 @@ export interface Offer {
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDatepickerModule
   ],
 })
 export class OfferPanelModule { }

@@ -1,17 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {OfferService} from '../services/offer.service';
+import {OfferService} from '../../services/offer.service';
 import {Router} from "@angular/router";
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 
 @Component({
-  selector: 'app-company-panel',
-  templateUrl: './company-panel.component.html',
-  styleUrls: ['./company-panel.component.css']
+  selector: 'app-add-offer',
+  templateUrl: './add-offer.component.html',
+  styleUrls: ['./add-offer.component.css']
 })
-export class CompanyPanelComponent implements OnInit {
+export class AddOfferComponent implements OnInit {
   companyName: string | null = null;
 
   title = new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(255)]);

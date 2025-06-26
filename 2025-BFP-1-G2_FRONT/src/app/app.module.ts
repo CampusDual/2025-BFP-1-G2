@@ -12,7 +12,6 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatIconModule} from '@angular/material/icon';
-import {CompanyPanelComponent} from './company-panel/company-panel.component';
 import {AuthInterceptor} from "./auth/interceptors/interceptor";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
@@ -24,15 +23,15 @@ import {AuthModule} from "./auth/auth.module";
 import {UserPanelComponent} from './user-panel/user-panel.component';
 import {OfferPanelModule} from "./offer-panel/offer-panel.module";
 import {MatSidenavModule} from "@angular/material/sidenav";
-import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule } from '@angular/material/table';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    CompanyPanelComponent,
     UserPanelComponent
     ],
   imports: [
@@ -54,7 +53,8 @@ import {MatTableModule } from '@angular/material/table';
     AuthModule,
     MatSidenavModule,
     OfferPanelModule,
-    MatTableModule
+    MatTableModule,
+    MatNativeDateModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
