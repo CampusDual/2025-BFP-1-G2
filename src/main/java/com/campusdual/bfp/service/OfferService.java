@@ -1,18 +1,14 @@
 package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.IOfferService;
-import com.campusdual.bfp.model.Candidate;
-import com.campusdual.bfp.model.Offer;
-import com.campusdual.bfp.model.User;
-import com.campusdual.bfp.model.UserOffer;
-import com.campusdual.bfp.model.dao.CandidateDao;
-import com.campusdual.bfp.model.dao.OfferDao;
-import com.campusdual.bfp.model.dao.UserDao;
-import com.campusdual.bfp.model.dao.UserOfferDao;
+import com.campusdual.bfp.model.*;
+import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
+import com.campusdual.bfp.model.dto.TagDTO;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
+import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +29,9 @@ public class OfferService implements IOfferService {
 
     @Autowired
     private CandidateDao candidateDao;
+
+    @Autowired
+    private TagDao tagDao;
 
     @Override
     public OfferDTO queryOffer(OfferDTO OfferDTO) {
@@ -160,5 +159,28 @@ public class OfferService implements IOfferService {
         }
         userOffer.setValid(candidateDTO.isValid());
         userOfferDao.saveAndFlush(userOffer);
+    }
+
+    @Override
+    public long addTag(String tag) {
+        if (tag == null || tag.isEmpty()) {
+            throw new RuntimeException("Tag cannot be null or empty");
+        }
+        if (tagDao.existsTagByName(tag)) {
+            throw new RuntimeException("Tag already exists");
+        }
+        return tagDao.saveAndFlush(new Tag(tag)).getId();
+    }
+
+    @Override
+    public List<TagDTO> getAllTags() {
+        return TagMapper.INSTANCE.toTagDTOs(tagDao.findAll());
+    }
+
+    @Override
+    public long deleteTag(long tagId) {
+        Tag tag = tagDao.findById(tagId).orElseThrow(() -> new RuntimeException("Tag not found"));
+        tagDao.delete(tag);
+        return tagId;
     }
 }
