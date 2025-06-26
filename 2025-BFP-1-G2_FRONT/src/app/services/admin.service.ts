@@ -2,6 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Company } from '../admin/admin-panel/admin-panel.component';
 import { Observable } from 'rxjs';
+import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -28,4 +31,7 @@ export class AdminService {
     return this.http.post<number>(`${this.baseUrl}/companies/add`, company);
   }
 
+  getAllTags() : Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/tags/list`);
+  }
 }
