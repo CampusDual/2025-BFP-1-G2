@@ -1,4 +1,5 @@
 .register-container {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,45 +25,49 @@ form {
   justify-content: center;
   border-radius: 10px;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
-  background-color: rgba(255, 255, 255, 0.52);
-  padding: 30px;
-  margin-top: 30px;
-  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding-bottom: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .formdata h2 {
   color: var(--primary-color);
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  margin-bottom: 2rem;
+  padding-bottom: 5px;
 }
 
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  column-gap: 40px;
+  row-gap: 20px;
   width: 100%;
-  margin-bottom: 1.5rem;
-}
-
-.form-grid > *:nth-child(odd) {
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-  padding-right: 20px;
 }
 
 
 .form-actions {
+  margin-top: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 20px;
+}
+
+.form-actions button {
+  width: 100px;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-link {
+  margin-bottom: 1.5rem;
   padding: 10px 20px;
   border-radius: 10px;
-  transition: color 0.3s ease, background-color  0.3s ease;
+  transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 .login-link:hover {
@@ -79,4 +84,14 @@ form {
 #confirmPasswordField.hidden {
   opacity: 0;
   display: none;
+}
+.home-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.home-button mat-icon {
+  margin: 0;
+  line-height: 1;
 }

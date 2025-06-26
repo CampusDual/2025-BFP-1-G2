@@ -33,7 +33,20 @@ img {
 }
 
 .username-header {
-  margin-right: 20px;
+  margin-right: 10px;
   white-space: nowrap;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: white;
+  background-color: #31313176;
+  padding: 6px 18px 6px 12px;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(30,60,114,0.10);
+  display: flex;
+  align-items: center;
+  cursor:pointer;
+  gap: 6px;
 }
+
+
 

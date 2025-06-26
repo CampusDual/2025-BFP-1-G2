@@ -98,7 +98,7 @@ mat-card {
   background-color: rgba(255, 255, 255, 0.7);
   padding: 20px;
   cursor: pointer;
-  border-left: 6px solid var(--primary-color);
+  border-left: 5px solid var(--primary-color);
   max-height: 100px;
   p {
     text-align: justify;
@@ -126,7 +126,7 @@ mat-card {
 mat-card:hover {
   transform: scale(1.05);
   background-color: white;
-  border-left: 8px solid var(--primary-color);
+  border-left: 7px solid var(--primary-color);
   animation: borderAnimation 0.3s ease-in-out;
 }
 
@@ -156,9 +156,9 @@ div.details mat-card:hover {
 
 @keyframes borderAnimation {
   0% {
-    border-left: 6px solid var(--primary-color);
+    border-left: 5px solid var(--primary-color);
   }
   100% {
-    border-left: 8px solid var(--primary-color);
+    border-left: 7px solid var(--primary-color);
   }
 }
