@@ -137,7 +137,15 @@
               <mat-datepicker-toggle matIconSuffix [for]="foundedDatePicker">
                 <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
               </mat-datepicker-toggle>
-              <mat-datepicker #foundedDatePicker></mat-datepicker>
+              <mat-datepicker
+                #foundedDatePicker
+                startView="multi-year"
+                (yearSelected)="yearSelected($event)"
+                panelClass="year-picker"
+                [startAt]="startYear"
+              ></mat-datepicker>
+
+
               <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('required')">
                 El año de fundación es obligatorio
               </mat-error>
