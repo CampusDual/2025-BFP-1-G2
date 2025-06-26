@@ -6,11 +6,11 @@ export interface ChipColor {
   color: ThemePalette;
 }
 @Component({
-  selector: 'app-admin-tags',
-  templateUrl: './admin-tags.component.html',
-  styleUrls: ['./admin-tags.component.css']
+  selector: 'app-admin-dashboard',
+  templateUrl: './admin-dashboard.component.html',
+  styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminTagsComponent {
+export class AdminDashboardComponent {
   availableColors: ChipColor[] = [
     {name: 'none', color: undefined},
     {name: 'Primary', color: 'primary'},
