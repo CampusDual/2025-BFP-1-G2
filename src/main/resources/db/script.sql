@@ -77,3 +77,11 @@ CREATE TABLE companies (
     user_id INTEGER,
     CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE offer_tag (
+    id SERIAL PRIMARY KEY,
+    offer_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    FOREIGN KEY (offer_id) REFERENCES offers(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
+);
