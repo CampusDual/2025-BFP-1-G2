@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from '../auth/services/auth.service';
 import { Company } from '../admin/admin-panel/admin-panel.component';
 import { Observable } from 'rxjs';
-import { tag } from '../admin/admin-dashboard/admin-dashboard.component';
+import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 
 
 
@@ -32,7 +31,7 @@ export class AdminService {
     return this.http.post<number>(`${this.baseUrl}/companies/add`, company);
   }
 
-  getAllTags() : Observable<tag[]> {
-    return this.http.get<tag[]>(`${this.baseUrl}/tags/list`);
+  getAllTags() : Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/tags/list`);
   }
 }

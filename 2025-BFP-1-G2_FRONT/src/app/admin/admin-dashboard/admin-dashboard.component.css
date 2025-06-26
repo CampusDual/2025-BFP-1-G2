@@ -1,6 +1,6 @@
 .parent {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     grid-template-rows: repeat(5, 1fr);
     gap: 16px;
     padding: 16px;
@@ -8,6 +8,7 @@
 }
 
 .div1 {
+    grid-column: span 2 / span 2;
     grid-row: span 5 / span 5;
 }
 
@@ -20,26 +21,34 @@
 .div3 {
     grid-column: span 2 / span 2;
     grid-row: span 5 / span 5;
-    grid-column-start: 4;
+
 }
    
 
 .mat-mdc-card {
-    height: 100%;
+    margin: 16px;
+    height: fit-content;
     display: flex;
     flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
 }
 
-/* El contenido de tags debe ser scrolleable si es necesario */
 .tags-content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     flex: 1;
     overflow-y: auto;
-    min-height: 0; /* Importante para que flex funcione correctamente */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+    min-height: 0; 
 }
 
-/* Las acciones (formulario) tienen altura fija */
 .mat-card-actions.add-tag-section {
-    flex-shrink: 0; /* No se reduce */
+    flex-shrink: 0; 
     padding: 16px;
     border-top: 1px solid #e0e0e0;
     background-color: #fafafa;
@@ -49,7 +58,6 @@
     width: 100%;
 }
 
-/* Contenedor para input y botón en línea */
 .input-button-container {
     display: flex;
     align-items: flex-start;
@@ -64,6 +72,9 @@
 .mat-chip-listbox {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
     gap: 8px;
 }
 
@@ -80,12 +91,12 @@
 }
 
 .tag-input {
-    flex: 1; /* Ocupa todo el espacio disponible */
+    flex: 1;
 }
 
 .add-button {
-    margin-top: 8px; /* Alineación con el input */
-    flex-shrink: 0; /* No se reduce */
+    margin-top: 8px;
+    flex-shrink: 0;
 }
 
 

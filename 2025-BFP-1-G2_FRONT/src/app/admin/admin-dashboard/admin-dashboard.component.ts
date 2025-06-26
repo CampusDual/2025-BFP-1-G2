@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipEditedEvent } from '@angular/material/chips';
 import { FormControl, Validators } from '@angular/forms';
+import { AdminService } from 'src/app/services/admin.service';
 
 export interface Tag {
   name: string;
@@ -12,18 +13,27 @@ export interface Tag {
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminDashboardComponent {
+export class AdminDashboardComponent implements OnInit {
+  
  
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  tags: Tag[] = [
-    { name: 'Frontend' }, 
-    { name: 'Backend' }, 
-    { name: 'Full Stack' },
-    { name: 'Angular' },
-    { name: 'React' }
-  ];
+  tags: Tag[] = [];
   tag = new FormControl('', [Validators.required, Validators.minLength(2)]);
   
+  constructor(private adminService: AdminService) { }
+  
+  ngOnInit(): void {
+    this.adminService.getAllTags().subscribe(
+      (tags: Tag[]) => {
+        this.tags = tags;
+      },
+      (error) => {
+        console.error('Error al obtener los tags:', error);
+      }
+    );
+  }
+
+
   add(): void {
     const value = this.tag.value?.toString().trim();
     
@@ -67,12 +77,6 @@ export class AdminDashboardComponent {
       }
     } else {
       console.warn('El tag ya existe');
-    }
-  }
-
-  clearAllTags(): void {
-    if (confirm('¿Estás seguro de que quieres eliminar todos los tags?')) {
-      this.tags = [];
     }
   }
 }
