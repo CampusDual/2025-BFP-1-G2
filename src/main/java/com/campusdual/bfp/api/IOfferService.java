@@ -20,6 +20,10 @@ public interface IOfferService {
     void updateCandidateValidity(int offerID, CandidateDTO candidateDTO);
     long addTag(String tag);
     List<TagDTO> getAllTags();
-
     long deleteTag(long tagId);
+    long updateTag(long id, String name);
+    int addTagsToOffer(int offerId, List<Long> tagIds, String username);
+    int removeTagFromOffer(int offerId, long tagId, String username);
+    List<TagDTO> getOfferTags(int offerId);
+    int replaceOfferTags(int offerId, List<Long> tagIds, String username);
 }

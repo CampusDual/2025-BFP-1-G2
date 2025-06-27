@@ -2,10 +2,7 @@ package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.auth.JWTUtil;
-import com.campusdual.bfp.model.dto.CandidateDTO;
-import com.campusdual.bfp.model.dto.CompanyDTO;
-import com.campusdual.bfp.model.dto.SignupDTO;
-import com.campusdual.bfp.model.dto.TagDTO;
+import com.campusdual.bfp.model.dto.*;
 import com.campusdual.bfp.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -198,5 +195,12 @@ public class AuthController {
     public ResponseEntity<Long> deleteTag(@PathVariable("tagId") long tagId) {
         long deletedId = offerService.deleteTag(tagId);
         return ResponseEntity.ok(deletedId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("tags/edit")
+    public ResponseEntity<Long> editTag(@RequestBody TagDTO tag) {
+        long updatedId = offerService.updateTag(tag.getId(), tag.getName());
+        return ResponseEntity.ok(updatedId);
     }
 }

@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from "../../auth/services/auth.service";
 import { OfferService } from "../../services/offer.service";
+
+
 @Component({
   selector: 'app-offer-card',
   templateUrl: './offer-card.component.html',
   styleUrls: ['./offer-card.component.css']
 })
 export class OfferCardComponent implements OnInit {
+
   @Input() offer: any;
 
   isDisabled: boolean = true;
@@ -41,6 +44,21 @@ export class OfferCardComponent implements OnInit {
         this.isCompany = false;
       }
     });
+  }
+  getFirstThreeTags(): any {
+    if (!this.offer?.tags || !Array.isArray(this.offer.tags)) {
+      return [];
+    }
+    return this.offer.tags.slice(0, 3);
+  }
+  hasMoreThanThreeTags(): boolean {
+    return this.offer?.tags?.length > 3;
+  }
+  getAdditionalTagsCount(): number {
+    if (!this.offer?.tags || this.offer.tags.length <= 3) {
+      return 0;
+    }
+    return this.offer.tags.length - 3;
   }
 }
 

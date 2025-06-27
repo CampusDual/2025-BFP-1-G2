@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
-import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild } from '@angular/core';
+import { FormControl, AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from "@angular/material/core";
 import {MatDatepicker} from "@angular/material/datepicker";
+import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 
 export interface Candidate {
   name: string;
@@ -29,6 +30,7 @@ export interface DetailedCardData {
   metadata?: { [key: string]: any };
   candidates?: any[];
   actions?: DetailedCardAction[];
+  tags?: Tag[];
 }
 
 export interface DetailedCardAction {
@@ -77,8 +79,9 @@ export class DetailedCardComponent implements OnInit {
   @Input() data: DetailedCardData[] = [];
   @Input() currentIndex: number = 0;
   @Input() showNavigation: boolean = true;
-  @Input() cardType: 'offer' | 'candidate' | 'generic' = 'generic';
+  @Input() cardType: 'company' | 'offer' | 'candidate' | 'generic' = 'generic';
   @Input() editMode: boolean = false;
+  @Input() availableTags: Tag[] = [];
 
   @Output() onClose = new EventEmitter<void>();
   @Output() onAction = new EventEmitter<{ action: string, data: any }>();
@@ -170,6 +173,14 @@ export class DetailedCardComponent implements OnInit {
     else if (event.key === 'ArrowRight' && this.showNavigation && !this.isEditing) {
       event.preventDefault();
       this.navigateNext();
+    }
+  }
+
+  onChipKeydown(event: KeyboardEvent): void {
+    // Detener la propagación de eventos de teclado específicos desde los chips
+    if (event.key === 'Enter' || event.key === 'Escape' ||
+        event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.stopPropagation();
     }
   }
 
@@ -291,6 +302,64 @@ export class DetailedCardComponent implements OnInit {
       ctrl.setValue(new Date(normalizedYear.getFullYear(), 0, 1));
       this.foundedDatePicker?.close(); // cierre inmediato
     }
+  }
+
+  isTagSelected(tag: Tag, form: FormGroup): boolean {
+    const selectedTags = form.get('tags')?.value || [];
+    return selectedTags.some((t: Tag) => t.id === tag.id);
+  }
+
+  getTagsFormControl(form: FormGroup): FormControl {
+    return form.get('tags') as FormControl;
+  }
+
+  onChipSelectionChange(event: any): void {
+    const selectedTags = event.value as Tag[];
+    const currentForm = this.currentItem?.form;
+
+    if (!currentForm) return;
+
+    if (selectedTags) {
+      currentForm.get('tags')?.setValue(selectedTags);
+    }
+  }
+
+  toggleTag(tag: Tag, form: FormGroup): void {
+    const tagsControl = form.get('tags');
+    if (!tagsControl) return;
+
+    const currentTags = tagsControl.value || [];
+    const isSelected = this.isTagSelected(tag, form);
+
+    if (isSelected) {
+      const updatedTags = currentTags.filter((t: Tag) => t.id !== tag.id);
+      tagsControl.setValue(updatedTags);
+    } else {
+      if (currentTags.length < 5) {
+        const updatedTags = [...currentTags, tag];
+        tagsControl.setValue(updatedTags);
+      } else {
+        const updatedTags = [...currentTags.slice(1), tag];
+        tagsControl.setValue(updatedTags);
+      }
+    }
+  }
+
+  getSelectedTagsCount(form: FormGroup): number {
+    const selectedTags = form.get('tags')?.value || [];
+
+    if (selectedTags.length > 5) {
+      const limitedTags = selectedTags.slice(-5);
+      form.get('tags')?.setValue(limitedTags);
+      return 5;
+    }
+
+    return selectedTags.length;
+  }
+
+
+  compareTagsById = (tag1: Tag, tag2: Tag): boolean => {
+    return tag1 && tag2 ? tag1.id === tag2.id : tag1 === tag2;
   }
 
 }
