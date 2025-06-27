@@ -1,5 +1,7 @@
 <div class="register-container">
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="registerForm">
+  <form [formGroup]="registerForm">
     <mat-card class="formdata">
       <h2 #formTitle>Registrarse</h2>
 
@@ -56,13 +58,179 @@
       </div>
 
       <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Registrarse</button>
+        <button
+          mat-raised-button
+          color="primary"
+          matStepperNext
+          [disabled]="!isStep1Valid()"
+          (click)="canAdvanceToStep2()"
+        >
+          Siguiente
+        </button>
         <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
         <button class="home-button" mat-raised-button color="primary" type="reset" routerLink="/offers/portal"><mat-icon>home</mat-icon></button>
       </div>
     </mat-card>
 
-    <p>¿Ya tienes una cuenta?</p>
-    <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
+    <div class="step-footer">
+      <p>¿Ya tienes una cuenta?</p>
+      <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
+    </div>
   </form>
+  </mat-step>
+
+  <!-- Segunda página del stepper -->
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <mat-card class="formdata">
+        <h2>Información Adicional</h2>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Ubicación *</mat-label>
+            <input matInput placeholder="Madrid, España" formControlName="location" required>
+            <mat-error *ngIf="secondFormGroup.get('location')?.invalid">La ubicación es requerida</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Título Profesional *</mat-label>
+            <input matInput placeholder="Desarrollador Full Stack" formControlName="professionalTitle" required>
+            <mat-error *ngIf="secondFormGroup.get('professionalTitle')?.invalid">El título profesional es requerido</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Años de Experiencia</mat-label>
+            <mat-select formControlName="yearsOfExperience">
+              <mat-option value="0">Sin experiencia</mat-option>
+              <mat-option value="1">1 año</mat-option>
+              <mat-option value="2">2 años</mat-option>
+              <mat-option value="3">3 años</mat-option>
+              <mat-option value="4">4 años</mat-option>
+              <mat-option value="5">5 años</mat-option>
+              <mat-option value="6-10">6-10 años</mat-option>
+              <mat-option value="10+">Más de 10 años</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nivel de Estudios</mat-label>
+            <mat-select formControlName="educationLevel">
+              <mat-option value="ESO">Educación Secundaria</mat-option>
+              <mat-option value="Bachillerato">Bachillerato</mat-option>
+              <mat-option value="FP">Formación Profesional</mat-option>
+              <mat-option value="Universitario">Universitario</mat-option>
+              <mat-option value="Master">Máster</mat-option>
+              <mat-option value="Doctorado">Doctorado</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Idiomas</mat-label>
+            <input matInput placeholder="Español (nativo), Inglés (B2), Francés (A1)" formControlName="languages">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Situación Laboral *</mat-label>
+            <mat-select formControlName="employmentStatus" required>
+              <mat-option value="empleado">Empleado</mat-option>
+              <mat-option value="desempleado">Desempleado</mat-option>
+              <mat-option value="estudiante">Estudiante</mat-option>
+              <mat-option value="freelance">Freelance</mat-option>
+              <mat-option value="emprendedor">Emprendedor</mat-option>
+              <mat-option value="jubilado">Jubilado</mat-option>
+            </mat-select>
+            <mat-error *ngIf="secondFormGroup.get('employmentStatus')?.invalid">La situación laboral es requerida</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Foto de Perfil (Enlace)</mat-label>
+            <input matInput placeholder="https://ejemplo.com/mi-foto.jpg" formControlName="profilePhoto" type="url">
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            matStepperNext
+            [disabled]="!isStep2Valid()"
+            (click)="canAdvanceToStep3()"
+          >
+            Siguiente
+          </button>
+          <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+          <button mat-raised-button color="accent" matStepperPrevious>Volver</button>
+        </div>
+      </mat-card>
+
+      <div class="form-spacer"></div>
+    </form>
+  </mat-step>
+
+  <!-- Tercera página del stepper (opcional) -->
+  <mat-step [stepControl]="thirdFormGroup">
+    <form [formGroup]="thirdFormGroup">
+      <mat-card class="formdata">
+        <h2>Enlaces Profesionales (Opcional)</h2>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Curriculum (Enlace)</mat-label>
+            <input matInput placeholder="https://ejemplo.com/mi-curriculum.pdf" formControlName="curriculum" type="url">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>LinkedIn</mat-label>
+            <input matInput placeholder="https://linkedin.com/in/mi-perfil" formControlName="linkedin" type="url">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>GitHub</mat-label>
+            <input matInput placeholder="https://github.com/mi-usuario" formControlName="github" type="url">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Figma</mat-label>
+            <input matInput placeholder="https://figma.com/@mi-usuario" formControlName="figma" type="url">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Web Personal</mat-label>
+            <input matInput placeholder="https://mi-portfolio.com" formControlName="personalWebsite" type="url">
+          </mat-form-field>
+
+          <!-- Espaciador para mantener la simetría del grid -->
+          <div class="grid-spacer"></div>
+          <div class="grid-spacer"></div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            (click)="onSubmit()"
+            [disabled]="!formValid()"
+          >
+            Finalizar Registro
+          </button>
+          <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+          <button mat-raised-button color="accent" matStepperPrevious>Volver</button>
+          <button
+            class="home-button"
+            mat-raised-button
+            color="primary"
+            type="button"
+            routerLink="/offers/portal"
+          >
+            <mat-icon>home</mat-icon>
+          </button>
+        </div>
+      </mat-card>
+
+      <div class="form-spacer"></div>
+    </form>
+  </mat-step>
+  </mat-horizontal-stepper>
+
 </div>

@@ -80,18 +80,32 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public void registerNewCandidate(String username, String password, String email, String name,
-                                     String surname1, String surname2, String phoneNumber, String roleName) {
+                                     String surname1, String surname2, String phoneNumber, String roleName,
+                                     String location, String professionalTitle, String yearsOfExperience, String educationLevel,
+                                     String languages, String employmentStatus, String profilePictureUrl, String curriculumUrl,
+                                     String linkedinUrl, String githubUrl, String figmaUrl, String personalWebsiteUrl) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
         candidate.setSurname1(surname1);
         candidate.setSurname2(surname2);
         candidate.setPhoneNumber(phoneNumber);
+        candidate.setLocation(location);
+        candidate.setProfessionalTitle(professionalTitle);
+        candidate.setYearsOfExperience(yearsOfExperience);
+        candidate.setEducationLevel(educationLevel);
+        candidate.setLanguages(languages);
+        candidate.setEmploymentStatus(employmentStatus);
+        candidate.setProfilePictureUrl(profilePictureUrl);
+        candidate.setCurriculumUrl(curriculumUrl);
+        candidate.setLinkedinUrl(linkedinUrl);
+        candidate.setGithubUrl(githubUrl);
+        candidate.setFigmaUrl(figmaUrl);
+        candidate.setPersonalWebsiteUrl(personalWebsiteUrl);
         id = this.registerNewUser(username, password, email, roleName);
         candidate.setUser(this.userDao.findUserById(id));
         this.candidateDao.saveAndFlush(candidate);
     }
-
 
     @Override
     public void addRoleToUser(int userId, Long roleName) {
@@ -115,8 +129,6 @@ public class UserService implements UserDetailsService, IUserService {
             return null;
         }
         Candidate candidate = this.candidateDao.findCandidateByUser(user);
-        System.out.println("Candidate: " + candidate);
-        System.out.println("User: " + user);
         if (candidate == null) {
             return null;
         }
@@ -127,6 +139,18 @@ public class UserService implements UserDetailsService, IUserService {
         candidateDTO.setSurname1(candidate.getSurname1());
         candidateDTO.setSurname2(candidate.getSurname2());
         candidateDTO.setPhoneNumber(candidate.getPhoneNumber());
+        candidateDTO.setLocation(candidate.getLocation());
+        candidateDTO.setProfessionalTitle(candidate.getProfessionalTitle());
+        candidateDTO.setYearsOfExperience(candidate.getYearsOfExperience());
+        candidateDTO.setEducationLevel(candidate.getEducationLevel());
+        candidateDTO.setLanguages(candidate.getLanguages());
+        candidateDTO.setEmploymentStatus(candidate.getEmploymentStatus());
+        candidateDTO.setProfilePictureUrl(candidate.getProfilePictureUrl());
+        candidateDTO.setCurriculumUrl(candidate.getCurriculumUrl());
+        candidateDTO.setLinkedinUrl(candidate.getLinkedinUrl());
+        candidateDTO.setGithubUrl(candidate.getGithubUrl());
+        candidateDTO.setFigmaUrl(candidate.getFigmaUrl());
+        candidateDTO.setPersonalWebsiteUrl(candidate.getPersonalWebsiteUrl());
         return candidateDTO;
     }
 

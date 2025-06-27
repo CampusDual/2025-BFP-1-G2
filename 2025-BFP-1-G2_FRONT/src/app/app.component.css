@@ -13,6 +13,14 @@
   background: transparent
 }
 
+/* Cuando no hay header, ajustar el grid para no reservar espacio */
+.content.no-header {
+  grid-template-rows: 0px minmax(100vh, 100%) 0px; /* Header con altura 0 */
+  grid-template-areas:
+    ". ."
+    "mat-drawer-container main";
+}
+
 app-header {
   grid-area: header;
 }

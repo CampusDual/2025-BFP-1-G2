@@ -22,6 +22,42 @@ public class Candidate {
     @Column
     private String surname2;
 
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "professional_title")
+    private String professionalTitle;
+
+    @Column(name = "years_of_experience")
+    private String yearsOfExperience;
+
+    @Column(name = "education_level")
+    private String educationLevel;
+
+    @Column(name = "languages", columnDefinition = "TEXT")
+    private String languages;
+
+    @Column(name = "employment_status")
+    private String employmentStatus;
+
+    @Column(name = "profile_picture_url", length = 500)
+    private String profilePictureUrl;
+
+    @Column(name = "curriculum_url", length = 500)
+    private String curriculumUrl;
+
+    @Column(name = "linkedin_url", length = 500)
+    private String linkedinUrl;
+
+    @Column(name = "github_url", length = 500)
+    private String githubUrl;
+
+    @Column(name = "figma_url", length = 500)
+    private String figmaUrl;
+
+    @Column(name = "personal_website_url", length = 500)
+    private String personalWebsiteUrl;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -76,4 +112,101 @@ public class Candidate {
 
     public void setUser(User user) {
         this.user = user;
-    }}
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getProfessionalTitle() {
+        return professionalTitle;
+    }
+
+    public void setProfessionalTitle(String professionalTitle) {
+        this.professionalTitle = professionalTitle;
+    }
+
+    public String getYearsOfExperience() {
+        return yearsOfExperience;
+    }
+
+    public void setYearsOfExperience(String yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
+    }
+
+    public String getEducationLevel() {
+        return educationLevel;
+    }
+
+    public void setEducationLevel(String educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+
+    public String getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(String languages) {
+        this.languages = languages;
+    }
+
+    public String getEmploymentStatus() {
+        return employmentStatus;
+    }
+
+    public void setEmploymentStatus(String employmentStatus) {
+        this.employmentStatus = employmentStatus;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public String getCurriculumUrl() {
+        return curriculumUrl;
+    }
+
+    public void setCurriculumUrl(String curriculumUrl) {
+        this.curriculumUrl = curriculumUrl;
+    }
+
+    public String getLinkedinUrl() {
+        return linkedinUrl;
+    }
+
+    public void setLinkedinUrl(String linkedinUrl) {
+        this.linkedinUrl = linkedinUrl;
+    }
+
+    public String getGithubUrl() {
+        return githubUrl;
+    }
+
+    public void setGithubUrl(String githubUrl) {
+        this.githubUrl = githubUrl;
+    }
+
+    public String getFigmaUrl() {
+        return figmaUrl;
+    }
+
+    public void setFigmaUrl(String figmaUrl) {
+        this.figmaUrl = figmaUrl;
+    }
+
+    public String getPersonalWebsiteUrl() {
+        return personalWebsiteUrl;
+    }
+
+    public void setPersonalWebsiteUrl(String personalWebsiteUrl) {
+        this.personalWebsiteUrl = personalWebsiteUrl;
+    }
+}
