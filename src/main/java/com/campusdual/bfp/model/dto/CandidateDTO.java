@@ -1,8 +1,5 @@
 package com.campusdual.bfp.model.dto;
 
-
-import java.util.Date;
-
 public class CandidateDTO extends SignupDTO {
 
     private String phoneNumber;
@@ -11,7 +8,19 @@ public class CandidateDTO extends SignupDTO {
     private String surname2;
     private Boolean valid;
     private String dateAdded;
+    private String[] allDates;
 
+    public String[] getAllDates() {
+        return allDates;
+    }
+
+    public void setAllDates(String[] allDates) {
+        this.allDates = allDates;
+    }
+
+    public Boolean getValid() {
+        return valid;
+    }
 
     public String getName() {
         return name;

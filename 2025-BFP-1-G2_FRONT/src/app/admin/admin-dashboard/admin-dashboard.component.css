@@ -23,7 +23,7 @@
     grid-row: span 5 / span 5;
 
 }
-   
+
 
 .mat-mdc-card {
     margin: 16px;
@@ -44,11 +44,11 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #888 #f1f1f1;
-    min-height: 0; 
+    min-height: 0;
 }
 
 .mat-card-actions.add-tag-section {
-    flex-shrink: 0; 
+    flex-shrink: 0;
     padding: 16px;
     border-top: 1px solid #e0e0e0;
     background-color: #fafafa;
@@ -99,24 +99,23 @@
     flex-shrink: 0;
 }
 
-
 @media (max-width: 1200px) {
     .parent {
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(6, 1fr);
     }
-    
+
     .div1 {
         grid-column: span 3 / span 3;
         grid-row: span 4 / span 4;
     }
-    
+
     .div2 {
         grid-column: span 1 / span 1;
         grid-row: span 2 / span 2;
         grid-row-start: 5;
     }
-    
+
     .div3 {
         grid-column: span 2 / span 2;
         grid-row: span 2 / span 2;
@@ -132,14 +131,13 @@
         gap: 12px;
         height: auto;
     }
-    
+
     .div1, .div2, .div3 {
         grid-column: 1;
         grid-row: auto;
     }
-    
+
     .mat-card-actions.add-tag-section {
         gap: 8px;
     }
 }
-        

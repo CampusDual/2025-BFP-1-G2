@@ -2,10 +2,7 @@ package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.auth.JWTUtil;
-import com.campusdual.bfp.model.dto.CandidateDTO;
-import com.campusdual.bfp.model.dto.CompanyDTO;
-import com.campusdual.bfp.model.dto.SignupDTO;
-import com.campusdual.bfp.model.dto.TagDTO;
+import com.campusdual.bfp.model.dto.*;
 import com.campusdual.bfp.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -157,6 +154,15 @@ public class AuthController {
         }
         List<CompanyDTO> companies = userService.getAllCompanies();
         return ResponseEntity.ok(companies);
+    }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/listCandidates")
+    public ResponseEntity<List<CandidateDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<CandidateDTO> candidatos = userService.getAllCandidates();
+        return ResponseEntity.ok(candidatos);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

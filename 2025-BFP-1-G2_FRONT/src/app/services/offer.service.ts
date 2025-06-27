@@ -8,6 +8,7 @@ import { Candidate } from '../detailed-card/detailed-card.component';
 export interface Offer {
   title: string;
   description: string;
+  dateAdded?: Date;
 }
 
 @Injectable({

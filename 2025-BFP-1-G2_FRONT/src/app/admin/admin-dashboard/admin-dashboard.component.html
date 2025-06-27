@@ -10,8 +10,8 @@
         <div class="tags-display" *ngIf="tags.length > 0; else noTags">
           <mat-chip-listbox aria-label="Tags existentes">
             <mat-chip-row *ngFor="let tag of tags" [editable]="true" (edited)="edit(tag, $event)"
-              [aria-description]="'press enter to edit ' + tag.name">
-              {{tag.name}}
+                          [aria-description]="'press enter to edit ' + tag.name">
+              {{ tag.name }}
               <button matChipRemove [attr.aria-label]="'remove ' + tag.name" (click)="remove(tag)">
                 <mat-icon>cancel</mat-icon>
               </button>
@@ -28,20 +28,20 @@
         <div class="input-button-container">
           <mat-form-field appearance="outline" class="tag-input">
             <mat-label>Nuevo tag</mat-label>
-            <input matInput 
-                   [formControl]="tag" 
-                   placeholder="Escribe el nombre del tag" 
+            <input matInput
+                   [formControl]="tag"
+                   placeholder="Escribe el nombre del tag"
                    (keyup.enter)="add()"
                    maxlength="30">
             <mat-error *ngIf="tag.invalid && tag.touched">
               El tag es requerido
             </mat-error>
           </mat-form-field>
-          
-          <button mat-icon-button 
-                  color="primary" 
-                  (click)="add()" 
-                  [disabled]="tag.invalid" 
+
+          <button mat-icon-button
+                  color="primary"
+                  (click)="add()"
+                  [disabled]="tag.invalid"
                   class="add-button"
                   matTooltip="Añadir tag">
             <mat-icon>add</mat-icon>
@@ -53,22 +53,38 @@
   <div class="div2">
     <mat-card class="mat-mdc-card">
       <mat-card-header>
-        <mat-card-title>Panel de administración</mat-card-title>
-        <mat-card-subtitle>Opciones administrativas</mat-card-subtitle>
+        <mat-card-title>Alta de publicaciones por meses</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>Contenido adicional para el panel de administración.</p>
+        <div class="chart-box">
+          <canvas baseChart
+                  [data]="publicationsChartData"
+                  [options]="chartOptions"
+                  [plugins]="chartPlugins"
+                  [type]="'bar'"
+                  [legend]="true">
+          </canvas>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>
   <div class="div3">
     <mat-card class="mat-mdc-card">
       <mat-card-header>
-        <mat-card-title>Estadísticas</mat-card-title>
-        <mat-card-subtitle>Visión general del sistema</mat-card-subtitle>
+        <mat-card-title>Alta de candidatos por meses</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>Contenido de estadísticas y métricas.</p>
+        <div class="charts-container">
+          <div class="chart-box">
+            <canvas baseChart
+                    [data]="candidatesChartData"
+                    [options]="chartOptions"
+                    [plugins]="chartPlugins"
+                    [type]="'bar'"
+                    [legend]="true">
+            </canvas>
+          </div>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>
