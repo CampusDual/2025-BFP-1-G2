@@ -1,6 +1,6 @@
 <div>
   <div [class.details]="!isDisabled">
-    <mat-card >
+    <mat-card>
       <mat-card-header>
         <mat-card-title>{{ offer?.title }}</mat-card-title>
       </mat-card-header>
@@ -9,6 +9,17 @@
         <span class="email">{{ offer?.email }}</span>
       </mat-card-subtitle>
       <mat-card-content>
+        <div *ngIf="offer?.tags?.length" class="tags-container">
+          <mat-chip-listbox class="tags-display">
+            <mat-chip *ngFor="let tag of getFirstThreeTags()" 
+                      [removable]="false" class="chip">
+              {{ tag.name || tag }}
+            </mat-chip>
+          </mat-chip-listbox>
+          <span *ngIf="offer && offer.tags && offer.tags.length > 3" class="more-tags">
+            +{{ offer.tags.length - 3 }} más
+          </span>
+        </div>
         <p class="data-offer">{{ offer?.dateAdded }}</p>
       </mat-card-content>
     </mat-card>

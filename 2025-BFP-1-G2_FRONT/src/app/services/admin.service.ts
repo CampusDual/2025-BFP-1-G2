@@ -31,7 +31,23 @@ export class AdminService {
     return this.http.post<number>(`${this.baseUrl}/companies/add`, company);
   }
 
+  createTag(tag: Tag): Observable<Tag> {
+    return this.http.post<Tag>(`${this.baseUrl}/tags/add`, tag);
+  }
+
+  deleteTag(tagId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/tags/delete/${tagId}`);
+  }
+
   getAllTags() : Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/tags/list`);
+  }
+
+  updateTag(tag: Tag): Observable<Tag> {
+    return this.http.put<Tag>(`${this.baseUrl}/tags/edit`, tag);
+  }
+
+  getTags(): Observable<Tag[]> {
     return this.http.get<Tag[]>(`${this.baseUrl}/tags/list`);
   }
 }

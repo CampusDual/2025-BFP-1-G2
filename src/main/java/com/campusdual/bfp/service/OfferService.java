@@ -9,11 +9,13 @@ import com.campusdual.bfp.model.dto.TagDTO;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OfferService implements IOfferService {
@@ -33,6 +35,11 @@ public class OfferService implements IOfferService {
     @Autowired
     private TagDao tagDao;
 
+    @Autowired
+    private OfferTagsDao offerTagsDao;
+
+    private static final int MAX_TAGS_PER_OFFER = 5;
+
     @Override
     public OfferDTO queryOffer(OfferDTO OfferDTO) {
         Offer Offer = OfferMapper.INSTANCE.toEntity(OfferDTO);
@@ -51,6 +58,11 @@ public class OfferService implements IOfferService {
                 dto.setEmail(user.getEmail());
             }
             dto.setDateAdded(offer.getDate());
+            List<OfferTags> offerTags = offerTagsDao.findByOfferId(offer.getId());
+            List<TagDTO> tagDTOs = offerTags.stream()
+                    .map(ot -> TagMapper.INSTANCE.toTagDTO(ot.getTag()))
+                    .collect(Collectors.toList());
+            dto.setTags(tagDTOs);
             dtos.add(dto);
         }
         dtos.sort(Comparator.comparing(OfferDTO::getDateAdded));
@@ -68,13 +80,45 @@ public class OfferService implements IOfferService {
         offer.setActive(true);
         offer.setDate(new Date());
         offer.setCompanyId(user.getId());
+        if (request.getTags() != null && request.getTags().size() > MAX_TAGS_PER_OFFER) {
+            throw new RuntimeException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
+        }
+        if (request.getTags() != null) {
+            for (TagDTO tagDTO : request.getTags()) {
+                Tag tag = tagDao.findById(tagDTO.getId())
+                        .orElseThrow(() -> new RuntimeException("Tag no encontrado: " + tagDTO.getId()));
+                OfferTags offerTag = new OfferTags(offer, tag);
+                offerTagsDao.saveAndFlush(offerTag);
+            }
+        }
         Offer savedOffer = OfferDao.saveAndFlush(offer);
         return savedOffer.getId();
     }
 
     @Override
+    @Transactional
     public int updateOffer(OfferDTO request, String username) {
-        return insertOffer(request, username);
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        Offer offer = OfferDao.getReferenceById(request.getId());
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+        if (request.getTags() != null && request.getTags().size() > MAX_TAGS_PER_OFFER) {
+            throw new RuntimeException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
+        }
+        BeanUtils.copyProperties(request, offer, "id", "companyId");
+        if (request.getTags() != null) {
+            offerTagsDao.deleteByOfferId(offer.getId());
+            for (TagDTO tagDTO : request.getTags()) {
+                Tag tag = tagDao.findById(tagDTO.getId())
+                        .orElseThrow(() -> new RuntimeException("Tag no encontrado: " + tagDTO.getId()));
+                OfferTags offerTag = new OfferTags(offer, tag);
+                offerTagsDao.saveAndFlush(offerTag);
+            }
+        }
+        Offer savedOffer = OfferDao.saveAndFlush(offer);
+        return savedOffer.getId();
     }
 
     @Override
@@ -83,6 +127,7 @@ public class OfferService implements IOfferService {
         User user = userDao.findByLogin(username);
         if (user == null) throw new RuntimeException("Usuario no encontrado");
         Offer Offer =OfferDao.getReferenceById(id);
+        offerTagsDao.deleteByOfferId(Offer.getId());
         userOfferDao.deleteUserOfferByOffer(Offer);
         OfferDao.delete(Offer);
         return id;
@@ -115,6 +160,11 @@ public class OfferService implements IOfferService {
             dto.setCompanyName("");
             dto.setEmail("");
             dto.setDateAdded(offer.getDate());
+            List<OfferTags> offerTags = offerTagsDao.findByOfferId(offer.getId());
+            List<TagDTO> tagDTOs = offerTags.stream()
+                    .map(ot -> TagMapper.INSTANCE.toTagDTO(ot.getTag()))
+                    .collect(Collectors.toList());
+            dto.setTags(tagDTOs);
             dtos.add(dto);
         }
         dtos.sort(Comparator.comparing(OfferDTO::getDateAdded));
@@ -182,5 +232,90 @@ public class OfferService implements IOfferService {
         Tag tag = tagDao.findById(tagId).orElseThrow(() -> new RuntimeException("Tag not found"));
         tagDao.delete(tag);
         return tagId;
+    }
+
+    @Override
+    public long updateTag(long id, String name){
+        Tag tag = tagDao.findById(id).orElseThrow(() -> new RuntimeException("Tag not found"));
+        if (name == null || name.isEmpty()) {
+            throw new RuntimeException("Tag name cannot be null or empty");
+        }
+        tag.setName(name);
+        tagDao.saveAndFlush(tag);
+        return tag.getId();
+    }
+
+    @Override
+    @Transactional
+    public int addTagsToOffer(int offerId, List<Long> tagIds, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Offer offer = OfferDao.getReferenceById(offerId);
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        int currentTagCount = offerTagsDao.countByOfferId(offerId);
+        if (currentTagCount + tagIds.size() > MAX_TAGS_PER_OFFER) {
+            throw new RuntimeException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
+        }
+
+        for (Long tagId : tagIds) {
+            Tag tag = tagDao.findById(tagId)
+                    .orElseThrow(() -> new RuntimeException("Tag no encontrado: " + tagId));
+            OfferTags existingOfferTag = offerTagsDao.findByOfferIdAndTagId(offerId, tagId);
+            if (existingOfferTag == null) {
+                OfferTags offerTag = new OfferTags(offer, tag);
+                offerTagsDao.saveAndFlush(offerTag);
+            }
+        }
+
+        return offerId;
+    }
+
+    @Override
+    @Transactional
+    public int removeTagFromOffer(int offerId, long tagId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Offer offer = OfferDao.getReferenceById(offerId);
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        offerTagsDao.deleteByOfferIdAndTagId(offerId, tagId);
+        return offerId;
+    }
+
+    @Override
+    public List<TagDTO> getOfferTags(int offerId) {
+        List<OfferTags> offerTags = offerTagsDao.findByOfferId(offerId);
+        return offerTags.stream()
+                .map(ot -> TagMapper.INSTANCE.toTagDTO(ot.getTag()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public int replaceOfferTags(int offerId, List<Long> tagIds, String username) {
+        if (tagIds.size() > MAX_TAGS_PER_OFFER) {
+            throw new RuntimeException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
+        }
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        Offer offer = OfferDao.getReferenceById(offerId);
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+        offerTagsDao.deleteByOfferId(offerId);
+        for (Long tagId : tagIds) {
+            Tag tag = tagDao.findById(tagId)
+                    .orElseThrow(() -> new RuntimeException("Tag no encontrado: " + tagId));
+            OfferTags offerTag = new OfferTags(offer, tag);
+            offerTagsDao.saveAndFlush(offerTag);
+        }
+        return offerId;
     }
 }

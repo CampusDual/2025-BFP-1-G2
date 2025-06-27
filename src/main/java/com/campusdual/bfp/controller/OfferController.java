@@ -1,9 +1,13 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
+import com.campusdual.bfp.auth.JWTUtil;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
+import com.campusdual.bfp.model.dto.OfferTagsDTO;
+import com.campusdual.bfp.model.dto.TagDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +22,9 @@ public class OfferController {
 
     @Autowired
     private IOfferService offerService;
+
+    @Autowired
+    JWTUtil jwtUtils;
 
     @GetMapping
     public ResponseEntity<String> testController() {
@@ -54,6 +61,7 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.CREATED).body(offerId);
     }
 
+    @PreAuthorize("hasRole('COMPANY')")
     @PutMapping(value = "/update")
     public ResponseEntity<Integer> updateOffer(@RequestBody OfferDTO offerDTO, Principal principal) {
         String username = principal.getName();
@@ -122,5 +130,50 @@ public class OfferController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("Candidato actualizado correctamente");
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @PostMapping("/offers/{offerId}/tags")
+    public ResponseEntity<Integer> addTagsToOffer(
+            @PathVariable("offerId") int offerId,
+            @RequestBody OfferTagsDTO request,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        int result = offerService.addTagsToOffer(offerId, request.getTagIds(), username);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @DeleteMapping("/offers/{offerId}/tags/{tagId}")
+    public ResponseEntity<Integer> removeTagFromOffer(
+            @PathVariable("offerId") int offerId,
+            @PathVariable("tagId") long tagId,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+
+        int result = offerService.removeTagFromOffer(offerId, tagId, username);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/offers/{offerId}/tags")
+    public ResponseEntity<List<TagDTO>> getOfferTags(@PathVariable("offerId") int offerId) {
+        List<TagDTO> tags = offerService.getOfferTags(offerId);
+        return ResponseEntity.ok(tags);
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @PutMapping("/offers/{offerId}/tags")
+    public ResponseEntity<Integer> replaceOfferTags(
+            @PathVariable("offerId") int offerId,
+            @RequestBody OfferTagsDTO request,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+
+        int result = offerService.replaceOfferTags(offerId, request.getTagIds(), username);
+        return ResponseEntity.ok(result);
     }
 }

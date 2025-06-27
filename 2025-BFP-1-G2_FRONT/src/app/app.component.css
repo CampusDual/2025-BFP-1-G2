@@ -5,8 +5,8 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-rows: 75px minmax(auto, 100%) 0px;
-  grid-template-columns: 0px 1fr;
+  grid-template-rows: 75px minmax(auto, 100%) 0;
+  grid-template-columns: 0 1fr;
   grid-template-areas:
     "header header"
     "mat-drawer-container main";
@@ -20,7 +20,6 @@ app-header {
 mat-drawer-container {
   grid-area: main;
   background: transparent;
-  background-color: transparent;
 }
 
 

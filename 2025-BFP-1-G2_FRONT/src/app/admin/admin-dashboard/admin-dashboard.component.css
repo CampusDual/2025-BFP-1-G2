@@ -4,7 +4,7 @@
     grid-template-rows: repeat(5, 1fr);
     gap: 16px;
     padding: 16px;
-    height: calc(100vh - 32px);
+    height: auto;
 }
 
 .div1 {
@@ -26,6 +26,10 @@
    
 
 .mat-mdc-card {
+    mat-card-title {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+    }
     margin: 16px;
     height: fit-content;
     display: flex;
