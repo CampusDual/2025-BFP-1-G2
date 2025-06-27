@@ -14,6 +14,8 @@ class="search-input">
   [currentIndex]="currentDetailIndex"
   [showNavigation]="true"
   [cardType]="'offer'"
+  [availableTags]="availableTags"
   (onClose)="closeDetailedCard()"
-  (onAction)="onDetailedCardAction($event)">
+  (onAction)="onDetailedCardAction($event)"
+  (onSave)="onDetailedCardSave($event)">
 </app-detailed-card>

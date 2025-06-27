@@ -15,8 +15,10 @@
 
 .detailed-container {
   position: relative;
-  max-width: 80vw;
-  max-height: 80vh;
+  max-width: 70vw;
+  max-height: 95vh;
+  min-height: 40vh;
+  min-width: 70vw;
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
@@ -93,13 +95,8 @@
 
 mat-card {
   padding: 16px;
-  max-height: 80vh;
-  min-height: 40vh;
-  max-width: 65vw;
-  min-width: 65vw;
   margin: 0;
   border-radius: 0 0 8px 8px;
-  overflow: auto;
   scrollbar-color: var(--primary-color) transparent;
 }
 
@@ -107,6 +104,10 @@ mat-card-title {
   font-size: 1.5rem;
   color: var(--primary-color);
   margin-bottom: 8px;
+}
+
+mat-card-header {
+  padding-bottom: 16px;
 }
 
 .metadata {
@@ -174,6 +175,7 @@ mat-card-title {
 }
 
 mat-card-content {
+  padding: 16px;
   transition: opacity 0.3s ease, height 0.3s ease;
 }
 
@@ -189,6 +191,7 @@ mat-card-actions {
   gap: 12px;
   justify-content: center;
   padding: 16px;
+  margin-top: auto;
 }
 
 
@@ -198,14 +201,12 @@ mat-label {
 }
 
 .edit-field {
-  width: 100%;
+  z-index: 1;
+  width: calc(100% - 32px);
   margin-bottom: 16px;
   margin-inline: 16px;
 }
 
-.edit-field.full-width {
-  width: 100%;
-}
 
 .edit-field .mat-form-field-wrapper {
   padding-bottom: 0;
@@ -285,6 +286,101 @@ mat-label {
   border-radius: 4px;
   color: #c62828;
   font-size: 0.9rem;
+}
+
+.tags-section {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.tags-section h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.tags-subtitle {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.selected-tags-count {
+  margin-bottom: 16px;
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.tags-container {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.tags-listbox {
+  width: 100%;
+}
+
+.chip-selected {
+  background-color: #1976d2 !important;
+  color: white !important;
+  border: 2px solid #1976d2 !important;
+}
+
+.chip-selected ::ng-deep .mdc-evolution-chip__text-label,
+.chip-selected ::ng-deep .mat-mdc-chip-action-label,
+.chip-selected ::ng-deep span {
+  color: white !important;
+}
+
+.chip-unselected {
+  background-color: transparent !important;
+  color: #333 !important;
+  border: 1px solid #ddd !important;
+}
+
+.chip-unselected ::ng-deep .mdc-evolution-chip__text-label,
+.chip-unselected ::ng-deep .mat-mdc-chip-action-label,
+.chip-unselected ::ng-deep span {
+  color: #333 !important;
+}
+
+.chip-unselected:hover {
+  background-color: #e3f2fd !important;
+  border-color: #1976d2 !important;
+}
+
+.chip-unselected:hover ::ng-deep .mdc-evolution-chip__text-label,
+.chip-unselected:hover ::ng-deep .mat-mdc-chip-action-label,
+.chip-unselected:hover ::ng-deep span {
+  color: #1976d2 !important;
+}
+
+.chip-info {
+  background-color: #fde3e3 !important;
+  border: 1px solid var(--primary-color) !important;
+}
+
+.chip-info ::ng-deep .mdc-evolution-chip__text-label,
+.chip-info ::ng-deep .mat-mdc-chip-action-label,
+.chip-info ::ng-deep span {
+  color: var(--primary-color) !important;
+}
+
+mat-chip-option[disabled] {
+  opacity: 0.4 !important;
+  background-color: #f5f5f5 !important;
+  color: #999 !important;
+  border: 1px solid #eee !important;
+  cursor: not-allowed !important;
+}
+
+mat-chip-option[disabled] ::ng-deep .mdc-evolution-chip__text-label,
+mat-chip-option[disabled] ::ng-deep .mat-mdc-chip-action-label,
+mat-chip-option[disabled] ::ng-deep span {
+  color: #999 !important;
 }
 
 @media (max-width: 768px) {

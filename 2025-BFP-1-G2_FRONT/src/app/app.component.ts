@@ -115,6 +115,18 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
   }
+  navigateToAddOffer() {
+    if (this.router.url.includes('/company/myoffers')) {
+      this.router.navigate(['/company/myoffers'], { 
+        queryParams: { addNew: true, timestamp: Date.now() } 
+      });
+    } else {
+      this.router.navigate(['/company/myoffers'], { 
+        queryParams: { addNew: true } 
+      });
+    }
+  }
+
   getRouterOutletState(outlet: RouterOutlet) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }

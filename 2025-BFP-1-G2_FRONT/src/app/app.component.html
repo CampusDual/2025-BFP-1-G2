@@ -19,7 +19,7 @@
           <mat-icon>business_center</mat-icon>
           <span>Vacantes</span>
         </div>
-        <div class="nav-item" *ngIf="isCompany" routerLink="../company/addOffer" (click)="drawer.close()">
+        <div class="nav-item" *ngIf="isCompany" (click)="navigateToAddOffer(); drawer.close()">
           <mat-icon>add_add</mat-icon>
           <span>Añadir Ofertas</span>
         </div>
