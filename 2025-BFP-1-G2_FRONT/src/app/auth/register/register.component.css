@@ -9,6 +9,20 @@
   width: 100%;
   top: 0;
   left: 0;
+  margin-top: 20px;
+}
+
+.register-card{
+  margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20px;
+  width: 100%;
+  max-width: 600px;
+  height: 600px;
+  margin: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 form {
@@ -28,7 +42,6 @@ form {
   justify-content: center;
   box-shadow: none !important;
   background-color: rgba(255, 255, 255, 0);
-  padding-bottom: 20px;
   padding-left: 15px;
   padding-right: 15px;
 }
@@ -41,35 +54,19 @@ form {
   padding-bottom: 5px;
 }
 
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 40px;
   row-gap: 20px;
   width: 100%;
-  padding-bottom: 20px;
-}
-
-
-.form-actions {
-  margin-top: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
-.form-actions button {
-  width: 100px;
-  height: 30px;
-  justify-content: center;
-  align-items: center;
 }
 
 .login-link {
+  justify-content: center;
+  align-items: center;
   margin-bottom: 1.5rem;
-  padding: 10px 20px;
+  padding: 10px;
   border-radius: 10px;
   transition: color 0.3s ease, background-color 0.3s ease;
 }
@@ -89,25 +86,15 @@ form {
   opacity: 0;
   display: none;
 }
-.home-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-.home-button mat-icon {
-  margin: 0;
-  line-height: 1;
-}
-
 
 mat-horizontal-stepper {
   justify-content: center;
   align-items: center;
   width: 100%;
   max-width: fit-content;
-  margin-top: 20px;
-  border-radius: 10px;
+  margin-top: 15px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 ::ng-deep .mat-step-header{
@@ -115,7 +102,7 @@ mat-horizontal-stepper {
   top:0;
   left:5%;
   height: 60px !important;
-  padding-top: 10px;
+  margin-top: 0 !important;
 }
 
 ::ng-deep .mat-step-header:hover {
@@ -134,17 +121,45 @@ mat-horizontal-stepper {
   box-shadow: none !important;
 }
 
+.step-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.step-buttons button {
+  min-width: 120px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.step-buttons .home-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.step-buttons .home-button mat-icon {
+  margin: 0;
+  line-height: 1;
+}
+
+.step-buttons {
+  animation: fadeInUp 0.3s ease-out;
+}
+
 .step-footer {
-  min-height: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
+  margin-bottom: 20px;
 }
-
-.step-footer p {
-  margin-bottom: 10px;
-  margin-top: 10px;
-}
-

@@ -1,4 +1,5 @@
 <div class="register-container">
+  <mat-card class="register-card">
   <mat-horizontal-stepper [linear]="true" #stepper>
   <mat-step [stepControl]="registerForm">
   <form [formGroup]="registerForm">
@@ -56,23 +57,7 @@
           </mat-error>
         </mat-form-field>
       </div>
-
-      <div class="form-actions">
-        <button
-          mat-raised-button
-          color="primary"
-          matStepperNext
-          [disabled]="!isStep1Valid()"
-          (click)="canAdvanceToStep2()"
-        >
-          Siguiente
-        </button>
-        <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
-        <button class="home-button" mat-raised-button color="primary" type="reset" routerLink="/offers/portal"><mat-icon>home</mat-icon></button>
-      </div>
     </mat-card>
-
-    
   </form>
   </mat-step>
 
@@ -144,20 +129,6 @@
             <input matInput placeholder="https://ejemplo.com/mi-foto.jpg" formControlName="profilePhoto" type="url">
           </mat-form-field>
         </div>
-
-        <div class="form-actions">
-          <button
-            mat-raised-button
-            color="primary"
-            matStepperNext
-            [disabled]="!isStep2Valid()"
-            (click)="canAdvanceToStep3()"
-          >
-            Siguiente
-          </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
-          <button mat-raised-button color="accent" matStepperPrevious>Volver</button>
-        </div>
       </mat-card>
     </form>
   </mat-step>
@@ -193,37 +164,70 @@
             <input matInput placeholder="https://mi-portfolio.com" formControlName="personalWebsite" type="url">
           </mat-form-field>
         </div>
-
-        <div class="form-actions">
-          <button
-            mat-raised-button
-            color="primary"
-            type="submit"
-            (click)="onSubmit()"
-            [disabled]="!formValid()"
-          >
-            Finalizar Registro
-          </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
-          <button mat-raised-button color="accent" matStepperPrevious>Volver</button>
-          <button
-            class="home-button"
-            mat-raised-button
-            color="primary"
-            type="button"
-            routerLink="/offers/portal"
-          >
-            <mat-icon>home</mat-icon>
-          </button>
-        </div>
       </mat-card>
-
       <div class="form-spacer"></div>
     </form>
   </mat-step>
   </mat-horizontal-stepper>
+  <mat-card-footer>
+    <div class="external-form-actions">
+    <div class="step-buttons" *ngIf="stepper.selectedIndex === 0">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!isStep1Valid()"
+        (click)="nextStep()"
+      >
+        Siguiente
+      </button>
+      <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+      <button class="home-button" mat-raised-button color="primary" type="button" (click)="goHome()">
+        <mat-icon>home</mat-icon>
+      </button>
+    </div>
+
+    <div class="step-buttons" *ngIf="stepper.selectedIndex === 1">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!isStep2Valid()"
+        (click)="nextStep()"
+      >
+        Siguiente
+      </button>
+      <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+      <button mat-raised-button color="accent" (click)="previousStep()">Volver</button>
+    </div>
+
+    <div class="step-buttons" *ngIf="stepper.selectedIndex === 2">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="onSubmit()"
+        [disabled]="!formValid()"
+      >
+        Finalizar Registro
+      </button>
+      <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+      <button mat-raised-button color="accent" (click)="previousStep()">Volver</button>
+      <button
+        class="home-button"
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="goHome()"
+      >
+        <mat-icon>home</mat-icon>
+      </button>
+    </div>
+  </div>
+  </mat-card-footer>
+  
+  </mat-card>
   <div class="step-footer">
       <p>¿Ya tienes una cuenta?</p>
       <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
   </div>
+  
 </div>

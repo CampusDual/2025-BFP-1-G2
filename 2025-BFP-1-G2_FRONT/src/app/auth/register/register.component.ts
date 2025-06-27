@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {Router} from '@angular/router';
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatStepper} from '@angular/material/stepper';
 
 
 @Component({
@@ -13,7 +14,8 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 export class RegisterComponent {
-  // Primer formulario
+  @ViewChild('stepper') stepper!: MatStepper;
+  
   login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   email = new FormControl('', [Validators.required, Validators.email]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
@@ -74,7 +76,6 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    // Verificar que los formularios obligatorios sean válidos
     if (this.isStep1Valid() && this.isStep2Valid()) {
       const allFormData = {
         login: this.login.value!,
@@ -243,18 +244,15 @@ export class RegisterComponent {
   }
 
   isStep2Valid(): boolean {
-    // Solo campos obligatorios del segundo paso
     const requiredFields = [this.location, this.professionalTitle, this.employmentStatus];
     return requiredFields.every(field => field.valid);
   }
 
   canAdvanceToStep2(): void {
     if (this.isStep1Valid()) {
-      // Si es válido, permite avanzar (no hace nada, deja que Angular Material maneje la navegación)
       return;
     }
 
-    // Solo muestra errores si no es válido
     if (!this.registerForm.valid) {
       this.snackBar.open('Por favor completa todos los campos requeridos en el paso 1', 'Cerrar', {
         duration: 3000,
@@ -274,11 +272,9 @@ export class RegisterComponent {
 
   canAdvanceToStep3(): void {
     if (this.isStep2Valid()) {
-      // Si es válido, permite avanzar
       return;
     }
 
-    // Solo muestra errores si no es válido
     if (!this.isStep2Valid()) {
       this.snackBar.open('Por favor completa todos los campos requeridos en el paso 2', 'Cerrar', {
         duration: 3000,
@@ -286,6 +282,28 @@ export class RegisterComponent {
       });
       return;
     }
+  }
+
+  nextStep(): void {
+    if (this.stepper.selectedIndex === 0 && this.isStep1Valid()) {
+      this.stepper.next();
+    } else if (this.stepper.selectedIndex === 1 && this.isStep2Valid()) {
+      this.stepper.next();
+    } else {
+      if (this.stepper.selectedIndex === 0) {
+        this.canAdvanceToStep2();
+      } else if (this.stepper.selectedIndex === 1) {
+        this.canAdvanceToStep3();
+      }
+    }
+  }
+
+  previousStep(): void {
+    this.stepper.previous();
+  }
+
+  goHome(): void {
+    this.router.navigate(['/offers/portal']);
   }
 
 }
