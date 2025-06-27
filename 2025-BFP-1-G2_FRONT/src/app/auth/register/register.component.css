@@ -21,21 +21,20 @@ form {
 }
 
 .formdata {
-  margin-top: 0px;
   min-width: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
-  background-color: rgba(255, 255, 255, 0.9);
-  padding-bottom: 30px;
-  padding-left: 30px;
-  padding-right: 30px;
+  box-shadow: none !important;
+  background-color: rgba(255, 255, 255, 0);
+  padding-bottom: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .formdata h2 {
+  margin-top: 5px;
   color: var(--primary-color);
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -49,6 +48,7 @@ form {
   column-gap: 40px;
   row-gap: 20px;
   width: 100%;
+  padding-bottom: 20px;
 }
 
 
@@ -100,65 +100,40 @@ form {
   line-height: 1;
 }
 
+
 mat-horizontal-stepper {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: fit-content;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+
+::ng-deep .mat-step-header{
+  position: relative;
+  top:0;
+  left:5%;
+  height: 60px !important;
+  padding-top: 10px;
+}
+
+::ng-deep .mat-step-header:hover {
+ background-color: transparent !important;
+}
+
+::ng-deep .mat-step-header .mat-ripple-element {
+  background-color: transparent !important;
+}
+
+::ng-deep .mat-step-header.mat-active,
+::ng-deep .mat-step-header.cdk-focused,
+::ng-deep .mat-step-header.cdk-program-focused {
   background: transparent !important;
+  background-color: transparent !important;
   box-shadow: none !important;
 }
 
-/* Estilos para los círculos con números del stepper */
-::ng-deep .mat-step-icon {
-  /* El círculo completo que contiene el número */
-  width: 24px !important;
-  height: 24px !important;
-  margin-right: 8px !important;
-}
-
-::ng-deep .mat-step-icon-content {
-  /* El contenido del círculo (el número en sí) */
-  font-size: 14px !important;
-  font-weight: bold !important;
-}
-
-::ng-deep .mat-step-icon-state-number {
-  /* Estado específico cuando muestra números */
-  background-color: var(--primary-color) !important;
-  color: white !important;
-}
-
-::ng-deep .mat-step-icon-state-done {
-  /* Estado cuando el paso está completado (check mark) */
-  background-color: #4caf50 !important;
-}
-
-::ng-deep .mat-step-icon-state-edit {
-  /* Estado cuando el paso está en edición */
-  background-color: #ff9800 !important;
-}
-
-/* Header completo de cada paso */
-::ng-deep .mat-step-header {
-  margin-left: 50px !important;
-  display: flex !important;
-  align-items: center !important;
-  padding: 12px 0 !important;
-}
-
-/* Líneas que conectan los pasos */
-::ng-deep .mat-stepper-horizontal-line {
-  border-top: 1px solid #e0e0e0 !important;
-  margin: 0 8px !important;
-  flex: 1 !important;
-}
-
-/* Espaciador para mantener la alineación entre pasos */
-.form-spacer {
-  height: 80px; /* Altura equivalente al texto y botón "Inicia sesión" del primer paso */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Contenedor para el área inferior del primer paso */
 .step-footer {
   min-height: 80px;
   display: flex;
@@ -170,20 +145,6 @@ mat-horizontal-stepper {
 
 .step-footer p {
   margin-bottom: 10px;
-  margin-top: 0;
+  margin-top: 10px;
 }
 
-/* Asegurar que todos los mat-step tengan la misma altura mínima */
-mat-step {
-  min-height: 600px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Contenedor para el contenido principal de cada paso */
-.step-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}

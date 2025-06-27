@@ -72,14 +72,11 @@
       </div>
     </mat-card>
 
-    <div class="step-footer">
-      <p>¿Ya tienes una cuenta?</p>
-      <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
-    </div>
+    
   </form>
   </mat-step>
 
-  <!-- Segunda página del stepper -->
+
   <mat-step [stepControl]="secondFormGroup">
     <form [formGroup]="secondFormGroup">
       <mat-card class="formdata">
@@ -87,13 +84,13 @@
 
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Ubicación *</mat-label>
+            <mat-label>Ubicación</mat-label>
             <input matInput placeholder="Madrid, España" formControlName="location" required>
             <mat-error *ngIf="secondFormGroup.get('location')?.invalid">La ubicación es requerida</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Título Profesional *</mat-label>
+            <mat-label>Título Profesional</mat-label>
             <input matInput placeholder="Desarrollador Full Stack" formControlName="professionalTitle" required>
             <mat-error *ngIf="secondFormGroup.get('professionalTitle')?.invalid">El título profesional es requerido</mat-error>
           </mat-form-field>
@@ -130,7 +127,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Situación Laboral *</mat-label>
+            <mat-label>Situación Laboral</mat-label>
             <mat-select formControlName="employmentStatus" required>
               <mat-option value="empleado">Empleado</mat-option>
               <mat-option value="desempleado">Desempleado</mat-option>
@@ -162,12 +159,9 @@
           <button mat-raised-button color="accent" matStepperPrevious>Volver</button>
         </div>
       </mat-card>
-
-      <div class="form-spacer"></div>
     </form>
   </mat-step>
 
-  <!-- Tercera página del stepper (opcional) -->
   <mat-step [stepControl]="thirdFormGroup">
     <form [formGroup]="thirdFormGroup">
       <mat-card class="formdata">
@@ -198,10 +192,6 @@
             <mat-label>Web Personal</mat-label>
             <input matInput placeholder="https://mi-portfolio.com" formControlName="personalWebsite" type="url">
           </mat-form-field>
-
-          <!-- Espaciador para mantener la simetría del grid -->
-          <div class="grid-spacer"></div>
-          <div class="grid-spacer"></div>
         </div>
 
         <div class="form-actions">
@@ -232,5 +222,8 @@
     </form>
   </mat-step>
   </mat-horizontal-stepper>
-
+  <div class="step-footer">
+      <p>¿Ya tienes una cuenta?</p>
+      <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
+  </div>
 </div>

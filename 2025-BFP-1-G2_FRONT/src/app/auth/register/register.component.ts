@@ -74,7 +74,8 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
+    // Verificar que los formularios obligatorios sean válidos
+    if (this.isStep1Valid() && this.isStep2Valid()) {
       const allFormData = {
         login: this.login.value!,
         password: this.password.value!,
@@ -242,11 +243,18 @@ export class RegisterComponent {
   }
 
   isStep2Valid(): boolean {
-    return this.secondFormGroup.valid;
+    // Solo campos obligatorios del segundo paso
+    const requiredFields = [this.location, this.professionalTitle, this.employmentStatus];
+    return requiredFields.every(field => field.valid);
   }
 
   canAdvanceToStep2(): void {
+    if (this.isStep1Valid()) {
+      // Si es válido, permite avanzar (no hace nada, deja que Angular Material maneje la navegación)
+      return;
+    }
 
+    // Solo muestra errores si no es válido
     if (!this.registerForm.valid) {
       this.snackBar.open('Por favor completa todos los campos requeridos en el paso 1', 'Cerrar', {
         duration: 3000,
@@ -265,7 +273,13 @@ export class RegisterComponent {
   }
 
   canAdvanceToStep3(): void {
-    if (!this.secondFormGroup.valid) {
+    if (this.isStep2Valid()) {
+      // Si es válido, permite avanzar
+      return;
+    }
+
+    // Solo muestra errores si no es válido
+    if (!this.isStep2Valid()) {
       this.snackBar.open('Por favor completa todos los campos requeridos en el paso 2', 'Cerrar', {
         duration: 3000,
         panelClass: ['error-snackbar']
