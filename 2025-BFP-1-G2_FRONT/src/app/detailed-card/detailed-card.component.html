@@ -31,7 +31,8 @@
     </div>
 
     <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
-      <mat-card-title *ngIf="addingNewItem && cardType==='company'" class="add-title">Añadir nueva empresa</mat-card-title>
+      <mat-card-title *ngIf="addingNewItem && cardType==='company'" class="add-title">Añadir nueva
+        empresa</mat-card-title>
       <mat-card-title *ngIf="addingNewItem && cardType==='offer'" class="add-title">Añadir nueva oferta</mat-card-title>
       <mat-card-title *ngIf="!isEditing">{{ currentItem.title }}</mat-card-title>
 
@@ -108,16 +109,10 @@
           </div>
 
           <div class="tags-container">
-            <mat-chip-listbox 
-              class="tags-listbox" 
-              multiple
-              [formControl]="getTagsFormControl(currentItem.form)"
-              [compareWith]="compareTagsById"
-              (selectionChange)="onChipSelectionChange($event)"
+            <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl(currentItem.form)"
+              [compareWith]="compareTagsById" (selectionChange)="onChipSelectionChange($event)"
               (keydown)="onChipKeydown($event)">
-              <mat-chip-option 
-                *ngFor="let tag of availableTags" 
-                [value]="tag"
+              <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
                 [class.chip-selected]="isTagSelected(tag, currentItem.form)"
                 [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
                 [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
@@ -128,23 +123,22 @@
           </div>
         </div>
 
-        <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'" class="tags-section">
-          <h4>Areas de la oferta</h4>
-          <div class="tags-container">
-            <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-              <mat-chip class="chip-info"
-                *ngFor="let tag of currentItem.tags"
-                (keydown)="onChipKeydown($event)">
-                {{tag.name}}
-              </mat-chip>
-            </mat-chip-listbox>
-          </div>
-        </div>
 
 
-        <div class="metadata" *ngIf="currentItem.metadata && !isEditing && cardType === 'company'">
+        <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
             <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
+          </div>
+          <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'"
+            class="tags-section-static">
+            <h4>Areas de la oferta</h4>
+            <div class="tags-container">
+              <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
+                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (keydown)="onChipKeydown($event)">
+                  {{tag.name}}
+                </mat-chip>
+              </mat-chip-listbox>
+            </div>
           </div>
         </div>
 
@@ -193,19 +187,12 @@
           <div class="metadata-edit-item">
             <mat-form-field appearance="outline" class="metadata-value">
               <mat-label>Año de Fundación</mat-label>
-              <input matInput [matDatepicker]="foundedDatePicker"
-                     formControlName="foundedDate"
-                     [max]="maxDate">
+              <input matInput [matDatepicker]="foundedDatePicker" formControlName="foundedDate" [max]="maxDate">
               <mat-datepicker-toggle matIconSuffix [for]="foundedDatePicker">
                 <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
               </mat-datepicker-toggle>
-              <mat-datepicker
-                #foundedDatePicker
-                startView="multi-year"
-                (yearSelected)="yearSelected($event)"
-                panelClass="year-picker"
-                [startAt]="startYear"
-              ></mat-datepicker>
+              <mat-datepicker #foundedDatePicker startView="multi-year" (yearSelected)="yearSelected($event)"
+                panelClass="year-picker" [startAt]="startYear"></mat-datepicker>
 
 
               <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('required')">
@@ -250,19 +237,18 @@
       <mat-card-content
         [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
         <div [innerHTML]="currentItem.content"></div>
-        <div *ngIf="currentItem.tags && currentItem.tags.length && cardType === 'offer'" class="tags-section">
-          <h4>Areas de la oferta</h4>
-          <div class="tags-container">
-            <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-              <mat-chip class="chip-info"
-                *ngFor="let tag of currentItem.tags"
-                (keydown)="onChipKeydown($event)">
-                {{tag.name}}
-              </mat-chip>
-            </mat-chip-listbox>
+        <div class="metadata" *ngIf="currentItem.metadata">
+          <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'"
+            class="tags-section-static">
+            <h4>Areas de la oferta</h4>
+            <div class="tags-container">
+              <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
+                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (keydown)="onChipKeydown($event)">
+                  {{tag.name}}
+                </mat-chip>
+              </mat-chip-listbox>
+            </div>
           </div>
-        </div>
-        <div class="metadata" *ngIf="currentItem.metadata && cardType === 'company'">
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
             <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
           </div>

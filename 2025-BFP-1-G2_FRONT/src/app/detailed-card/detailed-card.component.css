@@ -7,9 +7,11 @@
   background: rgba(30, 30, 30, 0.55);
   backdrop-filter: blur(6px) brightness(0.9);
   display: flex;
+  padding-block: 20px;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow-y: auto;
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -22,7 +24,6 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
-
 }
 
 .close-button {
@@ -284,6 +285,14 @@ mat-label {
   border-radius: 4px;
   color: #c62828;
   font-size: 0.9rem;
+}
+
+.tags-section-static {
+  margin-block: 16px;
+}
+
+.tags-section-static h4 {
+  text-transform: uppercase;
 }
 
 .tags-section {

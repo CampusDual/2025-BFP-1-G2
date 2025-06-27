@@ -65,8 +65,14 @@ export class OfferTableComponent {
           dateAdded: new Date(offer.dateAdded).toLocaleDateString(),
           candidatesCount: offer.candidatesCount || 0,
           candidates: offer.candidates || [],
-          tags: offer.tags || []
+          tags: offer.tags || [],
+          metadata: {
+            email: offer.email,
+            companyName: offer.companyName,
+            dateAdded: offer.dateAdded
+          },
         }));
+        console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
       },
       error: (error: any) => {
@@ -341,6 +347,7 @@ export class OfferTableComponent {
     }
   }
 
+
   private createOfferForm(offer: any): FormGroup {
     return this.formBuilder.group({
       title: [offer.title, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -362,11 +369,9 @@ export class OfferTableComponent {
     const isSelected = this.isTagSelected(tag, form);
 
     if (isSelected) {
-      // Deseleccionar tag
       const updatedTags = currentTags.filter((t: Tag) => t.id !== tag.id);
       tagsControl.setValue(updatedTags);
     } else {
-      // Seleccionar tag (máximo 5)
       if (currentTags.length < 5) {
         const updatedTags = [...currentTags, tag];
         tagsControl.setValue(updatedTags);
