@@ -74,3 +74,68 @@ app-offer-card:nth-child(n+10) { animation-delay: 1s; }
   box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
   transform: translateY(-2px);
 }
+
+.offer-recommendations {
+  padding: 0;
+  margin: 20px;
+  width: 100%;
+}
+
+.scroll-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  overflow-x: auto;
+  width: 100%;
+  min-height: 400px;
+  align-items: center;
+  scroll-behavior: smooth;
+}
+
+.scroll-container {
+  scroll-snap-type: x mandatory;
+  border-radius: 10px;
+  padding: 20px 40px; /* Aumentado el padding lateral para los botones */
+  overflow-x: hidden; /* Cambiado de auto a hidden */
+}
+
+.your-cards {
+  flex: 0 0 300px;
+  width: 300px;
+  min-width: 300px;
+  height: 350px;
+  opacity: 0;
+  transform: translateY(50px) scale(0.8);
+  animation: slideInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  order: 0; /* Asegura el orden correcto */
+}
+
+.scroll-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-button {
+  position: fixed;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.prev-button {
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.next-button {
+  right: 0;
+  transform: translateX(50%);
+}

@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
 import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
+import { ViewChild, ElementRef } from '@angular/core';
 
 
 @Component({
@@ -15,6 +16,7 @@ import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent {
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   offers: any[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
@@ -371,5 +373,23 @@ export class OfferTableComponent {
   getSelectedTagsCount(form: FormGroup): number {
     const selectedTags = form.get('tags')?.value || [];
     return selectedTags.length;
+  }
+
+  scrollLeft() {
+    const container = this.scrollContainer.nativeElement;
+    const scrollAmount = 300; // Ancho de una card
+    container.scrollBy({
+      left: -scrollAmount,
+      behavior: 'smooth'
+    });
+  }
+
+  scrollRight() {
+    const container = this.scrollContainer.nativeElement;
+    const scrollAmount = 300; // Ancho de una card
+    container.scrollBy({
+      left: scrollAmount,
+      behavior: 'smooth'
+    });
   }
 }

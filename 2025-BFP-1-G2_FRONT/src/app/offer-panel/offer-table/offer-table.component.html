@@ -1,3 +1,29 @@
+<div class="offer-recommendations-container" *ngIf="isCandidate">
+  <mat-list class="offer-recommendations">
+    <mat-list-item>
+      <h3>Ofertas recomendadas</h3>
+    </mat-list-item>
+    <div class="scroll-wrapper">
+      <button mat-icon-button class="nav-button prev-button" (click)="scrollLeft()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <div class="scroll-container" #scrollContainer>
+        <app-offer-card class="your-cards"
+                        *ngFor="let offer of filterOffers(); let i = index"
+                        [offer]="offer"
+                        (click)="openDetailedCard(i)">
+        </app-offer-card>
+      </div>
+      <button mat-icon-button class="nav-button next-button" (click)="scrollRight()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+  </mat-list>
+</div>
+
+
+
 <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
   (ngModelChange)="filterOffers()"
 class="search-input">
