@@ -1,5 +1,8 @@
 package com.campusdual.bfp.model.dto;
 
+
+import java.util.Date;
+
 public class CandidateDTO extends SignupDTO {
 
     private String phoneNumber;
@@ -8,6 +11,18 @@ public class CandidateDTO extends SignupDTO {
     private String surname2;
     private Boolean valid;
     private String dateAdded;
+    private String location;
+    private String professionalTitle;
+    private String yearsOfExperience;
+    private String educationLevel;
+    private String languages;
+    private String employmentStatus;
+    private String profilePictureUrl;
+    private String curriculumUrl;
+    private String linkedinUrl;
+    private String githubUrl;
+    private String figmaUrl;
+    private String personalWebsiteUrl;
     private String[] allDates;
 
     public String[] getAllDates() {
@@ -84,5 +99,78 @@ public class CandidateDTO extends SignupDTO {
     }
     public String getDateAdded() {
         return dateAdded;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    public String getProfessionalTitle() {
+        return professionalTitle;
+    }
+    public void setProfessionalTitle(String professionalTitle) {
+        this.professionalTitle = professionalTitle;
+    }
+    public String getYearsOfExperience() {
+        return yearsOfExperience;
+    }
+    public void setYearsOfExperience(String yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
+    }
+    public String getEducationLevel() {
+        return educationLevel;
+    }
+    public void setEducationLevel(String educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+    public String getLanguages() {
+        return languages;
+    }
+    public void setLanguages(String languages) {
+        this.languages = languages;
+    }
+    public String getEmploymentStatus() {
+        return employmentStatus;
+    }
+    public void setEmploymentStatus(String employmentStatus) {
+        this.employmentStatus = employmentStatus;
+    }
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+    public String getCurriculumUrl() {
+        return curriculumUrl;
+    }
+    public void setCurriculumUrl(String curriculumUrl) {
+        this.curriculumUrl = curriculumUrl;
+    }
+    public String getLinkedinUrl() {
+        return linkedinUrl;
+    }
+    public void setLinkedinUrl(String linkedinUrl) {
+        this.linkedinUrl = linkedinUrl;
+    }
+    public String getGithubUrl() {
+        return githubUrl;
+    }
+    public void setGithubUrl(String githubUrl) {
+        this.githubUrl = githubUrl;
+    }
+    public String getFigmaUrl() {
+        return figmaUrl;
+    }
+    public void setFigmaUrl(String figmaUrl) {
+        this.figmaUrl = figmaUrl;
+    }
+    public String getPersonalWebsiteUrl() {
+        return personalWebsiteUrl;
+    }
+    public void setPersonalWebsiteUrl(String personalWebsiteUrl) {
+        this.personalWebsiteUrl = personalWebsiteUrl;
     }
 }

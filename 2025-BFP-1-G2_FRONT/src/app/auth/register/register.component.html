@@ -1,68 +1,264 @@
 <div class="register-container">
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <mat-card class="register-card">
+  <mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="registerForm">
+  <form [formGroup]="registerForm">
     <mat-card class="formdata">
       <h2 #formTitle>Registrarse</h2>
 
       <div class="form-grid">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Nombre de usuario</mat-label>
           <input matInput placeholder="usuario123" [formControl]="login" required>
+          <mat-icon matPrefix class="field-icon">person</mat-icon>
           <mat-error *ngIf="login.invalid">{{ getLoginErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Nombre</mat-label>
           <input matInput placeholder="Nombre" [formControl]="name" required>
+          <mat-icon matPrefix class="field-icon">badge</mat-icon>
           <mat-error *ngIf="name.invalid">{{ getNameErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Primer apellido</mat-label>
           <input matInput placeholder="Apellido 1" [formControl]="surname1" required>
+          <mat-icon matPrefix class="field-icon">family_restroom</mat-icon>
           <mat-error *ngIf="surname1.invalid">{{ getSurname1ErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Segundo apellido</mat-label>
           <input matInput placeholder="Apellido 2" [formControl]="surname2" required>
+          <mat-icon matPrefix class="field-icon">family_restroom</mat-icon>
           <mat-error *ngIf="surname2.invalid">{{ getSurname2ErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Email</mat-label>
           <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
+          <mat-icon matPrefix class="field-icon">email</mat-icon>
           <mat-error *ngIf="email.invalid">{{ getEmailErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Teléfono</mat-label>
           <input matInput placeholder="123456789" [formControl]="phoneNumber" required>
+          <mat-icon matPrefix class="field-icon">phone</mat-icon>
           <mat-error *ngIf="phoneNumber.invalid">{{ getPhoneNumberErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Contraseña</mat-label>
           <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
+          <mat-icon matPrefix class="field-icon">lock</mat-icon>
           <mat-error *ngIf="password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Confirma la contraseña</mat-label>
           <input matInput type="password" placeholder="Confirmar contraseña" [formControl]="confirmPassword" required>
+          <mat-icon matPrefix class="field-icon">lock_outline</mat-icon>
           <mat-error *ngIf="confirmPassword.invalid || password.value !== confirmPassword.value">
             {{ getConfirmPasswordErrorMessage() }}
           </mat-error>
         </mat-form-field>
       </div>
-
-      <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Registrarse</button>
-        <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
-        <button class="home-button" mat-raised-button color="primary" type="reset" routerLink="/offers/portal"><mat-icon>home</mat-icon></button>
-      </div>
     </mat-card>
-
-    <p>¿Ya tienes una cuenta?</p>
-    <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
   </form>
+  </mat-step>
+
+
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <mat-card class="formdata">
+        <h2>Información Adicional</h2>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Ubicación</mat-label>
+            <input matInput placeholder="Madrid, España" formControlName="location">
+            <mat-icon matPrefix class="field-icon">location_on</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Título Profesional</mat-label>
+            <input matInput placeholder="Desarrollador Full Stack" formControlName="professionalTitle">
+            <mat-icon matPrefix class="field-icon">work</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Años de Experiencia</mat-label>
+            <mat-select formControlName="yearsOfExperience">
+              <mat-option value="0">Sin experiencia</mat-option>
+              <mat-option value="1">1 año</mat-option>
+              <mat-option value="2">2 años</mat-option>
+              <mat-option value="3">3 años</mat-option>
+              <mat-option value="4">4 años</mat-option>
+              <mat-option value="5">5 años</mat-option>
+              <mat-option value="6-10">6-10 años</mat-option>
+              <mat-option value="10+">Más de 10 años</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">schedule</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Nivel de Estudios</mat-label>
+            <mat-select formControlName="educationLevel">
+              <mat-option value="ESO">Educación Secundaria</mat-option>
+              <mat-option value="Bachillerato">Bachillerato</mat-option>
+              <mat-option value="FP">Formación Profesional</mat-option>
+              <mat-option value="Universitario">Universitario</mat-option>
+              <mat-option value="Master">Máster</mat-option>
+              <mat-option value="Doctorado">Doctorado</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">school</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Idiomas</mat-label>
+            <input matInput placeholder="Español (nativo), Inglés (B2), Francés (A1)" formControlName="languages">
+            <mat-icon matPrefix class="field-icon">language</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Situación Laboral</mat-label>
+            <mat-select formControlName="employmentStatus">
+              <mat-option value="empleado">Empleado</mat-option>
+              <mat-option value="desempleado">Desempleado</mat-option>
+              <mat-option value="estudiante">Estudiante</mat-option>
+              <mat-option value="freelance">Freelance</mat-option>
+              <mat-option value="emprendedor">Emprendedor</mat-option>
+              <mat-option value="jubilado">Jubilado</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">business_center</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Foto de Perfil (Enlace)</mat-label>
+            <input matInput placeholder="https://ejemplo.com/mi-foto.jpg" formControlName="profilePhoto" type="url">
+            <mat-icon matPrefix class="field-icon">account_circle</mat-icon>
+          </mat-form-field>
+
+        </div>
+      </mat-card>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="thirdFormGroup">
+    <form [formGroup]="thirdFormGroup">
+      <mat-card class="formdata">
+        <h2>Enlaces Profesionales (Opcional)</h2>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Curriculum (Enlace)</mat-label>
+            <input matInput placeholder="https://ejemplo.com/mi-curriculum.pdf" formControlName="curriculum" type="url">
+            <mat-icon matPrefix class="field-icon">description</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>LinkedIn</mat-label>
+            <input matInput placeholder="https://linkedin.com/in/mi-perfil" formControlName="linkedin" type="url">
+            <mat-icon matPrefix class="field-icon">link</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>GitHub</mat-label>
+            <input matInput placeholder="https://github.com/mi-usuario" formControlName="github" type="url">
+            <mat-icon matPrefix class="field-icon">code</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Figma</mat-label>
+            <input matInput placeholder="https://figma.com/@mi-usuario" formControlName="figma" type="url">
+            <mat-icon matPrefix class="field-icon">design_services</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Web Personal</mat-label>
+            <input matInput placeholder="https://mi-portfolio.com" formControlName="personalWebsite" type="url">
+            <mat-icon matPrefix class="field-icon">language</mat-icon>
+          </mat-form-field>
+
+        </div>
+      </mat-card>
+    </form>
+  </mat-step>
+  </mat-horizontal-stepper>
+  <mat-card-footer>
+    <div class="external-form-actions">
+      <div class="step-buttons" *ngIf="stepper.selectedIndex === 0">
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="!isStep1Valid()"
+          (click)="registerBasicInfo()"
+        >
+          Finalizar registro
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          [disabled]="!isStep1Valid()"
+          (click)="nextStep()"
+        >
+          Completar datos
+        </button>
+        <button mat-raised-button color="warn" type="reset" (click)="onReset()">
+          Cancelar
+        </button>
+        <button class="home-button" mat-raised-button color="primary" type="button" (click)="goHome()">
+          <mat-icon>home</mat-icon>
+        </button>
+      </div>
+
+      <div class="step-buttons" *ngIf="stepper.selectedIndex === 1">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="nextStep()"
+        >
+          Continuar
+        </button>
+        <button mat-raised-button color="warn" type="reset" (click)="onReset()">
+          Cancelar
+        </button>
+        <button mat-raised-button color="basic" (click)="previousStep()">
+          Volver
+        </button>
+      </div>
+
+    <div class="step-buttons" *ngIf="stepper.selectedIndex === 2">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="onSubmit()"
+        [disabled]="!formValid()"
+      >
+        Finalizar Registro
+      </button>
+      <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
+      <button mat-raised-button color="accent" (click)="previousStep()">Volver</button>
+      <button
+        class="home-button"
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="goHome()"
+      >
+        <mat-icon>home</mat-icon>
+      </button>
+    </div>
+  </div>
+  </mat-card-footer>
+  
+  </mat-card>
+  <div class="step-footer">
+      <p>¿Ya tienes una cuenta?</p>
+      <button mat-raised-button color="primary" routerLink="../login" class="login-link">Inicia sesión</button>
+  </div>
+  
 </div>

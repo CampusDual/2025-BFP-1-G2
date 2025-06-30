@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {Router} from '@angular/router';
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatStepper} from '@angular/material/stepper';
 
 
 @Component({
@@ -13,6 +14,12 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 export class RegisterComponent {
+  @ViewChild('stepper') stepper!: MatStepper;
+  
+  // Propiedades para controlar la visibilidad de las contraseñas
+  hidePassword = true;
+  hideConfirmPassword = true;
+  
   login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   email = new FormControl('', [Validators.required, Validators.email]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
@@ -21,6 +28,21 @@ export class RegisterComponent {
   surname1 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   surname2 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   phoneNumber = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
+
+  location = new FormControl('');
+  professionalTitle = new FormControl('');
+  yearsOfExperience = new FormControl('');
+  educationLevel = new FormControl('');
+  languages = new FormControl('');
+  employmentStatus = new FormControl('');
+  profilePhoto = new FormControl('');
+
+  curriculum = new FormControl('');
+  linkedin = new FormControl('');
+  github = new FormControl('');
+  figma = new FormControl('');
+  personalWebsite = new FormControl('');
+
   registerForm = new FormGroup({
     login: this.login,
     email: this.email,
@@ -32,6 +54,24 @@ export class RegisterComponent {
     phoneNumber: this.phoneNumber
   });
 
+  secondFormGroup = new FormGroup({
+    location: this.location,
+    professionalTitle: this.professionalTitle,
+    yearsOfExperience: this.yearsOfExperience,
+    educationLevel: this.educationLevel,
+    languages: this.languages,
+    employmentStatus: this.employmentStatus,
+    profilePhoto: this.profilePhoto
+  });
+
+  thirdFormGroup = new FormGroup({
+    curriculum: this.curriculum,
+    linkedin: this.linkedin,
+    github: this.github,
+    figma: this.figma,
+    personalWebsite: this.personalWebsite
+  });
+
 
   constructor(private authService: AuthService,
               private router: Router,
@@ -40,29 +80,47 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.email.value && this.password.value && this.login.value && this.name.value
-      && this.surname1.value && this.surname2.value && this.phoneNumber.value) {
-      this.authService.register({
-        login: this.login.value,
-        password: this.password.value,
-        email: this.email.value,
-        name: this.name.value,
-        surname1: this.surname1.value,
-        surname2: this.surname2.value,
-        phoneNumber: this.phoneNumber.value
-      }).subscribe({
+    if (this.isStep1Valid()) {
+      const allFormData = {
+        login: this.login.value!,
+        password: this.password.value!,
+        email: this.email.value!,
+        name: this.name.value!,
+        surname1: this.surname1.value!,
+        surname2: this.surname2.value!,
+        phoneNumber: this.phoneNumber.value!,
+        location: this.location.value || '',
+        professionalTitle: this.professionalTitle.value || '',
+        yearsOfExperience: this.yearsOfExperience.value || '',
+        educationLevel: this.educationLevel.value || '',
+        languages: this.languages.value || '',
+        employmentStatus: this.employmentStatus.value || '',
+        profilePhoto: this.profilePhoto.value || '',
+        curriculum: this.curriculum.value || '',
+        linkedin: this.linkedin.value || '',
+        github: this.github.value || '',
+        figma: this.figma.value || '',
+        personalWebsite: this.personalWebsite.value || ''
+      };
+
+      console.log('Datos completos del registro:', allFormData);
+
+      this.authService.register(allFormData).subscribe({
         next: (response) => {
-          this.snackBar.open('Regitro completado', 'Cerrar', {duration: 3000});
+          this.snackBar.open('Registro completado exitosamente', 'Cerrar', {duration: 3000});
           this.router.navigate([`offers/portal`]);
         },
         error: (error) => {
-          this.snackBar.open('Nombre o correo ya registrado', 'Cerrar', {
+          this.snackBar.open('Error en el registro: ' + (error.error || 'Nombre o correo ya registrado'), 'Cerrar', {
             panelClass: ['error-snackbar']
           });
         }
       });
     } else {
-      console.error('Email or password is null');
+      console.error('El primer formulario no es válido');
+      this.snackBar.open('Por favor completa todos los campos requeridos', 'Cerrar', {
+        panelClass: ['error-snackbar']
+      });
     }
   }
 
@@ -183,6 +241,104 @@ export class RegisterComponent {
   formValid() {
     return this.login.valid && this.email.valid && this.password.valid && this.confirmPassword.valid && this.password.value === this.confirmPassword.value
       && this.name.valid && this.surname1.valid && this.surname2.valid && this.phoneNumber.valid;
+  }
+
+  isStep1Valid(): boolean {
+    return this.registerForm.valid && this.password.value === this.confirmPassword.value;
+  }
+
+  isStep2Valid(): boolean {
+    return true;
+  }
+
+  canAdvanceToStep2(): void {
+    if (this.isStep1Valid()) {
+      return;
+    }
+
+    if (!this.registerForm.valid) {
+      this.snackBar.open('Por favor completa todos los campos requeridos en el paso 1', 'Cerrar', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+    
+    if (this.password.value !== this.confirmPassword.value) {
+      this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+  }
+
+  canAdvanceToStep3(): void {
+    return;
+  }
+
+  registerBasicInfo(): void {
+    if (this.isStep1Valid()) {
+      const basicFormData = {
+        login: this.login.value!,
+        password: this.password.value!,
+        email: this.email.value!,
+        name: this.name.value!,
+        surname1: this.surname1.value!,
+        surname2: this.surname2.value!,
+        phoneNumber: this.phoneNumber.value!,
+        location: '',
+        professionalTitle: '',
+        yearsOfExperience: '',
+        educationLevel: '',
+        languages: '',
+        employmentStatus: '',
+        profilePhoto: '',
+        curriculum: '',
+        linkedin: '',
+        github: '',
+        figma: '',
+        personalWebsite: ''
+      };
+
+      console.log('Registro básico:', basicFormData);
+
+      this.authService.register(basicFormData).subscribe({
+        next: (response) => {
+          this.snackBar.open('Registro completado exitosamente. Podrás completar tu perfil más tarde.', 'Cerrar', {
+            duration: 4000
+          });
+          this.router.navigate(['/offers/portal']);
+        },
+        error: (error) => {
+          this.snackBar.open('Error en el registro: ' + (error.error || 'Nombre o correo ya registrado'), 'Cerrar', {
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    } else {
+      this.canAdvanceToStep2();
+    }
+  }
+
+  nextStep(): void {
+    if (this.stepper.selectedIndex === 0 && this.isStep1Valid()) {
+      this.stepper.next();
+    } else if (this.stepper.selectedIndex === 1) {
+      this.stepper.next();
+    } else {
+      if (this.stepper.selectedIndex === 0) {
+        this.canAdvanceToStep2();
+      }
+    }
+  }
+
+  previousStep(): void {
+    this.stepper.previous();
+  }
+
+  goHome(): void {
+    this.router.navigate(['/offers/portal']);
   }
 
 }

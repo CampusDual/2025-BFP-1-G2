@@ -89,7 +89,10 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }
         this.userService.registerNewCandidate(request.getLogin(), request.getPassword(), request.getEmail(),
-                request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE");
+                request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE",
+                request.getLocation(), request.getProfessionalTitle(), request.getYearsOfExperience(), request.getEducationLevel(),
+                request.getLanguages(), request.getEmploymentStatus(), request.getProfilePictureUrl(), request.getCurriculumUrl(),
+                request.getLinkedinUrl(), request.getGithubUrl(), request.getFigmaUrl(), request.getPersonalWebsiteUrl());
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
     }
 
