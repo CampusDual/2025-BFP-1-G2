@@ -14,6 +14,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatCardModule} from "@angular/material/card";
 import { MatIconModule } from '@angular/material/icon';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -32,7 +34,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatDialogModule,
     MatProgressBarModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatStepperModule,
+    MatSelectModule
     ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
