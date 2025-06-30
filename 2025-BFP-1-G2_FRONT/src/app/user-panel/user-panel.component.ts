@@ -111,6 +111,11 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.isEditMode = !this.isEditMode;
   }
 
+  onImageError(): void {
+    // Si hay error al cargar la imagen, usar null para mostrar el placeholder
+    this.profilePictureUrl = null;
+  }
+
   saveChanges(): void {
     if (this.isSaving) return;
     
@@ -128,6 +133,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       educationLevel: this.educationLevel,
       languages: this.languages,
       employmentStatus: this.employmentStatus,
+      profilePictureUrl: this.profilePictureUrl,
       curriculumUrl: this.curriculumUrl,
       linkedinUrl: this.linkedinUrl,
       githubUrl: this.githubUrl,

@@ -1,7 +1,7 @@
 <div class="user-panel" *ngIf="!isLoading">
   <div class="profile-header fade-in">
     <div class="profile-avatar">
-      <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" [alt]="fullName" class="avatar-image">
+      <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" [alt]="fullName" class="avatar-image" (error)="onImageError()">
       <div *ngIf="!profilePictureUrl" class="avatar-placeholder">
         <mat-icon>person</mat-icon>
       </div>
@@ -70,6 +70,11 @@
         <span class="label">Ubicación:</span>
         <span class="value" *ngIf="!isEditMode">{{ location || 'No especificada' }}</span>
         <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="location" placeholder="Ingrese su ubicación">
+      </div>
+      <div class="info-item" *ngIf="isEditMode">
+        <mat-icon>image</mat-icon>
+        <span class="label">Foto de Perfil:</span>
+        <input class="edit-input" type="url" [(ngModel)]="profilePictureUrl" placeholder="URL de la imagen de perfil">
       </div>
     </div>
   </div>
