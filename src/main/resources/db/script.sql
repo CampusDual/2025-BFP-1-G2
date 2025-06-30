@@ -85,3 +85,11 @@ CREATE TABLE offer_tag (
     FOREIGN KEY (offer_id) REFERENCES offers(id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
 );
+
+CREATE TABLE candidate_tags (
+    id serial PRIMARY KEY,
+    candidate_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    CONSTRAINT fk_candidate_id FOREIGN KEY (candidate_id) REFERENCES candidates(id),
+    CONSTRAINT fk_tag_id FOREIGN KEY (tag_id) REFERENCES tag(id)
+);
