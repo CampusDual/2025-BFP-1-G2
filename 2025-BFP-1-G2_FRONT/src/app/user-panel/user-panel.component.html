@@ -1,12 +1,96 @@
-<div class="user-panel">
-  <h1>Panel de Usuario</h1>
-  <div class="user-info fade-in">
-    <div class="user-details">
-      <h2><span class="typing-name">{{ animatedName }}</span>
-        <span class="typing-cursor" [ngClass]="{'no-blink': !showCursor}" [ngStyle]="{opacity: showCursor ? 1 : 0}">|</span></h2>
-      <p><strong>Email:</strong>    {{ userEmail }}</p>
-      <p><strong>Teléfono:</strong> {{ phoneNumber }}</p>
+<div class="user-panel" *ngIf="!isLoading">
+  <div class="profile-header fade-in">
+    <div class="profile-avatar">
+      <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" [alt]="fullName" class="avatar-image">
+      <div *ngIf="!profilePictureUrl" class="avatar-placeholder">
+        <mat-icon>person</mat-icon>
+      </div>
+    </div>
+
+    <div class="profile-main-info">
+      <h1 class="profile-name">
+        <span class="typing-name">{{ animatedName }}</span>
+        <span class="typing-cursor" [ngClass]="{'no-blink': !showCursor}" [ngStyle]="{opacity: showCursor ? 1 : 0}">|</span>
+      </h1>
+      <p class="profile-title" *ngIf="professionalTitle">{{ professionalTitle }}</p>
+    </div>
+  </div>
+
+  <div class="info-section fade-in">
+    <h3><mat-icon>contact_page</mat-icon> Información de Contacto</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <mat-icon>email</mat-icon>
+        <span class="label">Email:</span>
+        <span class="value">{{ userEmail }}</span>
+      </div>
+      <div class="info-item" *ngIf="phoneNumber">
+        <mat-icon>phone</mat-icon>
+        <span class="label">Teléfono:</span>
+        <span class="value">{{ phoneNumber }}</span>
+      </div>
+      <div class="info-item" *ngIf="location">
+        <mat-icon>location_on</mat-icon>
+        <span class="label">Ubicación:</span>
+        <span class="value">{{ location }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section fade-in" *ngIf="yearsOfExperience || educationLevel || languages || employmentStatus">
+    <h3><mat-icon>work</mat-icon> Información Profesional</h3>
+    <div class="info-grid">
+      <div class="info-item" *ngIf="yearsOfExperience">
+        <mat-icon>schedule</mat-icon>
+        <span class="label">Experiencia:</span>
+        <span class="value">{{ yearsOfExperience }} años</span>
+      </div>
+      <div class="info-item" *ngIf="educationLevel">
+        <mat-icon>school</mat-icon>
+        <span class="label">Educación:</span>
+        <span class="value">{{ educationLevel }}</span>
+      </div>
+      <div class="info-item" *ngIf="languages">
+        <mat-icon>language</mat-icon>
+        <span class="label">Idiomas:</span>
+        <span class="value">{{ languages }}</span>
+      </div>
+      <div class="info-item" *ngIf="employmentStatus">
+        <mat-icon>badge</mat-icon>
+        <span class="label">Estado:</span>
+        <span class="value">{{ employmentStatus }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section fade-in" *ngIf="curriculumUrl || linkedinUrl || githubUrl || figmaUrl || personalWebsiteUrl">
+    <h3><mat-icon>link</mat-icon> Enlaces y Portafolio</h3>
+    <div class="social-links">
+      <button *ngIf="curriculumUrl" class="social-btn cv-btn" (click)="openLink(curriculumUrl)">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Currículum</span>
+      </button>
+      <button *ngIf="linkedinUrl" class="social-btn linkedin-btn" (click)="openLink(linkedinUrl)">
+        <mat-icon>work</mat-icon>
+        <span>LinkedIn</span>
+      </button>
+      <button *ngIf="githubUrl" class="social-btn github-btn" (click)="openLink(githubUrl)">
+        <mat-icon>code</mat-icon>
+        <span>GitHub</span>
+      </button>
+      <button *ngIf="figmaUrl" class="social-btn figma-btn" (click)="openLink(figmaUrl)">
+        <mat-icon>design_services</mat-icon>
+        <span>Figma</span>
+      </button>
+      <button *ngIf="personalWebsiteUrl" class="social-btn website-btn" (click)="openLink(personalWebsiteUrl)">
+        <mat-icon>public</mat-icon>
+        <span>Sitio Web</span>
+      </button>
     </div>
   </div>
 </div>
 
+<div class="loading-container" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <p>Cargando información del usuario...</p>
+</div>
