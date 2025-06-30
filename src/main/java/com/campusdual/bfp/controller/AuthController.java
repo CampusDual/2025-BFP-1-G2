@@ -155,6 +155,15 @@ public class AuthController {
         List<CompanyDTO> companies = userService.getAllCompanies();
         return ResponseEntity.ok(companies);
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/listCandidates")
+    public ResponseEntity<List<CandidateDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<CandidateDTO> candidatos = userService.getAllCandidates();
+        return ResponseEntity.ok(candidatos);
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/companies/add")

@@ -3,7 +3,6 @@ package com.campusdual.bfp.api;
 import com.campusdual.bfp.model.dto.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
 import java.util.List;
 
 public interface IUserService {
@@ -22,6 +21,8 @@ public interface IUserService {
     UserDetails loadUserByUsername(String username);
 
     List<CompanyDTO> getAllCompanies();
+
+    List<CandidateDTO> getAllCandidates();
 
     int addCompany(CompanyDTO companyDTO);
 
