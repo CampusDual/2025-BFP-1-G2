@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { TagService } from 'src/app/services/tag.service';
 
 export interface User {
   username: string;
@@ -48,7 +49,8 @@ export class AuthService {
   }
 
   constructor(private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private tagsService: TagService
   ) {
   }
 
@@ -98,7 +100,8 @@ export class AuthService {
       linkedinUrl: userData.linkedin || null,
       githubUrl: userData.github || null,
       figmaUrl: userData.figma || null,
-      personalWebsiteUrl: userData.personalWebsite || null
+      personalWebsiteUrl: userData.personalWebsite || null,
+      tagIds: userData.tagIds || []
     };
 
     console.log('Registering user with complete data:', completeUserData);
@@ -107,6 +110,7 @@ export class AuthService {
       tap({
         next: (response: any) => {
           console.log('Usuario registrado exitosamente con todos los datos:', response);
+        
         },
         error: (error) => {
           console.error('Error en el registro completo:', error);

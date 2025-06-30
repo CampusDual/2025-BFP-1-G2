@@ -15,7 +15,7 @@ public interface IUserService {
                               String surname1, String surname2, String phoneNumber, String roleName,
                               String location, String professionalTitle, String yearsOfExperience, String educationLevel,
                               String languages, String employmentStatus, String profilePictureUrl, String curriculumUrl,
-                              String linkedinUrl, String githubUrl, String figmaUrl, String personalWebsiteUrl);
+                              String linkedinUrl, String githubUrl, String figmaUrl, String personalWebsiteUrl, int[]tags);
 
     void addRoleToUser(int userId, Long roleName);
 

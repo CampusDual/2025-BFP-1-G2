@@ -24,6 +24,7 @@ public class CandidateDTO extends SignupDTO {
     private String figmaUrl;
     private String personalWebsiteUrl;
     private String[] allDates;
+    private int[] tagIds;
 
     public String[] getAllDates() {
         return allDates;
@@ -173,4 +174,11 @@ public class CandidateDTO extends SignupDTO {
     public void setPersonalWebsiteUrl(String personalWebsiteUrl) {
         this.personalWebsiteUrl = personalWebsiteUrl;
     }
+    public int[] getTagIds() {
+        return tagIds;
+    }
+    public void setTagIds(int[] tagIds) {
+        this.tagIds = tagIds;
+    }
+
 }

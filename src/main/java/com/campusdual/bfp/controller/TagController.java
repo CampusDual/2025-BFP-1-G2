@@ -25,13 +25,13 @@ public class TagController {
     JWTUtil jwtUtils;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("tags/add")
+    @PostMapping("/add")
     public ResponseEntity<Long> addTag(@RequestBody TagDTO tag) {
         long idNewTag = tagService.addTag(tag.getName());
         return ResponseEntity.ok(idNewTag);
     }
 
-    @GetMapping("tags/list")
+    @GetMapping("/list")
     public ResponseEntity<List<TagDTO>> listTags() {
         List<TagDTO> tags = tagService.getAllTags();
         return ResponseEntity.ok(tags);

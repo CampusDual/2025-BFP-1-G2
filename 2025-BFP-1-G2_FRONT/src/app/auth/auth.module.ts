@@ -16,6 +16,8 @@ import {MatCardModule} from "@angular/material/card";
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -36,7 +38,9 @@ import { MatSelectModule } from '@angular/material/select';
     MatCardModule,
     MatIconModule,
     MatStepperModule,
-    MatSelectModule
+    MatSelectModule,
+    MatChipsModule,
+    MatSnackBarModule
     ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
