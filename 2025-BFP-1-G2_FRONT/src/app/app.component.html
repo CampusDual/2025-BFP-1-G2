@@ -1,5 +1,5 @@
 <body [ngClass]="{ 'login-bg': !showHeader }">
-  <div class="content">
+  <div class="content" [ngClass]="{ 'no-header': !showHeader }">
     <app-header *ngIf="showHeader" [drawer]="drawer"></app-header>
     <mat-drawer-container autosize>
       <mat-drawer #drawer mode="side">

@@ -1,11 +1,26 @@
 .register-container {
   overflow: hidden;
+  position: absolute;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
   width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.register-card{
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  height: 600px;
+  margin: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 form {
@@ -18,17 +33,15 @@ form {
 }
 
 .formdata {
-  min-width: 300px;
+  min-width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
-  background-color: rgba(255, 255, 255, 0.9);
-  padding-bottom: 30px;
-  padding-left: 30px;
-  padding-right: 30px;
+  box-shadow: none !important;
+  background-color: rgba(255, 255, 255, 0);
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .formdata h2 {
@@ -38,34 +51,19 @@ form {
   padding-bottom: 5px;
 }
 
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 40px;
+  column-gap: 60px;
   row-gap: 20px;
   width: 100%;
 }
 
-
-.form-actions {
-  margin-top: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
-.form-actions button {
-  width: 100px;
-  height: 30px;
-  justify-content: center;
-  align-items: center;
-}
-
 .login-link {
-  margin-bottom: 1.5rem;
-  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 10px;
   border-radius: 10px;
   transition: color 0.3s ease, background-color 0.3s ease;
 }
@@ -85,13 +83,150 @@ form {
   opacity: 0;
   display: none;
 }
-.home-button {
+
+mat-horizontal-stepper {
+  margin-top: 60px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: fit-content;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+::ng-deep .mat-step-header{
+  position: relative;
+  top:0%;
+  left:5%;
+  height: 60px !important;
+  margin-top: 0px !important;
+}
+
+::ng-deep .mat-step-header:hover {
+ background-color: transparent !important;
+}
+
+::ng-deep .mat-step-header .mat-ripple-element {
+  background-color: transparent !important;
+}
+
+::ng-deep .mat-step-header.mat-active,
+::ng-deep .mat-step-header.cdk-focused,
+::ng-deep .mat-step-header.cdk-program-focused {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.step-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.external-form-actions {
+  width: 800px;
+  background-color: white;
+  padding-bottom: 25px;
+  position: relative;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.step-buttons button {
+  min-width: 120px;
+  height: 25px;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.step-buttons .home-button {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
 }
-.home-button mat-icon {
+
+.step-buttons .home-button mat-icon {
   margin: 0;
   line-height: 1;
 }
+
+.step-buttons {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.external-form-actions .step-buttons {
+  transition: all 0.3s ease-in-out;
+}
+
+.step-footer {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  font-size: smaller;
+}
+
+.step-footer button {
+  min-width: 120px;
+  height: 25px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.decorated-field {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.decorated-field .field-icon {
+  color: var(--primary-color, #000000);
+  margin-right: 8px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.decorated-field:focus-within .field-icon {
+  opacity: 1;
+  color: var(--accent-color, #000000);
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field button[matSuffix] {
+  margin-right: 5px;
+  border: none;
+  background: transparent;
+  color: var(--primary-color, #000000);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.password-field button[matSuffix]:hover {
+  opacity: 1;
+  cursor: pointer;
+  background-color: rgba(63, 81, 181, 0.1);
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  transition: color 0.3s ease;
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: var(--accent-color, #000000);
+}
+
+
+

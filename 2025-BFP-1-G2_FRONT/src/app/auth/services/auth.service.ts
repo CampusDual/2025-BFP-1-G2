@@ -71,13 +71,47 @@ export class AuthService {
     );
   }
 
-  register(userData: {
-    login: string, password: string, email: string, name: string,
-    surname1: string, surname2: string, phoneNumber: string
-  }): Observable<any> {
+  register(userData: any): Observable<any> {
     localStorage.removeItem('authToken');
-    console.log('Registering user with data:', userData);
-    return this.http.post(`${this.baseUrl}/signup`, userData, { responseType: 'text' });
+
+
+    const completeUserData = {
+
+      login: userData.login,
+      password: userData.password,
+      email: userData.email,
+      name: userData.name,
+      surname1: userData.surname1,
+      surname2: userData.surname2,
+      phoneNumber: userData.phoneNumber,
+
+      location: userData.location || null,
+      professionalTitle: userData.professionalTitle || null,
+      yearsOfExperience: userData.yearsOfExperience || null,
+      educationLevel: userData.educationLevel || null,
+      languages: userData.languages || null,
+      employmentStatus: userData.employmentStatus || null,
+      profilePictureUrl: userData.profilePhoto || null,
+
+      curriculumUrl: userData.curriculum || null,
+      linkedinUrl: userData.linkedin || null,
+      githubUrl: userData.github || null,
+      figmaUrl: userData.figma || null,
+      personalWebsiteUrl: userData.personalWebsite || null
+    };
+
+    console.log('Registering user with complete data:', completeUserData);
+
+    return this.http.post(`${this.baseUrl}/signup`, completeUserData, { responseType: 'text' }).pipe(
+      tap({
+        next: (response: any) => {
+          console.log('Usuario registrado exitosamente con todos los datos:', response);
+        },
+        error: (error) => {
+          console.error('Error en el registro completo:', error);
+        }
+      })
+    );
   }
 
   isLoggedIn(): boolean {

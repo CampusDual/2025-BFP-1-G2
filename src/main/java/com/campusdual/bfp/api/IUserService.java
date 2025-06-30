@@ -12,7 +12,10 @@ public interface IUserService {
     int registerNewUser(String username, String password, String email, String roleName);
 
     void registerNewCandidate(String username, String password, String email, String name,
-                              String surname1, String surname2, String phoneNumber, String roleName);
+                              String surname1, String surname2, String phoneNumber, String roleName,
+                              String location, String professionalTitle, String yearsOfExperience, String educationLevel,
+                              String languages, String employmentStatus, String profilePictureUrl, String curriculumUrl,
+                              String linkedinUrl, String githubUrl, String figmaUrl, String personalWebsiteUrl);
 
     void addRoleToUser(int userId, Long roleName);
 
