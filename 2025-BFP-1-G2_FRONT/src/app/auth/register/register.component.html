@@ -49,23 +49,17 @@
           <mat-error *ngIf="phoneNumber.invalid">{{ getPhoneNumberErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="decorated-field password-field">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Contraseña</mat-label>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="Contraseña" [formControl]="password" required>
+          <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
           <mat-icon matPrefix class="field-icon">lock</mat-icon>
-          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword" type="button">
-            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
           <mat-error *ngIf="password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="decorated-field password-field">
+        <mat-form-field appearance="outline" class="decorated-field">
           <mat-label>Confirma la contraseña</mat-label>
-          <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirmar contraseña" [formControl]="confirmPassword" required>
+          <input matInput type="password" placeholder="Confirmar contraseña" [formControl]="confirmPassword" required>
           <mat-icon matPrefix class="field-icon">lock_outline</mat-icon>
-          <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirmPassword" type="button">
-            <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
           <mat-error *ngIf="confirmPassword.invalid || password.value !== confirmPassword.value">
             {{ getConfirmPasswordErrorMessage() }}
           </mat-error>
@@ -202,7 +196,7 @@
           [disabled]="!isStep1Valid()"
           (click)="registerBasicInfo()"
         >
-          Registrarse
+          Finalizar registro
         </button>
         <button
           mat-raised-button
@@ -210,7 +204,7 @@
           [disabled]="!isStep1Valid()"
           (click)="nextStep()"
         >
-          Más Información
+          Completar datos
         </button>
         <button mat-raised-button color="warn" type="reset" (click)="onReset()">
           Cancelar
@@ -227,13 +221,6 @@
           (click)="nextStep()"
         >
           Continuar
-        </button>
-        <button 
-          mat-raised-button 
-          color="accent" 
-          (click)="registerBasicInfo()"
-        >
-          Registrarse Ahora
         </button>
         <button mat-raised-button color="warn" type="reset" (click)="onReset()">
           Cancelar

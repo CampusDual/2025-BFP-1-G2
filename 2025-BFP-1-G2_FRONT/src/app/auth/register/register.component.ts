@@ -80,7 +80,6 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    // Solo necesita el primer formulario para registrarse
     if (this.isStep1Valid()) {
       const allFormData = {
         login: this.login.value!,
@@ -249,7 +248,6 @@ export class RegisterComponent {
   }
 
   isStep2Valid(): boolean {
-    // Ahora todos los campos del segundo formulario son opcionales
     return true;
   }
 
@@ -276,11 +274,9 @@ export class RegisterComponent {
   }
 
   canAdvanceToStep3(): void {
-    // Ya no hay validaciones requeridas en el paso 2
     return;
   }
 
-  // Función para registrarse solo con el primer formulario
   registerBasicInfo(): void {
     if (this.isStep1Valid()) {
       const basicFormData = {

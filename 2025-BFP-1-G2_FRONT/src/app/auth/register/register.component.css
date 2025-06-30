@@ -16,7 +16,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   height: 600px;
   margin: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -33,7 +33,7 @@ form {
 }
 
 .formdata {
-  min-width: 500px;
+  min-width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,7 +54,7 @@ form {
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 40px;
+  column-gap: 60px;
   row-gap: 20px;
   width: 100%;
 }
@@ -128,8 +128,9 @@ mat-horizontal-stepper {
 }
 
 .external-form-actions {
+  width: 800px;
   background-color: white;
-  padding-bottom: 15px;
+  padding-bottom: 25px;
   position: relative;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -189,7 +190,7 @@ mat-horizontal-stepper {
 }
 
 .decorated-field .field-icon {
-  color: var(--primary-color, #3f51b5);
+  color: var(--primary-color, #000000);
   margin-right: 8px;
   opacity: 0.7;
   transition: opacity 0.3s ease;
@@ -197,7 +198,7 @@ mat-horizontal-stepper {
 
 .decorated-field:focus-within .field-icon {
   opacity: 1;
-  color: var(--accent-color, #4050ff);
+  color: var(--accent-color, #000000);
 }
 
 .password-field {
@@ -205,28 +206,27 @@ mat-horizontal-stepper {
 }
 
 .password-field button[matSuffix] {
+  margin-right: 5px;
   border: none;
   background: transparent;
-  color: var(--primary-color, #4050ff);
+  color: var(--primary-color, #000000);
   opacity: 0.7;
   transition: opacity 0.3s ease;
 }
 
 .password-field button[matSuffix]:hover {
   opacity: 1;
+  cursor: pointer;
   background-color: rgba(63, 81, 181, 0.1);
 }
 
-/* Mejoras en los mat-form-field */
 ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
   transition: color 0.3s ease;
 }
 
 ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
-  color: var(--accent-color, #4050ff);
+  color: var(--accent-color, #000000);
 }
 
-::ng-deep .mat-form-field-appearance-outline .mat-form-field-prefix .mat-icon {
-  margin-right: 8px;
-}
+
 
