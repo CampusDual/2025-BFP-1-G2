@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 export interface User {
   username: string;
@@ -27,7 +28,7 @@ export interface User {
 export class AuthService {
 
 
-  private baseUrl = 'http://localhost:30030/auth';
+  private baseUrl = `${environment.apiUrl}/auth`;
   private authStatusSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
   public isAuthenticated$ = this.authStatusSubject.asObservable();
   private userNameSubject = new BehaviorSubject<string>(this.getLogin());

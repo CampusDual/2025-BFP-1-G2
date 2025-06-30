@@ -29,14 +29,12 @@ export class OfferTableComponent {
   constructor(
     private offerService: OfferService,
     private authService: AuthService,
-    private adminService: AdminService,
     private snackBar: MatSnackBar,
     private router: Router,
     private formBuilder: FormBuilder
   ) {
     this.loadUserRole();
     this.loadOffers();
-    this.loadTags();
   }
 
 
@@ -77,17 +75,6 @@ export class OfferTableComponent {
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
-      }
-    });
-  }
-
-  loadTags() {
-    this.offerService.getAllTags().subscribe({
-      next: (tags: Tag[]) => {
-        this.availableTags = tags;
-      },
-      error: (error: any) => {
-        console.error('Error fetching tags', error);
       }
     });
   }

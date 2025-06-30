@@ -3,7 +3,6 @@ package com.campusdual.bfp.controller;
 import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.auth.JWTUtil;
 import com.campusdual.bfp.model.dto.*;
-import com.campusdual.bfp.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -31,8 +30,6 @@ public class AuthController {
     IUserService userService;
     @Autowired
     JWTUtil jwtUtils;
-    @Autowired
-    private OfferService offerService;
 
     @PostMapping("/signin")
     public ResponseEntity<String> authenticateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -186,30 +183,5 @@ public class AuthController {
         return ResponseEntity.ok(deletedId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("tags/add")
-    public ResponseEntity<Long> addTag(@RequestBody TagDTO tag) {
-        long idNewTag = offerService.addTag(tag.getName());
-        return ResponseEntity.ok(idNewTag);
-    }
 
-    @GetMapping("tags/list")
-    public ResponseEntity<List<TagDTO>> listTags() {
-        List<TagDTO> tags = offerService.getAllTags();
-        return ResponseEntity.ok(tags);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("tags/delete/{tagId}")
-    public ResponseEntity<Long> deleteTag(@PathVariable("tagId") long tagId) {
-        long deletedId = offerService.deleteTag(tagId);
-        return ResponseEntity.ok(deletedId);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("tags/edit")
-    public ResponseEntity<Long> editTag(@RequestBody TagDTO tag) {
-        long updatedId = offerService.updateTag(tag.getId(), tag.getName());
-        return ResponseEntity.ok(updatedId);
-    }
 }

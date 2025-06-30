@@ -8,7 +8,7 @@ public class CandidateTags {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "candidate_id", nullable = false)
@@ -21,11 +21,16 @@ public class CandidateTags {
     public CandidateTags() {
     }
 
-    public Long getId() {
+    public CandidateTags(Candidate candidate, Tag tag) {
+        this.candidate = candidate;
+        this.tag = tag;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
