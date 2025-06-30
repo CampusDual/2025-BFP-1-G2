@@ -18,7 +18,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {ReactiveFormsModule} from "@angular/forms";
+import {ReactiveFormsModule, FormsModule} from "@angular/forms";
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {AuthModule} from "./auth/auth.module";
 import {UserPanelComponent} from './user-panel/user-panel.component';
@@ -52,6 +52,7 @@ import { NgChartsModule } from 'ng2-charts';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    FormsModule,
     TextFieldModule,
     AuthModule,
     MatSidenavModule,

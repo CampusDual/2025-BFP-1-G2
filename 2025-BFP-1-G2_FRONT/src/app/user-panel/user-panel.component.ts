@@ -12,6 +12,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   userSurname1: string | null = null;
   userSurname2: string | null = null;
   userEmail: string | null = null;
+  login: string | null = null;
   phoneNumber: string | null = null;
 
   location: string | null = null;
@@ -35,6 +36,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = true;
   userRole: string = '';
+  isEditMode: boolean = false;
+  isSaving: boolean = false;
 
   constructor(private authService: AuthService) {}
 
@@ -49,6 +52,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.userSurname1 = user.surname1;
         this.userSurname2 = user.surname2;
         this.userEmail = user.email;
+        this.login = user.login;
         this.phoneNumber = user.phoneNumber;
 
         this.location = user.location;
@@ -101,6 +105,58 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     if (url) {
       window.open(url, '_blank');
     }
+  }
+
+  toggleEditMode(): void {
+    this.isEditMode = !this.isEditMode;
+  }
+
+  saveChanges(): void {
+    if (this.isSaving) return;
+    
+    this.isSaving = true;
+    const updatedData = {
+      name: this.userName,
+      surname1: this.userSurname1,
+      surname2: this.userSurname2,
+      email: this.userEmail,
+      login: this.login,
+      phoneNumber: this.phoneNumber,
+      location: this.location,
+      professionalTitle: this.professionalTitle,
+      yearsOfExperience: this.yearsOfExperience,
+      educationLevel: this.educationLevel,
+      languages: this.languages,
+      employmentStatus: this.employmentStatus,
+      curriculumUrl: this.curriculumUrl,
+      linkedinUrl: this.linkedinUrl,
+      githubUrl: this.githubUrl,
+      figmaUrl: this.figmaUrl,
+      personalWebsiteUrl: this.personalWebsiteUrl
+    };
+
+    this.authService.updateCandidateDetails(updatedData).subscribe({
+      next: (response) => {
+        console.log('Datos actualizados exitosamente', response);
+        this.isEditMode = false;
+        this.isSaving = false;
+        // Actualizar el nombre completo y la animación
+        const parts = [this.userName, this.userSurname1, this.userSurname2].filter(Boolean);
+        this.fullName = parts.join(' ');
+        this.startTypingAnimation();
+      },
+      error: (error) => {
+        console.error('Error al actualizar los datos', error);
+        this.isSaving = false;
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    });
+  }
+
+  cancelEdit(): void {
+    this.isEditMode = false;
+    // Recargar los datos originales
+    this.loadUserData();
   }
 
   ngOnDestroy(): void {

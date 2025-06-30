@@ -149,6 +149,27 @@ public class AuthController {
         return ResponseEntity.ok(candidateDetails);
     }
 
+    @PutMapping("/candidateDetails/edit")
+    public ResponseEntity<CandidateDTO> editCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                             @RequestBody CandidateDTO candidateDTO) {
+        if (candidateDTO == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        CandidateDTO updatedCandidate = userService.updateCandidateDetails(username, candidateDTO);
+        if (updatedCandidate == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(updatedCandidate);
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listCompanies")
     public ResponseEntity<List<CompanyDTO>> listCompanies(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {

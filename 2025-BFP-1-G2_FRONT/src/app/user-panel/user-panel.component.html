@@ -14,58 +14,118 @@
       </h1>
       <p class="profile-title" *ngIf="professionalTitle">{{ professionalTitle }}</p>
     </div>
+
+    <!-- Botones de edición -->
+    <div class="edit-controls" *ngIf="!isEditMode">
+      <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+
+    <div class="edit-controls" *ngIf="isEditMode">
+      <button class="save-btn" (click)="saveChanges()" [disabled]="isSaving" title="Guardar cambios">
+        <mat-icon>save</mat-icon>
+      </button>
+      <button class="cancel-btn" (click)="cancelEdit()" [disabled]="isSaving" title="Cancelar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </div>
 
-  <div class="info-section fade-in">
+  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <h3><mat-icon>contact_page</mat-icon> Información de Contacto</h3>
     <div class="info-grid">
       <div class="info-item">
+        <mat-icon>person</mat-icon>
+        <span class="label">Nombre:</span>
+        <span class="value" *ngIf="!isEditMode">{{ userName || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="userName" placeholder="Ingrese su nombre">
+      </div>
+      <div class="info-item">
+        <mat-icon>person_outline</mat-icon>
+        <span class="label">Primer Apellido:</span>
+        <span class="value" *ngIf="!isEditMode">{{ userSurname1 || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="userSurname1" placeholder="Primer apellido">
+      </div>
+      <div class="info-item">
+        <mat-icon>person_outline</mat-icon>
+        <span class="label">Segundo Apellido:</span>
+        <span class="value" *ngIf="!isEditMode">{{ userSurname2 || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="userSurname2" placeholder="Segundo apellido">
+      </div>
+      <div class="info-item">
         <mat-icon>email</mat-icon>
         <span class="label">Email:</span>
-        <span class="value">{{ userEmail }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ userEmail }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="email" [(ngModel)]="userEmail" placeholder="Ingrese su email">
       </div>
-      <div class="info-item" *ngIf="phoneNumber">
+      <div class="info-item">
         <mat-icon>phone</mat-icon>
         <span class="label">Teléfono:</span>
-        <span class="value">{{ phoneNumber }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ phoneNumber || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="tel" [(ngModel)]="phoneNumber" placeholder="Ingrese su teléfono">
       </div>
-      <div class="info-item" *ngIf="location">
+      <div class="info-item">
         <mat-icon>location_on</mat-icon>
         <span class="label">Ubicación:</span>
-        <span class="value">{{ location }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ location || 'No especificada' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="location" placeholder="Ingrese su ubicación">
       </div>
     </div>
   </div>
 
-  <div class="info-section fade-in" *ngIf="yearsOfExperience || educationLevel || languages || employmentStatus">
+  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <h3><mat-icon>work</mat-icon> Información Profesional</h3>
     <div class="info-grid">
-      <div class="info-item" *ngIf="yearsOfExperience">
+      <div class="info-item">
+        <mat-icon>account_circle</mat-icon>
+        <span class="label">Usuario:</span>
+        <span class="value" *ngIf="!isEditMode">{{ login || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="login" placeholder="Nombre de usuario">
+      </div>
+      <div class="info-item">
+        <mat-icon>work_outline</mat-icon>
+        <span class="label">Título:</span>
+        <span class="value" *ngIf="!isEditMode">{{ professionalTitle || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="professionalTitle" placeholder="Título profesional">
+      </div>
+      <div class="info-item">
         <mat-icon>schedule</mat-icon>
         <span class="label">Experiencia:</span>
-        <span class="value">{{ yearsOfExperience }} años</span>
+        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience ? yearsOfExperience + ' años' : 'No especificada' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="number" [(ngModel)]="yearsOfExperience" placeholder="Años de experiencia" min="0">
       </div>
-      <div class="info-item" *ngIf="educationLevel">
+      <div class="info-item">
         <mat-icon>school</mat-icon>
         <span class="label">Educación:</span>
-        <span class="value">{{ educationLevel }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ educationLevel || 'No especificada' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="educationLevel" placeholder="Nivel educativo">
       </div>
-      <div class="info-item" *ngIf="languages">
+      <div class="info-item">
         <mat-icon>language</mat-icon>
         <span class="label">Idiomas:</span>
-        <span class="value">{{ languages }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ languages || 'No especificados' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="languages" placeholder="Idiomas que habla">
       </div>
-      <div class="info-item" *ngIf="employmentStatus">
+      <div class="info-item">
         <mat-icon>badge</mat-icon>
         <span class="label">Estado:</span>
-        <span class="value">{{ employmentStatus }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ employmentStatus || 'No especificado' }}</span>
+        <select class="edit-select" *ngIf="isEditMode" [(ngModel)]="employmentStatus">
+          <option value="">Seleccione estado</option>
+          <option value="Empleado">Empleado</option>
+          <option value="Desempleado">Desempleado</option>
+          <option value="Estudiante">Estudiante</option>
+          <option value="Freelancer">Freelancer</option>
+          <option value="Jubilado">Jubilado</option>
+        </select>
       </div>
     </div>
   </div>
 
-  <div class="info-section fade-in" *ngIf="curriculumUrl || linkedinUrl || githubUrl || figmaUrl || personalWebsiteUrl">
+  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <h3><mat-icon>link</mat-icon> Enlaces y Portafolio</h3>
-    <div class="social-links">
+    <div class="social-links" *ngIf="!isEditMode">
       <button *ngIf="curriculumUrl" class="social-btn cv-btn" (click)="openLink(curriculumUrl)">
         <mat-icon>picture_as_pdf</mat-icon>
         <span>Currículum</span>
@@ -86,6 +146,37 @@
         <mat-icon>public</mat-icon>
         <span>Sitio Web</span>
       </button>
+      <div *ngIf="!curriculumUrl && !linkedinUrl && !githubUrl && !figmaUrl && !personalWebsiteUrl" class="no-links">
+        <p>No hay enlaces configurados</p>
+      </div>
+    </div>
+
+    <div class="edit-links" *ngIf="isEditMode">
+      <div class="edit-link-item">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span class="label">Currículum:</span>
+        <input class="edit-input" type="url" [(ngModel)]="curriculumUrl" placeholder="URL del currículum">
+      </div>
+      <div class="edit-link-item">
+        <mat-icon>work</mat-icon>
+        <span class="label">LinkedIn:</span>
+        <input class="edit-input" type="url" [(ngModel)]="linkedinUrl" placeholder="URL de LinkedIn">
+      </div>
+      <div class="edit-link-item">
+        <mat-icon>code</mat-icon>
+        <span class="label">GitHub:</span>
+        <input class="edit-input" type="url" [(ngModel)]="githubUrl" placeholder="URL de GitHub">
+      </div>
+      <div class="edit-link-item">
+        <mat-icon>design_services</mat-icon>
+        <span class="label">Figma:</span>
+        <input class="edit-input" type="url" [(ngModel)]="figmaUrl" placeholder="URL de Figma">
+      </div>
+      <div class="edit-link-item">
+        <mat-icon>public</mat-icon>
+        <span class="label">Sitio Web:</span>
+        <input class="edit-input" type="url" [(ngModel)]="personalWebsiteUrl" placeholder="URL del sitio web">
+      </div>
     </div>
   </div>
 </div>
