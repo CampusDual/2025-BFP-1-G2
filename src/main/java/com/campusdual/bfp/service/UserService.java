@@ -5,6 +5,7 @@ import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,9 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private CompanyDao companyDao;
+
+    @Autowired
+    private UserOfferDao userOfferDao;
 
 
     @Override
@@ -135,11 +139,9 @@ public class UserService implements UserDetailsService, IUserService {
         return new BCryptPasswordEncoder();
     }
 
-
-
     @Override
     public List<CompanyDTO> getAllCompanies() {
-        List<CompanyDTO> companies =  companyDao.findAll().stream()
+        List<CompanyDTO> companies = companyDao.findAll().stream()
                 .map(CompanyMapper.INSTANCE::toDTO)
                 .collect(Collectors.toList());
         for (CompanyDTO company : companies) {
@@ -154,6 +156,28 @@ public class UserService implements UserDetailsService, IUserService {
         return companies;
     }
 
+    @Override
+    public List<CandidateDTO> getAllCandidates() {
+        List<Candidate> candidates = this.candidateDao.findAll();
+        System.out.println("Candidates found: " + candidates.size());
+
+        List<CandidateDTO> candidateDTOs = CandidateMapper.INSTANCE.toDTOList(candidates);
+
+        for (int i = 0; i < candidates.size(); i++) {
+            Candidate candidate = candidates.get(i);
+            CandidateDTO candidateDTO = candidateDTOs.get(i);
+
+            if (candidate.getUser() == null) {
+                System.out.println("Warning: Candidate without user found");
+                continue;
+            }
+
+            candidateDTO.setAllDates(userOfferDao.findDatesByUserId(candidate.getUser().getId()).stream()
+                    .map(date -> new java.text.SimpleDateFormat("dd/MM/yyyy").format(date))
+                    .toArray(String[]::new));
+        }
+        return candidateDTOs;
+    }
 
     @Override
     public int addCompany(CompanyDTO companyDTO) {

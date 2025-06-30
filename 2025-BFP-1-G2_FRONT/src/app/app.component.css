@@ -20,15 +20,18 @@ app-header {
 mat-drawer-container {
   grid-area: main;
   background: transparent;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
 }
 
-
 app-footer {
-  position: absolute;
-  bottom: 0;
+  grid-row: 2;
+  position: static;
   width: 100%;
   margin-top: 20px;
 }
+
 
 mat-drawer {
   background: #3e3e3e
@@ -45,6 +48,8 @@ router-outlet {
   align-items: center;
   justify-content: center;
   width: 100%;
+  
+  grid-row: 1;
 }
 
 .nav-item {
@@ -69,7 +74,7 @@ router-outlet {
 .login-bg {
   background:
   linear-gradient(
-      rgba(255, 255, 255, 0.838), /* blanco semitransparente */
+      rgba(255, 255, 255, 0.838),
       rgba(255, 255, 255, 0.667)
     ),
   url('https://media.timtul.com/media/web_clustertic/background-2462431_1920_20190429120035.jpg') center center no-repeat;

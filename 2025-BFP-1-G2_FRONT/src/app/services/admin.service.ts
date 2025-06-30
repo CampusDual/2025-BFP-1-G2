@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Company } from '../admin/admin-panel/admin-panel.component';
 import { Observable } from 'rxjs';
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
+import {Candidate} from "../detailed-card/detailed-card.component";
 
 
 
@@ -41,6 +42,9 @@ export class AdminService {
 
   getAllTags() : Observable<Tag[]> {
     return this.http.get<Tag[]>(`${this.baseUrl}/tags/list`);
+  }
+  getCandidatesOffers(): Observable<Candidate[]> {
+    return this.http.get<Candidate[]>(`${this.baseUrl}/listCandidates`);
   }
 
   updateTag(tag: Tag): Observable<Tag> {

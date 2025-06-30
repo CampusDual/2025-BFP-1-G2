@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserOfferDao extends JpaRepository<UserOffer, Long> {
@@ -15,4 +16,8 @@ public interface UserOfferDao extends JpaRepository<UserOffer, Long> {
     List<Integer> findUserIdsByOfferId(@Param("offerId") int offerId);
     UserOffer findByUserIdAndOfferId(int userId, int offerId);
     void deleteUserOfferByOffer(Offer offer);
+
+    @Query("SELECT uo.date FROM UserOffer uo WHERE uo.user.id = :userId")
+    List<Date> findDatesByUserId(@Param("userId") int userId);
+
 }

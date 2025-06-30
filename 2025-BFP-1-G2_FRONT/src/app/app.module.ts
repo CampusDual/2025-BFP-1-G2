@@ -25,6 +25,7 @@ import {OfferPanelModule} from "./offer-panel/offer-panel.module";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatTableModule } from '@angular/material/table';
 import { MatNativeDateModule } from '@angular/material/core';
+import { NgChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSidenavModule,
     OfferPanelModule,
     MatTableModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    NgChartsModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
