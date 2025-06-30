@@ -1,4 +1,5 @@
 .register-container {
+  overflow: hidden;
   position: absolute;
   overflow: hidden;
   display: flex;
@@ -9,14 +10,11 @@
   width: 100%;
   top: 0;
   left: 0;
-  margin-top: 20px;
 }
 
 .register-card{
-  margin-top: 20px;
   justify-content: center;
   align-items: center;
-  padding-bottom: 20px;
   width: 100%;
   max-width: 600px;
   height: 600px;
@@ -35,7 +33,7 @@ form {
 }
 
 .formdata {
-  min-width: 300px;
+  min-width: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,7 +45,6 @@ form {
 }
 
 .formdata h2 {
-  margin-top: 5px;
   color: var(--primary-color);
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -65,7 +62,7 @@ form {
 .login-link {
   justify-content: center;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   padding: 10px;
   border-radius: 10px;
   transition: color 0.3s ease, background-color 0.3s ease;
@@ -88,21 +85,21 @@ form {
 }
 
 mat-horizontal-stepper {
+  margin-top: 60px;
   justify-content: center;
   align-items: center;
   width: 100%;
   max-width: fit-content;
-  margin-top: 15px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
 
 ::ng-deep .mat-step-header{
   position: relative;
-  top:0;
+  top:0%;
   left:5%;
   height: 60px !important;
-  margin-top: 0 !important;
+  margin-top: 0px !important;
 }
 
 ::ng-deep .mat-step-header:hover {
@@ -127,13 +124,20 @@ mat-horizontal-stepper {
   justify-content: center;
   gap: 15px;
   flex-wrap: wrap;
-  margin-top: 20px;
   padding: 0 20px;
+}
+
+.external-form-actions {
+  background-color: white;
+  padding-bottom: 15px;
+  position: relative;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .step-buttons button {
   min-width: 120px;
-  height: 36px;
+  height: 25px;
   justify-content: center;
   align-items: center;
   font-size: 14px;
@@ -156,10 +160,73 @@ mat-horizontal-stepper {
   animation: fadeInUp 0.3s ease-out;
 }
 
+.external-form-actions .step-buttons {
+  transition: all 0.3s ease-in-out;
+}
+
 .step-footer {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin: 0;
+  padding: 0;
+  font-size: smaller;
 }
+
+.step-footer button {
+  min-width: 120px;
+  height: 25px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.decorated-field {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.decorated-field .field-icon {
+  color: var(--primary-color, #3f51b5);
+  margin-right: 8px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.decorated-field:focus-within .field-icon {
+  opacity: 1;
+  color: var(--accent-color, #4050ff);
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field button[matSuffix] {
+  border: none;
+  background: transparent;
+  color: var(--primary-color, #4050ff);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.password-field button[matSuffix]:hover {
+  opacity: 1;
+  background-color: rgba(63, 81, 181, 0.1);
+}
+
+/* Mejoras en los mat-form-field */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  transition: color 0.3s ease;
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: var(--accent-color, #4050ff);
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-prefix .mat-icon {
+  margin-right: 8px;
+}
+

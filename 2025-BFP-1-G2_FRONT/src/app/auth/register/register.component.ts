@@ -16,6 +16,10 @@ import {MatStepper} from '@angular/material/stepper';
 export class RegisterComponent {
   @ViewChild('stepper') stepper!: MatStepper;
   
+  // Propiedades para controlar la visibilidad de las contraseñas
+  hidePassword = true;
+  hideConfirmPassword = true;
+  
   login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   email = new FormControl('', [Validators.required, Validators.email]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
@@ -25,12 +29,12 @@ export class RegisterComponent {
   surname2 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   phoneNumber = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
 
-  location = new FormControl('', [Validators.required]);
-  professionalTitle = new FormControl('', [Validators.required]);
+  location = new FormControl('');
+  professionalTitle = new FormControl('');
   yearsOfExperience = new FormControl('');
   educationLevel = new FormControl('');
   languages = new FormControl('');
-  employmentStatus = new FormControl('', [Validators.required]);
+  employmentStatus = new FormControl('');
   profilePhoto = new FormControl('');
 
   curriculum = new FormControl('');
@@ -76,7 +80,8 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.isStep1Valid() && this.isStep2Valid()) {
+    // Solo necesita el primer formulario para registrarse
+    if (this.isStep1Valid()) {
       const allFormData = {
         login: this.login.value!,
         password: this.password.value!,
@@ -85,12 +90,12 @@ export class RegisterComponent {
         surname1: this.surname1.value!,
         surname2: this.surname2.value!,
         phoneNumber: this.phoneNumber.value!,
-        location: this.location.value!,
-        professionalTitle: this.professionalTitle.value!,
+        location: this.location.value || '',
+        professionalTitle: this.professionalTitle.value || '',
         yearsOfExperience: this.yearsOfExperience.value || '',
         educationLevel: this.educationLevel.value || '',
         languages: this.languages.value || '',
-        employmentStatus: this.employmentStatus.value!,
+        employmentStatus: this.employmentStatus.value || '',
         profilePhoto: this.profilePhoto.value || '',
         curriculum: this.curriculum.value || '',
         linkedin: this.linkedin.value || '',
@@ -113,7 +118,7 @@ export class RegisterComponent {
         }
       });
     } else {
-      console.error('Los formularios no son válidos');
+      console.error('El primer formulario no es válido');
       this.snackBar.open('Por favor completa todos los campos requeridos', 'Cerrar', {
         panelClass: ['error-snackbar']
       });
@@ -244,8 +249,8 @@ export class RegisterComponent {
   }
 
   isStep2Valid(): boolean {
-    const requiredFields = [this.location, this.professionalTitle, this.employmentStatus];
-    return requiredFields.every(field => field.valid);
+    // Ahora todos los campos del segundo formulario son opcionales
+    return true;
   }
 
   canAdvanceToStep2(): void {
@@ -271,29 +276,63 @@ export class RegisterComponent {
   }
 
   canAdvanceToStep3(): void {
-    if (this.isStep2Valid()) {
-      return;
-    }
+    // Ya no hay validaciones requeridas en el paso 2
+    return;
+  }
 
-    if (!this.isStep2Valid()) {
-      this.snackBar.open('Por favor completa todos los campos requeridos en el paso 2', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
+  // Función para registrarse solo con el primer formulario
+  registerBasicInfo(): void {
+    if (this.isStep1Valid()) {
+      const basicFormData = {
+        login: this.login.value!,
+        password: this.password.value!,
+        email: this.email.value!,
+        name: this.name.value!,
+        surname1: this.surname1.value!,
+        surname2: this.surname2.value!,
+        phoneNumber: this.phoneNumber.value!,
+        location: '',
+        professionalTitle: '',
+        yearsOfExperience: '',
+        educationLevel: '',
+        languages: '',
+        employmentStatus: '',
+        profilePhoto: '',
+        curriculum: '',
+        linkedin: '',
+        github: '',
+        figma: '',
+        personalWebsite: ''
+      };
+
+      console.log('Registro básico:', basicFormData);
+
+      this.authService.register(basicFormData).subscribe({
+        next: (response) => {
+          this.snackBar.open('Registro completado exitosamente. Podrás completar tu perfil más tarde.', 'Cerrar', {
+            duration: 4000
+          });
+          this.router.navigate(['/offers/portal']);
+        },
+        error: (error) => {
+          this.snackBar.open('Error en el registro: ' + (error.error || 'Nombre o correo ya registrado'), 'Cerrar', {
+            panelClass: ['error-snackbar']
+          });
+        }
       });
-      return;
+    } else {
+      this.canAdvanceToStep2();
     }
   }
 
   nextStep(): void {
     if (this.stepper.selectedIndex === 0 && this.isStep1Valid()) {
       this.stepper.next();
-    } else if (this.stepper.selectedIndex === 1 && this.isStep2Valid()) {
+    } else if (this.stepper.selectedIndex === 1) {
       this.stepper.next();
     } else {
       if (this.stepper.selectedIndex === 0) {
         this.canAdvanceToStep2();
-      } else if (this.stepper.selectedIndex === 1) {
-        this.canAdvanceToStep3();
       }
     }
   }
