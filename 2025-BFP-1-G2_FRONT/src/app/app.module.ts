@@ -26,6 +26,7 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatTableModule } from '@angular/material/table';
 import { MatNativeDateModule } from '@angular/material/core';
 import { NgChartsModule } from 'ng2-charts';
+import { MatChipsModule } from '@angular/material/chips';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { NgChartsModule } from 'ng2-charts';
     OfferPanelModule,
     MatTableModule,
     MatNativeDateModule,
-    NgChartsModule
+    NgChartsModule,
+    MatChipsModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}

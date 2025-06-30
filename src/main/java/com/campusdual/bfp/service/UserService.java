@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,9 @@ public class UserService implements UserDetailsService, IUserService {
     private CandidateDao candidateDao;
 
     @Autowired
+    private CandidateTagsDao candidateTagsDao;
+
+    @Autowired
     private OfferDao offerDao;
 
     @Autowired
@@ -46,6 +50,8 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private UserOfferDao userOfferDao;
+    @Autowired
+    private TagDao tagDao;
 
 
     @Override
@@ -82,12 +88,13 @@ public class UserService implements UserDetailsService, IUserService {
         return savedUser.getId();
     }
 
+    @Transactional
     @Override
     public void registerNewCandidate(String username, String password, String email, String name,
                                      String surname1, String surname2, String phoneNumber, String roleName,
                                      String location, String professionalTitle, String yearsOfExperience, String educationLevel,
                                      String languages, String employmentStatus, String profilePictureUrl, String curriculumUrl,
-                                     String linkedinUrl, String githubUrl, String figmaUrl, String personalWebsiteUrl) {
+                                     String linkedinUrl, String githubUrl, String figmaUrl, String personalWebsiteUrl, int[] tags) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
@@ -109,6 +116,15 @@ public class UserService implements UserDetailsService, IUserService {
         id = this.registerNewUser(username, password, email, roleName);
         candidate.setUser(this.userDao.findUserById(id));
         this.candidateDao.saveAndFlush(candidate);
+        if (tags != null) {
+            for (Integer tagId : tags) {
+                Tag tag = tagDao.findById(tagId.longValue()).orElse(null);
+                if (tag != null) {
+                    CandidateTags candidateTag = new CandidateTags(candidate, tag);
+                    candidateTagsDao.save(candidateTag);
+                }
+            }
+        }
     }
 
     @Override

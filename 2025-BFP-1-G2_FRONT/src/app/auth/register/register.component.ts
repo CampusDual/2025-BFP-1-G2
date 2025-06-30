@@ -1,9 +1,12 @@
-import {Component, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from '../services/auth.service';
-import {Router} from '@angular/router';
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {MatStepper} from '@angular/material/stepper';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatStepper } from '@angular/material/stepper';
+import { TagService } from '../../services/tag.service';
+import { Tag } from '../../admin/admin-dashboard/admin-dashboard.component';
+import { MatChipSelectionChange } from '@angular/material/chips';
 
 
 @Component({
@@ -13,13 +16,16 @@ import {MatStepper} from '@angular/material/stepper';
 })
 
 
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
+
+  availableTags: Tag[] = [];
+  selectedTags: Tag[] = [];
+  tagsControl = new FormControl<Tag[]>([], { nonNullable: true });
   @ViewChild('stepper') stepper!: MatStepper;
-  
-  // Propiedades para controlar la visibilidad de las contraseñas
+
   hidePassword = true;
   hideConfirmPassword = true;
-  
+
   login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   email = new FormControl('', [Validators.required, Validators.email]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
@@ -69,14 +75,87 @@ export class RegisterComponent {
     linkedin: this.linkedin,
     github: this.github,
     figma: this.figma,
-    personalWebsite: this.personalWebsite
+    personalWebsite: this.personalWebsite,
+    tags: this.tagsControl
   });
 
 
   constructor(private authService: AuthService,
-              private router: Router,
-              private snackBar: MatSnackBar) {
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private tagService: TagService) {
 
+  }
+
+  ngOnInit(): void {
+    this.loadTags();
+  }
+
+  loadTags(): void {
+    this.tagService.getAllTags().subscribe({
+      next: (tags) => {
+        this.availableTags = tags;
+      },
+      error: (error) => {
+        console.error('Error loading tags:', error);
+        this.snackBar.open('Error al cargar las áreas de interés', 'Cerrar', {
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  getTagsFormControl(): FormControl<Tag[]> {
+    return this.tagsControl;
+  }
+
+  getSelectedTagsCount(): number {
+    return this.tagsControl.value.length;
+  }
+
+  isTagSelected(tag: Tag): boolean {
+    return this.tagsControl.value.some(selectedTag => selectedTag.id === tag.id);
+  }
+
+  onChipSelectionChange(event: MatChipSelectionChange): void {
+    const tag = event.source.value as Tag;
+    const currentTags = this.tagsControl.value;
+
+    if (event.selected) {
+      if (!this.isTagSelected(tag) && currentTags.length < 10) {
+        this.tagsControl.setValue([...currentTags, tag]);
+      }
+    } else {
+      const updatedTags = currentTags.filter(selectedTag => selectedTag.id !== tag.id);
+      this.tagsControl.setValue(updatedTags);
+    }
+  }
+
+  onChipKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+    }
+  }
+
+  compareTagsById(tag1: Tag, tag2: Tag): boolean {
+    return tag1 && tag2 ? tag1.id === tag2.id : tag1 === tag2;
+  }
+
+  updateCandidateTags(): void {
+    const selectedTagIds = this.tagsControl.value.map(tag => tag.id!);
+
+    this.tagService.updateCandidateTags(selectedTagIds,).subscribe({
+      next: () => {
+        console.log('Tags del candidato actualizados exitosamente');
+        this.snackBar.open('Registro completado exitosamente con áreas de interés', 'Cerrar', { duration: 3000 });
+        this.router.navigate([`offers/portal`]);
+      },
+      error: (error) => {
+        console.error('Error actualizando tags del candidato:', error);
+        this.snackBar.open('Registro completado exitosamente', 'Cerrar', { duration: 3000 });
+        this.router.navigate([`offers/portal`]);
+      }
+    });
   }
 
   onSubmit(): void {
@@ -100,14 +179,15 @@ export class RegisterComponent {
         linkedin: this.linkedin.value || '',
         github: this.github.value || '',
         figma: this.figma.value || '',
-        personalWebsite: this.personalWebsite.value || ''
+        personalWebsite: this.personalWebsite.value || '',
+        tagIds: this.tagsControl.value.map(tag => tag.id!) || []
       };
 
       console.log('Datos completos del registro:', allFormData);
 
       this.authService.register(allFormData).subscribe({
         next: (response) => {
-          this.snackBar.open('Registro completado exitosamente', 'Cerrar', {duration: 3000});
+          this.snackBar.open('Registro completado exitosamente', 'Cerrar', { duration: 3000 });
           this.router.navigate([`offers/portal`]);
         },
         error: (error) => {
@@ -165,7 +245,7 @@ export class RegisterComponent {
 
   getPhoneNumberErrorMessage(): string {
     if (this.phoneNumber.hasError('required')) {
-      return 'Debes introducir un número de teléfono';
+      return 'Debes introducir un número';
     }
     if (this.phoneNumber.hasError('pattern')) {
       return 'El número de teléfono solo puede contener números';
@@ -251,27 +331,6 @@ export class RegisterComponent {
     return true;
   }
 
-  canAdvanceToStep2(): void {
-    if (this.isStep1Valid()) {
-      return;
-    }
-
-    if (!this.registerForm.valid) {
-      this.snackBar.open('Por favor completa todos los campos requeridos en el paso 1', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
-      });
-      return;
-    }
-    
-    if (this.password.value !== this.confirmPassword.value) {
-      this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
-      });
-      return;
-    }
-  }
 
   canAdvanceToStep3(): void {
     return;
@@ -316,8 +375,6 @@ export class RegisterComponent {
           });
         }
       });
-    } else {
-      this.canAdvanceToStep2();
     }
   }
 
@@ -326,10 +383,6 @@ export class RegisterComponent {
       this.stepper.next();
     } else if (this.stepper.selectedIndex === 1) {
       this.stepper.next();
-    } else {
-      if (this.stepper.selectedIndex === 0) {
-        this.canAdvanceToStep2();
-      }
     }
   }
 

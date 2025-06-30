@@ -99,3 +99,11 @@ ADD COLUMN IF NOT EXISTS linkedin_url VARCHAR(500),
 ADD COLUMN IF NOT EXISTS github_url VARCHAR(500),
 ADD COLUMN IF NOT EXISTS figma_url VARCHAR(500),
 ADD COLUMN IF NOT EXISTS personal_website_url VARCHAR(500);
+
+CREATE TABLE candidate_tags (
+    id serial PRIMARY KEY,
+    candidate_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    CONSTRAINT fk_candidate_id FOREIGN KEY (candidate_id) REFERENCES candidates(id),
+    CONSTRAINT fk_tag_id FOREIGN KEY (tag_id) REFERENCES tag(id)
+);

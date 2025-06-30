@@ -1,10 +1,10 @@
-// offer.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { AuthService } from "../auth/services/auth.service";
 import { Candidate } from '../detailed-card/detailed-card.component';
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
+import { environment } from '../../environments/environment';
 
 export interface Offer {
   id?: number;
@@ -19,8 +19,8 @@ export interface Offer {
 })
 export class OfferService {
 
-  private baseUrl = 'http://localhost:30030/offer';
-  private authUrl = 'http://localhost:30030/auth';
+  private baseUrl = `${environment.apiUrl}/offer`;
+  private authUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient,
     private authService: AuthService) { }
@@ -57,33 +57,5 @@ export class OfferService {
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
   }
-  getAllTags(): Observable<Tag[]> {
-    return this.http.get<Tag[]>(`${this.authUrl}/tags/list`);
-  }
-  getOfferTags(offerId: number): Observable<Tag[]> {
-    return this.http.get<Tag[]>(`${this.baseUrl}/offers/${offerId}/tags`);
-  }
 
-
-  addTagsToOffer(offerId: number, tagIds: number[]): Observable<any> {
-    return this.http.post(`${this.baseUrl}/offers/${offerId}/tags`,
-      { tagIds },
-      { responseType: 'text' }
-    );
-  }
-
-
-  removeTagFromOffer(offerId: number, tagId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/offers/${offerId}/tags/${tagId}`,
-      { responseType: 'text' }
-    );
-  }
-
-
-  updateOfferTags(offerId: number, tagIds: number[]): Observable<any> {
-    return this.http.put(`${this.baseUrl}/offers/${offerId}/tags`,
-      { tagIds },
-      { responseType: 'text' }
-    );
-  }
 }

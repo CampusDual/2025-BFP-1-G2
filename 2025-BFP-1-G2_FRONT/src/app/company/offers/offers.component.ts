@@ -13,10 +13,8 @@ export class OffersComponent implements OnInit {
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-    // Check if we should trigger add offer on component load
     this.route.queryParams.subscribe(params => {
       if (params['addNew'] === 'true') {
-        // Use setTimeout to ensure the view is initialized
         setTimeout(() => {
           this.addOffer();
         }, 100);

@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { Offer, OfferService } from "../../services/offer.service";
 import { Candidate } from "../../detailed-card/detailed-card.component";
+import { TagService } from 'src/app/services/tag.service';
 
 export interface Tag {
   id?: number;
@@ -39,6 +40,7 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
+    private tagService: TagService,
     private offerService: OfferService,
     private matSnackBar: MatSnackBar
   ) {}
@@ -339,7 +341,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadTags() {
-    this.adminService.getAllTags().subscribe(
+    this.tagService.getAllTags().subscribe(
       (tags: Tag[]) => {
         this.tags = tags.sort((a, b) => a.name.localeCompare(b.name));
       },

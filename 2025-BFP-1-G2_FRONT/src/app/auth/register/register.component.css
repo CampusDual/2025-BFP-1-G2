@@ -1,24 +1,20 @@
 .register-container {
-  overflow: hidden;
-  position: absolute;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
   width: 100%;
-  top: 0;
-  left: 0;
+  padding-block: 20px;
 }
 
 .register-card{
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: fit-content;
   max-width: 800px;
-  height: 600px;
-  margin: auto;
+  margin: 0;
+  padding: 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
@@ -33,15 +29,12 @@ form {
 }
 
 .formdata {
-  min-width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: none !important;
+  box-shadow: none;
   background-color: rgba(255, 255, 255, 0);
-  padding-left: 15px;
-  padding-right: 15px;
 }
 
 .formdata h2 {
@@ -55,7 +48,7 @@ form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 60px;
-  row-gap: 20px;
+  row-gap: 0.4vh;
   width: 100%;
 }
 
@@ -85,7 +78,7 @@ form {
 }
 
 mat-horizontal-stepper {
-  margin-top: 60px;
+  margin-top: 1rem;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -122,13 +115,13 @@ mat-horizontal-stepper {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 0.7rem;
   flex-wrap: wrap;
   padding: 0 20px;
 }
 
 .external-form-actions {
-  width: 800px;
+  width: 100%;
   background-color: white;
   padding-bottom: 25px;
   position: relative;
@@ -166,7 +159,6 @@ mat-horizontal-stepper {
 }
 
 .step-footer {
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -226,6 +218,110 @@ mat-horizontal-stepper {
 
 ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
   color: var(--accent-color, #000000);
+}
+
+/* Solo para ajustes críticos en móviles muy pequeños */
+@media (max-width: 480px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    padding: 0 10px;
+  }
+  
+  .step-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .step-buttons button {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* ===== ESTILOS PARA TAGS ===== */
+
+.tags-subtitle {
+  font-size: clamp(12px, 1.6vw, 14px);
+  color: #666;
+  margin-bottom: clamp(10px, 2vh, 15px);
+  text-align: center;
+}
+
+.selected-tags-count {
+  font-size: clamp(12px, 1.6vw, 14px);
+  color: var(--primary-color);
+  font-weight: 500;
+  margin-bottom: clamp(10px, 2vh, 15px);
+  text-align: center;
+}
+
+.tags-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 1.5vh, 12px);
+  width: 100%;
+  max-width: 100%;
+}
+
+.tags-listbox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(6px, 1vw, 10px);
+  max-width: 100%;
+  width: 100%;
+}
+
+.chip-selected {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.chip-unselected {
+  background-color: #fde3e3 !important;
+  border: 1px solid var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+::ng-deep .mat-chip-option {
+  border-radius: 16px;
+  font-size: clamp(11px, 1.4vw, 13px);
+  padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px);
+  height: auto;
+  min-height: clamp(28px, 4vh, 32px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+::ng-deep .mat-chip-option:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .mat-chip-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+::ng-deep .mat-chip-option:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.loading-tags {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 4vh, 40px);
+  color: #666;
+}
+
+.loading-tags p {
+  margin-top: clamp(10px, 2vh, 15px);
+  font-size: clamp(12px, 1.6vw, 14px);
 }
 
 
