@@ -17,6 +17,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatChipsModule } from '@angular/material/chips';
 import {  MatListModule} from "@angular/material/list";
+import { MatSliderModule } from '@angular/material/slider';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 export interface Offer {
@@ -54,7 +57,10 @@ export interface Offer {
     ReactiveFormsModule,
     MatDatepickerModule,
     MatChipsModule,
-    MatListModule
+    MatListModule,
+    MatSliderModule,
+    MatDividerModule,
+    MatSnackBarModule
   ],
 })
 export class OfferPanelModule { }

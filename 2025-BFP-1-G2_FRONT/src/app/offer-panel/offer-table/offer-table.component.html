@@ -1,47 +1,53 @@
 <div class="offer-recommendations-container" *ngIf="isCandidate">
   <mat-list class="offer-recommendations">
-    <mat-list-item>
-      <h3>Ofertas recomendadas</h3>
-    </mat-list-item>
+      <div class="scroll-buttons">
+
+        <button mat-fab class="nav-button prev-button" (click)="scrollLeft()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <h3>Ofertas recomendadas</h3>
+        <button mat-fab class="nav-button next-button" (click)="scrollRight()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+    <mat-divider></mat-divider>
+
+  
     <div class="scroll-wrapper">
-      <button mat-icon-button class="nav-button prev-button" (click)="scrollLeft()">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <div class="scroll-container" #scrollContainer>
-        <app-offer-card class="your-cards"
-                        *ngFor="let offer of filterOffers(); let i = index"
-                        [offer]="offer"
-                        (click)="openDetailedCard(i)">
+      <div class="scroll-container" #scrollContainer (scroll)="onScrollContainerScroll()">
+        <app-offer-card class="your-cards" *ngFor="let offer of recomendedOffers(); let i = index" [offer]="offer"
+          (click)="openDetailedCardFromSuggested(i)">
         </app-offer-card>
       </div>
-      <button mat-icon-button class="nav-button next-button" (click)="scrollRight()">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
     </div>
-    <mat-divider></mat-divider>
+    <div class="slider-navigation" *ngIf="maxSliderValue > 0">
+      <div class="slider-container">
+        <input 
+          type="range"
+          class="navigation-slider"
+          [value]="sliderValue"
+          min="0"
+          max="100"
+          step="1"
+          (input)="onSliderChange($event)"
+          #sliderInput>
+      </div>
+    </div>
+        <mat-divider></mat-divider>
+
   </mat-list>
 </div>
 
 
 
-<input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
-  (ngModelChange)="filterOffers()"
-class="search-input">
+<input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="filterOffers()"
+  class="search-input">
 <div class="grid-container">
-  <app-offer-card
-    *ngFor="let offer of filterOffers(); let i = index"
-    [offer]="offer"
-    (click)="openDetailedCard(i)">
+  <app-offer-card *ngFor="let offer of filterOffers(); let i = index" [offer]="offer" (click)="openDetailedCard(i)">
   </app-offer-card>
 </div>
-<app-detailed-card
-  [isVisible]="showDetailedCard"
-  [data]="detailedCardData"
-  [currentIndex]="currentDetailIndex"
-  [showNavigation]="true"
-  [cardType]="'offer'"
-  [availableTags]="availableTags"
-  (onClose)="closeDetailedCard()"
-  (onAction)="onDetailedCardAction($event)"
-  (onSave)="onDetailedCardSave($event)">
+<app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
+  [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
+  (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)">
 </app-detailed-card>

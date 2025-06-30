@@ -57,7 +57,7 @@ export class TagService {
     }
 
     getCandidateTags(): Observable<Tag[]> {
-        return this.http.get<Tag[]>(`${environment.apiUrl}/auth/candidateTags`);
+        return this.http.get<Tag[]>(`${this.baseUrl}/candidate`);
     }
 
     updateCandidateTags(tagIds: number[]): Observable<any> {

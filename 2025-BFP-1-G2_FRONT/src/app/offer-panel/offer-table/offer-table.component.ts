@@ -1,22 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
-import { AdminService } from "../../services/admin.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
 import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
-import { ViewChild, ElementRef } from '@angular/core';
-
+import { TagService } from 'src/app/services/tag.service';
 
 @Component({
   selector: 'app-offer-table',
   templateUrl: './offer-table.component.html',
   styleUrls: ['./offer-table.component.css']
 })
-export class OfferTableComponent {
+export class OfferTableComponent implements AfterViewInit {
+
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  @ViewChild('sliderInput') sliderInput!: ElementRef;
   offers: any[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
@@ -28,17 +28,39 @@ export class OfferTableComponent {
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
 
+  sliderValue = 0;
+  maxSliderValue = 100;
+  isScrolling = false;
+
   constructor(
     private offerService: OfferService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private tagService: TagService 
   ) {
+    this.loadMyTags();
     this.loadUserRole();
     this.loadOffers();
   }
+  loadMyTags() {
+    this.tagService.getCandidateTags().subscribe({
+      next: (tags: Tag[]) => {
+        this.selectedTags = tags;
+        console.log('Available tags loaded successfully:', this.selectedTags);
+      },
+      error: (error: any) => {
+        console.error('Error fetching available tags', error);
+      }
+    });
+  }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateMaxSliderValue();
+    }, 500);
+  }
 
   loadUserRole() {
     this.authService.hasRole('ROLE_COMPANY').subscribe({
@@ -74,11 +96,36 @@ export class OfferTableComponent {
         }));
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
+        setTimeout(() => {
+          this.updateMaxSliderValue();
+        }, 200);
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
       }
     });
+  }
+  openDetailedCardFromSuggested(offerIndex: number) {
+    const recommendedOffers = this.recomendedOffers();
+    
+    this.detailedCardData = recommendedOffers.map(offer => ({
+      id: offer.id,
+      title: offer.title,
+      editableTitle: offer.title,
+      titleLabel: 'Título de la oferta',
+      subtitle: `${offer.companyName}  ${offer.email}`,
+      content: offer.description,
+      contentLabel: 'Descripción de la oferta',
+      metadata: this.getMetadataForOffer(offer),
+      actions: this.getActionsForOffer(offer),
+      candidates: offer.candidates,
+      editable: this.isCompany,
+      form: this.isCompany ? this.createOfferForm(offer) : undefined,
+      tags: offer.tags || [],
+    }));
+    
+    this.currentDetailIndex = offerIndex;
+    this.showDetailedCard = true;
   }
 
   openDetailedCard(offerIndex: number) {
@@ -271,10 +318,30 @@ export class OfferTableComponent {
 
   filterOffers(): any[] {
     const searchTerm = this.searchTerm.toLowerCase();
-    return this.offers.filter((offer: any) =>
+    const filtered = this.offers.filter((offer: any) =>
       offer.title.toLowerCase().includes(searchTerm) ||
       offer.description.toLowerCase().includes(searchTerm)
     );
+    
+    setTimeout(() => {
+      this.updateMaxSliderValue();
+    }, 100);
+    
+    return filtered;
+  }
+
+  recomendedOffers(): any[] {
+    const selectedTagIds = this.selectedTags.map(tag => tag.id);
+    let filtered = this.offers.filter((offer: any) =>
+      offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id) )
+    );
+    
+    filtered = filtered.sort((a: any, b: any) => {
+      const aMatchCount = a.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
+      const bMatchCount = b.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
+      return bMatchCount - aMatchCount; 
+    });
+    return filtered;
   }
 
   onDetailedCardSave(editedOffer: any) {
@@ -377,19 +444,68 @@ export class OfferTableComponent {
 
   scrollLeft() {
     const container = this.scrollContainer.nativeElement;
-    const scrollAmount = 300; // Ancho de una card
+    const scrollAmount = 1000;
     container.scrollBy({
       left: -scrollAmount,
       behavior: 'smooth'
     });
+    this.updateSliderFromScroll();
   }
 
   scrollRight() {
     const container = this.scrollContainer.nativeElement;
-    const scrollAmount = 300; // Ancho de una card
+    const scrollAmount = 1000;
     container.scrollBy({
       left: scrollAmount,
       behavior: 'smooth'
     });
+    this.updateSliderFromScroll();
+  }
+
+  onSliderChange(event: any): void {
+    
+    const sliderValue = event.value || event.target?.value || 0;
+    const container = this.scrollContainer.nativeElement;
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const targetScrollLeft = (sliderValue / 100) * maxScrollLeft;
+    
+    container.scrollTo({
+      left: targetScrollLeft
+    });
+  }
+
+  updateSliderFromScroll(): void {
+    setTimeout(() => {
+      const container = this.scrollContainer.nativeElement;
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      
+      if (maxScrollLeft > 0) {
+        this.sliderValue = (container.scrollLeft / maxScrollLeft) * 100;
+        if (this.sliderInput?.nativeElement) {
+          this.sliderInput.nativeElement.value = this.sliderValue;
+        }
+      } else {
+        this.sliderValue = 0;
+      }
+    }, 100);
+  }
+
+  onScrollContainerScroll(): void {
+    if (!this.isScrolling) {
+      this.isScrolling = true;
+      this.updateSliderFromScroll();
+      setTimeout(() => {
+        this.isScrolling = false;
+      }, 150);
+    }
+  }
+
+  updateMaxSliderValue(): void {
+    setTimeout(() => {
+      const container = this.scrollContainer.nativeElement;
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      this.maxSliderValue = maxScrollLeft > 0 ? 100 : 0;
+      this.updateSliderFromScroll();
+    }, 100);
   }
 }
