@@ -31,7 +31,6 @@ export class AdminDashboardComponent implements OnInit {
   private candidates: Candidate[] = [];
   private offers: ExtendedOffer[] = [];
 
-  // Estadísticas generales
   totalOffers: number = 0;
   totalCandidates: number = 0;
   activeOffers: number = 0;
@@ -44,17 +43,16 @@ export class AdminDashboardComponent implements OnInit {
     private matSnackBar: MatSnackBar
   ) {}
 
-  // Gráfica de ofertas por mes - Línea con área
   public offersChartData: ChartData<'line'> = {
     labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
     datasets: [{
       data: Array(12).fill(0),
       label: 'Ofertas Publicadas',
-      borderColor: '#4f46e5',
-      backgroundColor: 'rgba(79, 70, 229, 0.1)',
+      borderColor: '#dc2626',
+      backgroundColor: 'rgba(229, 70, 70, 0.1)',
       fill: true,
       tension: 0.4,
-      pointBackgroundColor: '#4f46e5',
+      pointBackgroundColor: 'rgb(229, 70, 70)',
       pointBorderColor: '#ffffff',
       pointBorderWidth: 2,
       pointRadius: 6,
@@ -116,40 +114,13 @@ export class AdminDashboardComponent implements OnInit {
     }
   };
 
-  // Gráfica de candidatos por mes - Barras con gradiente
   public candidatesChartData: ChartData<'bar'> = {
     labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
     datasets: [{
       data: Array(12).fill(0),
       label: 'Candidatos Registrados',
-      backgroundColor: [
-        'rgba(16, 185, 129, 0.8)',
-        'rgba(59, 130, 246, 0.8)',
-        'rgba(139, 92, 246, 0.8)',
-        'rgba(236, 72, 153, 0.8)',
-        'rgba(245, 101, 101, 0.8)',
-        'rgba(251, 146, 60, 0.8)',
-        'rgba(252, 211, 77, 0.8)',
-        'rgba(34, 197, 94, 0.8)',
-        'rgba(20, 184, 166, 0.8)',
-        'rgba(99, 102, 241, 0.8)',
-        'rgba(168, 85, 247, 0.8)',
-        'rgba(244, 63, 94, 0.8)'
-      ],
-      borderColor: [
-        '#10b981',
-        '#3b82f6',
-        '#8b5cf6',
-        '#ec4899',
-        '#f56565',
-        '#fb923c',
-        '#fcd34d',
-        '#22c55e',
-        '#14b8a6',
-        '#6366f1',
-        '#a855f7',
-        '#f43f5e'
-      ],
+      backgroundColor:'rgba(13, 148, 137, 0.55)',
+      borderColor:'#0d9488',
       borderWidth: 2,
       borderRadius: 8,
       borderSkipped: false,
@@ -210,18 +181,17 @@ export class AdminDashboardComponent implements OnInit {
     }
   };
 
-  // Gráfica de distribución de ofertas por estado - Doughnut
   public offersStatusChartData: ChartData<'doughnut'> = {
     labels: ['Ofertas Activas', 'Ofertas con Candidatos', 'Ofertas Sin Candidatos'],
     datasets: [{
       data: [0, 0, 0],
       backgroundColor: [
-        '#10b981',
+        '#4f46e5',
         '#3b82f6',
         '#f59e0b'
       ],
       borderColor: [
-        '#059669',
+        '#4f46e5',
         '#2563eb',
         '#d97706'
       ],

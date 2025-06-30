@@ -65,32 +65,57 @@
   </div>
 
   <div class="div3">
-   <mat-card class="stat-card offers-stat">
-      <mat-card-content>
-        <div class="stat-content">
-          <div class="stat-icon">
-            <mat-icon>work</mat-icon>
-          </div>
-          <div class="stat-info">
-            <div class="stat-number">{{ totalOffers }}</div>
-            <div class="stat-label">Ofertas Totales</div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-    <mat-card class="chart-card doughnut-card">
+   <mat-card class="tags-card">
       <mat-card-header>
         <mat-card-title class="card-title">
-          <mat-icon class="title-icon">donut_large</mat-icon>
-          Estado de las Ofertas
+          <mat-icon class="title-icon">label</mat-icon>
+          Administrar Etiquetas
         </mat-card-title>
+        <mat-card-subtitle>Gestiona las etiquetas de ofertas y empleados</mat-card-subtitle>
       </mat-card-header>
-      <mat-card-content>
-        <div class="chart-container doughnut-container">
-          <canvas baseChart [data]="offersStatusChartData" [options]="offersStatusChartOptions" [type]="'doughnut'">
-          </canvas>
+
+      <mat-card-content class="tags-content">
+        <div class="tags-display" *ngIf="tags.length > 0; else noTags">
+          <mat-chip-listbox aria-label="Tags existentes">
+            <mat-chip-row *ngFor="let tag of tags" [editable]="true" (edited)="edit(tag, $event)"
+                          [aria-description]="'press enter to edit ' + tag.name">
+              {{ tag.name }}
+              <button matChipRemove [attr.aria-label]="'remove ' + tag.name" (click)="remove(tag)">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          </mat-chip-listbox>
         </div>
+
+        <ng-template #noTags>
+          <p class="no-tags-message">No hay etiquetas disponibles. Añade algunas usando el formulario de abajo.</p>
+        </ng-template>
       </mat-card-content>
+
+      <mat-card-actions class="add-tag-section">
+        <div class="input-button-container">
+          <mat-form-field appearance="outline" class="tag-input">
+            <mat-label>Nueva etiqueta</mat-label>
+            <input matInput
+                   [formControl]="tag"
+                   placeholder="Escribe el nombre del tag"
+                   (keyup.enter)="add()"
+                   maxlength="30">
+            <mat-error *ngIf="tag.invalid && tag.touched">
+              La etiqueta es requerida
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-icon-button
+                  color="primary"
+                  (click)="add()"
+                  [disabled]="tag.invalid"
+                  class="add-button"
+                  matTooltip="Añadir tag">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </mat-card-actions>
     </mat-card>
     
   </div>
