@@ -42,10 +42,31 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**","/api/test/all", "/api/public/**").permitAll()
+                // Rutas públicas
+                .antMatchers("/api/auth/**", "/test/all", "/public/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/offer/getAll").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/tags/{offerId}").permitAll()
+
+                // Tags - administración
+                .antMatchers(HttpMethod.POST, "/api/tags/add").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/tags").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/tags/{tagId}").hasRole("ADMIN")
+
+                // Tags - ofertas (COMPANY)
+                .antMatchers(HttpMethod.POST, "/api/tags/{offerId}").hasRole("COMPANY")
+                .antMatchers(HttpMethod.PUT, "/api/tags/{offerId}").hasRole("COMPANY")
+                .antMatchers(HttpMethod.DELETE, "/api/tags/{offerId}/{tagId}").hasRole("COMPANY")
+
+                // Tags - candidatos (CANDIDATE)
+                .antMatchers(HttpMethod.GET, "/api/tags/candidate").hasRole("CANDIDATE")
+                .antMatchers(HttpMethod.PUT, "/api/tags/candidate").hasRole("CANDIDATE")
+                .antMatchers(HttpMethod.DELETE, "/api/tags/candidate/{tagId}").hasRole("CANDIDATE")
+
+                // Ofertas
                 .antMatchers(HttpMethod.DELETE, "/api/offer/delete/**").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(this.authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

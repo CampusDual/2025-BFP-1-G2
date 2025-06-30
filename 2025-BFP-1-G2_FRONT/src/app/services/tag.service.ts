@@ -55,4 +55,15 @@ export class TagService {
     updateTag(tag: Tag): Observable<Tag> {
         return this.http.put<Tag>(`${this.baseUrl}`, tag);
     }
+
+    getCandidateTags(): Observable<Tag[]> {
+        return this.http.get<Tag[]>(`${environment.apiUrl}/auth/candidateTags`);
+    }
+
+    updateCandidateTags(tagIds: number[]): Observable<any> {
+        return this.http.put(`${environment.apiUrl}/tags/candidate`, 
+            { tagIds }, 
+            { responseType: 'text' }
+        );
+    }
 }

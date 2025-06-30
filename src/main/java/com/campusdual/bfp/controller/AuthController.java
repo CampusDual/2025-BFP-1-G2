@@ -89,7 +89,7 @@ public class AuthController {
                 request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE",
                 request.getLocation(), request.getProfessionalTitle(), request.getYearsOfExperience(), request.getEducationLevel(),
                 request.getLanguages(), request.getEmploymentStatus(), request.getProfilePictureUrl(), request.getCurriculumUrl(),
-                request.getLinkedinUrl(), request.getGithubUrl(), request.getFigmaUrl(), request.getPersonalWebsiteUrl());
+                request.getLinkedinUrl(), request.getGithubUrl(), request.getFigmaUrl(), request.getPersonalWebsiteUrl(), request.getTagIds());
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
     }
 
