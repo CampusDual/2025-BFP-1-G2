@@ -74,6 +74,8 @@ app-offer-card:nth-child(n+10) {
   animation: fadeInGrid 0.5s ease-out;
 }
 
+
+
 @keyframes fadeInGrid {
   from {
     opacity: 0;
@@ -112,9 +114,10 @@ app-offer-card:nth-child(n+10) {
   width: 100%;
 }
 
+
 .scroll-container {
   min-height: 100px;
-  width: 100%;
+  width: 95%;
   display: flex;
   scroll-snap-type: x mandatory;
   border-radius: 10px;
@@ -122,11 +125,12 @@ app-offer-card:nth-child(n+10) {
   height: fit-content;
   padding-inline: 20px;
   gap: 20px;
-  padding-block: 5vh;
-
+  padding-block: 10vh;
 }
 
 .your-cards {
+  display: flex;
+  flex-wrap: nowrap;
   flex: 0 0 300px;
   width: 300px;
   min-width: 300px;
@@ -135,6 +139,13 @@ app-offer-card:nth-child(n+10) {
   order: 0;
 }
 
+h3{
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  text-align: center;
+  text-transform: uppercase;
+}
 
 .nav-button {
   display: flex;

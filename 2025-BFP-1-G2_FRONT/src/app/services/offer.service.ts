@@ -12,6 +12,7 @@ export interface Offer {
   description: string;
   dateAdded?: Date;
   tags?: Tag[];
+  valid?: Boolean
 }
 
 @Injectable({
@@ -20,7 +21,6 @@ export interface Offer {
 export class OfferService {
 
   private baseUrl = `${environment.apiUrl}/offer`;
-  private authUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient,
     private authService: AuthService) { }
@@ -56,6 +56,10 @@ export class OfferService {
   }
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
+  }
+
+  getCandidateOffers(): Observable<Offer[]> {
+    return this.http.get<Offer[]>(`${this.baseUrl}/myOffers`);
   }
 
 }

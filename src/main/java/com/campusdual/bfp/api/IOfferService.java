@@ -17,4 +17,5 @@ public interface IOfferService {
     List<OfferDTO> getCompanyOffers(String name);
     List<CandidateDTO> getCompanyOffersCandidates(int offerID);
     void updateCandidateValidity(int offerID, CandidateDTO candidateDTO);
+    List<OfferDTO> getMyOffers(String username);
 }

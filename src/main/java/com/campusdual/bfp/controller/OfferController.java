@@ -1,7 +1,6 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
-import com.campusdual.bfp.auth.JWTUtil;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping(value = "/add")
     public ResponseEntity<Integer> addOffer(@RequestBody OfferDTO request, Principal principal) {
         String username = principal.getName();
@@ -55,7 +54,7 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.CREATED).body(offerId);
     }
 
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PutMapping(value = "/update")
     public ResponseEntity<Integer> updateOffer(@RequestBody OfferDTO offerDTO, Principal principal) {
         String username = principal.getName();
@@ -63,7 +62,7 @@ public class OfferController {
         return ResponseEntity.ok(updatedId);
     }
 
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @DeleteMapping(value = "/delete/{offerId}")
     public ResponseEntity<Integer> deleteOffer(Principal principal, @PathVariable int offerId) {
         String username = principal.getName();
@@ -71,7 +70,7 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedId);
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
     @PostMapping(value = "/apply")
     public ResponseEntity<String> applyForOffer(@RequestParam int offerId, Principal principal) {
         String username = principal.getName();
@@ -86,17 +85,16 @@ public class OfferController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
         }
-
     }
 
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping(value = "/companyOffers")
     public ResponseEntity<List<OfferDTO>> queryCompanyOffers(Principal principal) {
         List<OfferDTO> offers = offerService.getCompanyOffers(principal.getName());
         return ResponseEntity.ok(offers);
     }
 
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping(value = "/candidates/{OfferID}")
     public ResponseEntity<List<CandidateDTO>> getCandidatesFromOffer(
             @PathVariable("OfferID") int OfferID) {
@@ -107,7 +105,7 @@ public class OfferController {
         return ResponseEntity.ok(candidates);
     }
 
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping(value = "/update/{OfferID}")
     public ResponseEntity<String> updateValidUser(
             @PathVariable("OfferID") int OfferID,
@@ -126,5 +124,12 @@ public class OfferController {
         return ResponseEntity.ok("Candidato actualizado correctamente");
     }
 
+    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
+    @GetMapping(value = "/myOffers")
+    public ResponseEntity<List<OfferDTO>> getMyOffers(Principal principal) {
+        String username = principal.getName();
+        List<OfferDTO> offers = offerService.getMyOffers(username);
+        return ResponseEntity.ok(offers);
+    }
 
 }

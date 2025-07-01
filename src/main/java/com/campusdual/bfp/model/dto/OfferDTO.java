@@ -14,6 +14,16 @@ public class OfferDTO implements Comparator <OfferDTO> {
     private Date dateAdded;
     private List<TagDTO> tags;
 
+    public Boolean getCandidateValid() {
+        return candidateValid;
+    }
+
+    public void setCandidateValid(Boolean candidateValid) {
+        this.candidateValid = candidateValid;
+    }
+
+    private Boolean candidateValid;
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getDescription() { return description; }

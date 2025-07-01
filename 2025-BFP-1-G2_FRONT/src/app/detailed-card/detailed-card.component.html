@@ -18,19 +18,34 @@
       </button>
     </div>
 
-    <div class="navigation-header" *ngIf="showNavigation && data.length > 1 && !addingNewItem">
-      <button mat-icon-button [disabled]="!canNavigatePrevious" (click)="navigatePrevious()" aria-label="Anterior">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
+    <div class="navigation-fixed-header" *ngIf="showNavigation && data.length > 1 && !addingNewItem">
+      <div class="navigation-controls">
+        <button mat-icon-button [disabled]="!canNavigatePrevious" (click)="navigatePrevious()" aria-label="Anterior">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
 
-      <span class="position-indicator">{{ currentPosition }}</span>
+        <span class="position-indicator">{{ currentPosition }}</span>
 
-      <button mat-icon-button [disabled]="!canNavigateNext" (click)="navigateNext()" aria-label="Siguiente">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
+        <button mat-icon-button [disabled]="!canNavigateNext" (click)="navigateNext()" aria-label="Siguiente">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+      <div class="navigation-dots-container-fixed">
+        <div class="navigation-dots-wrapper" #navigationDotsWrapper>
+          <div class="navigation-dots" #navigationDots>
+            <button *ngFor="let item of data; let i = index" mat-icon-button class="dot" [class.active]="i === currentIndex"
+              (click)="navigateToIndex(i)">
+              <div class="dot-indicator"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+      
     </div>
 
-    <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
+    <div class="card-content-wrapper">
+      <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
       <mat-card-title *ngIf="addingNewItem && cardType==='company'" class="add-title">Añadir nueva
         empresa</mat-card-title>
       <mat-card-title *ngIf="addingNewItem && cardType==='offer'" class="add-title">Añadir nueva oferta</mat-card-title>
@@ -224,9 +239,9 @@
           {{ action.label }}
         </button>
       </mat-card-actions>
-    </mat-card>
+      </mat-card>
 
-    <mat-card *ngIf="currentItem && !currentItem.editable">
+      <mat-card *ngIf="currentItem && !currentItem.editable">
       <mat-card-title>{{ currentItem.title }}</mat-card-title>
       <mat-card-header>
         <mat-card-subtitle *ngIf="currentItem.subtitle">
@@ -262,14 +277,7 @@
           {{ action.label }}
         </button>
       </mat-card-actions>
-    </mat-card>
-
-
-    <div class="navigation-dots" *ngIf="showNavigation && data.length > 1 && !addingNewItem">
-      <button *ngFor="let item of data; let i = index" mat-icon-button class="dot" [class.active]="i === currentIndex"
-        (click)="currentIndex = i; updateCurrentItem(); onNavigate.emit(currentIndex)">
-        <div class="dot-indicator"></div>
-      </button>
+      </mat-card>
     </div>
   </div>
 </div>
