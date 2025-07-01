@@ -257,4 +257,51 @@ public class UserService implements UserDetailsService, IUserService {
         this.userDao.delete(company.getUser());
         return companyId;
     }
+
+    @Override
+    @Transactional
+    public CandidateDTO updateCandidateDetails(String username, CandidateDTO candidateDTO) {
+        // Validaciones iniciales
+        if (candidateDTO == null) {
+            throw new IllegalArgumentException("Los datos del candidato no pueden ser nulos");
+        }
+
+        User user = this.userDao.findByLogin(username);
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        Candidate candidate = this.candidateDao.findCandidateByUser(user);
+        if (candidate == null) {
+            throw new RuntimeException("Candidato no encontrado");
+        }
+
+        // Validar duplicados solo si el login/email han cambiado
+        if (!user.getLogin().equals(candidateDTO.getLogin())) {
+            User existingUser = this.userDao.findByLogin(candidateDTO.getLogin());
+            if (existingUser != null) {
+                throw new RuntimeException("El nombre de usuario ya existe");
+            }
+        }
+
+        if (!user.getEmail().equals(candidateDTO.getEmail())) {
+            User existingUserByEmail = this.userDao.findByEmail(candidateDTO.getEmail());
+            if (existingUserByEmail != null) {
+                throw new RuntimeException("El email ya está en uso");
+            }
+        }
+
+        // Actualizar datos del candidato
+        BeanUtils.copyProperties(candidateDTO, candidate, "id", "user");
+
+        // Actualizar datos del usuario
+        user.setEmail(candidateDTO.getEmail());
+        user.setLogin(candidateDTO.getLogin());
+
+        // Guardar cambios
+        this.userDao.saveAndFlush(user);
+        this.candidateDao.saveAndFlush(candidate);
+
+        return CandidateMapper.INSTANCE.toDTO(candidate);
+    }
 }

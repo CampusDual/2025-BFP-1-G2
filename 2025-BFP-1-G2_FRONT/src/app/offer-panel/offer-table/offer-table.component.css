@@ -123,7 +123,7 @@ app-offer-card:nth-child(n+10) {
   padding-inline: 20px;
   gap: 20px;
   padding-block: 5vh;
-  
+
 }
 
 .your-cards {
@@ -284,15 +284,15 @@ app-offer-card:nth-child(n+10) {
     margin: 10px 10px;
     padding: 12px 15px;
   }
-  
+
   .slider-container {
     gap: 10px;
   }
-  
+
   .slider-icon {
     font-size: 18px;
   }
-  
+
   .slider-text {
     font-size: 11px;
   }
@@ -303,12 +303,38 @@ app-offer-card:nth-child(n+10) {
     margin: 8px 5px;
     padding: 10px 12px;
   }
-  
+
   .slider-container {
     gap: 8px;
   }
-  
+
   .slider-icon {
     font-size: 16px;
   }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.loading-logo {
+  width: 80px;
+  height: 80px;
+  animation: spin 2s linear infinite;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
+import {CommonModule} from '@angular/common';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -17,7 +18,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {ReactiveFormsModule} from "@angular/forms";
+import {ReactiveFormsModule, FormsModule} from "@angular/forms";
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {AuthModule} from "./auth/auth.module";
 import {UserPanelComponent} from './user-panel/user-panel.component';
@@ -38,6 +39,7 @@ import { MatChipsModule } from '@angular/material/chips';
     ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatToolbarModule,
@@ -51,6 +53,7 @@ import { MatChipsModule } from '@angular/material/chips';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    FormsModule,
     TextFieldModule,
     AuthModule,
     MatSidenavModule,

@@ -36,7 +36,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    // Escuchar cambios en el estado de autenticación
     this.authSubscription = this.authService.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         console.log('Auth status changed:', isAuthenticated); // Debug
@@ -50,7 +49,6 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
-    // También escuchar cambios de ruta para verificar el estado
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event) => {
@@ -61,7 +59,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.showFooter = !isLoginOrRegister;
       });
 
-    // Verificar estado inicial
     this.checkAuthStatus();
     const initialUrl = this.router.url;
     const isLoginOrRegister = initialUrl.includes('/login') || initialUrl === '/auth/login' || initialUrl === '/login' || initialUrl.includes('/register') || initialUrl === '/auth/register' || initialUrl === '/register';

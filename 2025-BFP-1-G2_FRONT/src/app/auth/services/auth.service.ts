@@ -141,6 +141,10 @@ export class AuthService {
     return this.http.get<User>(`${this.baseUrl}/candidateDetails`);
   }
 
+  updateCandidateDetails(candidateData: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/candidateDetails/edit`, candidateData);
+  }
+
   isCandidate() {
     return this.hasRole('ROLE_CANDIDATE');
   }
