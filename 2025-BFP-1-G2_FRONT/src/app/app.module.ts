@@ -21,7 +21,6 @@ import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule, FormsModule} from "@angular/forms";
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {AuthModule} from "./auth/auth.module";
-import {UserPanelComponent} from './user-panel/user-panel.component';
 import {OfferPanelModule} from "./offer-panel/offer-panel.module";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatTableModule } from '@angular/material/table';
@@ -34,8 +33,7 @@ import { MatChipsModule } from '@angular/material/chips';
   declarations: [
     AppComponent,
     HeaderComponent,
-    FooterComponent,
-    UserPanelComponent
+    FooterComponent
     ],
   imports: [
     BrowserModule,
