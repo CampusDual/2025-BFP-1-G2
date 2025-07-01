@@ -10,12 +10,11 @@
   grid-template-areas:
     "header header"
     "mat-drawer-container main";
-  background: transparent
+  background: transparent;
 }
 
-/* Cuando no hay header, ajustar el grid para no reservar espacio */
 .content.no-header {
-  grid-template-rows: 0px minmax(100vh, 100%) 0px; /* Header con altura 0 */
+  grid-template-rows: 0px minmax(100vh, 100%) 0px;
   grid-template-areas:
     ". ."
     "mat-drawer-container main";
@@ -23,6 +22,10 @@
 
 app-header {
   grid-area: header;
+}
+
+mat-drawer-content {
+  overflow-x: hidden;
 }
 
 mat-drawer-container {

@@ -20,4 +20,5 @@ public interface UserOfferDao extends JpaRepository<UserOffer, Long> {
     @Query("SELECT uo.date FROM UserOffer uo WHERE uo.user.id = :userId")
     List<Date> findDatesByUserId(@Param("userId") int userId);
 
+    List<UserOffer> findOfferByUserId(int userId);
 }

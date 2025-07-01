@@ -33,9 +33,12 @@
         </div>
 
       </mat-drawer>
+      <mat-drawer-content>
+
         <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
             #outlet="outlet"></router-outlet></div>
         <app-footer *ngIf="showFooter"></app-footer>
+      </mat-drawer-content>
     </mat-drawer-container>
   </div>
 </body>
