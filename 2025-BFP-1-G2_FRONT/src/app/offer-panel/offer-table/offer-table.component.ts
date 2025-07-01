@@ -13,7 +13,7 @@ import { TagService } from 'src/app/services/tag.service';
   templateUrl: './offer-table.component.html',
   styleUrls: ['./offer-table.component.css']
 })
-export class OfferTableComponent implements AfterViewInit {
+export class OfferTableComponent{
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   @ViewChild('sliderInput') sliderInput!: ElementRef;
@@ -27,9 +27,6 @@ export class OfferTableComponent implements AfterViewInit {
   isCandidate = false;
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
-
-  sliderValue = 0;
-  maxSliderValue = 100;
   isScrolling = false;
 
   constructor(
@@ -56,11 +53,7 @@ export class OfferTableComponent implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.updateMaxSliderValue();
-    }, 500);
-  }
+
 
   loadUserRole() {
     this.authService.hasRole('ROLE_COMPANY').subscribe({
@@ -96,9 +89,6 @@ export class OfferTableComponent implements AfterViewInit {
         }));
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
-        setTimeout(() => {
-          this.updateMaxSliderValue();
-        }, 200);
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
@@ -323,9 +313,7 @@ export class OfferTableComponent implements AfterViewInit {
       offer.description.toLowerCase().includes(searchTerm)
     );
     
-    setTimeout(() => {
-      this.updateMaxSliderValue();
-    }, 100);
+  
     
     return filtered;
   }
@@ -449,7 +437,6 @@ export class OfferTableComponent implements AfterViewInit {
       left: -scrollAmount,
       behavior: 'smooth'
     });
-    this.updateSliderFromScroll();
   }
 
   scrollRight() {
@@ -459,7 +446,6 @@ export class OfferTableComponent implements AfterViewInit {
       left: scrollAmount,
       behavior: 'smooth'
     });
-    this.updateSliderFromScroll();
   }
 
   onSliderChange(event: any): void {
@@ -474,38 +460,16 @@ export class OfferTableComponent implements AfterViewInit {
     });
   }
 
-  updateSliderFromScroll(): void {
-    setTimeout(() => {
-      const container = this.scrollContainer.nativeElement;
-      const maxScrollLeft = container.scrollWidth - container.clientWidth;
-      
-      if (maxScrollLeft > 0) {
-        this.sliderValue = (container.scrollLeft / maxScrollLeft) * 100;
-        if (this.sliderInput?.nativeElement) {
-          this.sliderInput.nativeElement.value = this.sliderValue;
-        }
-      } else {
-        this.sliderValue = 0;
-      }
-    }, 100);
-  }
+
 
   onScrollContainerScroll(): void {
     if (!this.isScrolling) {
       this.isScrolling = true;
-      this.updateSliderFromScroll();
       setTimeout(() => {
         this.isScrolling = false;
       }, 150);
     }
   }
 
-  updateMaxSliderValue(): void {
-    setTimeout(() => {
-      const container = this.scrollContainer.nativeElement;
-      const maxScrollLeft = container.scrollWidth - container.clientWidth;
-      this.maxSliderValue = maxScrollLeft > 0 ? 100 : 0;
-      this.updateSliderFromScroll();
-    }, 100);
-  }
+  
 }

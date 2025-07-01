@@ -1,19 +1,19 @@
 <div class="offer-recommendations-container" *ngIf="isCandidate">
   <mat-list class="offer-recommendations">
-      <div class="scroll-buttons">
+    <div class="scroll-buttons">
 
-        <button mat-fab class="nav-button prev-button" (click)="scrollLeft()">
-          <mat-icon>chevron_left</mat-icon>
-        </button>
-        <h3>Ofertas recomendadas</h3>
-        <button mat-fab class="nav-button next-button" (click)="scrollRight()">
-          <mat-icon>chevron_right</mat-icon>
-        </button>
-      </div>
+      <button mat-fab class="nav-button prev-button" (click)="scrollLeft()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <h3>Ofertas recomendadas</h3>
+      <button mat-fab class="nav-button next-button" (click)="scrollRight()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
 
     <mat-divider></mat-divider>
 
-  
+
     <div class="scroll-wrapper">
       <div class="scroll-container" #scrollContainer (scroll)="onScrollContainerScroll()">
         <app-offer-card class="your-cards" *ngFor="let offer of recomendedOffers(); let i = index" [offer]="offer"
@@ -21,20 +21,8 @@
         </app-offer-card>
       </div>
     </div>
-    <div class="slider-navigation" *ngIf="maxSliderValue > 0">
-      <div class="slider-container">
-        <input 
-          type="range"
-          class="navigation-slider"
-          [value]="sliderValue"
-          min="0"
-          max="100"
-          step="1"
-          (input)="onSliderChange($event)"
-          #sliderInput>
-      </div>
-    </div>
-        <mat-divider></mat-divider>
+
+    <mat-divider></mat-divider>
 
   </mat-list>
 </div>
