@@ -30,6 +30,7 @@ export class AdminPanelComponent {
   currentDetailIndex = 0;
   companyForm: FormGroup;
   isAddingNewCompany = false;
+  isLoading = true;
 
   constructor(
     private adminService: AdminService,
@@ -69,6 +70,7 @@ export class AdminPanelComponent {
           }));
         if (!this.isAddingNewCompany) {
           this.createDetailedCardData();
+          this.isLoading = false;
         }
       },
       error: (error: any) => {

@@ -13,7 +13,7 @@
 
     <mat-divider></mat-divider>
 
-  
+
     <div class="scroll-wrapper">
       <div class="scroll-container" #scrollContainer (scroll)="onScrollContainerScroll()">
         <app-offer-card class="your-cards" *ngFor="let offer of recomendedOffers(); let i = index" [offer]="offer"
@@ -23,7 +23,7 @@
     </div>
     <div class="slider-navigation" *ngIf="maxSliderValue > 0">
       <div class="slider-container">
-        <input 
+        <input
           type="range"
           class="navigation-slider"
           [value]="sliderValue"
@@ -51,3 +51,7 @@
   [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
   (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)">
 </app-detailed-card>
+<div class="loading-container" *ngIf="isLoading">
+  <img src="https://media.timtul.com/media/web_clustertic/Xcluster_20190917094551.png" alt="Cargando..." class="loading-logo">
+  <p>Cargando ofertas...</p>
+</div>
