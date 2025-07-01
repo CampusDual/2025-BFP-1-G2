@@ -1,7 +1,6 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
-import com.campusdual.bfp.auth.JWTUtil;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,5 +125,12 @@ public class OfferController {
         return ResponseEntity.ok("Candidato actualizado correctamente");
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @GetMapping(value = "/myOffers")
+    public ResponseEntity<List<OfferDTO>> getMyOffers(Principal principal) {
+        String username = principal.getName();
+        List<OfferDTO> offers = offerService.getMyOffers(username);
+        return ResponseEntity.ok(offers);
+    }
 
 }
