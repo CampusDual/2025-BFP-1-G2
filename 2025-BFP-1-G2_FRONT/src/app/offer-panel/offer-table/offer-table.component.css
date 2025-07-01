@@ -331,10 +331,11 @@ h3{
   justify-content: center;
   color: #000000;
   position: fixed;
-  top: 0;
+  top: 75px;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 75px);
+  background-color: rgb(234, 234, 234);
 }
 
 .loading-logo {
