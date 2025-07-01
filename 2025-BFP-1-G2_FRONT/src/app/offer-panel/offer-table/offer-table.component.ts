@@ -25,6 +25,7 @@ export class OfferTableComponent {
   isCandidate = false;
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
+  isLoading: boolean = true;
 
   constructor(
     private offerService: OfferService,
@@ -74,6 +75,7 @@ export class OfferTableComponent {
         }));
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
+        this.isLoading = false;
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);

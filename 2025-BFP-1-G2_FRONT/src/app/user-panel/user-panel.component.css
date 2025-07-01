@@ -23,6 +23,7 @@
 }
 
 .profile-avatar {
+  border-radius: 50%;
   width: 120px;
   height: 120px;
   position: relative;
@@ -43,7 +44,7 @@
   justify-content: center;
   color: #000000;
   font-size: 3rem;
-  border-radius: 0;
+  border-radius: 50%;
 }
 
 .avatar-placeholder mat-icon {
@@ -171,11 +172,22 @@
   padding: 12px 0;
 }
 
-/* Ajuste para modo edición - campos más compactos */
 .info-section.edit-mode .info-item {
   padding: 8px 0;
   gap: 12px;
 }
+
+.info-section:nth-child(3).edit-mode .info-item {
+  grid-template-columns: 20px 0.4fr 2.2fr;
+  padding-right: 0px;
+}
+
+.info-section:nth-child(3).edit-mode .edit-input,
+.info-section:nth-child(3).edit-mode .edit-select {
+  width: 250px;
+}
+
+
 
 .info-section.edit-mode .edit-input,
 .info-section.edit-mode .edit-select {
@@ -296,11 +308,11 @@
   background: #9f9f9f;
 }
 
-.cv-btn:hover { background: #3e3e3e; }
-.linkedin-btn:hover { background: #3e3e3e; }
-.github-btn:hover { background: #3e3e3e; }
-.figma-btn:hover { background: #3e3e3e; }
-.website-btn:hover { background: #3e3e3e; }
+.cv-btn:hover { background: #000000; }
+.linkedin-btn:hover { background: #000000; }
+.github-btn:hover { background: #000000; }
+.figma-btn:hover { background: #000000; }
+.website-btn:hover { background: #000000; }
 
 .loading-container {
   display: flex;
@@ -311,15 +323,12 @@
   color: #000000;
 }
 
-.spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid #9f9f9f;
-  border-top: 4px solid #9c0700;
-  border-right: 4px solid #1e40af;
-  border-bottom: 4px solid #fbbf24;
-  animation: spin 1s linear infinite;
+.loading-logo {
+  width: 80px;
+  height: 80px;
+  animation: spin 2s linear infinite;
   margin-bottom: 20px;
+  object-fit: contain;
 }
 
 @keyframes spin {
@@ -347,7 +356,6 @@
   }
 }
 
-/* Controles de edición */
 .edit-controls {
   display: flex;
   gap: 10px;
@@ -408,10 +416,10 @@
   height: 1.5rem;
 }
 
-/* Campos de edición */
 .edit-input, .edit-select {
   background: #f8f9fa;
   border: 2px solid #e9ecef;
+  border-radius: 8px;
   padding: 6px 10px;
   font-size: 0.85rem;
   font-family: 'Rubik', sans-serif;
@@ -423,20 +431,56 @@
 }
 
 .edit-input:focus, .edit-select:focus {
-  border-color: #1e40af;
+  border-color: var(--primary-color);
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.edit-input.ng-invalid.ng-touched, .edit-select.ng-invalid.ng-touched {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 .edit-select {
   cursor: pointer;
 }
 
-/* Enlaces editables */
-.edit-links {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.error-message {
+  grid-column: 2 / -1;
+  color: #dc2626;
+  font-size: 0.7rem;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  padding-left: 30px;
+}
+
+.error-message small {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.edit-input.error,
+.edit-select.error {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+.edit-input.error:focus,
+.edit-select.error:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
+}
+
+
+.info-section.edit-mode .error-message {
+  margin-bottom: 4px;
+}
+
+.save-btn:disabled {
+  background: #9ca3af !important;
+  cursor: not-allowed !important;
+  transform: none !important;
 }
 
 .edit-link-item {
@@ -461,7 +505,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Campos más compactos en sección de enlaces */
 .info-section.edit-mode .edit-link-item {
   padding: 6px 0;
   gap: 10px;
@@ -470,74 +513,3 @@
 .info-section.edit-mode .edit-links {
   gap: 8px;
 }
-
-@media (max-width: 1024px) {
-  .user-panel {
-    grid-template-columns: 1fr 1fr;
-    margin: 10px;
-  }
-  
-  .profile-header {
-    grid-column: 1 / -1;
-    padding: 30px 20px;
-    flex-direction: column;
-    text-align: center;
-    gap: 20px;
-  }
-  
-  .profile-name {
-    font-size: 2.5rem;
-  }
-  
-  .info-section:nth-child(2) {
-    grid-column: 1;
-  }
-  
-  .info-section:nth-child(3) {
-    grid-column: 2;
-  }
-  
-  .info-section:nth-child(4) {
-    grid-column: 1 / -1;
-    grid-row: 3;
-  }
-}
-
-@media (max-width: 768px) {
-  .user-panel {
-    grid-template-columns: 1fr;
-    gap: 2px;
-  }
-  
-  .profile-header {
-    padding: 20px;
-  }
-  
-  .profile-name {
-    font-size: 2rem;
-  }
-  
-  .info-section {
-    padding: 20px;
-  }
-  
-  .info-section:nth-child(2),
-  .info-section:nth-child(3),
-  .info-section:nth-child(4) {
-    grid-column: 1;
-    grid-row: auto;
-  }
-  
-  .social-links {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  
-  .social-btn {
-    justify-content: center;
-    padding: 12px;
-    font-size: 0.8rem;
-  }
-}
-

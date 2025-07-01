@@ -1,8 +1,8 @@
 <div class="user-panel" *ngIf="!isLoading">
   <div class="profile-header fade-in">
     <div class="profile-avatar">
-      <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" [alt]="fullName" class="avatar-image" (error)="onImageError()">
-      <div *ngIf="!profilePictureUrl" class="avatar-placeholder">
+      <img *ngIf="profilePictureUrl.value" [src]="profilePictureUrl.value" [alt]="fullName" class="avatar-image" (error)="onImageError()">
+      <div *ngIf="!profilePictureUrl.value" class="avatar-placeholder">
         <mat-icon>person</mat-icon>
       </div>
     </div>
@@ -12,10 +12,9 @@
         <span class="typing-name">{{ animatedName }}</span>
         <span class="typing-cursor" [ngClass]="{'no-blink': !showCursor}" [ngStyle]="{opacity: showCursor ? 1 : 0}">|</span>
       </h1>
-      <p class="profile-title" *ngIf="professionalTitle">{{ professionalTitle }}</p>
+      <p class="profile-title" *ngIf="professionalTitle.value">{{ professionalTitle.value }}</p>
     </div>
 
-    <!-- Botones de edición -->
     <div class="edit-controls" *ngIf="!isEditMode">
       <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
         <mat-icon>edit</mat-icon>
@@ -23,7 +22,7 @@
     </div>
 
     <div class="edit-controls" *ngIf="isEditMode">
-      <button class="save-btn" (click)="saveChanges()" [disabled]="isSaving" title="Guardar cambios">
+      <button class="save-btn" (click)="saveChanges()" [disabled]="isSaving || hasFormErrors()" title="Guardar cambios">
         <mat-icon>save</mat-icon>
       </button>
       <button class="cancel-btn" (click)="cancelEdit()" [disabled]="isSaving" title="Cancelar">
@@ -38,43 +37,89 @@
       <div class="info-item">
         <mat-icon>person</mat-icon>
         <span class="label">Nombre:</span>
-        <span class="value" *ngIf="!isEditMode">{{ userName || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="userName" placeholder="Ingrese su nombre">
+        <span class="value" *ngIf="!isEditMode">{{ userName.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="userName" placeholder="Ingrese su nombre">
+        <div *ngIf="isEditMode && userName.invalid && userName.touched" class="error-message">
+          <small *ngIf="userName.errors?.['required']">El nombre es requerido</small>
+          <small *ngIf="userName.errors?.['minlength']">Mínimo 3 caracteres</small>
+          <small *ngIf="userName.errors?.['maxlength']">Máximo 30 caracteres</small>
+        </div>
       </div>
       <div class="info-item">
         <mat-icon>person_outline</mat-icon>
         <span class="label">Primer Apellido:</span>
-        <span class="value" *ngIf="!isEditMode">{{ userSurname1 || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="userSurname1" placeholder="Primer apellido">
+        <span class="value" *ngIf="!isEditMode">{{ userSurname1.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="userSurname1" placeholder="Primer apellido">
+        <div *ngIf="isEditMode && userSurname1.invalid && userSurname1.touched" class="error-message">
+          <small *ngIf="userSurname1.errors?.['required']">El primer apellido es requerido</small>
+          <small *ngIf="userSurname1.errors?.['minlength']">Mínimo 3 caracteres</small>
+          <small *ngIf="userSurname1.errors?.['maxlength']">Máximo 30 caracteres</small>
+        </div>
       </div>
       <div class="info-item">
         <mat-icon>person_outline</mat-icon>
         <span class="label">Segundo Apellido:</span>
-        <span class="value" *ngIf="!isEditMode">{{ userSurname2 || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="userSurname2" placeholder="Segundo apellido">
+        <span class="value" *ngIf="!isEditMode">{{ userSurname2.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="userSurname2" placeholder="Segundo apellido">
+        <div *ngIf="isEditMode && userSurname2.invalid && userSurname2.touched" class="error-message">
+          <small *ngIf="userSurname2.errors?.['required']">El segundo apellido es requerido</small>
+          <small *ngIf="userSurname2.errors?.['minlength']">Mínimo 3 caracteres</small>
+          <small *ngIf="userSurname2.errors?.['maxlength']">Máximo 30 caracteres</small>
+        </div>
       </div>
       <div class="info-item">
         <mat-icon>email</mat-icon>
         <span class="label">Email:</span>
-        <span class="value" *ngIf="!isEditMode">{{ userEmail }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="email" [(ngModel)]="userEmail" placeholder="Ingrese su email">
+        <span class="value" *ngIf="!isEditMode">{{ userEmail.value }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="email" 
+               [formControl]="userEmail" 
+               [class.error]="userEmail.invalid && userEmail.touched"
+               placeholder="Ingrese su email">
+      </div>
+      <div *ngIf="isEditMode && userEmail.invalid && userEmail.touched" class="error-message">
+        <small *ngIf="userEmail.errors?.['required']">El email es requerido</small>
+        <small *ngIf="userEmail.errors?.['email']">Formato de email inválido</small>
       </div>
       <div class="info-item">
         <mat-icon>phone</mat-icon>
         <span class="label">Teléfono:</span>
-        <span class="value" *ngIf="!isEditMode">{{ phoneNumber || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="tel" [(ngModel)]="phoneNumber" placeholder="Ingrese su teléfono">
+        <span class="value" *ngIf="!isEditMode">{{ phoneNumber.value || 'No especificado' }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="tel" 
+               [formControl]="phoneNumber" 
+               [class.error]="phoneNumber.invalid && phoneNumber.touched"
+               placeholder="Ingrese su teléfono">
+      </div>
+      <div *ngIf="isEditMode && phoneNumber.invalid && phoneNumber.touched" class="error-message">
+        <small *ngIf="phoneNumber.errors?.['required']">El teléfono es requerido</small>
+        <small *ngIf="phoneNumber.errors?.['minlength'] || phoneNumber.errors?.['maxlength']">Debe tener exactamente 9 dígitos</small>
+        <small *ngIf="phoneNumber.errors?.['pattern']">Solo se permiten números</small>
       </div>
       <div class="info-item">
         <mat-icon>location_on</mat-icon>
         <span class="label">Ubicación:</span>
-        <span class="value" *ngIf="!isEditMode">{{ location || 'No especificada' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="location" placeholder="Ingrese su ubicación">
+        <span class="value" *ngIf="!isEditMode">{{ location.value || 'No especificada' }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="text" 
+               [formControl]="location" 
+               [class.error]="location.invalid && location.touched"
+               placeholder="Ingrese su ubicación">
+      </div>
+      <div *ngIf="isEditMode && location.invalid && location.touched" class="error-message">
+        <small *ngIf="location.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
       <div class="info-item" *ngIf="isEditMode">
         <mat-icon>image</mat-icon>
         <span class="label">Foto de Perfil:</span>
-        <input class="edit-input" type="url" [(ngModel)]="profilePictureUrl" placeholder="URL de la imagen de perfil">
+        <input class="edit-input" 
+               type="url" 
+               [formControl]="profilePictureUrl" 
+               [class.error]="profilePictureUrl.invalid && profilePictureUrl.touched"
+               placeholder="URL de la imagen de perfil">
       </div>
     </div>
   </div>
@@ -85,38 +130,85 @@
       <div class="info-item">
         <mat-icon>account_circle</mat-icon>
         <span class="label">Usuario:</span>
-        <span class="value" *ngIf="!isEditMode">{{ login || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="login" placeholder="Nombre de usuario">
+        <span class="value" *ngIf="!isEditMode">{{ login.value || 'No especificado' }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="text" 
+               [formControl]="login" 
+               [class.error]="login.invalid && login.touched"
+               placeholder="Nombre de usuario">
+      </div>
+      <div *ngIf="isEditMode && login.invalid && login.touched" class="error-message">
+        <small *ngIf="login.errors?.['required']">El usuario es requerido</small>
+        <small *ngIf="login.errors?.['minlength']">Mínimo 3 caracteres</small>
+        <small *ngIf="login.errors?.['maxlength']">Máximo 50 caracteres</small>
       </div>
       <div class="info-item">
         <mat-icon>work_outline</mat-icon>
         <span class="label">Título:</span>
-        <span class="value" *ngIf="!isEditMode">{{ professionalTitle || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="professionalTitle" placeholder="Título profesional">
+        <span class="value" *ngIf="!isEditMode">{{ professionalTitle.value || 'No especificado' }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="text" 
+               [formControl]="professionalTitle" 
+               [class.error]="professionalTitle.invalid && professionalTitle.touched"
+               placeholder="Título profesional">
+      </div>
+      <div *ngIf="isEditMode && professionalTitle.invalid && professionalTitle.touched" class="error-message">
+        <small *ngIf="professionalTitle.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
       <div class="info-item">
         <mat-icon>schedule</mat-icon>
         <span class="label">Experiencia:</span>
-        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience ? yearsOfExperience + ' años' : 'No especificada' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="number" [(ngModel)]="yearsOfExperience" placeholder="Años de experiencia" min="0">
+        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No especificada' }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="number" 
+               [formControl]="yearsOfExperience" 
+               [class.error]="yearsOfExperience.invalid && yearsOfExperience.touched"
+               placeholder="Años de experiencia" 
+               min="0">
+      </div>
+      <div *ngIf="isEditMode && yearsOfExperience.invalid && yearsOfExperience.touched" class="error-message">
+        <small *ngIf="yearsOfExperience.errors?.['min']">No puede ser menor a 0</small>
+        <small *ngIf="yearsOfExperience.errors?.['max']">Máximo 50 años</small>
       </div>
       <div class="info-item">
         <mat-icon>school</mat-icon>
         <span class="label">Educación:</span>
-        <span class="value" *ngIf="!isEditMode">{{ educationLevel || 'No especificada' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="educationLevel" placeholder="Nivel educativo">
+        <span class="value" *ngIf="!isEditMode">{{ educationLevel.value || 'No especificada' }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="text" 
+               [formControl]="educationLevel" 
+               [class.error]="educationLevel.invalid && educationLevel.touched"
+               placeholder="Nivel educativo">
+      </div>
+      <div *ngIf="isEditMode && educationLevel.invalid && educationLevel.touched" class="error-message">
+        <small *ngIf="educationLevel.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
       <div class="info-item">
         <mat-icon>language</mat-icon>
         <span class="label">Idiomas:</span>
-        <span class="value" *ngIf="!isEditMode">{{ languages || 'No especificados' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [(ngModel)]="languages" placeholder="Idiomas que habla">
+        <span class="value" *ngIf="!isEditMode">{{ languages.value || 'No especificados' }}</span>
+        <input class="edit-input" 
+               *ngIf="isEditMode" 
+               type="text" 
+               [formControl]="languages" 
+               [class.error]="languages.invalid && languages.touched"
+               placeholder="Idiomas que habla">
+      </div>
+      <div *ngIf="isEditMode && languages.invalid && languages.touched" class="error-message">
+        <small *ngIf="languages.errors?.['maxlength']">Máximo 200 caracteres</small>
       </div>
       <div class="info-item">
         <mat-icon>badge</mat-icon>
         <span class="label">Estado:</span>
-        <span class="value" *ngIf="!isEditMode">{{ employmentStatus || 'No especificado' }}</span>
-        <select class="edit-select" *ngIf="isEditMode" [(ngModel)]="employmentStatus">
+        <span class="value" *ngIf="!isEditMode">{{ employmentStatus.value || 'No especificado' }}</span>
+        <select class="edit-select" 
+                *ngIf="isEditMode" 
+                [formControl]="employmentStatus"
+                [class.error]="employmentStatus.invalid && employmentStatus.touched">
           <option value="">Seleccione estado</option>
           <option value="Empleado">Empleado</option>
           <option value="Desempleado">Desempleado</option>
@@ -125,33 +217,36 @@
           <option value="Jubilado">Jubilado</option>
         </select>
       </div>
+      <div *ngIf="isEditMode && employmentStatus.invalid && employmentStatus.touched" class="error-message">
+        <small *ngIf="employmentStatus.errors?.['maxlength']">Máximo 50 caracteres</small>
+      </div>
     </div>
   </div>
 
   <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <h3><mat-icon>link</mat-icon> Enlaces y Portafolio</h3>
     <div class="social-links" *ngIf="!isEditMode">
-      <button *ngIf="curriculumUrl" class="social-btn cv-btn" (click)="openLink(curriculumUrl)">
+      <button *ngIf="curriculumUrl.value" class="social-btn cv-btn" (click)="openLink(curriculumUrl.value!)">
         <mat-icon>picture_as_pdf</mat-icon>
         <span>Currículum</span>
       </button>
-      <button *ngIf="linkedinUrl" class="social-btn linkedin-btn" (click)="openLink(linkedinUrl)">
+      <button *ngIf="linkedinUrl.value" class="social-btn linkedin-btn" (click)="openLink(linkedinUrl.value!)">
         <mat-icon>work</mat-icon>
         <span>LinkedIn</span>
       </button>
-      <button *ngIf="githubUrl" class="social-btn github-btn" (click)="openLink(githubUrl)">
+      <button *ngIf="githubUrl.value" class="social-btn github-btn" (click)="openLink(githubUrl.value!)">
         <mat-icon>code</mat-icon>
         <span>GitHub</span>
       </button>
-      <button *ngIf="figmaUrl" class="social-btn figma-btn" (click)="openLink(figmaUrl)">
+      <button *ngIf="figmaUrl.value" class="social-btn figma-btn" (click)="openLink(figmaUrl.value!)">
         <mat-icon>design_services</mat-icon>
         <span>Figma</span>
       </button>
-      <button *ngIf="personalWebsiteUrl" class="social-btn website-btn" (click)="openLink(personalWebsiteUrl)">
+      <button *ngIf="personalWebsiteUrl.value" class="social-btn website-btn" (click)="openLink(personalWebsiteUrl.value!)">
         <mat-icon>public</mat-icon>
         <span>Sitio Web</span>
       </button>
-      <div *ngIf="!curriculumUrl && !linkedinUrl && !githubUrl && !figmaUrl && !personalWebsiteUrl" class="no-links">
+      <div *ngIf="!curriculumUrl.value && !linkedinUrl.value && !githubUrl.value && !figmaUrl.value && !personalWebsiteUrl.value" class="no-links">
         <p>No hay enlaces configurados</p>
       </div>
     </div>
@@ -160,33 +255,53 @@
       <div class="edit-link-item">
         <mat-icon>picture_as_pdf</mat-icon>
         <span class="label">Currículum:</span>
-        <input class="edit-input" type="url" [(ngModel)]="curriculumUrl" placeholder="URL del currículum">
+        <input class="edit-input" 
+               type="url" 
+               [formControl]="curriculumUrl" 
+               [class.error]="curriculumUrl.invalid && curriculumUrl.touched"
+               placeholder="URL del currículum">
       </div>
       <div class="edit-link-item">
         <mat-icon>work</mat-icon>
         <span class="label">LinkedIn:</span>
-        <input class="edit-input" type="url" [(ngModel)]="linkedinUrl" placeholder="URL de LinkedIn">
+        <input class="edit-input" 
+               type="url" 
+               [formControl]="linkedinUrl" 
+               [class.error]="linkedinUrl.invalid && linkedinUrl.touched"
+               placeholder="URL de LinkedIn">
       </div>
       <div class="edit-link-item">
         <mat-icon>code</mat-icon>
         <span class="label">GitHub:</span>
-        <input class="edit-input" type="url" [(ngModel)]="githubUrl" placeholder="URL de GitHub">
+        <input class="edit-input" 
+               type="url" 
+               [formControl]="githubUrl" 
+               [class.error]="githubUrl.invalid && githubUrl.touched"
+               placeholder="URL de GitHub">
       </div>
       <div class="edit-link-item">
         <mat-icon>design_services</mat-icon>
         <span class="label">Figma:</span>
-        <input class="edit-input" type="url" [(ngModel)]="figmaUrl" placeholder="URL de Figma">
+        <input class="edit-input" 
+               type="url" 
+               [formControl]="figmaUrl" 
+               [class.error]="figmaUrl.invalid && figmaUrl.touched"
+               placeholder="URL de Figma">
       </div>
       <div class="edit-link-item">
         <mat-icon>public</mat-icon>
         <span class="label">Sitio Web:</span>
-        <input class="edit-input" type="url" [(ngModel)]="personalWebsiteUrl" placeholder="URL del sitio web">
+        <input class="edit-input" 
+               type="url" 
+               [formControl]="personalWebsiteUrl" 
+               [class.error]="personalWebsiteUrl.invalid && personalWebsiteUrl.touched"
+               placeholder="URL del sitio web">
       </div>
     </div>
   </div>
 </div>
-
 <div class="loading-container" *ngIf="isLoading">
-  <div class="spinner"></div>
-  <p>Cargando información del usuario...</p>
+  <img src="https://media.timtul.com/media/web_clustertic/Xcluster_20190917094551.png" alt="Cargando..." class="loading-logo">
+  <p>Cargando ofertas...</p>
 </div>
+<div class="spacer" *ngIf="isLoading"></div>
