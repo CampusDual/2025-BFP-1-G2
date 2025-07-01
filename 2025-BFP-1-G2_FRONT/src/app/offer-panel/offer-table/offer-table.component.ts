@@ -27,6 +27,8 @@ export class OfferTableComponent{
   isCandidate = false;
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
+  isLoading: boolean = true;
+
   isScrolling = false;
 
   constructor(
@@ -35,7 +37,7 @@ export class OfferTableComponent{
     private snackBar: MatSnackBar,
     private router: Router,
     private formBuilder: FormBuilder,
-    private tagService: TagService 
+    private tagService: TagService
   ) {
     this.loadMyTags();
     this.loadUserRole();
@@ -89,6 +91,7 @@ export class OfferTableComponent{
         }));
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
+        this.isLoading = false;
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
@@ -97,7 +100,7 @@ export class OfferTableComponent{
   }
   openDetailedCardFromSuggested(offerIndex: number) {
     const recommendedOffers = this.recomendedOffers();
-    
+
     this.detailedCardData = recommendedOffers.map(offer => ({
       id: offer.id,
       title: offer.title,
@@ -113,7 +116,7 @@ export class OfferTableComponent{
       form: this.isCompany ? this.createOfferForm(offer) : undefined,
       tags: offer.tags || [],
     }));
-    
+
     this.currentDetailIndex = offerIndex;
     this.showDetailedCard = true;
   }
@@ -312,9 +315,6 @@ export class OfferTableComponent{
       offer.title.toLowerCase().includes(searchTerm) ||
       offer.description.toLowerCase().includes(searchTerm)
     );
-    
-  
-    
     return filtered;
   }
 
@@ -323,11 +323,11 @@ export class OfferTableComponent{
     let filtered = this.offers.filter((offer: any) =>
       offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id) )
     );
-    
+
     filtered = filtered.sort((a: any, b: any) => {
       const aMatchCount = a.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
       const bMatchCount = b.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
-      return bMatchCount - aMatchCount; 
+      return bMatchCount - aMatchCount;
     });
     return filtered;
   }
@@ -449,12 +449,12 @@ export class OfferTableComponent{
   }
 
   onSliderChange(event: any): void {
-    
+
     const sliderValue = event.value || event.target?.value || 0;
     const container = this.scrollContainer.nativeElement;
     const maxScrollLeft = container.scrollWidth - container.clientWidth;
     const targetScrollLeft = (sliderValue / 100) * maxScrollLeft;
-    
+
     container.scrollTo({
       left: targetScrollLeft
     });
@@ -471,5 +471,5 @@ export class OfferTableComponent{
     }
   }
 
-  
+
 }
