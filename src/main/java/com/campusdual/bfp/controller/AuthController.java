@@ -167,7 +167,6 @@ public class AuthController {
         return ResponseEntity.ok(updatedCandidate);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listCompanies")
     public ResponseEntity<List<CompanyDTO>> listCompanies(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -206,6 +205,4 @@ public class AuthController {
         int deletedId = userService.deleteCompany(companyId);
         return ResponseEntity.ok(deletedId);
     }
-
-
 }
