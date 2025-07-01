@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
-import {AuthService, User} from "../auth/services/auth.service";
+import {AuthService, User} from "../../auth/services/auth.service";
 
 @Component({
   selector: 'app-user-panel',
@@ -39,7 +39,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   userRole: string = '';
   isEditMode: boolean = false;
   isSaving: boolean = false;
-
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
@@ -118,7 +117,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   saveChanges(): void {
     if (this.isSaving) return;
-    
+
     this.userName.markAsTouched();
     this.userSurname1.markAsTouched();
     this.userSurname2.markAsTouched();
@@ -137,13 +136,13 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.githubUrl.markAsTouched();
     this.figmaUrl.markAsTouched();
     this.personalWebsiteUrl.markAsTouched();
-    
+
     // Validar campos requeridos
     if (this.hasFormErrors()) {
       console.error('Hay errores en el formulario');
       return;
     }
-    
+
     this.isSaving = true;
     const updatedData = {
       name: this.userName.value,
@@ -188,7 +187,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   hasFormErrors(): boolean {
-    return this.userName.invalid || this.userSurname1.invalid || this.userSurname2.invalid || 
+    return this.userName.invalid || this.userSurname1.invalid || this.userSurname2.invalid ||
            this.userEmail.invalid || this.login.invalid || this.phoneNumber.invalid ||
            this.location.invalid || this.professionalTitle.invalid || this.yearsOfExperience.invalid ||
            this.educationLevel.invalid || this.languages.invalid || this.employmentStatus.invalid ||
