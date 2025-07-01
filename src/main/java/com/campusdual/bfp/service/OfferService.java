@@ -147,12 +147,16 @@ public class OfferService implements IOfferService {
     @Transactional
     public int deleteOffer(int id, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
-
-        Offer Offer = OfferDao.getReferenceById(id);
-        offerTagsDao.deleteByOfferId(Offer.getId());
-        userOfferDao.deleteUserOfferByOffer(Offer);
-        OfferDao.delete(Offer);
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+        Offer offer = OfferDao.getReferenceById(id);
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+        offerTagsDao.deleteByOfferId(offer.getId());
+        userOfferDao.deleteUserOfferByOffer(offer);
+        OfferDao.delete(offer);
         return id;
     }
 
@@ -178,11 +182,9 @@ public class OfferService implements IOfferService {
     public List<OfferDTO> getCompanyOffers(String companyName) {
         User userCompany = userDao.findByLogin(companyName);
         List<Offer> offers = OfferDao.findOfferByCompanyId(userCompany.getId());
-
         List<OfferDTO> dtos = offers.stream()
                 .map(offer -> buildOfferDTO(offer, false))
                 .collect(Collectors.toList());
-
         sortOffersByDate(dtos);
         return dtos;
     }

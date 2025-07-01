@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormControl, AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from "@angular/material/core";
 import {MatDatepicker} from "@angular/material/datepicker";
@@ -36,7 +36,7 @@ export interface DetailedCardData {
 export interface DetailedCardAction {
   label: string;
   action: string;
-  color?: 'primary' | 'accent' | 'warn';
+  color?: string;
   icon?: string;
   data?: any;
 }
@@ -73,7 +73,7 @@ export class CustomDateAdapter extends NativeDateAdapter {
     { provide: MAT_DATE_FORMATS, useValue: YEAR_FORMATS },
   ],
 })
-export class DetailedCardComponent implements OnInit {
+export class DetailedCardComponent implements OnInit, AfterViewInit {
 
   @Input() isVisible: boolean = false;
   @Input() data: DetailedCardData[] = [];
@@ -89,6 +89,8 @@ export class DetailedCardComponent implements OnInit {
   @Output() onSave = new EventEmitter<DetailedCardData>();
 
   @ViewChild('foundedDatePicker') foundedDatePicker!: MatDatepicker<Date>;
+  @ViewChild('navigationDotsWrapper', { static: false }) navigationDotsWrapper!: ElementRef<HTMLDivElement>;
+  @ViewChild('navigationDots', { static: false }) navigationDots!: ElementRef<HTMLDivElement>;
   startYear = new Date();
 
   currentItem: DetailedCardData | null = null;
@@ -123,6 +125,9 @@ export class DetailedCardComponent implements OnInit {
       this.addingNewItem = this.currentItem.id === 0 && !this.currentItem.title;
       this.isEditing = this.addingNewItem;
       this.panelOpenState = false;
+            setTimeout(() => {
+        this.scrollToActiveDot();
+      }, 50);
     }
   }
 
@@ -177,7 +182,6 @@ export class DetailedCardComponent implements OnInit {
   }
 
   onChipKeydown(event: KeyboardEvent): void {
-    // Detener la propagación de eventos de teclado específicos desde los chips
     if (event.key === 'Enter' || event.key === 'Escape' ||
         event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.stopPropagation();
@@ -186,7 +190,6 @@ export class DetailedCardComponent implements OnInit {
 
   private createCompanyForm(): FormGroup {
     return this.fb.group({
-      // ... otros campos
       foundedDate: ['', [
         Validators.required,
         this.dateValidator()
@@ -227,6 +230,7 @@ export class DetailedCardComponent implements OnInit {
       this.currentIndex--;
       this.updateCurrentItem();
       this.onNavigate.emit(this.currentIndex);
+      this.scrollToActiveDot();
     }
   }
 
@@ -236,6 +240,7 @@ export class DetailedCardComponent implements OnInit {
       this.currentIndex++;
       this.updateCurrentItem();
       this.onNavigate.emit(this.currentIndex);
+      this.scrollToActiveDot();
     }
   }
 
@@ -362,4 +367,87 @@ export class DetailedCardComponent implements OnInit {
     return tag1 && tag2 ? tag1.id === tag2.id : tag1 === tag2;
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.initializeDotsNavigation();
+    }, 200);
+  }
+
+  private initializeDotsNavigation(): void {
+    if (!this.navigationDots?.nativeElement) return;
+    
+    const dotsContainer = this.navigationDots.nativeElement;
+    
+    dotsContainer.style.display = 'flex';
+    dotsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    dotsContainer.style.willChange = 'transform';
+    this.scrollToActiveDot();
+  }
+
+  navigateToIndex(index: number): void {
+    if (index >= 0 && index < this.data.length && index !== this.currentIndex) {
+      this.currentIndex = index;
+      this.updateCurrentItem();
+      this.onNavigate.emit(this.currentIndex);
+      this.scrollToActiveDot();
+    }
+  }
+
+  private scrollToActiveDot(): void {
+    if (!this.navigationDots?.nativeElement || !this.navigationDotsWrapper?.nativeElement) return;
+    
+    const dotsContainer = this.navigationDots.nativeElement;
+    const wrapper = this.navigationDotsWrapper.nativeElement;
+    
+    // Buscar el dot activo usando el índice actual
+    const activeDot = dotsContainer.children[this.currentIndex] as HTMLElement;
+    
+    if (!activeDot) return;
+    
+    const wrapperWidth = wrapper.offsetWidth;
+    const dotsContainerWidth = dotsContainer.scrollWidth;
+    
+    // Si los dots caben en el wrapper, centrarlos y no mover
+    if (dotsContainerWidth <= wrapperWidth) {
+      dotsContainer.style.transform = 'translateX(0px)';
+      dotsContainer.style.justifyContent = 'center';
+      this.updateContentIndicators(0, 0);
+      return;
+    }
+    
+    // Si no caben, calcular posición para centrar el dot activo
+    dotsContainer.style.justifyContent = 'flex-start';
+    const dotPosition = activeDot.offsetLeft;
+    const dotWidth = activeDot.offsetWidth;
+    
+    // Centrar el dot activo en el wrapper
+    const idealPosition = dotPosition - (wrapperWidth / 2) + (dotWidth / 2);
+    const maxScroll = dotsContainerWidth - wrapperWidth;
+    const targetScroll = Math.max(0, Math.min(idealPosition, maxScroll));
+    
+    dotsContainer.style.transform = `translateX(-${targetScroll}px)`;
+    dotsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    
+    // Actualizar indicadores
+    setTimeout(() => {
+      this.updateContentIndicators(targetScroll, maxScroll);
+    }, 300);
+  }
+
+  private updateContentIndicators(currentScroll: number, maxScroll: number): void {
+    if (!this.navigationDotsWrapper?.nativeElement) return;
+    
+    const wrapper = this.navigationDotsWrapper.nativeElement;
+    
+    const hasContentLeft = currentScroll > 10;
+   
+    const hasContentRight = currentScroll < (maxScroll - 10);
+    
+    wrapper.classList.toggle('has-content-left', hasContentLeft);
+    wrapper.classList.toggle('has-content-right', hasContentRight);
+  }
+
+
+  onDotsScroll(): void {
+  }
 }

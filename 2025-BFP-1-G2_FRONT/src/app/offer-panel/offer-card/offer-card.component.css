@@ -1,17 +1,17 @@
 mat-card-title {
   max-height: 100px;
   color: var(--primary-color);
-    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
   letter-spacing: 1.4px;
   display: -webkit-box;
-    word-wrap: break-word;
+  word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-transform: uppercase;
-  margin-bottom: 1rem;
 }
 
 mat-card-subtitle {
@@ -22,12 +22,10 @@ mat-card-subtitle {
   font-size: 0.7rem;
   padding: 15px;
   margin-left: 20px;
-
 }
 
 mat-card-content {
   flex-grow: 1;
-  margin: 1rem 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -43,19 +41,12 @@ mat-card-actions {
 }
 
 .tags-container {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
-}
-
-.more-tags {
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
-  white-space: nowrap;
 }
 
 .data-offer {
@@ -151,19 +142,17 @@ mat-card {
     border-top-right-radius: 8px;
 
   }
+
   overflow: hidden;
   transform-origin: center;
   scrollbar-color: var(--primary-color) transparent;
   transition: transform 0.3s ease-in-out,
   background-color 0.3s ease;
-  animation: borderAnimationBack 0.3s ease-in;
 }
 
 mat-card:hover {
   transform: scale(1.05);
   background-color: white;
-  border-left: 8px solid var(--primary-color);
-  animation: borderAnimation 0.3s ease-in;
 }
 
 
@@ -191,6 +180,41 @@ div.details mat-card:hover {
   color: var(--primary-color);
 }
 
+.pending-icon {
+  font-size: 20px;
+}
+
+.check-icon {
+  color: #4caf50;
+  font-size: 20px;
+}
+
+.invalid-icon {
+  color: #f44336;
+  font-size: 20px;
+}
+
+.pending {
+  font-size: 0.9rem;
+}
+
+.valid {
+  color: #4caf50;
+  font-size: 0.9rem;
+}
+
+.invalid {
+  color: #f44336;
+  font-size: 0.9rem;
+}
+
+.applieStatus {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
 .chip {
   background-color: #fde3e3 !important;
   border: 1px solid var(--primary-color) !important;
@@ -200,23 +224,4 @@ div.details mat-card:hover {
 .chip ::ng-deep .mat-mdc-chip-action-label,
 .chip ::ng-deep span {
   color: var(--primary-color) !important;
-}
-
-@keyframes borderAnimation {
-  0% {
-    border-left: 6px solid var(--primary-color);
-  }
-
-  100% {
-    border-left: 8px solid var(--primary-color);
-  }
-}
-
-@keyframes borderAnimationBack {
-  0% {
-    border-left: 8px solid var(--primary-color);
-  }
-  100% {
-    border-left: 6px solid var(--primary-color);
-  }
 }

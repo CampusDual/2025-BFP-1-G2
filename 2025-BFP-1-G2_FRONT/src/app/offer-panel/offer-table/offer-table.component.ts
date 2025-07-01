@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -13,10 +13,11 @@ import { TagService } from 'src/app/services/tag.service';
   templateUrl: './offer-table.component.html',
   styleUrls: ['./offer-table.component.css']
 })
-export class OfferTableComponent implements AfterViewInit {
+export class OfferTableComponent implements OnDestroy {
 
-  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
-  @ViewChild('sliderInput') sliderInput!: ElementRef;
+
+  @ViewChild('scrollContainer') scrollContainer: ElementRef | undefined;
+  @ViewChild('scrollContainerApplies') scrollContainerApplies: ElementRef | undefined;
   offers: any[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
@@ -41,10 +42,24 @@ export class OfferTableComponent implements AfterViewInit {
     private formBuilder: FormBuilder,
     private tagService: TagService
   ) {
+    this.loadOffers();
     this.loadMyTags();
     this.loadUserRole();
-    this.loadOffers();
+    this.loadAllTags();
   }
+
+
+  loadAllTags() {
+    this.tagService.getAllTags().subscribe({
+      next: (tags: Tag[]) => {
+        this.availableTags = tags;
+      },
+      error: (error: any) => {
+        console.error('Error fetching available tags', error);
+      }
+    });
+  }
+
   loadMyTags() {
     this.tagService.getCandidateTags().subscribe({
       next: (tags: Tag[]) => {
@@ -57,11 +72,6 @@ export class OfferTableComponent implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.updateMaxSliderValue();
-    }, 500);
-  }
 
   loadUserRole() {
     this.authService.hasRole('ROLE_COMPANY').subscribe({
@@ -95,17 +105,83 @@ export class OfferTableComponent implements AfterViewInit {
             dateAdded: offer.dateAdded
           },
         }));
+        this.offerService.getCandidateOffers().subscribe({
+          next: (offers: any[]) => {
+            this.selectedCandidatures = offers.map((offer: any) => ({
+              id: offer.id,
+              title: offer.title,
+              description: offer.description,
+              companyName: offer.companyName,
+              email: offer.email,
+              dateAdded: new Date(offer.dateAdded).toLocaleDateString(),
+              candidatesCount: offer.candidatesCount || 0,
+              candidates: offer.candidates || [],
+              tags: offer.tags || [],
+              isValid: offer.candidateValid === true ? 'VALID' : offer.candidateValid === false ? 'INVALID' : 'PENDING'
+            }));
+            this.offers = this.offers.map(offer => {
+              const matched = this.selectedCandidatures.find(sel => sel.id === offer.id);
+              if (matched) {
+                return { ...offer, isValid: matched.isValid };
+              }
+              return offer;
+            });
+          },
+          error: (error: any) => {
+            console.error('Error fetching candidate offers', error);
+          }
+        });
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
-        setTimeout(() => {
-          this.updateMaxSliderValue();
-        }, 200);
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
       }
     });
+
+
   }
+
+  scrollLeftApplies() {
+    const container = this.scrollContainerApplies?.nativeElement;
+    const scrollAmount = 1000;
+    container.scrollBy({
+      left: -scrollAmount,
+      behavior: 'smooth'
+    });
+  }
+
+  scrollRightApplies() {
+    const container = this.scrollContainerApplies?.nativeElement;
+    const scrollAmount = 1000;
+    container.scrollBy({
+      left: scrollAmount,
+      behavior: 'smooth'
+    });
+  }
+
+  openDetailedCardFromApplied(offerIndex: number) {
+    this.detailedCardData = this.selectedCandidatures.map(offer => ({
+      id: offer.id,
+      title: offer.title,
+      editableTitle: offer.title,
+      titleLabel: 'Título de la oferta',
+      subtitle: `${offer.companyName}  ${offer.email}`,
+      content: offer.description,
+      contentLabel: 'Descripción de la oferta',
+      metadata: this.getMetadataForOffer(offer),
+      actions: this.getActionsForOffer(offer),
+      candidates: offer.candidates,
+      editable: false,
+      form: undefined,
+      tags: offer.tags || [],
+    }));
+
+    this.currentDetailIndex = offerIndex;
+    this.showDetailedCard = true;
+    this.disableBodyScroll();
+  }
+
   openDetailedCardFromSuggested(offerIndex: number) {
     const recommendedOffers = this.recomendedOffers();
 
@@ -127,6 +203,7 @@ export class OfferTableComponent implements AfterViewInit {
 
     this.currentDetailIndex = offerIndex;
     this.showDetailedCard = true;
+    this.disableBodyScroll();
   }
 
   openDetailedCard(offerIndex: number) {
@@ -144,9 +221,11 @@ export class OfferTableComponent implements AfterViewInit {
       editable: this.isCompany,
       form: this.isCompany ? this.createOfferForm(offer) : undefined,
       tags: offer.tags || [],
+      availableTags: this.isCompany ? this.availableTags : [],
     }));
     this.currentDetailIndex = offerIndex;
     this.showDetailedCard = true;
+    this.disableBodyScroll();
   }
 
   openNewOfferCard() {
@@ -180,6 +259,7 @@ export class OfferTableComponent implements AfterViewInit {
 
     this.currentDetailIndex = 0;
     this.showDetailedCard = true;
+    this.disableBodyScroll();
   }
 
   private getMetadataForOffer(offer: any): { [key: string]: any } {
@@ -217,13 +297,42 @@ export class OfferTableComponent implements AfterViewInit {
       }
 
     } else if (this.isCandidate) {
-      actions.push({
-        label: 'Aplicar a oferta',
-        action: 'apply',
-        color: 'primary',
-        icon: 'send',
-        data: { offer: offer }
-      });
+
+      if (offer.isValid === 'VALID') {
+        actions.push({
+          label: 'Validada',
+          action: 'none',
+          color: 'primary',
+          icon: 'check',
+          data: { offer: offer }
+        });
+      }
+      else if (offer.isValid === 'INVALID') {
+        actions.push({
+          label: 'Rechazada',
+          action: 'none',
+          color: 'warn',
+          icon: 'close',
+          data: { offer: offer }
+        });
+      } else if (offer.isValid === 'PENDING') {
+        actions.push({
+          label: 'Pendiente de validación',
+          action: 'none',
+          color: 'accent',
+          icon: 'hourglass_empty',
+          data: { offer: offer }
+        });
+      }
+      else {
+        actions.push({
+          label: 'Aplicar a oferta',
+          action: 'apply',
+          color: 'primary',
+          icon: 'send',
+          data: { offer: offer }
+        });
+      }
 
     } else {
       actions.push({
@@ -315,6 +424,7 @@ export class OfferTableComponent implements AfterViewInit {
 
   closeDetailedCard() {
     this.showDetailedCard = false;
+    this.enableBodyScroll();
   }
 
   filterOffers(): any[] {
@@ -324,17 +434,13 @@ export class OfferTableComponent implements AfterViewInit {
       offer.description.toLowerCase().includes(searchTerm)
     );
 
-    setTimeout(() => {
-      this.updateMaxSliderValue();
-    }, 100);
-
     return filtered;
   }
 
   recomendedOffers(): any[] {
     const selectedTagIds = this.selectedTags.map(tag => tag.id);
     let filtered = this.offers.filter((offer: any) =>
-      offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id) )
+      offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id))
     );
 
     filtered = filtered.sort((a: any, b: any) => {
@@ -345,18 +451,12 @@ export class OfferTableComponent implements AfterViewInit {
     return filtered;
   }
 
-  yourCandidatures(): any[] {
-    const selectedCandidaturesIds = this.selectedCandidatures.map(candidature => candidature.id);
-    let filtered = this.offers.filter((offer: any) =>
-      offer.candidates.some((candidate: any) => selectedCandidaturesIds.includes(candidate.id))
+  selectedCandidaturesOffers(): any[] {
+    let filtered = this.selectedCandidatures.filter((offer: any) =>
+      offer.id
     );
-    filtered = filtered.sort((a: any, b: any) => {
-      const aMatchCount = a.candidates.filter((candidate: any) => selectedCandidaturesIds.includes(candidate.id)).length;
-      const bMatchCount = b.candidates.filter((candidate: any) => selectedCandidaturesIds.includes(candidate.id)).length;
-      return bMatchCount - aMatchCount;
-    });
     return filtered;
-    }
+  }
 
   onDetailedCardSave(editedOffer: any) {
     if (this.isCompany && editedOffer.form) {
@@ -457,29 +557,27 @@ export class OfferTableComponent implements AfterViewInit {
   }
 
   scrollLeft() {
-    const container = this.scrollContainer.nativeElement;
+    const container = this.scrollContainer?.nativeElement;
     const scrollAmount = 1000;
     container.scrollBy({
       left: -scrollAmount,
       behavior: 'smooth'
     });
-    this.updateSliderFromScroll();
   }
 
   scrollRight() {
-    const container = this.scrollContainer.nativeElement;
+    const container = this.scrollContainer?.nativeElement;
     const scrollAmount = 1000;
     container.scrollBy({
       left: scrollAmount,
       behavior: 'smooth'
     });
-    this.updateSliderFromScroll();
   }
 
   onSliderChange(event: any): void {
 
     const sliderValue = event.value || event.target?.value || 0;
-    const container = this.scrollContainer.nativeElement;
+    const container = this.scrollContainer?.nativeElement;
     const maxScrollLeft = container.scrollWidth - container.clientWidth;
     const targetScrollLeft = (sliderValue / 100) * maxScrollLeft;
 
@@ -488,38 +586,17 @@ export class OfferTableComponent implements AfterViewInit {
     });
   }
 
-  updateSliderFromScroll(): void {
-    setTimeout(() => {
-      const container = this.scrollContainer.nativeElement;
-      const maxScrollLeft = container.scrollWidth - container.clientWidth;
-
-      if (maxScrollLeft > 0) {
-        this.sliderValue = (container.scrollLeft / maxScrollLeft) * 100;
-        if (this.sliderInput?.nativeElement) {
-          this.sliderInput.nativeElement.value = this.sliderValue;
-        }
-      } else {
-        this.sliderValue = 0;
-      }
-    }, 100);
+  private disableBodyScroll(): void {
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
   }
 
-  onScrollContainerScroll(): void {
-    if (!this.isScrolling) {
-      this.isScrolling = true;
-      this.updateSliderFromScroll();
-      setTimeout(() => {
-        this.isScrolling = false;
-      }, 150);
-    }
+  private enableBodyScroll(): void {
+    document.body.style.overflow = '';
+    document.body.style.height = '';
   }
 
-  updateMaxSliderValue(): void {
-    setTimeout(() => {
-      const container = this.scrollContainer.nativeElement;
-      const maxScrollLeft = container.scrollWidth - container.clientWidth;
-      this.maxSliderValue = maxScrollLeft > 0 ? 100 : 0;
-      this.updateSliderFromScroll();
-    }, 100);
+  ngOnDestroy(): void {
+    this.enableBodyScroll();
   }
 }
