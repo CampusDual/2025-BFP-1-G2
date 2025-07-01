@@ -27,6 +27,7 @@ export class OfferTableComponent implements AfterViewInit {
   isCandidate = false;
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
+  selectedCandidatures: any[] = [];
 
   sliderValue = 0;
   maxSliderValue = 100;
@@ -38,7 +39,7 @@ export class OfferTableComponent implements AfterViewInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private formBuilder: FormBuilder,
-    private tagService: TagService 
+    private tagService: TagService
   ) {
     this.loadMyTags();
     this.loadUserRole();
@@ -107,7 +108,7 @@ export class OfferTableComponent implements AfterViewInit {
   }
   openDetailedCardFromSuggested(offerIndex: number) {
     const recommendedOffers = this.recomendedOffers();
-    
+
     this.detailedCardData = recommendedOffers.map(offer => ({
       id: offer.id,
       title: offer.title,
@@ -123,7 +124,7 @@ export class OfferTableComponent implements AfterViewInit {
       form: this.isCompany ? this.createOfferForm(offer) : undefined,
       tags: offer.tags || [],
     }));
-    
+
     this.currentDetailIndex = offerIndex;
     this.showDetailedCard = true;
   }
@@ -322,11 +323,11 @@ export class OfferTableComponent implements AfterViewInit {
       offer.title.toLowerCase().includes(searchTerm) ||
       offer.description.toLowerCase().includes(searchTerm)
     );
-    
+
     setTimeout(() => {
       this.updateMaxSliderValue();
     }, 100);
-    
+
     return filtered;
   }
 
@@ -335,14 +336,27 @@ export class OfferTableComponent implements AfterViewInit {
     let filtered = this.offers.filter((offer: any) =>
       offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id) )
     );
-    
+
     filtered = filtered.sort((a: any, b: any) => {
       const aMatchCount = a.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
       const bMatchCount = b.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
-      return bMatchCount - aMatchCount; 
+      return bMatchCount - aMatchCount;
     });
     return filtered;
   }
+
+  yourCandidatures(): any[] {
+    const selectedCandidaturesIds = this.selectedCandidatures.map(candidature => candidature.id);
+    let filtered = this.offers.filter((offer: any) =>
+      offer.candidates.some((candidate: any) => selectedCandidaturesIds.includes(candidate.id))
+    );
+    filtered = filtered.sort((a: any, b: any) => {
+      const aMatchCount = a.candidates.filter((candidate: any) => selectedCandidaturesIds.includes(candidate.id)).length;
+      const bMatchCount = b.candidates.filter((candidate: any) => selectedCandidaturesIds.includes(candidate.id)).length;
+      return bMatchCount - aMatchCount;
+    });
+    return filtered;
+    }
 
   onDetailedCardSave(editedOffer: any) {
     if (this.isCompany && editedOffer.form) {
@@ -463,12 +477,12 @@ export class OfferTableComponent implements AfterViewInit {
   }
 
   onSliderChange(event: any): void {
-    
+
     const sliderValue = event.value || event.target?.value || 0;
     const container = this.scrollContainer.nativeElement;
     const maxScrollLeft = container.scrollWidth - container.clientWidth;
     const targetScrollLeft = (sliderValue / 100) * maxScrollLeft;
-    
+
     container.scrollTo({
       left: targetScrollLeft
     });
@@ -478,7 +492,7 @@ export class OfferTableComponent implements AfterViewInit {
     setTimeout(() => {
       const container = this.scrollContainer.nativeElement;
       const maxScrollLeft = container.scrollWidth - container.clientWidth;
-      
+
       if (maxScrollLeft > 0) {
         this.sliderValue = (container.scrollLeft / maxScrollLeft) * 100;
         if (this.sliderInput?.nativeElement) {
