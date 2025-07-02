@@ -2,6 +2,7 @@ package com.campusdual.bfp.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "companies")
@@ -32,6 +33,9 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private List<Offer> offers;
 
     public int getId() {
         return id;
@@ -96,6 +100,17 @@ public class Company {
     public void setFoundedDate(Date foundedDate) {
         this.foundedDate = foundedDate;
     }
+
+    public List<Offer> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(List<Offer> offers) {
+        this.offers = offers;
+    }
+
+    public int getActiveOffers() {
+        if (offers == null) return 0;
+        return (int) offers.stream().filter(Offer::isActive).count();
+    }
 }
-
-

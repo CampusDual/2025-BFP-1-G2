@@ -16,8 +16,9 @@ public class Offer {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "company_id", nullable = false)
-    private int companyId;
+    @ManyToOne
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    private Company company;
 
     @Column(name = "active", nullable = false)
     private boolean active;
@@ -35,6 +36,7 @@ public class Offer {
         this.active = active;
         this.date = date;
     }
+
     public Offer(String title, String description, boolean active, Date date) {
         this.title = title;
         this.description = description;
@@ -82,11 +84,22 @@ public class Offer {
         this.date = date;
     }
 
-    public void setCompanyId(int id) {
-        this.companyId = id;
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public int getCompanyId() {
-        return companyId;
+        return company != null ? company.getId() : 0;
+    }
+
+    public void setCompanyId(int companyId) {
+        if (this.company == null) {
+            this.company = new Company();
+        }
+        this.company.setId(companyId);
     }
 }

@@ -5,6 +5,7 @@ import { AuthService } from "../auth/services/auth.service";
 import { Candidate } from '../detailed-card/detailed-card.component';
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 import { environment } from '../../environments/environment';
+import { Company } from './company.service';
 
 export interface Offer {
   id?: number;
@@ -19,7 +20,6 @@ export interface Offer {
   providedIn: 'root'
 })
 export class OfferService {
-
   private baseUrl = `${environment.apiUrl}/offer`;
 
   constructor(private http: HttpClient,
@@ -56,6 +56,9 @@ export class OfferService {
   }
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
+  }
+  getAllCompanies(): Observable<Company[]> {
+    return this.http.get<Company[]>(`${this.authUrl}/listCompanies`);
   }
 
   getCandidateOffers(): Observable<Offer[]> {
