@@ -30,11 +30,9 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
   ) {
     this.loadCompanies();
-    this.loadTags();
   }
 
   ngOnInit() {
-    // Escuchar cambios en el filtro de tags
     this.tagsFilterControl.valueChanges.subscribe(() => {
       this.filterCompanies();
     });
@@ -46,95 +44,12 @@ export class CompaniesComponent implements OnInit, OnDestroy {
 
   loadCompanies() {
     this.isLoading = true;
-    
-    // Datos mock para testing
-    const mockCompanies: Company[] = [
-      {
-        id: 1,
-        name: 'TechCorp Solutions',
-        description: 'Empresa líder en desarrollo de software y soluciones tecnológicas innovadoras para empresas de todos los tamaños.',
-        email: 'contacto@techcorp.com',
-        logo: 'https://via.placeholder.com/150x150/4A90E2/FFFFFF?text=TC',
-        sector: 'Tecnología',
-        location: 'Madrid, España',
-        foundedDate: '2010',
-        employeeCount: 250,
-        website: 'https://techcorp.com',
-        activeOffers: 12,
-        tags: [
-          { id: 1, name: 'JavaScript' },
-          { id: 2, name: 'React' },
-          { id: 3, name: 'Node.js' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'InnovateLab',
-        description: 'Laboratorio de innovación especializado en inteligencia artificial y machine learning.',
-        email: 'info@innovatelab.com',
-        sector: 'I+D',
-        location: 'Barcelona, España',
-        foundedDate: '2015',
-        employeeCount: 80,
-        website: 'https://innovatelab.com',
-        activeOffers: 8,
-        tags: [
-          { id: 4, name: 'Python' },
-          { id: 5, name: 'AI/ML' },
-          { id: 6, name: 'Data Science' }
-        ]
-      },
-      {
-        id: 3,
-        name: 'GreenEnergy Corp',
-        description: 'Compañía dedicada al desarrollo de energías renovables y soluciones sostenibles.',
-        email: 'careers@greenenergy.com',
-        sector: 'Energía Renovable',
-        location: 'Valencia, España',
-        foundedDate: '2008',
-        employeeCount: 500,
-        website: 'https://greenenergy.com',
-        activeOffers: 15,
-        tags: [
-          { id: 7, name: 'Sostenibilidad' },
-          { id: 8, name: 'Ingeniería' },
-          { id: 9, name: 'Medio Ambiente' }
-        ]
-      },
-      {
-        id: 4,
-        name: 'Digital Marketing Pro',
-        description: 'Agencia de marketing digital especializada en estrategias de crecimiento para startups y PYMES.',
-        email: 'hello@digitalmarketingpro.com',
-        sector: 'Marketing Digital',
-        location: 'Sevilla, España',
-        foundedDate: '2018',
-        employeeCount: 45,
-        activeOffers: 6,
-        tags: [
-          { id: 10, name: 'Marketing' },
-          { id: 11, name: 'SEO/SEM' },
-          { id: 12, name: 'Social Media' }
-        ]
-      }
-    ];
 
-    // Simular llamada a API
-    setTimeout(() => {
-      this.companies = mockCompanies;
-      this.filteredCompanies = [...this.companies];
-      this.isLoading = false;
-      console.log('Companies loaded successfully:', this.companies);
-    }, 1000);
-
-    // Versión real comentada para cuando esté disponible el backend
-    /*
     this.companyService.getCompanies().subscribe({
       next: (companies: Company[]) => {
         this.companies = companies.map((company: Company) => ({
           ...company,
-          dateAdded: company.dateAdded ? new Date(company.dateAdded) : undefined,
-          tags: company.tags || []
+          dateAdded: company.foundedDate ? new Date(company.foundedDate) : undefined
         }));
         this.filteredCompanies = [...this.companies];
         this.isLoading = false;
@@ -149,61 +64,18 @@ export class CompaniesComponent implements OnInit, OnDestroy {
         });
       }
     });
-    */
-  }
 
-  loadTags() {
-    // Datos mock para testing
-    const mockTags: Tag[] = [
-      { id: 1, name: 'JavaScript' },
-      { id: 2, name: 'React' },
-      { id: 3, name: 'Node.js' },
-      { id: 4, name: 'Python' },
-      { id: 5, name: 'AI/ML' },
-      { id: 6, name: 'Data Science' },
-      { id: 7, name: 'Sostenibilidad' },
-      { id: 8, name: 'Ingeniería' },
-      { id: 9, name: 'Medio Ambiente' },
-      { id: 10, name: 'Marketing' },
-      { id: 11, name: 'SEO/SEM' },
-      { id: 12, name: 'Social Media' }
-    ];
-
-    this.availableTags = mockTags;
-
-    // Versión real comentada para cuando esté disponible el backend
-    /*
-    this.tagService.getAllTags().subscribe({
-      next: (tags: Tag[]) => {
-        this.availableTags = tags;
-      },
-      error: (error: any) => {
-        console.error('Error fetching tags', error);
-      }
-    });
-    */
   }
 
   filterCompanies() {
     let filtered = [...this.companies];
 
-    // Filtrar por término de búsqueda
     if (this.searchTerm.trim()) {
       const searchLower = this.searchTerm.toLowerCase();
       filtered = filtered.filter(company =>
-        company.name.toLowerCase().includes(searchLower) ||
+        company.login.toLowerCase().includes(searchLower) ||
         company.description.toLowerCase().includes(searchLower) ||
-        company.sector?.toLowerCase().includes(searchLower) ||
-        company.location?.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Filtrar por tags seleccionados
-    const selectedTags = this.tagsFilterControl.value || [];
-    if (selectedTags.length > 0) {
-      const selectedTagIds = selectedTags.map(tag => tag.id);
-      filtered = filtered.filter(company =>
-        company.tags && company.tags.some(tag => selectedTagIds.includes(tag.id))
+        company.address?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -213,13 +85,12 @@ export class CompaniesComponent implements OnInit, OnDestroy {
   openCompanyDetails(companyIndex: number) {
     this.detailedCardData = this.filteredCompanies.map(company => ({
       id: company.id,
-      title: company.name,
+      title: company.login,
       subtitle: company.email,
       content: this.formatCompanyContent(company),
       metadata: this.getMetadataForCompany(company),
       actions: this.getActionsForCompany(company),
       editable: false,
-      tags: company.tags || []
     }));
 
     this.currentDetailIndex = companyIndex;
@@ -237,24 +108,17 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       </div>`;
     }
 
-    if (company.sector) {
-      content += `<div class="company-sector">
-        <h4>Sector</h4>
-        <p>${company.sector}</p>
-      </div>`;
-    }
-
-    if (company.location) {
-      content += `<div class="company-location">
+    if (company.address) {
+      content += `<div class="company-address">
         <h4>Ubicación</h4>
-        <p>${company.location}</p>
+        <p>${company.address}</p>
       </div>`;
     }
 
-    if (company.website) {
-      content += `<div class="company-website">
+    if (company.url) {
+      content += `<div class="company-url">
         <h4>Sitio web</h4>
-        <p><a href="${company.website}" target="_blank" rel="noopener noreferrer">${company.website}</a></p>
+        <p><a href="${company.url}" target="_blank" rel="noopener noreferrer">${company.url}</a></p>
       </div>`;
     }
 
@@ -269,41 +133,19 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       metadata['Año de fundación'] = company.foundedDate;
     }
 
-    if (company.employeeCount) {
-      metadata['Número de empleados'] = `${company.employeeCount}+`;
-    }
-
-    if (company.activeOffers !== undefined) {
-      metadata['Ofertas activas'] = company.activeOffers;
-    }
-
-    if (company.dateAdded) {
-      metadata['Fecha de registro'] = company.dateAdded.toLocaleDateString();
-    }
-
     return metadata;
   }
 
   private getActionsForCompany(company: Company): DetailedCardAction[] {
     const actions: DetailedCardAction[] = [];
 
-    if (company.activeOffers && company.activeOffers > 0) {
-      actions.push({
-        label: `Ver ofertas (${company.activeOffers})`,
-        action: 'viewOffers',
-        color: 'primary',
-        icon: 'work',
-        data: { companyId: company.id, companyName: company.name }
-      });
-    }
-
-    if (company.website) {
+    if (company.url) {
       actions.push({
         label: 'Visitar sitio web',
-        action: 'visitWebsite',
+        action: 'visiturl',
         color: 'accent',
         icon: 'open_in_new',
-        data: { website: company.website }
+        data: { url: company.url }
       });
     }
 
@@ -312,7 +154,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       action: 'contactCompany',
       color: 'primary',
       icon: 'email',
-      data: { email: company.email, companyName: company.name }
+      data: { email: company.email, companylogin: company.login }
     });
 
     return actions;
@@ -323,15 +165,15 @@ export class CompaniesComponent implements OnInit, OnDestroy {
 
     switch (action) {
       case 'viewOffers':
-        this.viewCompanyOffers(data.companyId, data.companyName);
+        this.viewCompanyOffers(data.companyId, data.companylogin);
         break;
 
-      case 'visitWebsite':
-        window.open(data.website, '_blank', 'noopener,noreferrer');
+      case 'visiturl':
+        window.open(data.url, '_blank', 'noopener,noreferrer');
         break;
 
       case 'contactCompany':
-        this.contactCompany(data.email, data.companyName);
+        this.contactCompany(data.email, data.companylogin);
         break;
 
       default:
@@ -339,18 +181,16 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     }
   }
 
-  private viewCompanyOffers(companyId: number, companyName: string) {
-    // Aquí podrías navegar a la vista de ofertas filtrada por empresa
-    // o mostrar las ofertas de la empresa en un diálogo
-    this.snackBar.open(`Navegando a ofertas de ${companyName}`, 'Cerrar', {
+  private viewCompanyOffers(companyId: number, companylogin: string) {
+    this.snackBar.open(`Navegando a ofertas de ${companylogin}`, 'Cerrar', {
       duration: 2000
     });
     this.closeDetailedCard();
   }
 
-  private contactCompany(email: string, companyName: string) {
-    const subject = encodeURIComponent(`Consulta sobre ${companyName}`);
-    const body = encodeURIComponent(`Hola,\n\nEstoy interesado/a en conocer más sobre ${companyName}.\n\nSaludos cordiales.`);
+  private contactCompany(email: string, companylogin: string) {
+    const subject = encodeURIComponent(`Consulta sobre ${companylogin}`);
+    const body = encodeURIComponent(`Hola,\n\nEstoy interesado/a en conocer más sobre ${companylogin}.\n\nSaludos cordiales.`);
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   }
 

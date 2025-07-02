@@ -1,6 +1,5 @@
 <div class="companies-container">
 
-  <!-- Header con búsqueda -->
   <div class="companies-header">
     <h2 class="page-title">
       <mat-icon>business</mat-icon>
@@ -20,22 +19,14 @@
       </mat-form-field>
     </div>
 
-    <div class="filter-chips" *ngIf="availableTags.length > 0">
-      <mat-label class="filter-label">Filtrar por áreas:</mat-label>
-      <mat-chip-listbox multiple [formControl]="tagsFilterControl" (change)="filterCompanies()">        <mat-chip-option *ngFor="let tag of availableTags" [value]="tag">
-          {{tag.name}}
-        </mat-chip-option>
-      </mat-chip-listbox>
-    </div>
+  
   </div>
 
-  <!-- Loading -->
   <div class="loading-container" *ngIf="isLoading">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Cargando empresas...</p>
   </div>
 
-  <!-- Grid de tarjetas de empresas -->
   <div class="companies-grid" *ngIf="!isLoading && filteredCompanies.length > 0">
     <div
       class="company-card"
@@ -43,12 +34,11 @@
       (click)="openCompanyDetails(i)"
       [attr.data-index]="i"
     >
-      <!-- Logo circular -->
       <div class="company-logo">
         <img
           *ngIf="company.logo"
           [src]="company.logo"
-          [alt]="company.name + ' logo'"
+          [alt]="company.login + ' logo'"
           (error)="onImageError($event)"
         >
         <div *ngIf="!company.logo" class="logo-placeholder">
@@ -56,45 +46,22 @@
         </div>
       </div>
 
-      <!-- Información de la empresa -->
       <div class="company-info">
-        <h3 class="company-name">{{ company.name }}</h3>
-        <p class="company-sector" *ngIf="company.sector">
-          <mat-icon>category</mat-icon>
-          {{ company.sector }}
-        </p>
-        <p class="company-location" *ngIf="company.location">
+        <h3 class="company-name">{{ company.login }}</h3>
+        <p class="company-location" *ngIf="company.address">
           <mat-icon>location_on</mat-icon>
-          {{ company.location }}
+          A Coruña
         </p>
           <p class="company-description">{{ company.description | slice:0:120 }}{{ (company.description.length || 0) > 120 ? '...' : '' }}</p>      </div>
 
-      <!-- Tags de la empresa -->
-      <div class="company-tags" *ngIf="company.tags && company.tags.length > 0">
-        <mat-chip *ngFor="let tag of company.tags.slice(0, 3)" class="company-tag">
-          {{ tag.name }}
-        </mat-chip>
-        <span *ngIf="company.tags.length > 3" class="more-tags">+{{ company.tags.length - 3 }}</span>
-      </div>
-
-      <!-- Estadísticas -->
       <div class="company-stats">
-        <div class="stat-item" *ngIf="company.activeOffers !== undefined">
-          <mat-icon>work</mat-icon>
-          <span>{{ company.activeOffers }} ofertas</span>
-        </div>
-        <div class="stat-item" *ngIf="company.employeeCount">
-          <mat-icon>people</mat-icon>
-          <span>{{ company.employeeCount }}+ empleados</span>
-        </div>
         <div class="stat-item" *ngIf="company.foundedDate">
           <mat-icon>schedule</mat-icon>
-          <span>Desde {{ company.foundedDate }}</span>
+            <span>Desde {{ company.foundedDate | date:'yyyy' }}</span>
         </div>
       </div>
 
-      <!-- Botón de ver más -->
-      <div class="company-actions">
+      <div class="company-actions"> 
         <button mat-raised-button color="primary" (click)="openCompanyDetails(i); $event.stopPropagation()">
           <mat-icon>visibility</mat-icon>
           Ver detalles
@@ -103,7 +70,6 @@
     </div>
   </div>
 
-  <!-- Estado vacío -->
   <div class="empty-state" *ngIf="!isLoading && filteredCompanies.length === 0">
     <mat-icon class="empty-icon">business</mat-icon>
     <h3>No se encontraron empresas</h3>
@@ -121,7 +87,6 @@
 
 </div>
 
-<!-- Detailed Card Component -->
 <app-detailed-card
   [isVisible]="showDetailedCard"
   [data]="detailedCardData"

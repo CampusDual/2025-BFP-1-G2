@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-// Angular Material Modules
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,8 +23,6 @@ import { DetailedCardComponent } from '../detailed-card/detailed-card.component'
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    
-    // Angular Material
     MatCardModule,
     MatButtonModule,
     MatIconModule,

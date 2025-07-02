@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/offer/getAll").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/{offerId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
 
                 // Tags - administración
                 .antMatchers(HttpMethod.POST, "/api/tags/add").hasRole("ADMIN")

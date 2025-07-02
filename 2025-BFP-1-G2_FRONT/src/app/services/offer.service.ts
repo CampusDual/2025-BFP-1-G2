@@ -5,7 +5,7 @@ import { AuthService } from "../auth/services/auth.service";
 import { Candidate } from '../detailed-card/detailed-card.component';
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 import { environment } from '../../environments/environment';
-import {Company} from "../admin/admin-panel/admin-panel.component";
+import { Company } from './company.service';
 
 export interface Offer {
   id?: number;

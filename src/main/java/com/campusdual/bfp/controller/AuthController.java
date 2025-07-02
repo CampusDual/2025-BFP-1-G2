@@ -54,8 +54,6 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = this.jwtUtils.generateJWTToken(userDetails.getUsername());
 
-            System.out.println("User authenticated: " + userDetails.getUsername());
-            System.out.println("Generated JWT Token: " + token);
             userService.addRoleToUser(15, (long) 6);
 
             String role = userDetails.getAuthorities().stream()
@@ -63,7 +61,6 @@ public class AuthController {
                     .map(GrantedAuthority::getAuthority)
                     .orElse("ROLE_USER");
 
-            System.out.println("User role: " + role);
             return ResponseEntity.ok(token);
 
         } catch (AuthenticationException ex) {
@@ -95,9 +92,6 @@ public class AuthController {
 
     @GetMapping("/me")
     public UserDetails getCurrentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return null; // or throw an exception
-        }
         String token = authHeader.substring(7);
         String username = jwtUtils.getUsernameFromToken(token);
         if (username == null) {
@@ -167,14 +161,6 @@ public class AuthController {
         return ResponseEntity.ok(updatedCandidate);
     }
 
-    @GetMapping("/listCompanies")
-    public ResponseEntity<List<CompanyDTO>> listCompanies(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        List<CompanyDTO> companies = userService.getAllCompanies();
-        return ResponseEntity.ok(companies);
-    }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listCandidates")
     public ResponseEntity<List<CandidateDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -183,26 +169,5 @@ public class AuthController {
         }
         List<CandidateDTO> candidatos = userService.getAllCandidates();
         return ResponseEntity.ok(candidatos);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/companies/add")
-    public ResponseEntity<Integer> addCompany(@RequestBody CompanyDTO companyDTO) {
-        int idNewCompany = userService.addCompany(companyDTO);
-        return ResponseEntity.ok(idNewCompany);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/companies/edit")
-    public ResponseEntity<Integer> editCompany(@RequestBody CompanyDTO companyDTO) {
-        int updatedId = userService.updateCompany(companyDTO);
-        return ResponseEntity.ok(updatedId);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/companies/delete/{companyId}")
-    public ResponseEntity<Integer> deleteCompany(@PathVariable("companyId") int companyId) {
-        int deletedId = userService.deleteCompany(companyId);
-        return ResponseEntity.ok(deletedId);
     }
 }
