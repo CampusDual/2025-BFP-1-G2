@@ -5,6 +5,8 @@ import com.campusdual.bfp.model.dto.CompanyDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper
 public interface CompanyMapper {
     CompanyMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(CompanyMapper.class);
@@ -21,4 +23,6 @@ public interface CompanyMapper {
     @Mapping(target = "user.email", source = "email")
     @Mapping(target = "foundedDate", source = "foundedDate") // Asegurar el mapeo explícito
     Company toEntity(CompanyDTO companyDTO);
+
+    List<CompanyDTO> toDTOs(List<Company> companies);
 }

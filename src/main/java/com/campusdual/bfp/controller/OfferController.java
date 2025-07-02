@@ -97,27 +97,27 @@ public class OfferController {
     @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping(value = "/candidates/{OfferID}")
     public ResponseEntity<List<CandidateDTO>> getCandidatesFromOffer(
-            @PathVariable("OfferID") int OfferID) {
-        if (OfferID <= 0) {
+            @PathVariable("OfferID") int offerID) {
+        if (offerID <= 0) {
             return ResponseEntity.badRequest().body(null);
         }
-        List<CandidateDTO> candidates = offerService.getCompanyOffersCandidates(OfferID);
+        List<CandidateDTO> candidates = offerService.getCompanyOffersCandidates(offerID);
         return ResponseEntity.ok(candidates);
     }
 
     @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping(value = "/update/{OfferID}")
     public ResponseEntity<String> updateValidUser(
-            @PathVariable("OfferID") int OfferID,
+            @PathVariable("OfferID") int offerID,
             @RequestBody CandidateDTO candidateDTO) {
-        if (OfferID <= 0) {
+        if (offerID <= 0) {
             return ResponseEntity.badRequest().body(null);
         }
         if (candidateDTO.getLogin() == null) {
             return ResponseEntity.badRequest().body("Invalid candidate data");
         }
         try {
-            offerService.updateCandidateValidity(OfferID, candidateDTO);
+            offerService.updateCandidateValidity(offerID, candidateDTO);
         }catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
