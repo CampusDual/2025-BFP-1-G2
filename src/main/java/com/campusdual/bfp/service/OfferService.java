@@ -7,6 +7,7 @@ import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import com.campusdual.bfp.model.dto.TagDTO;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
+import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
 import org.springframework.beans.BeanUtils;
@@ -38,18 +39,28 @@ public class OfferService implements IOfferService {
     @Autowired
     private OfferTagsDao offerTagsDao;
 
+    @Autowired
+    private CompanyDao companyDao;
+
     private static final int MAX_TAGS_PER_OFFER = 5;
 
     private OfferDTO buildOfferDTO(Offer offer, boolean includeCompanyInfo) {
         OfferDTO dto = OfferMapper.INSTANCE.toDTO(offer);
         dto.setDateAdded(offer.getDate());
 
-        if (includeCompanyInfo) {
-            User user = userDao.findUserById(offer.getCompanyId());
+        if (includeCompanyInfo && offer.getCompany() != null) {
+            // Usar la relación JPA en lugar de companyId
+            Company company = offer.getCompany();
+            User user = company.getUser();
+
             if (user != null) {
                 dto.setCompanyName(user.getLogin());
                 dto.setEmail(user.getEmail());
             }
+            if (company.getLogo() != null) {
+                dto.setLogo(company.getLogo());
+            }
+
         }
 
         // Añadir tags
@@ -102,7 +113,6 @@ public class OfferService implements IOfferService {
         List<OfferDTO> dtos = offers.stream()
                 .map(offer -> buildOfferDTO(offer, true))
                 .collect(Collectors.toList());
-
         sortOffersByDate(dtos);
         return dtos;
     }
@@ -111,7 +121,6 @@ public class OfferService implements IOfferService {
     public int insertOffer(OfferDTO request, String username) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new RuntimeException("Usuario no encontrado");
-
         Offer offer = new Offer();
         offer.setTitle(request.getTitle());
         offer.setDescription(request.getDescription());

@@ -15,7 +15,6 @@ export class AdminService {
 
     constructor(private http: HttpClient) { }
 
-  // Obtener candidatos (método que permanece en admin)
   getCandidatesOffers(): Observable<Candidate[]> {
     return this.http.get<Candidate[]>(`${this.baseUrl}/listCandidates`);
   }

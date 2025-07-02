@@ -47,6 +47,8 @@ public class CompanyService implements ICompanyService {
         return companyDao.findById(id).map(CompanyMapper.INSTANCE::toDTO);
     }
 
+
+
     public CompanyDTO createCompany(CompanyDTO companyDTO) {
         User user = this.userDao.findByLogin(companyDTO.getLogin());
         if (user != null) {
@@ -82,13 +84,29 @@ public class CompanyService implements ICompanyService {
 
     public List<OfferDTO> getCompanyOffers(Integer companyId) {
         List<Offer> offers = offerDao.findOfferByCompanyId(companyId);
-        return offers.stream()
+        List<OfferDTO> offerDTOS =
+        offers.stream()
                 .map(OfferMapper.INSTANCE::toDTO)
                 .collect(Collectors.toList());
+        for (OfferDTO offerDTO : offerDTOS) {
+            offerDTO.setLogo(companyDao.findById(companyId)
+                    .map(Company::getLogo)
+                    .orElse(null));
+        }
+        return offerDTOS;
     }
 
 
     public List<CompanyDTO> getCompaniesByLocation(String location) {
         return CompanyMapper.INSTANCE.toDTOs(companyDao.findByAddressContainingIgnoreCase(location));
+    }
+
+    public Optional<CompanyDTO> getCompanyByUsername(String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) {
+            return Optional.empty();
+        }
+        Company company = companyDao.findCompanyByUser(user);
+        return Optional.of(CompanyMapper.INSTANCE.toDTO(company));
     }
 }

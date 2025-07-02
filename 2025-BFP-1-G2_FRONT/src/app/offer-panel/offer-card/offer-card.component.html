@@ -1,31 +1,44 @@
-<div>
-  <div [class.details]="!isDisabled">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>{{ offer?.title }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="applieStatus" *ngIf="offer?.isValid == 'PENDING'">
-          <mat-icon class="pending-icon">hourglass_empty</mat-icon>
-          <span class="pending">Pendiente</span>
-        </div>
-        <div class="applieStatus" *ngIf="offer?.isValid == 'VALID'">
-          <mat-icon class="check-icon">check</mat-icon>
-          <span class="valid">Validada</span>
-        </div>
-        <div class="applieStatus" *ngIf="offer?.isValid == 'INVALID'">
-          <mat-icon class="invalid-icon">close</mat-icon>
-          <span class="invalid">Rechazada</span>
-        </div>
-        <div *ngIf="offer?.tags?.length" class="tags-container">
-          <mat-chip-listbox class="tags-display">
-            <mat-chip *ngFor="let tag of getFirstThreeTags()" [removable]="false" class="chip">
-              {{ tag.name || tag }}
-            </mat-chip>
-          </mat-chip-listbox>
-        </div>
-        <p class="data-offer">{{ offer?.dateAdded }}</p>
-      </mat-card-content>
-    </mat-card>
+<div class="offer-card">
+  <div class="offer-logo">
+    <img *ngIf="offer.logo" [src]="offer.logo" [alt]="offer.login + ' logo'" (error)="onImageError($event)">
+    <div *ngIf="!offer.logo" class="logo-placeholder">
+      <mat-icon>business</mat-icon>
+    </div>
+  </div>
+
+  <div class="offer-info">
+    <h3 class="offer-name">{{ offer.title }}</h3>
+    <p class="offer-location" *ngIf="offer.address">
+      <mat-icon>location_on</mat-icon>
+      A Coruña
+    </p>
+    <p class="offer-description">{{ offer.description | slice:0:120 }}{{ (offer.description.length || 0) > 120 ?
+      '...'
+      : '' }}</p>
+  </div>
+  <div class="offer-tags" *ngIf="offer.tags && offer.tags.length > 0">
+    <mat-chip *ngFor="let tag of offer.tags.slice(0, 3)" class="offer-tag">
+      {{ tag.name }}
+    </mat-chip>
+    <span *ngIf="offer.tags.length > 3" class="more-tags">+{{ offer.tags.length - 3 }}</span>
+  </div>
+
+  <div class="offer-stats">
+    <div class="stat-item" *ngIf="offer.dateAdded">
+      <mat-icon>schedule</mat-icon>
+      <span>Desde {{ offer.dateAdded | date:'yyyy' }}</span>
+    </div>
+    <div class="applieStatus" *ngIf="offer?.isValid == 'PENDING'">
+      <mat-icon class="pending-icon">hourglass_empty</mat-icon>
+      <span class="pending">Pendiente</span>
+    </div>
+    <div class="applieStatus" *ngIf="offer?.isValid == 'VALID'">
+      <mat-icon class="check-icon">check</mat-icon>
+      <span class="valid">Validada</span>
+    </div>
+    <div class="applieStatus" *ngIf="offer?.isValid == 'INVALID'">
+      <mat-icon class="invalid-icon">close</mat-icon>
+      <span class="invalid">Rechazada</span>
+    </div>
   </div>
 </div>

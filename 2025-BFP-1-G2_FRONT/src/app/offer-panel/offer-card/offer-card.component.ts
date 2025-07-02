@@ -60,5 +60,8 @@ export class OfferCardComponent implements OnInit {
     }
     return this.offer.tags.length - 3;
   }
+  onImageError(event: any) {
+    event.target.style.display = 'none';
+  }
 }
 

@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
 import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
 import { TagService } from 'src/app/services/tag.service';
+import { Offer } from '../offer-panel.module';
 
 @Component({
   selector: 'app-offer-table',
@@ -18,7 +19,7 @@ export class OfferTableComponent implements OnDestroy {
 
   @ViewChild('scrollContainer') scrollContainer: ElementRef | undefined;
   @ViewChild('scrollContainerApplies') scrollContainerApplies: ElementRef | undefined;
-  offers: any[] = [];
+  offers: Offer[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
   showDetailedCard = false;
@@ -105,6 +106,7 @@ export class OfferTableComponent implements OnDestroy {
             companyName: offer.companyName,
             dateAdded: offer.dateAdded
           },
+          logo: offer.logo || '',
         }));
         this.offerService.getCandidateOffers().subscribe({
           next: (offers: any[]) => {
@@ -118,7 +120,8 @@ export class OfferTableComponent implements OnDestroy {
               candidatesCount: offer.candidatesCount || 0,
               candidates: offer.candidates || [],
               tags: offer.tags || [],
-              isValid: offer.candidateValid === true ? 'VALID' : offer.candidateValid === false ? 'INVALID' : 'PENDING'
+              isValid: offer.candidateValid === true ? 'VALID' : offer.candidateValid === false ? 'INVALID' : 'PENDING',
+              logo: offer.logo || ''
             }));
             this.offers = this.offers.map(offer => {
               const matched = this.selectedCandidatures.find(sel => sel.id === offer.id);
