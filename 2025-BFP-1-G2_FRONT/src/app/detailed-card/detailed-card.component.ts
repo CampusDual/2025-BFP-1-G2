@@ -399,7 +399,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     const dotsContainer = this.navigationDots.nativeElement;
     const wrapper = this.navigationDotsWrapper.nativeElement;
     
-    // Buscar el dot activo usando el índice actual
     const activeDot = dotsContainer.children[this.currentIndex] as HTMLElement;
     
     if (!activeDot) return;
@@ -407,7 +406,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     const wrapperWidth = wrapper.offsetWidth;
     const dotsContainerWidth = dotsContainer.scrollWidth;
     
-    // Si los dots caben en el wrapper, centrarlos y no mover
     if (dotsContainerWidth <= wrapperWidth) {
       dotsContainer.style.transform = 'translateX(0px)';
       dotsContainer.style.justifyContent = 'center';
@@ -415,12 +413,10 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
       return;
     }
     
-    // Si no caben, calcular posición para centrar el dot activo
     dotsContainer.style.justifyContent = 'flex-start';
     const dotPosition = activeDot.offsetLeft;
     const dotWidth = activeDot.offsetWidth;
     
-    // Centrar el dot activo en el wrapper
     const idealPosition = dotPosition - (wrapperWidth / 2) + (dotWidth / 2);
     const maxScroll = dotsContainerWidth - wrapperWidth;
     const targetScroll = Math.max(0, Math.min(idealPosition, maxScroll));
@@ -428,7 +424,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     dotsContainer.style.transform = `translateX(-${targetScroll}px)`;
     dotsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
     
-    // Actualizar indicadores
     setTimeout(() => {
       this.updateContentIndicators(targetScroll, maxScroll);
     }, 300);

@@ -97,10 +97,9 @@ export class AdminPanelComponent {
       login: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      sector: ['', [Validators.maxLength(100)]],
       address: ['', [Validators.maxLength(100)]],
       url: ['', [Validators.pattern(/^https?:\/\/.+/)]],
-      employeeCount: ['', [Validators.min(1)]],
+      phone: ['', [Validators.pattern(/^\+?[0-9\s-]+$/)]],
       foundedDate: [''],
       logo: ['']
     });
@@ -115,7 +114,8 @@ export class AdminPanelComponent {
       address: company.address || '',
       url: company.url || '',
       foundedDate: company.foundedDate || '',
-      logo: company.logo || ''
+      logo: company.logo || '',
+      phone: company.phone || ''
     });
     return form;
   }
