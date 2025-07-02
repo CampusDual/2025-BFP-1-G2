@@ -55,6 +55,7 @@
   border: 2px solid transparent;
   position: relative;
   overflow: hidden;
+  max-height: min-content;
 }
 
 .offer-card:hover {
@@ -124,6 +125,13 @@
   color: var(--primary-color);
   margin: 0 0 12px 0;
   line-height: 1.3;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 3.6em;
 }
 
 .offer-sector,

@@ -3,7 +3,7 @@ import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
 import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
 import { TagService } from 'src/app/services/tag.service';
@@ -17,8 +17,6 @@ import { Offer } from '../offer-panel.module';
 export class OfferTableComponent implements OnDestroy {
 
 
-  @ViewChild('scrollContainer') scrollContainer: ElementRef | undefined;
-  @ViewChild('scrollContainerApplies') scrollContainerApplies: ElementRef | undefined;
   offers: Offer[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
@@ -30,10 +28,11 @@ export class OfferTableComponent implements OnDestroy {
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
   selectedCandidatures: any[] = [];
+  tagsFilterControl = new FormControl<Tag[]>([]);
 
-  sliderValue = 0;
-  maxSliderValue = 100;
-  isScrolling = false;
+  // New properties for offer view selection
+  currentOfferView: 'all' | 'recommended' | 'applied' = 'all';
+
   isLoading = true;
 
   constructor(
@@ -104,10 +103,11 @@ export class OfferTableComponent implements OnDestroy {
           metadata: {
             email: offer.email,
             companyName: offer.companyName,
-            dateAdded: offer.dateAdded
+            dateAdded: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : '',
           },
           logo: offer.logo || '',
         }));
+        this.isLoading = false;
         this.offerService.getCandidateOffers().subscribe({
           next: (offers: any[]) => {
             this.selectedCandidatures = offers.map((offer: any) => ({
@@ -137,7 +137,7 @@ export class OfferTableComponent implements OnDestroy {
         });
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
-        this.isLoading = false;
+        
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
@@ -145,24 +145,6 @@ export class OfferTableComponent implements OnDestroy {
     });
 
 
-  }
-
-  scrollLeftApplies() {
-    const container = this.scrollContainerApplies?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: -scrollAmount,
-      behavior: 'smooth'
-    });
-  }
-
-  scrollRightApplies() {
-    const container = this.scrollContainerApplies?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: scrollAmount,
-      behavior: 'smooth'
-    });
   }
 
   openDetailedCardFromApplied(offerIndex: number) {
@@ -433,15 +415,32 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   filterOffers(): any[] {
-    const searchTerm = this.searchTerm.toLowerCase();
-    const filtered = this.offers.filter((offer: any) =>
-      offer.title.toLowerCase().includes(searchTerm) ||
-      offer.description.toLowerCase().includes(searchTerm)
-    );
+    // Get the base offers based on current view
+    let filtered = [...this.getCurrentViewOffers()];
+    
+    if (this.searchTerm.trim()) {
+      const searchLower = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(offer =>
+        offer.title.toLowerCase().includes(searchLower) ||
+        offer.description.toLowerCase().includes(searchLower) ||
+        offer.companyName.toLowerCase().includes(searchLower) ||
+        offer.email.toLowerCase().includes(searchLower)
+      );
+    }
 
+    if (this.tagsFilterControl.value) {
+      const selectedTags = this.tagsFilterControl.value || [];
+      if (selectedTags.length > 0) {
+        const selectedTagIds = selectedTags.map(tag => tag.id);
+        filtered = filtered.filter((offer: any) =>
+          offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id))
+        );
+      }
+    }
     return filtered;
   }
 
+ 
   recomendedOffers(): any[] {
     const selectedTagIds = this.selectedTags.map(tag => tag.id);
     let filtered = this.offers.filter((offer: any) =>
@@ -461,6 +460,30 @@ export class OfferTableComponent implements OnDestroy {
       offer.id
     );
     return filtered;
+  }
+
+  // New methods for offer view selection
+  setOfferView(view: 'all' | 'recommended' | 'applied') {
+    this.currentOfferView = view;
+  }
+
+  getRecommendedOffersCount(): number {
+    return this.recomendedOffers().length;
+  }
+
+  getAppliedOffersCount(): number {
+    return this.selectedCandidaturesOffers().length;
+  }
+
+  getCurrentViewOffers(): any[] {
+    switch (this.currentOfferView) {
+      case 'recommended':
+        return this.recomendedOffers();
+      case 'applied':
+        return this.selectedCandidaturesOffers();
+      default:
+        return this.offers;
+    }
   }
 
   onDetailedCardSave(editedOffer: any) {
@@ -561,36 +584,6 @@ export class OfferTableComponent implements OnDestroy {
     return selectedTags.length;
   }
 
-  scrollLeft() {
-    const container = this.scrollContainer?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: -scrollAmount,
-      behavior: 'smooth'
-    });
-  }
-
-  scrollRight() {
-    const container = this.scrollContainer?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: scrollAmount,
-      behavior: 'smooth'
-    });
-  }
-
-  onSliderChange(event: any): void {
-
-    const sliderValue = event.value || event.target?.value || 0;
-    const container = this.scrollContainer?.nativeElement;
-    const maxScrollLeft = container.scrollWidth - container.clientWidth;
-    const targetScrollLeft = (sliderValue / 100) * maxScrollLeft;
-
-    container.scrollTo({
-      left: targetScrollLeft
-    });
-  }
-
   private disableBodyScroll(): void {
     document.body.style.overflow = 'hidden';
     document.body.style.height = '100vh';
@@ -603,5 +596,14 @@ export class OfferTableComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.enableBodyScroll();
+  }
+
+  onViewDetails(offer: any) {
+    const filteredOffers = this.filterOffers();
+    const offerIndex = filteredOffers.findIndex(o => o.id === offer.id);
+    
+    if (offerIndex !== -1) {
+      this.openDetailedCard(offerIndex);
+    }
   }
 }

@@ -1,349 +1,159 @@
+.offers-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  grid-template-rows: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 50px;
-  padding: 40px;
-  padding-top: 0px;
+  justify-content: center;
+  padding: 20px;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 32px;
 }
 
 app-offer-card {
   opacity: 0;
-  transform: translateY(50px) scale(0.8);
-  animation: slideInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: fadeInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, 
+    fadeInGrid 0.5s ease-out forwards;
 }
 
-app-offer-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-app-offer-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-app-offer-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-app-offer-card:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-app-offer-card:nth-child(5) {
-  animation-delay: 0.5s;
-}
-
-app-offer-card:nth-child(6) {
-  animation-delay: 0.6s;
-}
-
-app-offer-card:nth-child(7) {
-  animation-delay: 0.7s;
-}
-
-app-offer-card:nth-child(8) {
-  animation-delay: 0.8s;
-}
-
-app-offer-card:nth-child(9) {
-  animation-delay: 0.9s;
-}
-
-app-offer-card:nth-child(n+10) {
-  animation-delay: 1s;
-}
-
-@keyframes slideInCard {
-  0% {
-    opacity: 0;
-    transform: translateY(50px) scale(0.8);
-  }
-
-  60% {
-    opacity: 0.8;
-    transform: translateY(-10px) scale(1.05);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.grid-container {
-  animation: fadeInGrid 0.5s ease-out;
-}
-
-
-
-@keyframes fadeInGrid {
+@keyframes fadeInCard {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.search-input {
-  display: block;
-  width: 40%;
-  margin: 20px auto;
-  border: 2px solid #e0e0e0;
-  border-radius: 25px;
-  padding: 12px 20px;
-  font-size: 16px;
-  color: #3e3e3e;
-  background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--primary-color, #007bff);
-  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
-  transform: translateY(-2px);
-}
-
-.offer-recommendations {
-  padding: 0;
-  width: 100%;
-}
 
 
-.scroll-container {
-  min-height: 100px;
-  width: 95%;
-  display: flex;
-  scroll-snap-type: x mandatory;
-  border-radius: 10px;
-  overflow-x: hidden;
-  height: fit-content;
-  padding-inline: 20px;
-  gap: 20px;
-  padding-block: 10vh;
-}
-
-.your-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
-}
-
-
-h3{
-  margin: 0;
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.nav-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  background-color: var(--primary-color);
-  color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.scroll-buttons {
-  padding-block: 20px;
-  height: fit-content;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-
-.nav-button:hover {
-  background-color: #fff;
-  color: var(--primary-color);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.prev-button {
-  margin-left: 20px;
-  left: 0;
-}
-
-.next-button {
-  right: 0;
-  margin-right: 20px;
-}
-
-
-
-.slider-navigation {
-  padding: 15px 20px;
-  border-radius: 12px;
-  margin: 10px 20px;
-}
-
-
-.slider-container {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  width: 100%;
-}
-
-.slider-icon {
-  color: var(--primary-color);
-  font-size: 20px;
-  opacity: 0.7;
-}
-
-.navigation-slider {
-  flex: 1;
-  height: 6px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  outline: none;
-  cursor: pointer;
-}
-
-.navigation-slider::-webkit-slider-track {
-  height: 6px;
-  background: rgba(63, 81, 181, 0.2);
-  border-radius: 3px;
-}
-
-.navigation-slider::-moz-range-track {
-  height: 6px;
-  background: rgba(63, 81, 181, 0.2);
-  border-radius: 3px;
-  border: none;
-}
-
-.navigation-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 20px;
-  width: 20px;
-  background: var(--primary-color, #3f51b5);
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-}
-
-.navigation-slider::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
-  background: var(--primary-color);
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-}
-
-
-.navigation-slider {
-  background: linear-gradient(
-    to right,
-    var(--primary-color, #3f51b5) 0%,
-    var(--primary-color, #3f51b5) var(--slider-progress, 0%),
-    rgba(181, 63, 63, 0.2) var(--slider-progress, 0%),
-    rgba(181, 63, 63, 0.2) 100%
-  );
-}
-
-
-.slider-info {
-  margin-top: 8px;
-  display: flex;
-  justify-content: center;
-}
-
-.slider-text {
-  font-size: 12px;
-  color: #666;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.slider-navigation {
-  animation: slideInSlider 0.5s ease-out;
-}
-
-@keyframes slideInSlider {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 768px) {
-  .slider-navigation {
-    margin: 10px 10px;
-    padding: 12px 15px;
-  }
-
-  .slider-container {
-    gap: 10px;
-  }
-
-  .slider-icon {
-    font-size: 18px;
-  }
-
-  .slider-text {
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 480px) {
-  .slider-navigation {
-    margin: 8px 5px;
-    padding: 10px 12px;
-  }
-
-  .slider-container {
-    gap: 8px;
-  }
-
-  .slider-icon {
-    font-size: 16px;
-  }
-}
-
+/* Loading */
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #000000;
-  position: fixed;
-  top: 75px;
-  left: 0;
-  width: 100vw;
-  height: calc(100vh - 75px);
-  background-color: rgb(234, 234, 234);
+  padding: 64px 24px;
+  text-align: center;
 }
 
-.loading-logo {
-  width: 80px;
-  height: 80px;
-  animation: spin 2s linear infinite;
-  margin-bottom: 20px;
-  object-fit: contain;
+.loading-container p {
+  margin-top: 16px;
+  color: var(--secondary-color);
+  font-size: 1.1rem;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+
+.offers-header {
+  margin-bottom: 32px;
 }
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.search-container {
+  margin-block: 20px;
+}
+
+.search-and-selectors {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+/* Offer Selectors Styles */
+.offer-selectors {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-inline-end: 20px;
+}
+
+.selector-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-transform: none;
+  border: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.selector-button:not([color="primary"]) {
+  background-color: #f5f5f5;
+  color: var(--text-color);
+  border-color: #e0e0e0;
+}
+
+.selector-button:not([color="primary"]):hover {
+  background-color: #e8e8e8;
+  border-color: var(--primary-color);
+}
+
+.selector-button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Badge customization for selectors - Changed color to primary */
+::ng-deep .selector-button .mat-badge-content {
+  background-color:  white !important;
+  color:  var(--primary-color) !important;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+}
+
+/* Responsive design for selectors */
+@media (max-width: 768px) {
+  .search-and-selectors {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .search-field {
+    min-width: unset;
+    max-width: unset;
+  }
+  
+  .offer-selectors {
+    justify-content: center;
+  }
+  
+  .selector-button {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+  }
+}
+

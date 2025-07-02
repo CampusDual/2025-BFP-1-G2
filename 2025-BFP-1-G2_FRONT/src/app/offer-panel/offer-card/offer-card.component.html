@@ -26,19 +26,25 @@
   <div class="offer-stats">
     <div class="stat-item" *ngIf="offer.dateAdded">
       <mat-icon>schedule</mat-icon>
-      <span>Desde {{ offer.dateAdded | date:'yyyy' }}</span>
+      <span>{{ offer.dateAdded }}</span>
     </div>
-    <div class="applieStatus" *ngIf="offer?.isValid == 'PENDING'">
+    <div class="stat-item" *ngIf="offer?.isValid == 'PENDING'">
       <mat-icon class="pending-icon">hourglass_empty</mat-icon>
       <span class="pending">Pendiente</span>
     </div>
-    <div class="applieStatus" *ngIf="offer?.isValid == 'VALID'">
+    <div class="stat-item" *ngIf="offer?.isValid == 'VALID'">
       <mat-icon class="check-icon">check</mat-icon>
       <span class="valid">Validada</span>
     </div>
-    <div class="applieStatus" *ngIf="offer?.isValid == 'INVALID'">
+    <div class="stat-item" *ngIf="offer?.isValid == 'INVALID'">
       <mat-icon class="invalid-icon">close</mat-icon>
       <span class="invalid">Rechazada</span>
     </div>
+  </div>
+  <div class="offer-actions">
+    <button mat-raised-button color="primary" (click)="onViewDetails($event)">
+      <mat-icon>visibility</mat-icon>
+      Ver detalles
+    </button>
   </div>
 </div>
