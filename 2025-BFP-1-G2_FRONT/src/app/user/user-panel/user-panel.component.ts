@@ -1,10 +1,20 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService, User} from "../../auth/services/auth.service";
-
+import {MatIconModule} from "@angular/material/icon";
+import {NgClass, NgStyle} from "@angular/common";
+import {CommonModule} from "@angular/common";
 @Component({
   selector: 'app-user-panel',
   templateUrl: './user-panel.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    NgClass,
+    NgStyle
+  ],
   styleUrls: ['./user-panel.component.css']
 })
 export class UserPanelComponent implements OnInit, OnDestroy {

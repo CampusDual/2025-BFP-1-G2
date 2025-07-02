@@ -24,7 +24,7 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     UserRoutingModule,
-    
+
     // Angular Material
     MatIconModule,
     MatFormFieldModule,
@@ -33,7 +33,7 @@ import { SharedModule } from '../shared/shared.module';
     MatProgressSpinnerModule,
     MatButtonModule,
     MatSnackBarModule,
-    
+
     // Shared Components
     SharedModule
   ]

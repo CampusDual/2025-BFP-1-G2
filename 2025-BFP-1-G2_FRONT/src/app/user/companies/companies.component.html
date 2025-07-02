@@ -1,29 +1,28 @@
 <div class="companies-container">
-  
+
   <!-- Header con búsqueda -->
   <div class="companies-header">
     <h2 class="page-title">
       <mat-icon>business</mat-icon>
       Empresas
     </h2>
-    
+
     <div class="search-container">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Buscar empresas</mat-label>
-        <input 
-          matInput 
-          placeholder="Nombre, sector, ubicación..." 
+        <input
+          matInput
+          placeholder="Nombre, sector, ubicación..."
           [(ngModel)]="searchTerm"
           (input)="filterCompanies()"
         >
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
     </div>
-    
+
     <div class="filter-chips" *ngIf="availableTags.length > 0">
       <mat-label class="filter-label">Filtrar por áreas:</mat-label>
-      <mat-chip-listbox multiple [formControl]="tagsFilterControl" (selectionChange)="filterCompanies()">
-        <mat-chip-option *ngFor="let tag of availableTags" [value]="tag">
+      <mat-chip-listbox multiple [formControl]="tagsFilterControl" (change)="filterCompanies()">        <mat-chip-option *ngFor="let tag of availableTags" [value]="tag">
           {{tag.name}}
         </mat-chip-option>
       </mat-chip-listbox>
@@ -38,17 +37,17 @@
 
   <!-- Grid de tarjetas de empresas -->
   <div class="companies-grid" *ngIf="!isLoading && filteredCompanies.length > 0">
-    <div 
-      class="company-card" 
+    <div
+      class="company-card"
       *ngFor="let company of filteredCompanies; let i = index"
       (click)="openCompanyDetails(i)"
       [attr.data-index]="i"
     >
       <!-- Logo circular -->
       <div class="company-logo">
-        <img 
-          *ngIf="company.logo" 
-          [src]="company.logo" 
+        <img
+          *ngIf="company.logo"
+          [src]="company.logo"
           [alt]="company.name + ' logo'"
           (error)="onImageError($event)"
         >
@@ -68,8 +67,7 @@
           <mat-icon>location_on</mat-icon>
           {{ company.location }}
         </p>
-        <p class="company-description">{{ company.description | slice:0:120 }}{{ (company.description?.length || 0) > 120 ? '...' : '' }}</p>
-      </div>
+          <p class="company-description">{{ company.description | slice:0:120 }}{{ (company.description.length || 0) > 120 ? '...' : '' }}</p>      </div>
 
       <!-- Tags de la empresa -->
       <div class="company-tags" *ngIf="company.tags && company.tags.length > 0">
