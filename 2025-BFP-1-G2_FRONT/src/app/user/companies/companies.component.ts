@@ -130,7 +130,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     const metadata: { [key: string]: any } = {};
 
     if (company.foundedDate) {
-      metadata['Año de fundación'] = company.foundedDate;
+      metadata['Año de fundación'] = company.foundedDate? new Date(company.foundedDate).getFullYear() : 'Desconocido';
     }
 
     return metadata;

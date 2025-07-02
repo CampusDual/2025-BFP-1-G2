@@ -57,10 +57,6 @@ export class OfferService {
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
   }
-  getAllCompanies(): Observable<Company[]> {
-    return this.http.get<Company[]>(`${this.authUrl}/listCompanies`);
-  }
-
   getCandidateOffers(): Observable<Offer[]> {
     return this.http.get<Offer[]>(`${this.baseUrl}/myOffers`);
   }

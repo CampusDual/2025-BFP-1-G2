@@ -8,8 +8,9 @@ export interface Company {
   login: string;
   description: string;
   email: string;
+  phone?: string;
   logo?: string;
-  address?: string;
+  address?: string; 
   foundedDate?: string;
   url?: string;
 }
