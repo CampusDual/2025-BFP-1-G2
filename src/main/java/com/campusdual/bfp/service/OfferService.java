@@ -302,4 +302,19 @@ public class OfferService implements IOfferService {
         offer.setActive(false);
         OfferDao.saveAndFlush(offer);
     }
+
+    @Override
+    @Transactional
+    public void draftOffer(int offerId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Offer offer = OfferDao.getReferenceById(offerId);
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        offer.setActive(null); // null = draft
+        OfferDao.saveAndFlush(offer);
+    }
 }

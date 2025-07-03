@@ -151,4 +151,13 @@ public class CompanyController {
         companyService.archiveOffer(id, username);
         return ResponseEntity.ok().build();
     }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @PutMapping("/offers/draft/{id}")
+    public ResponseEntity<Void> draftOffer(@PathVariable int id, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        companyService.draftOffer(id, username);
+        return ResponseEntity.ok().build();
+    }
 }

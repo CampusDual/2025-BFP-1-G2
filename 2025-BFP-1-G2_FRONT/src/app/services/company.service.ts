@@ -72,4 +72,8 @@ export class CompanyService {
   archiveOffer(offerId: number): Observable<any> {
     return this.http.put(`${this.baseUrl}/offers/archive/${offerId}`, {}, { responseType: 'text' });
   }
+
+  draftOffer(offerId: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/offers/draft/${offerId}`, {});
+  }
 }

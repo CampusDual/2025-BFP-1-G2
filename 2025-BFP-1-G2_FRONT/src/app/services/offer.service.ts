@@ -24,7 +24,6 @@ export interface Offer {
   tags?: Tag[];
   valid?: Boolean;
   isActive?: boolean;
-  archived?: boolean;
   companyId?: number;
   companyName?: string;
   email?: string;
@@ -88,6 +87,10 @@ export class OfferService {
 
   archiveOffer(offerId: number): Observable<any> {
     return this.companyService.archiveOffer(offerId);
+  }
+
+  draftOffer(offerId: number): Observable<any> {
+    return this.companyService.draftOffer(offerId);
   }
 
 }

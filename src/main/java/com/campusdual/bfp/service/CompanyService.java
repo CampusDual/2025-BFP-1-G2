@@ -169,4 +169,22 @@ public class CompanyService implements ICompanyService {
         offer.setActive(false);
         offerDao.saveAndFlush(offer);
     }
+
+    @Override
+    @Transactional
+    public void draftOffer(int offerId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Company company = companyDao.findCompanyByUser(user);
+        if (company == null) throw new RuntimeException("Empresa no encontrada");
+
+        Offer offer = offerDao.getReferenceById(offerId);
+        if (offer.getCompany().getId() != company.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        offer.setActive(null); // null = draft
+        offerDao.saveAndFlush(offer);
+    }
 }

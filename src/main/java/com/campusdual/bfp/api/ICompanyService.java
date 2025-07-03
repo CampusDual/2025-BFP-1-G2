@@ -31,4 +31,6 @@ public interface ICompanyService {
     void publishOffer(int offerId, String username);
 
     void archiveOffer(int offerId, String username);
+
+    void draftOffer(int offerId, String username);
 }
