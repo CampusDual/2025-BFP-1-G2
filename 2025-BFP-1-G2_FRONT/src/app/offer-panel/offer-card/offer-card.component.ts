@@ -74,7 +74,7 @@ export class OfferCardComponent implements OnInit {
   }
 
   onToggleBookmark(event: Event) {
-    event.stopPropagation(); // Evitar que se abra la detailed card
+    event.stopPropagation(); 
     this.toggleBookmark.emit(this.offer.id);
   }
 }
