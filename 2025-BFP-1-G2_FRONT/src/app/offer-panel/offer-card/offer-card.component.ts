@@ -16,7 +16,7 @@ export class OfferCardComponent implements OnInit {
   @Output() toggleBookmark = new EventEmitter<number>();
 
   isDisabled: boolean = true;
-  isCompany: any;
+  isCandidate: any;
   candidates: any[] = [];
 
 
@@ -26,10 +26,10 @@ export class OfferCardComponent implements OnInit {
 
 
   ngOnInit() {
-    this.authService.hasRole('ROLE_COMPANY').subscribe({
+    this.authService.hasRole('ROLE_CANDIDATE').subscribe({
       next: (hasRole) => {
-        this.isCompany = hasRole;
-        if (this.isCompany) {
+        this.isCandidate = hasRole;
+        if (this.isCandidate) {
           this.offerService.getCandidates(this.offer.id).subscribe({
             next: (candidates) => {
               this.offer.candidates = candidates;
@@ -44,7 +44,7 @@ export class OfferCardComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error checking role:', error);
-        this.isCompany = false;
+        this.isCandidate = false;
       }
     });
   }
