@@ -36,6 +36,10 @@
           <span>Dashboard</span>
         </div>
 
+        <div class="nav-item" *ngIf="isCompany" routerLink="../company/profile" (click)="drawer.close()">
+          <mat-icon>person</mat-icon>
+          <span>Perfil Empresa</span>
+        </div>
       </mat-drawer>
       <mat-drawer-content>
 
