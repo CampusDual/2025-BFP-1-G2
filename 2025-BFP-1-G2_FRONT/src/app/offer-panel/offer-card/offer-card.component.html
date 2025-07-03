@@ -1,4 +1,16 @@
 <div class="offer-card">
+  <!-- Botón de bookmark en la esquina superior derecha -->
+  <button 
+    *ngIf="!isCompany" 
+    class="bookmark-button" 
+    mat-icon-button 
+    [class.bookmark-active]="isBookmarked"
+    (click)="onToggleBookmark($event)"
+    [attr.aria-label]="isBookmarked ? 'Quitar de guardados' : 'Guardar oferta'"
+  >
+    <mat-icon>{{ isBookmarked ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+  </button>
+
   <div class="offer-logo">
     <img *ngIf="offer.logo" [src]="offer.logo" [alt]="offer.login + ' logo'" (error)="onImageError($event)">
     <div *ngIf="!offer.logo" class="logo-placeholder">

@@ -30,7 +30,8 @@ export interface Offer {
   candidatesCount?: number;
   candidates?: Candidate[];
   isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
-  logo?: string; 
+  logo?: string;
+  isBookmarked?: boolean; // Indica si la oferta está marcada como favorita por el usuario
 }
 
 @Injectable({
@@ -42,7 +43,7 @@ export class OfferService {
   constructor(private http: HttpClient,
     private authService: AuthService,
     private companyService: CompanyService) { }
-    
+
 
   createOffer(offer: Offer): Observable<any> {
     return this.http.post(`${this.baseUrl}/add`, offer, { responseType: 'text' });
@@ -81,4 +82,20 @@ export class OfferService {
     return this.http.get<Offer[]>(`${this.baseUrl}/myOffers`);
   }
 
+  // Bookmark methods
+  addBookmark(offerId: number): Observable<string> {
+    return this.http.post(`${this.baseUrl}/bookmark/${offerId}`, {}, { responseType: 'text' });
+  }
+
+  removeBookmark(offerId: number): Observable<string> {
+    return this.http.delete(`${this.baseUrl}/bookmark/${offerId}`, { responseType: 'text' });
+  }
+
+  getUserBookmarksOffers(): Observable<Offer[]> {
+    return this.http.get<Offer[]>(`${this.baseUrl}/bookmarks`);
+  }
+
+  isBookmarked(offerId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}/bookmark/check/${offerId}`);
+  }
 }

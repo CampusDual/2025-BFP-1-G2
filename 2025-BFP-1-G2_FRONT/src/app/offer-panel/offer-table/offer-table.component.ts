@@ -31,7 +31,9 @@ export class OfferTableComponent implements OnDestroy {
   tagsFilterControl = new FormControl<Tag[]>([]);
 
   // New properties for offer view selection
-  currentOfferView: 'all' | 'recommended' | 'applied' = 'all';
+  currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
+  bookmarkedOffers: number[] = []; // Array de IDs de ofertas guardadas
+  serverBookmarkedOffers: any[] = []; // Ofertas bookmarked del servidor
 
   isLoading = true;
 
@@ -83,6 +85,9 @@ export class OfferTableComponent implements OnDestroy {
     this.authService.hasRole('ROLE_CANDIDATE').subscribe({
       next: (hasRole) => {
         this.isCandidate = hasRole;
+        if (hasRole) {
+          this.loadBookmarksFromServer();
+        }
       }
     });
   }
@@ -284,6 +289,14 @@ export class OfferTableComponent implements OnDestroy {
       }
 
     } else if (this.isCandidate) {
+      // Acción de bookmark para candidatos
+      actions.push({
+        label: this.isBookmarked(offer.id) ? 'Quitar bookmark' : 'Guardar bookmark',
+        action: 'toggleBookmark',
+        color: this.isBookmarked(offer.id) ? 'warn' : 'primary',
+        icon: this.isBookmarked(offer.id) ? 'bookmark' : 'bookmark_border',
+        data: { offer: offer }
+      });
 
       if (offer.isValid === 'VALID') {
         actions.push({
@@ -351,6 +364,12 @@ export class OfferTableComponent implements OnDestroy {
         this.router.navigate(['/company/candidates'], {
           queryParams: { offerId: data.offerId, offerTitle: data.offerTitle }
         });
+        break;
+
+      case 'toggleBookmark':
+        this.toggleBookmark(data.offer.id);
+        // Refrescar la detailed card para actualizar el botón
+        this.refreshDetailedCard();
         break;
 
       case 'loginToApply':
@@ -463,7 +482,7 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   // New methods for offer view selection
-  setOfferView(view: 'all' | 'recommended' | 'applied') {
+  setOfferView(view: 'all' | 'recommended' | 'applied' | 'bookmarks') {
     this.currentOfferView = view;
   }
 
@@ -475,12 +494,95 @@ export class OfferTableComponent implements OnDestroy {
     return this.selectedCandidaturesOffers().length;
   }
 
+  getBookmarkedOffersCount(): number {
+    return this.getBookmarkedOffers().length;
+  }
+
+  getBookmarkedOffers(): any[] {
+    return this.serverBookmarkedOffers;
+  }
+
+  toggleBookmark(offerId: number) {
+    const isCurrentlyBookmarked = this.isBookmarked(offerId);
+    
+    if (isCurrentlyBookmarked) {
+      // Remover bookmark
+      this.offerService.removeBookmark(offerId).subscribe({
+        next: (response) => {
+          this.snackBar.open('Oferta eliminada de guardados', 'Cerrar', { duration: 2000 });
+          this.loadBookmarksFromServer();
+          // Actualizar detailed card si está abierta
+          this.refreshDetailedCard();
+        },
+        error: (error) => {
+          console.error('Error removing bookmark:', error);
+          this.snackBar.open('Error al eliminar el bookmark', 'Cerrar', { 
+            duration: 2000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    } else {
+      // Agregar bookmark
+      this.offerService.addBookmark(offerId).subscribe({
+        next: (response) => {
+          this.snackBar.open('Oferta guardada correctamente', 'Cerrar', { duration: 2000 });
+          this.loadBookmarksFromServer();
+          // Actualizar detailed card si está abierta
+          this.refreshDetailedCard();
+        },
+        error: (error) => {
+          console.error('Error adding bookmark:', error);
+          this.snackBar.open('Error al guardar el bookmark', 'Cerrar', { 
+            duration: 2000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    }
+  }
+
+  isBookmarked(offerId: number): boolean {
+    return this.serverBookmarkedOffers.some(offer => offer.id === offerId);
+  }
+
+  private loadBookmarksFromServer() {
+    if (this.isCandidate) {
+      this.offerService.getUserBookmarksOffers().subscribe({
+        next: (bookmarks) => {
+          this.serverBookmarkedOffers = bookmarks;
+          // Actualizar el array de IDs para compatibilidad
+          this.bookmarkedOffers = bookmarks.map(offer => offer.id || 0).filter(id => id > 0);
+        },
+        error: (error) => {
+          console.error('Error loading bookmarks:', error);
+          // Mantener compatibilidad con localStorage como fallback
+          this.loadBookmarksFromLocalStorage();
+        }
+      });
+    }
+  }
+
+  // Métodos de localStorage como fallback
+  private saveBookmarksToLocalStorage() {
+    localStorage.setItem('bookmarkedOffers', JSON.stringify(this.bookmarkedOffers));
+  }
+
+  private loadBookmarksFromLocalStorage() {
+    const saved = localStorage.getItem('bookmarkedOffers');
+    if (saved) {
+      this.bookmarkedOffers = JSON.parse(saved);
+    }
+  }
+
   getCurrentViewOffers(): any[] {
     switch (this.currentOfferView) {
       case 'recommended':
         return this.recomendedOffers();
       case 'applied':
         return this.selectedCandidaturesOffers();
+      case 'bookmarks':
+        return this.getBookmarkedOffers();
       default:
         return this.offers;
     }
@@ -604,6 +706,16 @@ export class OfferTableComponent implements OnDestroy {
     
     if (offerIndex !== -1) {
       this.openDetailedCard(offerIndex);
+    }
+  }
+
+  private refreshDetailedCard() {
+    if (this.showDetailedCard && this.detailedCardData.length > 0) {
+      // Actualizar las acciones del item currente
+      const currentOffer = this.getCurrentViewOffers()[this.currentDetailIndex];
+      if (currentOffer) {
+        this.detailedCardData[this.currentDetailIndex].actions = this.getActionsForOffer(currentOffer);
+      }
     }
   }
 }
