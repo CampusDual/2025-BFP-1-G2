@@ -30,7 +30,7 @@ export class OfferTableComponent implements OnDestroy {
   selectedCandidatures: any[] = [];
   tagsFilterControl = new FormControl<Tag[]>([]);
 
-  // New properties for offer view selection
+
   currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
   bookmarkedOffers: number[] = []; // Array de IDs de ofertas guardadas
   serverBookmarkedOffers: any[] = []; // Ofertas bookmarked del servidor
@@ -291,7 +291,7 @@ export class OfferTableComponent implements OnDestroy {
     } else if (this.isCandidate) {
       // Acción de bookmark para candidatos
       actions.push({
-        label: this.isBookmarked(offer.id) ? 'Quitar bookmark' : 'Guardar bookmark',
+        label: this.isBookmarked(offer.id) ? 'Quitar' : 'Guardar',
         action: 'toggleBookmark',
         color: this.isBookmarked(offer.id) ? 'warn' : 'primary',
         icon: this.isBookmarked(offer.id) ? 'bookmark' : 'bookmark_border',
@@ -511,7 +511,6 @@ export class OfferTableComponent implements OnDestroy {
         next: (response) => {
           this.snackBar.open('Oferta eliminada de guardados', 'Cerrar', { duration: 2000 });
           this.loadBookmarksFromServer();
-          // Actualizar detailed card si está abierta
           this.refreshDetailedCard();
         },
         error: (error) => {
@@ -523,12 +522,10 @@ export class OfferTableComponent implements OnDestroy {
         }
       });
     } else {
-      // Agregar bookmark
       this.offerService.addBookmark(offerId).subscribe({
         next: (response) => {
           this.snackBar.open('Oferta guardada correctamente', 'Cerrar', { duration: 2000 });
           this.loadBookmarksFromServer();
-          // Actualizar detailed card si está abierta
           this.refreshDetailedCard();
         },
         error: (error) => {
@@ -551,29 +548,21 @@ export class OfferTableComponent implements OnDestroy {
       this.offerService.getUserBookmarksOffers().subscribe({
         next: (bookmarks) => {
           this.serverBookmarkedOffers = bookmarks;
-          // Actualizar el array de IDs para compatibilidad
-          this.bookmarkedOffers = bookmarks.map(offer => offer.id || 0).filter(id => id > 0);
+            this.bookmarkedOffers = bookmarks.map(offer => offer.id || 0).filter(id => id > 0); 
+            this.serverBookmarkedOffers = bookmarks.map(offer => ({
+            ...offer,
+            dateAdded: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : ''
+            }));
+
         },
         error: (error) => {
           console.error('Error loading bookmarks:', error);
-          // Mantener compatibilidad con localStorage como fallback
-          this.loadBookmarksFromLocalStorage();
         }
       });
     }
   }
 
-  // Métodos de localStorage como fallback
-  private saveBookmarksToLocalStorage() {
-    localStorage.setItem('bookmarkedOffers', JSON.stringify(this.bookmarkedOffers));
-  }
 
-  private loadBookmarksFromLocalStorage() {
-    const saved = localStorage.getItem('bookmarkedOffers');
-    if (saved) {
-      this.bookmarkedOffers = JSON.parse(saved);
-    }
-  }
 
   getCurrentViewOffers(): any[] {
     switch (this.currentOfferView) {
