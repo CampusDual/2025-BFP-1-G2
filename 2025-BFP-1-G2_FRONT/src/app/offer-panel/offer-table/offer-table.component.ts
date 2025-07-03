@@ -3,10 +3,11 @@ import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
 import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
 import { TagService } from 'src/app/services/tag.service';
+import { Offer } from '../offer-panel.module';
 
 @Component({
   selector: 'app-offer-table',
@@ -16,9 +17,7 @@ import { TagService } from 'src/app/services/tag.service';
 export class OfferTableComponent implements OnDestroy {
 
 
-  @ViewChild('scrollContainer') scrollContainer: ElementRef | undefined;
-  @ViewChild('scrollContainerApplies') scrollContainerApplies: ElementRef | undefined;
-  offers: any[] = [];
+  offers: Offer[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
   showDetailedCard = false;
@@ -29,10 +28,13 @@ export class OfferTableComponent implements OnDestroy {
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
   selectedCandidatures: any[] = [];
+  tagsFilterControl = new FormControl<Tag[]>([]);
 
-  sliderValue = 0;
-  maxSliderValue = 100;
-  isScrolling = false;
+
+  currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
+  bookmarkedOffers: number[] = []; // Array de IDs de ofertas guardadas
+  serverBookmarkedOffers: any[] = []; // Ofertas bookmarked del servidor
+
   isLoading = true;
 
   constructor(
@@ -83,6 +85,9 @@ export class OfferTableComponent implements OnDestroy {
     this.authService.hasRole('ROLE_CANDIDATE').subscribe({
       next: (hasRole) => {
         this.isCandidate = hasRole;
+        if (hasRole) {
+          this.loadBookmarksFromServer();
+        }
       }
     });
   }
@@ -103,9 +108,11 @@ export class OfferTableComponent implements OnDestroy {
           metadata: {
             email: offer.email,
             companyName: offer.companyName,
-            dateAdded: offer.dateAdded
+            dateAdded: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : '',
           },
+          logo: offer.logo || '',
         }));
+        this.isLoading = false;
         this.offerService.getCandidateOffers().subscribe({
           next: (offers: any[]) => {
             this.selectedCandidatures = offers.map((offer: any) => ({
@@ -118,7 +125,8 @@ export class OfferTableComponent implements OnDestroy {
               candidatesCount: offer.candidatesCount || 0,
               candidates: offer.candidates || [],
               tags: offer.tags || [],
-              isValid: offer.candidateValid === true ? 'VALID' : offer.candidateValid === false ? 'INVALID' : 'PENDING'
+              isValid: offer.candidateValid === true ? 'VALID' : offer.candidateValid === false ? 'INVALID' : 'PENDING',
+              logo: offer.logo || ''
             }));
             this.offers = this.offers.map(offer => {
               const matched = this.selectedCandidatures.find(sel => sel.id === offer.id);
@@ -134,7 +142,7 @@ export class OfferTableComponent implements OnDestroy {
         });
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
-        this.isLoading = false;
+        
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
@@ -142,24 +150,6 @@ export class OfferTableComponent implements OnDestroy {
     });
 
 
-  }
-
-  scrollLeftApplies() {
-    const container = this.scrollContainerApplies?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: -scrollAmount,
-      behavior: 'smooth'
-    });
-  }
-
-  scrollRightApplies() {
-    const container = this.scrollContainerApplies?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: scrollAmount,
-      behavior: 'smooth'
-    });
   }
 
   openDetailedCardFromApplied(offerIndex: number) {
@@ -299,6 +289,14 @@ export class OfferTableComponent implements OnDestroy {
       }
 
     } else if (this.isCandidate) {
+      // Acción de bookmark para candidatos
+      actions.push({
+        label: this.isBookmarked(offer.id) ? 'Quitar' : 'Guardar',
+        action: 'toggleBookmark',
+        color: this.isBookmarked(offer.id) ? 'warn' : 'primary',
+        icon: this.isBookmarked(offer.id) ? 'bookmark' : 'bookmark_border',
+        data: { offer: offer }
+      });
 
       if (offer.isValid === 'VALID') {
         actions.push({
@@ -368,6 +366,12 @@ export class OfferTableComponent implements OnDestroy {
         });
         break;
 
+      case 'toggleBookmark':
+        this.toggleBookmark(data.offer.id);
+        // Refrescar la detailed card para actualizar el botón
+        this.refreshDetailedCard();
+        break;
+
       case 'loginToApply':
         this.redirectToLogin(data.offer);
         break;
@@ -430,15 +434,32 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   filterOffers(): any[] {
-    const searchTerm = this.searchTerm.toLowerCase();
-    const filtered = this.offers.filter((offer: any) =>
-      offer.title.toLowerCase().includes(searchTerm) ||
-      offer.description.toLowerCase().includes(searchTerm)
-    );
+    // Get the base offers based on current view
+    let filtered = [...this.getCurrentViewOffers()];
+    
+    if (this.searchTerm.trim()) {
+      const searchLower = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(offer =>
+        offer.title.toLowerCase().includes(searchLower) ||
+        offer.description.toLowerCase().includes(searchLower) ||
+        offer.companyName.toLowerCase().includes(searchLower) ||
+        offer.email.toLowerCase().includes(searchLower)
+      );
+    }
 
+    if (this.tagsFilterControl.value) {
+      const selectedTags = this.tagsFilterControl.value || [];
+      if (selectedTags.length > 0) {
+        const selectedTagIds = selectedTags.map(tag => tag.id);
+        filtered = filtered.filter((offer: any) =>
+          offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id))
+        );
+      }
+    }
     return filtered;
   }
 
+ 
   recomendedOffers(): any[] {
     const selectedTagIds = this.selectedTags.map(tag => tag.id);
     let filtered = this.offers.filter((offer: any) =>
@@ -458,6 +479,102 @@ export class OfferTableComponent implements OnDestroy {
       offer.id
     );
     return filtered;
+  }
+
+  // New methods for offer view selection
+  setOfferView(view: 'all' | 'recommended' | 'applied' | 'bookmarks') {
+    this.currentOfferView = view;
+  }
+
+  getRecommendedOffersCount(): number {
+    return this.recomendedOffers().length;
+  }
+
+  getAppliedOffersCount(): number {
+    return this.selectedCandidaturesOffers().length;
+  }
+
+  getBookmarkedOffersCount(): number {
+    return this.getBookmarkedOffers().length;
+  }
+
+  getBookmarkedOffers(): any[] {
+    return this.serverBookmarkedOffers;
+  }
+
+  toggleBookmark(offerId: number) {
+    const isCurrentlyBookmarked = this.isBookmarked(offerId);
+    
+    if (isCurrentlyBookmarked) {
+      // Remover bookmark
+      this.offerService.removeBookmark(offerId).subscribe({
+        next: (response) => {
+          this.snackBar.open('Oferta eliminada de guardados', 'Cerrar', { duration: 2000 });
+          this.loadBookmarksFromServer();
+          this.refreshDetailedCard();
+        },
+        error: (error) => {
+          console.error('Error removing bookmark:', error);
+          this.snackBar.open('Error al eliminar el bookmark', 'Cerrar', { 
+            duration: 2000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    } else {
+      this.offerService.addBookmark(offerId).subscribe({
+        next: (response) => {
+          this.snackBar.open('Oferta guardada correctamente', 'Cerrar', { duration: 2000 });
+          this.loadBookmarksFromServer();
+          this.refreshDetailedCard();
+        },
+        error: (error) => {
+          console.error('Error adding bookmark:', error);
+          this.snackBar.open('Error al guardar el bookmark', 'Cerrar', { 
+            duration: 2000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    }
+  }
+
+  isBookmarked(offerId: number): boolean {
+    return this.serverBookmarkedOffers.some(offer => offer.id === offerId);
+  }
+
+  private loadBookmarksFromServer() {
+    if (this.isCandidate) {
+      this.offerService.getUserBookmarksOffers().subscribe({
+        next: (bookmarks) => {
+          this.serverBookmarkedOffers = bookmarks;
+            this.bookmarkedOffers = bookmarks.map(offer => offer.id || 0).filter(id => id > 0); 
+            this.serverBookmarkedOffers = bookmarks.map(offer => ({
+            ...offer,
+            dateAdded: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : ''
+            }));
+
+        },
+        error: (error) => {
+          console.error('Error loading bookmarks:', error);
+        }
+      });
+    }
+  }
+
+
+
+  getCurrentViewOffers(): any[] {
+    switch (this.currentOfferView) {
+      case 'recommended':
+        return this.recomendedOffers();
+      case 'applied':
+        return this.selectedCandidaturesOffers();
+      case 'bookmarks':
+        return this.getBookmarkedOffers();
+      default:
+        return this.offers;
+    }
   }
 
   onDetailedCardSave(editedOffer: any) {
@@ -558,36 +675,6 @@ export class OfferTableComponent implements OnDestroy {
     return selectedTags.length;
   }
 
-  scrollLeft() {
-    const container = this.scrollContainer?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: -scrollAmount,
-      behavior: 'smooth'
-    });
-  }
-
-  scrollRight() {
-    const container = this.scrollContainer?.nativeElement;
-    const scrollAmount = 1000;
-    container.scrollBy({
-      left: scrollAmount,
-      behavior: 'smooth'
-    });
-  }
-
-  onSliderChange(event: any): void {
-
-    const sliderValue = event.value || event.target?.value || 0;
-    const container = this.scrollContainer?.nativeElement;
-    const maxScrollLeft = container.scrollWidth - container.clientWidth;
-    const targetScrollLeft = (sliderValue / 100) * maxScrollLeft;
-
-    container.scrollTo({
-      left: targetScrollLeft
-    });
-  }
-
   private disableBodyScroll(): void {
     document.body.style.overflow = 'hidden';
     document.body.style.height = '100vh';
@@ -600,5 +687,24 @@ export class OfferTableComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.enableBodyScroll();
+  }
+
+  onViewDetails(offer: any) {
+    const filteredOffers = this.filterOffers();
+    const offerIndex = filteredOffers.findIndex(o => o.id === offer.id);
+    
+    if (offerIndex !== -1) {
+      this.openDetailedCard(offerIndex);
+    }
+  }
+
+  private refreshDetailedCard() {
+    if (this.showDetailedCard && this.detailedCardData.length > 0) {
+      // Actualizar las acciones del item currente
+      const currentOffer = this.getCurrentViewOffers()[this.currentDetailIndex];
+      if (currentOffer) {
+        this.detailedCardData[this.currentDetailIndex].actions = this.getActionsForOffer(currentOffer);
+      }
+    }
   }
 }

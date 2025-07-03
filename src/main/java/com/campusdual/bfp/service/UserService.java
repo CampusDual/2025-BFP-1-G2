@@ -200,7 +200,6 @@ public class UserService implements UserDetailsService, IUserService {
     public List<CandidateDTO> getAllCandidates() {
         List<Candidate> candidates = this.candidateDao.findAll();
         System.out.println("Candidates found: " + candidates.size());
-
         List<CandidateDTO> candidateDTOs = CandidateMapper.INSTANCE.toDTOList(candidates);
 
         for (int i = 0; i < candidates.size(); i++) {

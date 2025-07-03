@@ -1,8 +1,6 @@
 package com.campusdual.bfp.model.dto;
 
 
-import java.util.Date;
-
 public class CandidateDTO extends SignupDTO {
 
     private String phoneNumber;

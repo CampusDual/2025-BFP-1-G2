@@ -1,12 +1,20 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.IOfferService;
+import com.campusdual.bfp.model.CandidateBookmarks;
+import com.campusdual.bfp.model.Offer;
+import com.campusdual.bfp.model.User;
+import com.campusdual.bfp.model.dao.CandidateBookmarksDao;
+import com.campusdual.bfp.model.dao.OfferDao;
+import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
+import com.campusdual.bfp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -18,6 +26,15 @@ public class OfferController {
 
     @Autowired
     private IOfferService offerService;
+
+    @Autowired
+    private CandidateBookmarksDao candidateBookmarksDao;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private OfferDao offerDao;
 
     @GetMapping
     public ResponseEntity<String> testController() {
@@ -97,27 +114,27 @@ public class OfferController {
     @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping(value = "/candidates/{OfferID}")
     public ResponseEntity<List<CandidateDTO>> getCandidatesFromOffer(
-            @PathVariable("OfferID") int OfferID) {
-        if (OfferID <= 0) {
+            @PathVariable("OfferID") int offerID) {
+        if (offerID <= 0) {
             return ResponseEntity.badRequest().body(null);
         }
-        List<CandidateDTO> candidates = offerService.getCompanyOffersCandidates(OfferID);
+        List<CandidateDTO> candidates = offerService.getCompanyOffersCandidates(offerID);
         return ResponseEntity.ok(candidates);
     }
 
     @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping(value = "/update/{OfferID}")
     public ResponseEntity<String> updateValidUser(
-            @PathVariable("OfferID") int OfferID,
+            @PathVariable("OfferID") int offerID,
             @RequestBody CandidateDTO candidateDTO) {
-        if (OfferID <= 0) {
+        if (offerID <= 0) {
             return ResponseEntity.badRequest().body(null);
         }
         if (candidateDTO.getLogin() == null) {
             return ResponseEntity.badRequest().body("Invalid candidate data");
         }
         try {
-            offerService.updateCandidateValidity(OfferID, candidateDTO);
+            offerService.updateCandidateValidity(offerID, candidateDTO);
         }catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -130,6 +147,58 @@ public class OfferController {
         String username = principal.getName();
         List<OfferDTO> offers = offerService.getMyOffers(username);
         return ResponseEntity.ok(offers);
+    }
+
+
+    @PostMapping("/bookmark/{offerId}")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<String> addBookmark(@PathVariable int offerId, Principal principal) {
+        User user = userDao.findByLogin(principal.getName());
+        if (user == null) {
+            return ResponseEntity.badRequest().body("Usuario no encontrado");
+        }
+
+        Offer offer = offerDao.findById(offerId)
+                .orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+
+        if (candidateBookmarksDao.existsByUserIdAndOfferId(user.getId(), offerId)) {
+            return ResponseEntity.badRequest().body("Esta oferta ya está guardada");
+        }
+
+        CandidateBookmarks bookmark = new CandidateBookmarks(user, offer);
+        candidateBookmarksDao.save(bookmark);
+
+        return ResponseEntity.ok("Oferta guardada correctamente");
+    }
+
+    @DeleteMapping("/bookmark/{offerId}")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<String> removeBookmark(@PathVariable int offerId, Principal principal) {
+        User user = userDao.findByLogin(principal.getName());
+        if (user == null) {
+            return ResponseEntity.badRequest().body("Usuario no encontrado");
+        }
+
+        candidateBookmarksDao.deleteByUserIdAndOfferId(user.getId(), offerId);
+        return ResponseEntity.ok("Oferta eliminada de guardados");
+    }
+
+    @GetMapping("/bookmarks")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<List<OfferDTO>> getUserBookmarks(Principal principal) {
+        List<OfferDTO> bookmarks = offerService.getUserBookmarks(principal.getName());
+        return ResponseEntity.ok(bookmarks);
+    }
+
+    @GetMapping("/bookmark/check/{offerId}")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<Boolean> isBookmarked(@PathVariable int offerId, Principal principal) {
+        User user = userDao.findByLogin(principal.getName());
+        if (user == null) {
+            return ResponseEntity.ok(false);
+        }
+        boolean isBookmarked = candidateBookmarksDao.existsByUserIdAndOfferId(user.getId(), offerId);
+        return ResponseEntity.ok(isBookmarked);
     }
 
 }

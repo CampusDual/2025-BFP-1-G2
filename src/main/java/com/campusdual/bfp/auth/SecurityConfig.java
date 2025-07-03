@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/offer/getAll").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/{offerId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
 
                 // Tags - administración
                 .antMatchers(HttpMethod.POST, "/api/tags/add").hasRole("ADMIN")
@@ -65,6 +66,7 @@ public class SecurityConfig {
 
                 // Ofertas
                 .antMatchers(HttpMethod.DELETE, "/api/offer/delete/**").hasRole("COMPANY")
+                .antMatchers(HttpMethod.DELETE, "/api/offer/bookmark/**").hasRole("CANDIDATE")
                 .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
 
                 .anyRequest().authenticated()

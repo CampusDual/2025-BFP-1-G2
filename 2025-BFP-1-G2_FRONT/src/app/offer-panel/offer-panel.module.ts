@@ -9,7 +9,6 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatIconModule} from "@angular/material/icon";
 import {MatBadgeModule} from '@angular/material/badge';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { DetailedCardComponent } from '../detailed-card/detailed-card.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatTableModule} from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +19,8 @@ import {  MatListModule} from "@angular/material/list";
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { SharedModule } from '../shared/shared.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 export interface Offer {
@@ -34,13 +35,11 @@ export interface Offer {
 @NgModule({
   declarations: [
     OfferTableComponent,
-    OfferCardComponent,
-    DetailedCardComponent
+    OfferCardComponent
   ],
   exports: [
     OfferTableComponent,
-    OfferCardComponent,
-    DetailedCardComponent
+    OfferCardComponent
     ],
   imports: [
     CommonModule,
@@ -60,7 +59,9 @@ export interface Offer {
     MatListModule,
     MatSliderModule,
     MatDividerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    SharedModule,
+    MatProgressSpinnerModule
   ],
 })
 export class OfferPanelModule { }

@@ -1,21 +1,10 @@
 import { Component } from '@angular/core';
 import { DetailedCardData } from "../../detailed-card/detailed-card.component";
 import { AdminService } from 'src/app/services/admin.service';
+import { CompanyService, Company } from 'src/app/services/company.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-
-export interface Company {
-  id: number;
-  logo: string;
-  login: string;
-  description: string;
-  email: string;
-  phone: string;
-  url: string;
-  address: string;
-  foundedDate: number;
-}
 
 @Component({
   selector: 'app-admin-panel',
@@ -34,6 +23,7 @@ export class AdminPanelComponent {
 
   constructor(
     private adminService: AdminService,
+    private companyService: CompanyService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder
   ) {
@@ -52,21 +42,14 @@ export class AdminPanelComponent {
   }
 
   loadCompanies() {
-    this.adminService.getCompanies().subscribe({
+    this.companyService.getCompanies().subscribe({
       next: (companies: Company[]) => {
         this.companies = companies
           .slice()
           .sort((a, b) => a.login.localeCompare(b.login))
           .map(company => ({
-            id: company.id,
-            logo: company.logo,
-            login: company.login,
-            description: company.description,
-            email: company.email,
-            phone: company.phone,
-            url: company.url,
-            address: company.address,
-            foundedDate: new Date(company.foundedDate).getFullYear()
+            ...company,
+            foundedDate: company.foundedDate ? new Date(company.foundedDate).toISOString().split('T')[0] : ''
           }));
         if (!this.isAddingNewCompany) {
           this.createDetailedCardData();
@@ -93,10 +76,9 @@ export class AdminPanelComponent {
       form: this.createCompanyFormForEdit(company),
       metadata: {
         logo: company.logo,
-        telefono: company.phone,
+        ubicacion: company.address,
         web: company.url,
-        direccion: company.address,
-        fundación: company.foundedDate
+        fundación: company.foundedDate ? new Date(company.foundedDate).getFullYear() : ''
       },
       actions: [
         {
@@ -112,13 +94,13 @@ export class AdminPanelComponent {
 
   private createCompanyForm(): FormGroup {
     return this.fb.group({
-      login: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      login: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      phone: ['', [Validators.required, Validators.pattern(/^[+]?[\d\s\-\(\)]+$/)]],
-      url: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
-      address: ['', [Validators.required, Validators.minLength(5)]],
-      foundedDate: ['', [Validators.required, Validators.min(1800), Validators.max(new Date().getFullYear())]],
+      address: ['', [Validators.maxLength(100)]],
+      url: ['', [Validators.pattern(/^https?:\/\/.+/)]],
+      phone: ['', [Validators.pattern(/^\+?[0-9\s-]+$/)]],
+      foundedDate: [''],
       logo: ['']
     });
   }
@@ -129,11 +111,11 @@ export class AdminPanelComponent {
       login: company.login,
       email: company.email,
       description: company.description,
-      phone: company.phone,
-      url: company.url,
-      address: company.address,
-      foundedDate: company.foundedDate,
-      logo: company.logo
+      address: company.address || '',
+      url: company.url || '',
+      foundedDate: company.foundedDate || '',
+      logo: company.logo || '',
+      phone: company.phone || ''
     });
     return form;
   }
@@ -159,10 +141,11 @@ export class AdminPanelComponent {
       login: '',
       email: '',
       description: '',
-      phone: '',
-      url: 'https://',
+      sector: '',
       address: '',
-      foundedDate: new Date().getFullYear(),
+      url: 'https://',
+      employeeCount: '',
+      foundedDate: '',
       logo: ''
     });
 
@@ -179,10 +162,11 @@ export class AdminPanelComponent {
       form: newCompanyForm,
       metadata: {
         logo: '',
-        telefono: '',
+        sector: '',
+        ubicacion: '',
         web: 'https://',
-        direccion: '',
-        fundación: new Date().getFullYear()
+        empleados: '',
+        fundación: ''
       }
     }];
 
@@ -206,16 +190,15 @@ export class AdminPanelComponent {
 
     if (this.isAddingNewCompany) {
       if (confirm(`¿Crear nueva empresa "${formValue.login}"?`)) {
-        this.adminService.createCompany({
+        this.companyService.createCompany({
           id: 0,
-          logo: formValue.logo || '',
           login: formValue.login,
-          description: formValue.description,
           email: formValue.email,
-          phone: formValue.phone,
-          url: formValue.url,
-          address: formValue.address,
-          foundedDate: new Date(formValue.foundedDate, 0, 1).getTime()
+          description: formValue.description,
+          logo: formValue.logo || undefined,
+          address: formValue.address || undefined,
+          url: formValue.url || undefined,
+          foundedDate: formValue.foundedDate || undefined
         }).subscribe({
           next: () => {
             this.snackBar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
@@ -234,16 +217,15 @@ export class AdminPanelComponent {
       }
     } else {
       if (confirm(`¿Actualizar empresa "${formValue.login}"?`)) {
-        this.adminService.updateCompany({
+        this.companyService.updateCompany({
           id: editedData.id as number,
-          logo: formValue.logo || '',
           login: formValue.login,
-          description: formValue.description,
           email: formValue.email,
-          phone: formValue.phone,
-          url: formValue.url,
-          address: formValue.address,
-          foundedDate: new Date(formValue.foundedDate, 0, 1).getTime()
+          description: formValue.description,
+          logo: formValue.logo || undefined,
+          address: formValue.address || undefined,
+          url: formValue.url || undefined,
+          foundedDate: formValue.foundedDate || undefined
         }).subscribe({
           next: () => {
             this.snackBar.open('Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
@@ -266,7 +248,7 @@ export class AdminPanelComponent {
     switch (action) {
       case 'deleteCompany':
         if (confirm(`¿Estás seguro de que quieres eliminar la empresa "${data.Company.login}"?`)) {
-          this.adminService.deleteCompany(data.Company.id).subscribe({
+          this.companyService.deleteCompany(data.Company.id).subscribe({
             next: () => {
               this.showDetailedCard = false;
               this.isAddingNewCompany = false;

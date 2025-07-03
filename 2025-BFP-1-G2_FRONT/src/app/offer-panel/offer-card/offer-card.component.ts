@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from "../../auth/services/auth.service";
 import { OfferService } from "../../services/offer.service";
 
@@ -11,6 +11,9 @@ import { OfferService } from "../../services/offer.service";
 export class OfferCardComponent implements OnInit {
 
   @Input() offer: any;
+  @Input() isBookmarked: boolean = false;
+  @Output() viewDetails = new EventEmitter<any>();
+  @Output() toggleBookmark = new EventEmitter<number>();
 
   isDisabled: boolean = true;
   isCompany: any;
@@ -59,6 +62,20 @@ export class OfferCardComponent implements OnInit {
       return 0;
     }
     return this.offer.tags.length - 3;
+  }
+  
+  onImageError(event: any) {
+    event.target.style.display = 'none';
+  }
+
+  onViewDetails(event: Event) {
+    event.stopPropagation();
+    this.viewDetails.emit(this.offer);
+  }
+
+  onToggleBookmark(event: Event) {
+    event.stopPropagation(); // Evitar que se abra la detailed card
+    this.toggleBookmark.emit(this.offer.id);
   }
 }
 

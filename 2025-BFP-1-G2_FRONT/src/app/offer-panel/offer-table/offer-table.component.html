@@ -1,60 +1,77 @@
-<div class="offer-recommendations-container" *ngIf="isCandidate && recomendedOffers().length > 0">
-  <mat-list class="offer-recommendations">
-    <div class="scroll-buttons">
-      <button mat-fab class="nav-button prev-button" (click)="scrollLeft()">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <h3>Ofertas recomendadas</h3>
-      <button mat-fab class="nav-button next-button" (click)="scrollRight()">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
+<div class="offers-container">
+  <div class="offers-header">
+    <h2 class="page-title">
+      <mat-icon>work</mat-icon>
+      Ofertas
+    </h2>
+    <div class="filter-chips" *ngIf="availableTags.length > 0">
+      <mat-label class="filter-label">Filtrar por áreas:</mat-label>
+      <mat-chip-listbox multiple [formControl]="tagsFilterControl" (change)="filterOffers()"> <mat-chip-option
+          *ngFor="let tag of availableTags" [value]="tag">
+          {{tag.name}}
+        </mat-chip-option>
+      </mat-chip-listbox>
     </div>
-    <mat-divider></mat-divider>
-    <div class="scroll-wrapper">
-      <div class="scroll-container" #scrollContainer>
-        <app-offer-card class="your-cards" *ngFor="let offer of recomendedOffers(); let i = index" [offer]="offer"
-                        (click)="openDetailedCardFromSuggested(i)">
-        </app-offer-card>
+    <div class="search-container">
+      <div class="search-and-selectors">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar ofertas</mat-label>
+          <input matInput placeholder="Oferta, ubicación, empresa..." [(ngModel)]="searchTerm" (input)="filterOffers()">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="offer-selectors" *ngIf="isCandidate">
+          <button mat-raised-button [color]="currentOfferView === 'recommended' ? 'primary' : ''"
+            class="selector-button" (click)="setOfferView('recommended')" matBadge="{{ getRecommendedOffersCount() }}"
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getRecommendedOffersCount() === 0">
+            <mat-icon>star</mat-icon>
+            Recomendadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferView === 'applied' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferView('applied')" matBadge="{{ getAppliedOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getAppliedOffersCount() === 0">
+            <mat-icon>assignment_turned_in</mat-icon>
+            Aplicadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferView === 'bookmarks' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferView('bookmarks')" matBadge="{{ getBookmarkedOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getBookmarkedOffersCount() === 0">
+            <mat-icon>bookmark</mat-icon>
+            Guardadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferView === 'all' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferView('all')">
+            <mat-icon>list</mat-icon>
+            Todas
+          </button>
+        </div>
       </div>
     </div>
-    <mat-divider></mat-divider>
-  </mat-list>
-</div>
+  </div>
 
-<div class="offer-applied-container" *ngIf="isCandidate && selectedCandidaturesOffers().length > 0">
-  <mat-list class="offer-applied">
-    <div class="scroll-buttons">
-      <button mat-fab class="nav-button prev-button" (click)="scrollLeftApplies()">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <h3>Mis candidaturas</h3>
-      <button mat-fab class="nav-button next-button" (click)="scrollRightApplies()">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
-    </div>
-    <mat-divider></mat-divider>
-    <div class="scroll-wrapper">
-      <div class="scroll-container" #scrollContainerApplies>
-        <app-offer-card class="your-cards" *ngFor="let offer of selectedCandidaturesOffers(); let i = index" [offer]="offer"
-                        (click)="openDetailedCardFromApplied(i)">
-        </app-offer-card>
-      </div>
-    </div>
-    <mat-divider></mat-divider>
-  </mat-list>
-</div>
+  <mat-divider></mat-divider>
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando ofertas...</p>
+  </div>
+  <div class="grid-container" *ngIf="!isLoading">
+    <app-offer-card
+      *ngFor="let offer of filterOffers(); let i = index"
+      [offer]="offer"
+      [isBookmarked]="isBookmarked(offer.id)"
+      (click)="openDetailedCard(i)"
+      (viewDetails)="onViewDetails($event)"
+      (toggleBookmark)="toggleBookmark($event)"
+    >
+    </app-offer-card>
+  </div>
 
-<input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="filterOffers()"
-       class="search-input">
-<div class="grid-container">
-  <app-offer-card *ngFor="let offer of filterOffers(); let i = index" [offer]="offer" (click)="openDetailedCard(i)">
-  </app-offer-card>
-</div>
-<app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
-                   [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
-                   (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)">
-</app-detailed-card>
-<div class="loading-container" *ngIf="isLoading">
-  <img src="https://media.timtul.com/media/web_clustertic/Xcluster_20190917094551.png" alt="Cargando..." class="loading-logo">
-  <p>Cargando ofertas...</p>
+  <app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
+    [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
+    (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)">
+  </app-detailed-card>
+
 </div>

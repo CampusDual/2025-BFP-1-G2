@@ -7,13 +7,17 @@
           <mat-icon>home</mat-icon>
           <span>Inicio</span>
         </div>
-        <div class="nav-item" *ngIf="isCandidate" routerLink="../user" (click)="drawer.close()">
+        <div class="nav-item" *ngIf="isCandidate" routerLink="../user/profile" (click)="drawer.close()">
           <mat-icon>person</mat-icon>
           <span>Perfil Profesional</span>
         </div>
         <div class="nav-item" *ngIf="isCandidate" routerLink="../offers/portal" (click)="drawer.close()">
           <mat-icon>work</mat-icon>
           <span>Empleos</span>
+        </div>
+        <div class="nav-item" *ngIf="isCandidate" routerLink="../user/companies" (click)="drawer.close()">
+          <mat-icon>business</mat-icon>
+          <span>Empresas</span>
         </div>
         <div class="nav-item" *ngIf="isCompany" routerLink="../company/myoffers" (click)="drawer.close()">
           <mat-icon>business_center</mat-icon>

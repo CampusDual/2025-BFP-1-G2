@@ -9,14 +9,6 @@ import { filter } from 'rxjs/operators';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  animations: [
-    trigger('fadeAnimation', [
-      transition('* <=> *', [
-        style({ opacity: 0, transform: 'translateY(20px)', filter: 'blur(2px)' }),
-        animate('400ms', style({ opacity: 1, transform: 'translateY(0px)', filter: 'blur(0px)' })),
-      ])
-    ]),
-  ]
 })
 
 export class AppComponent implements OnInit, OnDestroy {
@@ -38,7 +30,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.authSubscription = this.authService.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
-        console.log('Auth status changed:', isAuthenticated); // Debug
         if (isAuthenticated) {
           this.loadUserRole();
         } else {
@@ -124,12 +115,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   navigateToAddOffer() {
     if (this.router.url.includes('/company/myoffers')) {
-      this.router.navigate(['/company/myoffers'], { 
-        queryParams: { addNew: true, timestamp: Date.now() } 
+      this.router.navigate(['/company/myoffers'], {
+        queryParams: { addNew: true, timestamp: Date.now() }
       });
     } else {
-      this.router.navigate(['/company/myoffers'], { 
-        queryParams: { addNew: true } 
+      this.router.navigate(['/company/myoffers'], {
+        queryParams: { addNew: true }
       });
     }
   }
