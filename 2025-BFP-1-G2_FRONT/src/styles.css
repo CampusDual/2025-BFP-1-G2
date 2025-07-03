@@ -2,7 +2,7 @@
 
 :root{
   --primary-color: #9c0700;
-  --secondary-color: #9f9f9f;
+  --secondary-color: rgba(85, 83, 83, 0.87);
   --background-color: rgba(228, 227, 227, 0.63);
   --background-hover-color: #ffffff00;
   --important-text-color: #9c0700;

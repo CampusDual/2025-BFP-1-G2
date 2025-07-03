@@ -15,6 +15,7 @@ import {  MatButtonModule } from '@angular/material/button';
 import { CandidatesComponent } from './candidates/candidates.component';
 import {  MatIconModule } from '@angular/material/icon';
 import {  MatMenuModule } from '@angular/material/menu';
+import { CompanyPanelComponent } from './company-panel/company-panel.component';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import {  MatMenuModule } from '@angular/material/menu';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    CompanyPanelComponent,
   ]
 })
 export class CompanyModule { }
