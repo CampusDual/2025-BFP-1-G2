@@ -3,6 +3,7 @@ package com.campusdual.bfp.model.dto;
 
 import com.campusdual.bfp.model.Company;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -17,6 +18,7 @@ public class OfferDTO implements Comparator <OfferDTO> {
     private Date dateAdded;
     private List<TagDTO> tags;
     private String logo;
+    @JsonIgnoreProperties("offers")
     private Company company;
     public Boolean active;
 
