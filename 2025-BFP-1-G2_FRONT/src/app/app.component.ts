@@ -30,7 +30,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.authSubscription = this.authService.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
-        console.log('Auth status changed:', isAuthenticated); // Debug
         if (isAuthenticated) {
           this.loadUserRole();
         } else {
@@ -116,12 +115,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   navigateToAddOffer() {
     if (this.router.url.includes('/company/myoffers')) {
-      this.router.navigate(['/company/myoffers'], { 
-        queryParams: { addNew: true, timestamp: Date.now() } 
+      this.router.navigate(['/company/myoffers'], {
+        queryParams: { addNew: true, timestamp: Date.now() }
       });
     } else {
-      this.router.navigate(['/company/myoffers'], { 
-        queryParams: { addNew: true } 
+      this.router.navigate(['/company/myoffers'], {
+        queryParams: { addNew: true }
       });
     }
   }

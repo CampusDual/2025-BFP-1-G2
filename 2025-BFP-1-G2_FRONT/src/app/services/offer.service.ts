@@ -5,15 +5,33 @@ import { AuthService } from "../auth/services/auth.service";
 import { Candidate } from '../detailed-card/detailed-card.component';
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 import { environment } from '../../environments/environment';
-import { Company } from './company.service';
+import { CompanyService } from './company.service';
 
 export interface Offer {
   id?: number;
   title: string;
   description: string;
+  requirements?: string;
+  location?: string;
+  salary?: number;
+  contractType?: string;
+  workMode?: string;
+  experienceLevel?: string;
+  skills?: string[];
+  benefits?: string;
+  applicationDeadline?: Date;
   dateAdded?: Date;
   tags?: Tag[];
-  valid?: Boolean
+  valid?: Boolean;
+  isActive?: boolean;
+  companyId?: number;
+  companyName?: string;
+  email?: string;
+  candidatesCount?: number;
+  candidates?: Candidate[];
+  isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
+  logo?: string;
+  isBookmarked?: boolean; // Indica si la oferta está marcada como favorita por el usuario
 }
 
 @Injectable({
@@ -23,7 +41,9 @@ export class OfferService {
   private baseUrl = `${environment.apiUrl}/offer`;
 
   constructor(private http: HttpClient,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private companyService: CompanyService) { }
+
 
   createOffer(offer: Offer): Observable<any> {
     return this.http.post(`${this.baseUrl}/add`, offer, { responseType: 'text' });
@@ -33,8 +53,9 @@ export class OfferService {
     return this.authService.hasRole('ROLE_COMPANY').pipe(
       switchMap(hasRole => {
         if (hasRole) {
-          console.log('Usuario es empresa, cargando ofertas de empresa');
-          return this.http.get<Offer[]>(`${this.baseUrl}/companyOffers`);
+          return this.companyService.getMyCompany().pipe(
+            switchMap(company => this.companyService.getCompanyOffers(company.id))
+          );
         } else {
           console.log('Usuario no es empresa, cargando todas las ofertas');
           return this.http.get<Offer[]>(`${this.baseUrl}/getAll`);
@@ -61,4 +82,20 @@ export class OfferService {
     return this.http.get<Offer[]>(`${this.baseUrl}/myOffers`);
   }
 
+  // Bookmark methods
+  addBookmark(offerId: number): Observable<string> {
+    return this.http.post(`${this.baseUrl}/bookmark/${offerId}`, {}, { responseType: 'text' });
+  }
+
+  removeBookmark(offerId: number): Observable<string> {
+    return this.http.delete(`${this.baseUrl}/bookmark/${offerId}`, { responseType: 'text' });
+  }
+
+  getUserBookmarksOffers(): Observable<Offer[]> {
+    return this.http.get<Offer[]>(`${this.baseUrl}/bookmarks`);
+  }
+
+  isBookmarked(offerId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}/bookmark/check/${offerId}`);
+  }
 }

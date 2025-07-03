@@ -1,6 +1,7 @@
 package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.ICompanyService;
+import com.campusdual.bfp.auth.JWTUtil;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class CompanyController {
 
     @Autowired
     private ICompanyService companyService;
+
+    @Autowired
+    private JWTUtil jwtUtils;
 
     @GetMapping("/getAll")
     public ResponseEntity<List<CompanyDTO>> getAllCompanies() {
@@ -95,9 +99,6 @@ public class CompanyController {
         }
     }
 
-
-
-
     @GetMapping("/byLocation")
     public ResponseEntity<List<CompanyDTO>> getCompaniesByLocation(@RequestParam String location) {
         try {
@@ -106,5 +107,21 @@ public class CompanyController {
         } catch (Exception e) {
             return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @GetMapping("/myCompany")
+    public ResponseEntity<CompanyDTO> getMyCompany(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Optional<CompanyDTO> company = companyService.getCompanyByUsername(username);
+        return company.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }

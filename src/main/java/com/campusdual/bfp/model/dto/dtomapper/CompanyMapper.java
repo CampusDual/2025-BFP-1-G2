@@ -11,17 +11,27 @@ import java.util.List;
 public interface CompanyMapper {
     CompanyMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(CompanyMapper.class);
 
-    @Mapping(source = "user.login", target = "login")
-    @Mapping(source = "user.password", target = "password")
-    @Mapping(source = "user.email", target = "email")
-    @Mapping(target = "foundedDate", source = "foundedDate") // Asegurar el mapeo explícito
+    @Mapping(source = "user.login", target = "login") // Company.user.login -> CompanyDTO.login (heredado de SignupDTO)
+    @Mapping(source = "user.email", target = "email") // Company.user.email -> CompanyDTO.email (heredado de SignupDTO)
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "logo", target = "logo")
+    @Mapping(source = "description", target = "description")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "url", target = "url")
+    @Mapping(source = "address", target = "address")
+    @Mapping(source = "foundedDate", target = "foundedDate")
+    @Mapping(target = "password", ignore = true) // Se maneja aparte
     CompanyDTO toDTO(Company company);
 
-
-    @Mapping(target = "user.login", source = "login")
-    @Mapping(target = "user.password", source = "password")
-    @Mapping(target = "user.email", source = "email")
-    @Mapping(target = "foundedDate", source = "foundedDate") // Asegurar el mapeo explícito
+    @Mapping(target = "user", ignore = true) // Se maneja en el servicio
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "logo", target = "logo")
+    @Mapping(source = "description", target = "description")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "url", target = "url")
+    @Mapping(source = "address", target = "address")
+    @Mapping(source = "foundedDate", target = "foundedDate")
+    @Mapping(target = "offers", ignore = true) // Se maneja aparte
     Company toEntity(CompanyDTO companyDTO);
 
     List<CompanyDTO> toDTOs(List<Company> companies);

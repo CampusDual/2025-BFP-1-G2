@@ -12,11 +12,11 @@ import java.util.List;
 public interface CompanyDao extends JpaRepository<Company, Integer> {
     Company findCompanyByUser(User user);
 
-    // Buscar empresas por término en nombre, descripción o sector
     @Query("SELECT c FROM Company c WHERE " +
             "LOWER(c.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<CompanyDTO> findBySearchTerm(@Param("searchTerm") String searchTerm);
 
-    // Obtener empresas por ubicación
     List<Company> findByAddressContainingIgnoreCase(String location);
+
+    Company findCompanyByUserLogin(String userLogin);
 }

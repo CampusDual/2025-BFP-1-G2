@@ -73,27 +73,4 @@ public class CompanyDTO extends SignupDTO {
         this.foundedDate = foundedDate;
     }
 
-    public String getLogin() {
-        return super.getLogin();
-    }
-
-    public void setLogin(String login) {
-        super.setLogin(login);
-    }
-
-    public String getPassword() {
-        return super.getPassword();
-    }
-
-    public void setPassword(String password) {
-        super.setPassword(password);
-    }
-
-    public String getEmail() {
-        return super.getEmail();
-    }
-
-    public void setEmail(String email) {
-        super.setEmail(email);
-    }
 }

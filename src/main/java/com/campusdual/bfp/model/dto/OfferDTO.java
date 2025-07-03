@@ -1,6 +1,8 @@
 package com.campusdual.bfp.model.dto;
 
 
+import com.campusdual.bfp.model.Company;
+
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +15,17 @@ public class OfferDTO implements Comparator <OfferDTO> {
     private String email;
     private Date dateAdded;
     private List<TagDTO> tags;
+    private String logo;
+    private Company company;
+    private Boolean isBookmarked;
+
+    public Boolean getBookmarked() {
+        return isBookmarked;
+    }
+
+    public void setBookmarked(Boolean bookmarked) {
+        isBookmarked = bookmarked;
+    }
 
     public Boolean getCandidateValid() {
         return candidateValid;
@@ -57,6 +70,13 @@ public class OfferDTO implements Comparator <OfferDTO> {
 
     public List<TagDTO> getTags() { return tags; }
 
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
     public void setTags(List<TagDTO> tags) { this.tags = tags; }
     @Override
     public int compare(OfferDTO o1, OfferDTO o2) {
@@ -65,4 +85,14 @@ public class OfferDTO implements Comparator <OfferDTO> {
         }
         return o1.getDateAdded().compareTo(o2.getDateAdded());
     }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+
 }

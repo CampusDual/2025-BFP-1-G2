@@ -20,6 +20,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SharedModule } from '../shared/shared.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 export interface Offer {
@@ -59,7 +60,8 @@ export interface Offer {
     MatSliderModule,
     MatDividerModule,
     MatSnackBarModule,
-    SharedModule
+    SharedModule,
+    MatProgressSpinnerModule
   ],
 })
 export class OfferPanelModule { }

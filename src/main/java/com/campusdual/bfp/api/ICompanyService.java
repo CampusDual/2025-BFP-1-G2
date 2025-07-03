@@ -23,4 +23,6 @@ public interface ICompanyService {
     List<OfferDTO> getCompanyOffers(Integer companyId);
 
     List<CompanyDTO> getCompaniesByLocation(String location);
+
+    Optional<CompanyDTO> getCompanyByUsername(String username);
 }
