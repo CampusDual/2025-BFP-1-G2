@@ -140,7 +140,7 @@ public class OfferService implements IOfferService {
         if (user == null) throw new RuntimeException("Usuario no encontrado");
 
         Offer offer = OfferDao.getReferenceById(request.getId());
-        if (offer.getCompanyId() != user.getId()) {
+        if (offer.getCompanyId() != companyDao.findCompanyByUser(user).getId()) {
             throw new RuntimeException("No tienes permiso para modificar esta oferta");
         }
 
