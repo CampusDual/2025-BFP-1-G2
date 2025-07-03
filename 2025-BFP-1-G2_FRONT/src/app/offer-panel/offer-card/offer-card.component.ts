@@ -11,10 +11,10 @@ import { OfferService } from "../../services/offer.service";
 export class OfferCardComponent implements OnInit {
 
   @Input() offer: any;
+  @Input() isCompany: boolean = false;
   @Output() viewDetails = new EventEmitter<any>();
 
   isDisabled: boolean = true;
-  isCompany: any;
   candidates: any[] = [];
 
 
@@ -24,27 +24,18 @@ export class OfferCardComponent implements OnInit {
 
 
   ngOnInit() {
-    this.authService.hasRole('ROLE_COMPANY').subscribe({
-      next: (hasRole) => {
-        this.isCompany = hasRole;
-        if (this.isCompany) {
-          this.offerService.getCandidates(this.offer.id).subscribe({
-            next: (candidates) => {
-              this.offer.candidates = candidates;
-              this.offer.candidatesCount = candidates.length;
-              console.log('Candidates fetched successfully:', this.candidates);
-            },
-            error: (error) => {
-              console.error('Error fetching candidates:', error);
-            }
-          });
+    if (this.isCompany) {
+      this.offerService.getCandidates(this.offer.id).subscribe({
+        next: (candidates) => {
+          this.offer.candidates = candidates;
+          this.offer.candidatesCount = candidates.length;
+          console.log('Candidates fetched successfully:', this.candidates);
+        },
+        error: (error) => {
+          console.error('Error fetching candidates:', error);
         }
-      },
-      error: (error) => {
-        console.error('Error checking role:', error);
-        this.isCompany = false;
-      }
-    });
+      });
+    }
   }
   getFirstThreeTags(): any {
     if (!this.offer?.tags || !Array.isArray(this.offer.tags)) {
@@ -69,6 +60,24 @@ export class OfferCardComponent implements OnInit {
   onViewDetails(event: Event) {
     event.stopPropagation();
     this.viewDetails.emit(this.offer);
+  }
+
+  getOfferStatusClass(): string {
+    if (!this.isCompany || !this.offer.status) {
+      return '';
+    }
+    
+    switch (this.offer.status) {
+      case 'PUBLISHED':
+      case 'ACTIVE':
+        return 'offer-card-published';
+      case 'DRAFT':
+        return 'offer-card-draft';
+      case 'ARCHIVED':
+        return 'offer-card-archived';
+      default:
+        return '';
+    }
   }
 }
 

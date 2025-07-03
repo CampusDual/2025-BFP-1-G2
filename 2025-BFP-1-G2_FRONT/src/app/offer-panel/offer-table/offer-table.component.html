@@ -82,7 +82,7 @@
     <p>Cargando ofertas...</p>
   </div>
   <div class="grid-container" *ngIf="!isLoading">
-    <app-offer-card *ngFor="let offer of filterOffers(); let i = index" [offer]="offer" (click)="openDetailedCard(i)"
+    <app-offer-card *ngFor="let offer of filterOffers(); let i = index" [offer]="offer" [isCompany]="isCompany" (click)="openDetailedCard(i)"
       (viewDetails)="onViewDetails($event)">
     </app-offer-card>
   </div>
