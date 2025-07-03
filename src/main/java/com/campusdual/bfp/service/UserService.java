@@ -171,6 +171,11 @@ public class UserService implements UserDetailsService, IUserService {
         candidateDTO.setGithubUrl(candidate.getGithubUrl());
         candidateDTO.setFigmaUrl(candidate.getFigmaUrl());
         candidateDTO.setPersonalWebsiteUrl(candidate.getPersonalWebsiteUrl());
+
+        // Agregar los nuevos campos
+        candidateDTO.setCvPdfBase64(candidate.getCvPdfBase64());
+        candidateDTO.setLogoImageBase64(candidate.getLogoImageBase64());
+
         return candidateDTO;
     }
 
