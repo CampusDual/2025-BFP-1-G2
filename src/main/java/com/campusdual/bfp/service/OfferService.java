@@ -118,15 +118,12 @@ public class OfferService implements IOfferService {
 
     @Override
     public int insertOffer(OfferDTO request, String username) {
-        User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
         Offer offer = new Offer();
         offer.setTitle(request.getTitle());
         offer.setDescription(request.getDescription());
         offer.setActive(null); // Por defecto, las ofertas se crean como borradores
         offer.setDate(new Date());
-        offer.setCompanyId(user.getId());
-
+        offer.setCompanyId(companyDao.findCompanyByUser(userDao.findByLogin(username)).getId());
         Offer savedOffer = OfferDao.saveAndFlush(offer);
         handleOfferTags(savedOffer, request.getTags(), false);
 
@@ -154,12 +151,8 @@ public class OfferService implements IOfferService {
     @Override
     @Transactional
     public int deleteOffer(int id, String username) {
-        User user = userDao.findByLogin(username);
-        if (user == null) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
         Offer offer = OfferDao.getReferenceById(id);
-        if (offer.getCompanyId() != user.getId()) {
+        if (offer.getCompanyId() != companyDao.findCompanyByUser(userDao.findByLogin(username)).getId()) {
             throw new RuntimeException("No tienes permiso para modificar esta oferta");
         }
         offerTagsDao.deleteByOfferId(offer.getId());

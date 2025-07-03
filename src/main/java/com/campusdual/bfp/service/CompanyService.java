@@ -2,16 +2,16 @@ package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.ICompanyService;
 import com.campusdual.bfp.model.Company;
+import com.campusdual.bfp.model.OfferTags;
 import com.campusdual.bfp.model.User;
-import com.campusdual.bfp.model.dao.UserDao;
-import com.campusdual.bfp.model.dao.UserRoleDao;
+import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.Offer;
-import com.campusdual.bfp.model.dao.CompanyDao;
-import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dto.OfferDTO;
+import com.campusdual.bfp.model.dto.TagDTO;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
+import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,9 @@ public class CompanyService implements ICompanyService {
 
     @Autowired
     private OfferService offerService;
+
+    @Autowired
+    private OfferTagsDao offerTagsDao;
 
     public List<CompanyDTO> getAllCompanies() {
         return companyDao.findAll().stream()
@@ -96,7 +99,11 @@ public class CompanyService implements ICompanyService {
             offerDTO.setLogo(companyDao.findById(companyId)
                     .map(Company::getLogo)
                     .orElse(null));
+            List<TagDTO> tagDTOs = getOfferTags(offerDTO.getId());
+            offerDTO.setTags(tagDTOs);
         }
+
+
         return offerDTOS;
     }
 
@@ -186,5 +193,12 @@ public class CompanyService implements ICompanyService {
 
         offer.setActive(null); // null = draft
         offerDao.saveAndFlush(offer);
+    }
+
+    private List<TagDTO> getOfferTags(int offerId) {
+        List<OfferTags> offerTags = offerTagsDao.findByOfferId(offerId);
+        return offerTags.stream()
+                .map(ot -> TagMapper.INSTANCE.toTagDTO(ot.getTag()))
+                .collect(Collectors.toList());
     }
 }

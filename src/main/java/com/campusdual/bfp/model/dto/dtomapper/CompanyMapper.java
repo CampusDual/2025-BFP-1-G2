@@ -31,7 +31,6 @@ public interface CompanyMapper {
     @Mapping(source = "url", target = "url")
     @Mapping(source = "address", target = "address")
     @Mapping(source = "foundedDate", target = "foundedDate")
-    @Mapping(target = "offers", ignore = true) // Se maneja aparte
     Company toEntity(CompanyDTO companyDTO);
 
     List<CompanyDTO> toDTOs(List<Company> companies);
