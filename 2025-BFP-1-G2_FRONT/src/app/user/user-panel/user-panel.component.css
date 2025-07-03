@@ -3,7 +3,7 @@
   margin: auto;
   padding: 0px;
   display: grid;
-  grid-template-columns: 0.4fr 2fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: auto auto auto;
   gap: 4px;
   min-height: 80vh;
@@ -156,11 +156,10 @@
 }
 
 .info-section {
+  margin-inline: 20px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
-  align-items: flex-start;
-  justify-content: flex-start;
   background: #ffffff;
   padding: 30px;
   position: relative;
@@ -187,8 +186,11 @@
   grid-row: 2;
   background: #9f9f9f;
   color: #ffffff;
-  align-items: flex-start;
-  max-height: max-content;
+}
+.info-section:nth-child(4) {
+  grid-column: 3;
+  grid-row: 2;
+  background: #ffffff;
 }
 
 .info-section h3 {

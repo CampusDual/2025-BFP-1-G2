@@ -13,7 +13,7 @@
         </div>
         <div class="nav-item" *ngIf="isCandidate" routerLink="../offers/portal" (click)="drawer.close()">
           <mat-icon>work</mat-icon>
-          <span>Empleos</span>
+          <span>Ofertas</span>
         </div>
         <div class="nav-item" *ngIf="isCandidate" routerLink="../user/companies" (click)="drawer.close()">
           <mat-icon>business</mat-icon>
@@ -21,7 +21,7 @@
         </div>
         <div class="nav-item" *ngIf="isCompany" routerLink="../company/myoffers" (click)="drawer.close()">
           <mat-icon>business_center</mat-icon>
-          <span>Vacantes</span>
+          <span>Mis ofertas</span>
         </div>
         <div class="nav-item" *ngIf="isCompany" (click)="navigateToAddOffer(); drawer.close()">
           <mat-icon>add_add</mat-icon>

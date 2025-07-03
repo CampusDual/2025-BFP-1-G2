@@ -14,10 +14,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserRoutingModule } from './user-routing.module';
 import { CompaniesComponent } from './companies/companies.component';
 import { SharedModule } from '../shared/shared.module';
+import { UserPanelComponent } from './user-panel/user-panel.component';
 
 @NgModule({
   declarations: [
-    CompaniesComponent
+    CompaniesComponent,
+    UserPanelComponent
   ],
   imports: [
     CommonModule,
