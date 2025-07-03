@@ -60,4 +60,16 @@ export class CompanyService {
   getCompaniesByLocation(location: string): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.baseUrl}/byLocation?location=${encodeURIComponent(location)}`);
   }
+
+  getCompanyOffersByStatus(status: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/offers/status?status=${status}`);
+  }
+
+  publishOffer(offerId: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/offers/publish/${offerId}`, {}, { responseType: 'text' });
+  }
+
+  archiveOffer(offerId: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/offers/archive/${offerId}`, {}, { responseType: 'text' });
+  }
 }

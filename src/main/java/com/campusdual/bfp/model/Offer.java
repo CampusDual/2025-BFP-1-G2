@@ -20,8 +20,8 @@ public class Offer {
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
-    @Column(name = "active", nullable = false)
-    private boolean active;
+    @Column(name = "active")
+    private Boolean active;
 
     @Column(name = "date_added", nullable = false)
     private Date date;
@@ -29,7 +29,7 @@ public class Offer {
     public Offer() {
     }
 
-    public Offer(int id, String title, String description, boolean active, Date date) {
+    public Offer(int id, String title, String description, Boolean active, Date date) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -37,7 +37,7 @@ public class Offer {
         this.date = date;
     }
 
-    public Offer(String title, String description, boolean active, Date date) {
+    public Offer(String title, String description, Boolean active, Date date) {
         this.title = title;
         this.description = description;
         this.active = active;
@@ -68,11 +68,11 @@ public class Offer {
         this.description = description;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -101,5 +101,17 @@ public class Offer {
             this.company = new Company();
         }
         this.company.setId(companyId);
+    }
+
+    public boolean isDraft() {
+        return active == null;
+    }
+
+    public boolean isPublished() {
+        return Boolean.TRUE.equals(active);
+    }
+
+    public boolean isArchived() {
+        return Boolean.FALSE.equals(active);
     }
 }

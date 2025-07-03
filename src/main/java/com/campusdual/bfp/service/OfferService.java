@@ -123,7 +123,7 @@ public class OfferService implements IOfferService {
         Offer offer = new Offer();
         offer.setTitle(request.getTitle());
         offer.setDescription(request.getDescription());
-        offer.setActive(true);
+        offer.setActive(null); // Por defecto, las ofertas se crean como borradores
         offer.setDate(new Date());
         offer.setCompanyId(user.getId());
 
@@ -254,5 +254,52 @@ public class OfferService implements IOfferService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OfferDTO> getCompanyOffersByStatus(String companyName, String status) {
+        User userCompany = userDao.findByLogin(companyName);
+        if (userCompany == null) throw new RuntimeException("Usuario no encontrado");
+
+        Company company = companyDao.findCompanyByUser(userCompany);
+        if (company == null) throw new RuntimeException("Empresa no encontrada");
+
+        List<Offer> offers = OfferDao.findOffersByCompanyIdAndStatus(company.getId(), status);
+
+        List<OfferDTO> dtos = offers.stream()
+                .map(offer -> buildOfferDTO(offer, false))
+                .collect(Collectors.toList());
+        sortOffersByDate(dtos);
+        return dtos;
+    }
+
+    @Override
+    @Transactional
+    public void publishOffer(int offerId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Offer offer = OfferDao.getReferenceById(offerId);
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        offer.setActive(true);
+        OfferDao.saveAndFlush(offer);
+    }
+
+    @Override
+    @Transactional
+    public void archiveOffer(int offerId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Offer offer = OfferDao.getReferenceById(offerId);
+        if (offer.getCompanyId() != user.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        offer.setActive(false);
+        OfferDao.saveAndFlush(offer);
     }
 }

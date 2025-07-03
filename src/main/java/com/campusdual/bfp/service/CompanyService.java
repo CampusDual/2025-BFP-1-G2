@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +38,9 @@ public class CompanyService implements ICompanyService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OfferService offerService;
 
     public List<CompanyDTO> getAllCompanies() {
         return companyDao.findAll().stream()
@@ -108,5 +112,61 @@ public class CompanyService implements ICompanyService {
         }
         Company company = companyDao.findCompanyByUser(user);
         return Optional.of(CompanyMapper.INSTANCE.toDTO(company));
+    }
+
+    @Override
+    public List<OfferDTO> getCompanyOffersByStatus(String username, String status) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Company company = companyDao.findCompanyByUser(user);
+        if (company == null) throw new RuntimeException("Empresa no encontrada");
+
+        List<Offer> offers = offerDao.findOffersByCompanyIdAndStatus(company.getId(), status);
+        List<OfferDTO> offerDTOS = offers.stream()
+                .map(OfferMapper.INSTANCE::toDTO)
+                .collect(Collectors.toList());
+
+        // Agregar logo como en getCompanyOffers
+        for (OfferDTO offerDTO : offerDTOS) {
+            offerDTO.setLogo(company.getLogo());
+        }
+        return offerDTOS;
+    }
+
+    @Override
+    @Transactional
+    public void publishOffer(int offerId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Company company = companyDao.findCompanyByUser(user);
+        if (company == null) throw new RuntimeException("Empresa no encontrada");
+
+        Offer offer = offerDao.getReferenceById(offerId);
+        if (offer.getCompany().getId() != company.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        offer.setActive(true);
+        offerDao.saveAndFlush(offer);
+    }
+
+    @Override
+    @Transactional
+    public void archiveOffer(int offerId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        Company company = companyDao.findCompanyByUser(user);
+        if (company == null) throw new RuntimeException("Empresa no encontrada");
+
+        Offer offer = offerDao.getReferenceById(offerId);
+        if (offer.getCompany().getId() != company.getId()) {
+            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+        }
+
+        offer.setActive(false);
+        offerDao.saveAndFlush(offer);
     }
 }
