@@ -107,3 +107,16 @@ CREATE TABLE candidate_tags (
     CONSTRAINT fk_candidate_id FOREIGN KEY (candidate_id) REFERENCES candidates(id),
     CONSTRAINT fk_tag_id FOREIGN KEY (tag_id) REFERENCES tag(id)
 );
+
+create table candidate_bookmarks
+(
+    id       serial  not null
+        constraint candidate_bookmarks_pk
+            primary key,
+    user_id  integer not null
+        constraint candidate_bookmarks_users_id_fk
+            references users,
+    offer_id integer not null
+        constraint candidate_bookmarks_offers_id_fk
+            references offers
+);

@@ -11,7 +11,9 @@ import { OfferService } from "../../services/offer.service";
 export class OfferCardComponent implements OnInit {
 
   @Input() offer: any;
+  @Input() isBookmarked: boolean = false;
   @Output() viewDetails = new EventEmitter<any>();
+  @Output() toggleBookmark = new EventEmitter<number>();
 
   isDisabled: boolean = true;
   isCompany: any;
@@ -69,6 +71,11 @@ export class OfferCardComponent implements OnInit {
   onViewDetails(event: Event) {
     event.stopPropagation();
     this.viewDetails.emit(this.offer);
+  }
+
+  onToggleBookmark(event: Event) {
+    event.stopPropagation(); // Evitar que se abra la detailed card
+    this.toggleBookmark.emit(this.offer.id);
   }
 }
 

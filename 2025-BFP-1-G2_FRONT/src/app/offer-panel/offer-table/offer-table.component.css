@@ -116,6 +116,19 @@ app-offer-card {
   border-color: var(--primary-color);
 }
 
+.selector-button[color="primary"] {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.selector-button[color="primary"]:hover {
+  background-color: var(--primary-color-dark, #3f51b5);
+  border-color: var(--primary-color-dark, #3f51b5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(var(--primary-color-rgb, 63, 81, 181), 0.3);
+}
+
 .selector-button mat-icon {
   font-size: 18px;
   width: 18px;
@@ -131,6 +144,28 @@ app-offer-card {
   min-width: 18px;
   height: 18px;
   line-height: 18px;
+}
+
+/* Animación especial para el botón de bookmarks */
+.selector-button mat-icon[fontIcon="bookmark"] {
+  color: #ff9800;
+  animation: bookmarkSave 0.6s ease-in-out;
+}
+
+@keyframes bookmarkSave {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Estilo para cuando no está en bookmarks */
+.selector-button mat-icon[fontIcon="bookmark_border"] {
+  transition: all 0.3s ease;
+}
+
+.selector-button:hover mat-icon[fontIcon="bookmark_border"] {
+  color: #ff9800;
+  transform: scale(1.1);
 }
 
 /* Responsive design for selectors */

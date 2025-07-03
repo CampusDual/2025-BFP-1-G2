@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,10 @@ public class OfferService implements IOfferService {
 
     @Autowired
     private CompanyDao companyDao;
+
+    @Autowired
+    private CandidateBookmarksDao candidateBookmarksDao;
+
 
     private static final int MAX_TAGS_PER_OFFER = 5;
 
@@ -251,8 +256,32 @@ public class OfferService implements IOfferService {
                     Offer offer = OfferDao.getReferenceById(userOffer.getOffer().getId());
                     OfferDTO dto = buildOfferDTO(offer, true);
                     dto.setCandidateValid(userOffer.isValid());
+                    dto.setBookmarked(isOfferBookmarked(offer.getId(), username));
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
+
+    private boolean isOfferBookmarked(int offerId, String username) {
+        if (username == null) return false;
+
+        User user = userDao.findByLogin(username);
+        if (user == null) return false;
+
+        return candidateBookmarksDao.existsByUserIdAndOfferId(user.getId(), offerId);
+    }
+
+    @Override
+    public List<OfferDTO> getUserBookmarks(String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
+
+        List<CandidateBookmarks> bookmarks = candidateBookmarksDao.findByUserId(user.getId());
+
+        return bookmarks.stream()
+                .map(bookmark -> buildOfferDTO(bookmark.getOffer(), true))
+                .collect(Collectors.toList());
+    }
+
+
 }
