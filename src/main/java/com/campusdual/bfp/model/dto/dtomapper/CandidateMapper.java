@@ -15,6 +15,8 @@ public interface CandidateMapper {
     @Mapping(source = "user.password", target = "password")
     @Mapping(source = "user.email", target = "email")
     @Mapping(source = "phoneNumber", target = "phoneNumber")
+    @Mapping(source = "cvPdfBase64", target = "cvPdfBase64")
+    @Mapping(source = "logoImageBase64", target = "logoImageBase64")
     CandidateDTO toDTO(Candidate candidate);
 
     List<CandidateDTO> toDTOList(List<Candidate> candidates);
@@ -22,5 +24,7 @@ public interface CandidateMapper {
     @Mapping(target = "user.login", source = "login")
     @Mapping(target = "user.password", source = "password")
     @Mapping(target = "user.email", source = "email")
+    @Mapping(target = "cvPdfBase64", source = "cvPdfBase64")
+    @Mapping(target = "logoImageBase64", source = "logoImageBase64")
     Candidate toEntity(CandidateDTO candidateDTO);
 }

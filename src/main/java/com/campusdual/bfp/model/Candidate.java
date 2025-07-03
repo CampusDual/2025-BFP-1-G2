@@ -58,6 +58,13 @@ public class Candidate {
     @Column(name = "personal_website_url", length = 500)
     private String personalWebsiteUrl;
 
+    // Nuevos campos para archivos en base64
+    @Column(name = "cv_pdf_base64", columnDefinition = "LONGTEXT")
+    private String cvPdfBase64;
+
+    @Column(name = "logo_image_base64", columnDefinition = "LONGTEXT")
+    private String logoImageBase64;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -208,5 +215,22 @@ public class Candidate {
 
     public void setPersonalWebsiteUrl(String personalWebsiteUrl) {
         this.personalWebsiteUrl = personalWebsiteUrl;
+    }
+
+    // Getters y setters para los nuevos campos
+    public String getCvPdfBase64() {
+        return cvPdfBase64;
+    }
+
+    public void setCvPdfBase64(String cvPdfBase64) {
+        this.cvPdfBase64 = cvPdfBase64;
+    }
+
+    public String getLogoImageBase64() {
+        return logoImageBase64;
+    }
+
+    public void setLogoImageBase64(String logoImageBase64) {
+        this.logoImageBase64 = logoImageBase64;
     }
 }

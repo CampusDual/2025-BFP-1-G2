@@ -1,5 +1,7 @@
 package com.campusdual.bfp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +37,7 @@ public class Company {
     private User user;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Offer> offers;
 
     public int getId() {

@@ -1,7 +1,7 @@
 <div class="offer-card">
   <!-- Botón de bookmark en la esquina superior derecha -->
   <button 
-    *ngIf="!isCompany" 
+    *ngIf="isCandidate" 
     class="bookmark-button" 
     mat-icon-button 
     [class.bookmark-active]="isBookmarked"

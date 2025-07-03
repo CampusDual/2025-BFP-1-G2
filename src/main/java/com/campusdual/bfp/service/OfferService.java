@@ -53,7 +53,6 @@ public class OfferService implements IOfferService {
         dto.setDateAdded(offer.getDate());
 
         if (includeCompanyInfo && offer.getCompany() != null) {
-            // Usar la relación JPA en lugar de companyId
             Company company = offer.getCompany();
             User user = company.getUser();
 
@@ -66,10 +65,9 @@ public class OfferService implements IOfferService {
             }
 
         }
-
-        // Añadir tags
         List<TagDTO> tagDTOs = getOfferTags(offer.getId());
         dto.setTags(tagDTOs);
+
 
         return dto;
     }
