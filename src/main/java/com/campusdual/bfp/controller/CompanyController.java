@@ -2,9 +2,11 @@ package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.ICompanyService;
 import com.campusdual.bfp.auth.JWTUtil;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -124,4 +126,25 @@ public class CompanyController {
         return company.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+    @PutMapping("/myCompany/edit")
+    public ResponseEntity<CompanyDTO> editCompanyDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                             @RequestBody CompanyDTO companyDTO) {
+        if (companyDTO == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        CompanyDTO updatedCompany = companyService.updateCompanyDetails(username, companyDTO);
+        if (updatedCompany == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(updatedCompany);
+    }
+
 }

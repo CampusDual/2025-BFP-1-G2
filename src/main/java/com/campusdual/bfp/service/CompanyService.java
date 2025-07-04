@@ -1,21 +1,25 @@
 package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.ICompanyService;
+import com.campusdual.bfp.model.Candidate;
 import com.campusdual.bfp.model.Company;
 import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dao.UserRoleDao;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.dao.CompanyDao;
 import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dto.OfferDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,5 +112,34 @@ public class CompanyService implements ICompanyService {
         }
         Company company = companyDao.findCompanyByUser(user);
         return Optional.of(CompanyMapper.INSTANCE.toDTO(company));
+    }
+    @Override
+    @Transactional
+    public CompanyDTO updateCompanyDetails(String username, CompanyDTO companyDTO) {
+
+        if (companyDTO == null) {
+            throw new IllegalArgumentException("Los datos del COMPANY no pueden ser nulos");
+        }
+
+        User user = this.userDao.findByLogin(username);
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        Company company = this.companyDao.findCompanyByUser(user);
+        if (company == null) {
+            throw new RuntimeException("Compañia no encontrado");
+        }
+
+        BeanUtils.copyProperties(companyDTO, company, "id", "user");
+
+        user.setEmail(companyDTO.getEmail());
+        user.setLogin(companyDTO.getLogin());
+
+        // Guardar cambios
+        this.userDao.saveAndFlush(user);
+        this.companyDao.saveAndFlush(company);
+
+        return CompanyMapper.INSTANCE.toDTO(company);
     }
 }

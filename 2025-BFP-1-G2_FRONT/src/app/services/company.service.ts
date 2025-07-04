@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { catchError, throwError } from 'rxjs';
 
 export interface Company {
   id: number;
@@ -40,8 +41,16 @@ export class CompanyService {
     return this.http.put<Company>(`${this.baseUrl}/update`, company);
   }
 
-  updateCompanyDetails(companyData: any): Observable<any> {
-    return this.http.put<Company>(`${this.baseUrl}/update`, companyData);
+  updateCompanyDetails(companyData: Partial<Company>): Observable<Company> {
+    return this.http.put<Company>(
+      `${this.baseUrl}/update/edit`,
+      companyData
+    ).pipe(
+      catchError((error) => {
+        console.error('Error al actualizar la compañía:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   deleteCompany(id: number): Observable<any> {

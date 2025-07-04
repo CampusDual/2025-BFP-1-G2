@@ -1,17 +1,15 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatIconModule} from "@angular/material/icon";
-import {NgClass, NgStyle} from "@angular/common";
-import {CommonModule} from "@angular/common";
 import {ImageCompressionService} from "../../services/image-compression.service";
-import {CompanyService} from "../../services/company.service";
-
+import {Company, CompanyService} from "../../services/company.service";
 
 @Component({
   selector: 'app-company-panel',
   templateUrl: './company-panel.component.html',
   styleUrls: ['./company-panel.component.css']
 })
+
+
 export class CompanyPanelComponent implements OnInit {
 
   companyName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
@@ -20,8 +18,7 @@ export class CompanyPanelComponent implements OnInit {
   login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   phone = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
 
-  location = new FormControl('', [Validators.maxLength(100)]);
-  linkedinUrl = new FormControl('');
+  address = new FormControl('', [Validators.maxLength(100)]);
   url = new FormControl('');
 
   logo = new FormControl('');
@@ -32,7 +29,6 @@ export class CompanyPanelComponent implements OnInit {
   fullName: string = '';
 
   isLoading: boolean = true;
-  userRole: string = '';
   isEditMode: boolean = false;
   isSaving: boolean = false;
   constructor(
@@ -40,10 +36,10 @@ export class CompanyPanelComponent implements OnInit {
     private imageCompressionService: ImageCompressionService) {}
 
   ngOnInit(): void {
-    this.loadUserData();
+    this.loadCompanyData();
   }
 
-  loadUserData(): void {
+  loadCompanyData(): void {
     this.companyService.getMyCompany().subscribe({
       next: (company: any) => {
         console.log('Datos recibidos del backend:', company); // Debug log
@@ -55,8 +51,7 @@ export class CompanyPanelComponent implements OnInit {
         this.login.setValue(company.login || company.companyName);
         this.phone.setValue(company.phone || '');
 
-        this.location.setValue(company.location);
-        this.linkedinUrl.setValue(company.linkedinUrl); //pendiente
+        this.address.setValue(company.address);
         this.url.setValue(company.url);
 
         console.log('Cargando logoImageBase64:', company.logo ? 'Existe' : 'No existe');
@@ -80,10 +75,6 @@ export class CompanyPanelComponent implements OnInit {
     this.isEditMode = !this.isEditMode;
   }
 
-  onImageError(): void {
-    this.logo.setValue('');
-  }
-
   getProfileImage(): string | null {
     if (this.logo.value) {
       return this.logo.value;
@@ -98,16 +89,15 @@ export class CompanyPanelComponent implements OnInit {
   saveChanges(): void {
     if (this.isSaving) return;
 
+    // Validar campos
     this.companyName.markAsTouched();
     this.description.markAsTouched();
     this.companyEmail.markAsTouched();
     this.login.markAsTouched();
     this.phone.markAsTouched();
-    this.location.markAsTouched();
-    this.linkedinUrl.markAsTouched();
+    this.address.markAsTouched();
     this.url.markAsTouched();
     this.logo.markAsTouched();
-
 
     if (this.hasFormErrors()) {
       console.error('Hay errores en el formulario');
@@ -115,25 +105,42 @@ export class CompanyPanelComponent implements OnInit {
     }
 
     this.isSaving = true;
-    const updatedData = {
-      name: this.companyName.value,
-      email: this.companyEmail.value,
-      login: this.login.value,
-      phoneNumber: this.phone.value,
-      location: this.location.value,
-      linkedinUrl: this.linkedinUrl.value,
-      url: this.url.value,
-      logo: this.logo.value
+
+    // Crear interfaz específica para actualización
+    interface CompanyUpdate {
+      name?: string;
+      login?: string;
+      description?: string;
+      email?: string;
+      phone?: string;
+      address?: string;
+      url?: string;
+      logo?: string;
+    }
+
+    const companyData: CompanyUpdate = {
+      name: this.companyName.value || undefined,
+      login: this.login.value || undefined,
+      description: this.description.value || undefined,
+      email: this.companyEmail.value || undefined,
+      phone: this.phone.value || undefined,
+      address: this.address.value || undefined,
+      url: this.url.value || undefined,
+      logo: this.logo.value || undefined
     };
 
-    this.companyService.updateCompanyDetails(updatedData).subscribe({
+    this.companyService.updateCompanyDetails(companyData).subscribe({
       next: (response) => {
-        console.log('Datos actualizados exitosamente', response);
+        console.log('Datos actualizados correctamente');
+        this.loadCompanyData(); // Recargar datos
         this.isEditMode = false;
         this.isSaving = false;
       },
       error: (error) => {
-        console.error('Error al actualizar los datos', error);
+        console.error('Error al actualizar:', error);
+        this.isSaving = false;
+      },
+      complete: () => {
         this.isSaving = false;
       }
     });
@@ -141,12 +148,12 @@ export class CompanyPanelComponent implements OnInit {
 
   cancelEdit(): void {
     this.isEditMode = false;
-    this.loadUserData();
+    this.loadCompanyData();
   }
 
   hasFormErrors(): boolean {
     return this.companyName.invalid || this.companyEmail.invalid || this.login.invalid || this.phone.invalid ||
-      this.location.invalid ;
+      this.address.invalid ;
   }
 
   async onLogoFileSelected(event: any): Promise<void> {

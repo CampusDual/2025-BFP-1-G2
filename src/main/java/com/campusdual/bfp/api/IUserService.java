@@ -34,4 +34,6 @@ public interface IUserService {
     int deleteCompany(int companyId);
 
     CandidateDTO updateCandidateDetails(String username, CandidateDTO candidateDTO);
+
+
 }
