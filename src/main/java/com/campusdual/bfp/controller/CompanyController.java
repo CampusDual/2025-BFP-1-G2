@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class CompanyController {
             List<CompanyDTO> companies = companyService.getAllCompanies();
             return new ResponseEntity<>(companies, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -41,7 +42,7 @@ public class CompanyController {
             return company.map(companyDTO -> new ResponseEntity<>(companyDTO, HttpStatus.OK))
                     .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         } catch (Exception e) {
-            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -52,19 +53,16 @@ public class CompanyController {
             CompanyDTO newCompany = companyService.createCompany(company);
             return new ResponseEntity<>(newCompany, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_COMPANY')")
     @PutMapping("/update")
-    public ResponseEntity<CompanyDTO> updateCompany(@RequestBody CompanyDTO company) {
-        try {
-            CompanyDTO updatedCompany = companyService.updateCompany(company);
-            return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<CompanyDTO> updateCompany(@RequestBody CompanyDTO company, Principal principal) {
+        CompanyDTO updatedCompany = companyService.updateCompany(company, principal.getName());
+        return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
+
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -85,9 +83,10 @@ public class CompanyController {
             List<CompanyDTO> companies = companyService.searchCompanies(term);
             return new ResponseEntity<>(companies, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("/{companyId}/offers")
     public ResponseEntity<List<OfferDTO>> getCompanyOffers(@PathVariable Integer companyId) {
@@ -95,7 +94,7 @@ public class CompanyController {
             List<OfferDTO> offers = companyService.getCompanyOffers(companyId);
             return new ResponseEntity<>(offers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -105,7 +104,7 @@ public class CompanyController {
             List<CompanyDTO> companies = companyService.getCompaniesByLocation(location);
             return new ResponseEntity<>(companies, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

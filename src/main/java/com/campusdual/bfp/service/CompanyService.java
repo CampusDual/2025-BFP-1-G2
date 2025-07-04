@@ -2,20 +2,25 @@ package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.ICompanyService;
 import com.campusdual.bfp.model.Company;
+import com.campusdual.bfp.model.OfferTags;
 import com.campusdual.bfp.model.User;
-import com.campusdual.bfp.model.dao.UserDao;
-import com.campusdual.bfp.model.dao.UserRoleDao;
+import com.campusdual.bfp.model.dao.*;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.Offer;
-import com.campusdual.bfp.model.dao.CompanyDao;
-import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dto.OfferDTO;
+import com.campusdual.bfp.model.dto.TagDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
+import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,10 +75,24 @@ public class CompanyService implements ICompanyService {
         return CompanyMapper.INSTANCE.toDTO(this.companyDao.saveAndFlush(company));
     }
 
-    public CompanyDTO updateCompany(CompanyDTO companyDTO) {
+    public CompanyDTO updateCompany(CompanyDTO companyDTO, String username) {
         Company company = this.companyDao.findById(companyDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        BeanUtils.copyProperties(companyDTO, company, "user_id");
+        User user = this.userDao.findByLogin(username);
+        if (user == null || (!(user.getId() == (company.getUser().getId())) && user.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .noneMatch(role -> role.equals("ROLE_ADMIN")))) {
+            throw new RuntimeException("No tienes permiso para modificar esta empresa");
+        }
+        if (companyDTO.getLogin() != null && !companyDTO.getLogin().equals(user.getLogin())) {
+            User existingUser = userDao.findByLogin(companyDTO.getLogin());
+            if (existingUser != null) {
+                throw new RuntimeException("El login ya está en uso");
+            }
+        }
+        BeanUtils.copyProperties(companyDTO, company, "id", "user", "userId");
+        BeanUtils.copyProperties(companyDTO, company.getUser(), "id", "password", "authorities", "roles");
+        this.userDao.saveAndFlush(user);
         this.companyDao.saveAndFlush(company);
         return companyDTO;
     }
@@ -90,8 +109,6 @@ public class CompanyService implements ICompanyService {
     public List<CompanyDTO> searchCompanies(String searchTerm) {
         return companyDao.findBySearchTerm(searchTerm);
     }
-
-
     public List<OfferDTO> getCompanyOffers(Integer companyId) {
         List<Offer> offers = offerDao.findOfferByCompanyId(companyId);
         List<OfferDTO> offerDTOS =
@@ -112,7 +129,6 @@ public class CompanyService implements ICompanyService {
             userOfferDao.findUserIdsByOfferId(offerDTO.getId()).stream().map(candidateDao::findCandidateByUserId)
                     .forEach(candidate -> {
                         CandidateDTO candidateDTO = CandidateMapper.INSTANCE.toDTO(candidate);
-
                         offerDTO.getCandidates().add(candidateDTO);
                     });
         }

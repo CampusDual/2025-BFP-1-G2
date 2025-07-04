@@ -143,6 +143,7 @@ export class OfferTableComponent implements OnDestroy {
           isValid: (offer.applied && offer.candidateValid === true) ? 'VALID' :
             (offer.applied && offer.candidateValid === false) ? 'INVALID' : (offer.applied )? 'PENDING' : undefined
         }));
+        console.log('Candidate offers loaded successfully:', this.offers);
         this.isLoading = false;
         this.filteredOffers = [...this.offers];
       },
@@ -856,7 +857,6 @@ export class OfferTableComponent implements OnDestroy {
 
   private refreshDetailedCard() {
     if (this.showDetailedCard && this.detailedCardData.length > 0) {
-      // Actualizar las acciones del item currente
       const currentOffer = this.getCurrentViewOffers()[this.currentDetailIndex];
       if (currentOffer) {
         this.detailedCardData[this.currentDetailIndex].actions = this.getActionsForOffer(currentOffer);

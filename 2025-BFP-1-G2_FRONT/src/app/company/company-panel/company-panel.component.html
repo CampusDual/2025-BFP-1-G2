@@ -89,6 +89,17 @@
         <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="address"
                [class.error]="address.invalid && address.touched" placeholder="Ingrese su ubicación">
       </div>
+      <div class="info-item">
+        <mat-icon>date_range</mat-icon>
+        <span class="label">Fecha de Fundación:</span>
+        <span class="value" *ngIf="!isEditMode">{{ foundedDate.value || 'No especificada' }}</span>
+        <input class="edit-input"
+               *ngIf="isEditMode"
+               type="text"
+               [formControl]="foundedDate"
+               [class.error]="foundedDate.invalid && foundedDate.touched"
+               placeholder="AAAA-MM-DD (Formato ISO)">
+      </div>
       <div *ngIf="isEditMode && address.invalid && address.touched" class="error-message">
         <small *ngIf="address.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
@@ -103,7 +114,7 @@
                   [formControl]="description"
                   [class.error]="description.invalid && description.touched"
                   placeholder="Descripcion"
-                  rows="4"></textarea>
+                  rows="9"></textarea>
       </div>
       <div *ngIf="isEditMode && description.invalid && description.touched" class="error-message">
         <small *ngIf="description.errors?.['required']">Descripcion es requerido</small>

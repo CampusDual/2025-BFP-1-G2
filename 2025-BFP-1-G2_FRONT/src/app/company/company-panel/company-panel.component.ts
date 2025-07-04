@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormControl, Validators} from '@angular/forms';
 import {ImageCompressionService} from "../../services/image-compression.service";
 import {Company, CompanyService} from "../../services/company.service";
 
@@ -12,17 +12,15 @@ import {Company, CompanyService} from "../../services/company.service";
 
 export class CompanyPanelComponent implements OnInit {
 
+  myCompany: Company | null = null;
   companyName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   description = new FormControl('', [Validators.maxLength(1000)]);
   companyEmail = new FormControl('', [Validators.required, Validators.email]);
-  login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   phone = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
-
   address = new FormControl('', [Validators.maxLength(100)]);
   url = new FormControl('');
-
   logo = new FormControl('');
-
+  foundedDate = new FormControl('', [Validators.pattern('^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$')]);
   isUploadingLogo: boolean = false;
   logoFileName: string = '';
 
@@ -42,21 +40,15 @@ export class CompanyPanelComponent implements OnInit {
   loadCompanyData(): void {
     this.companyService.getMyCompany().subscribe({
       next: (company: any) => {
-        console.log('Datos recibidos del backend:', company); // Debug log
-        console.log('Logo en base64:', company.logo ? 'Existe' : 'No existe'); // Debug log
-
-        this.companyName.setValue(company.name);
-        this.description.setValue(company.description || '');
-        this.companyEmail.setValue(company.email);
-        this.login.setValue(company.login || company.companyName);
-        this.phone.setValue(company.phone || '');
-
-        this.address.setValue(company.address);
-        this.url.setValue(company.url);
-
-        console.log('Cargando logoImageBase64:', company.logo ? 'Existe' : 'No existe');
+        this.myCompany = company;
+        this.companyName.setValue(this.myCompany?.login || '');
+        this.description.setValue(this.myCompany?.description || '');
+        this.companyEmail.setValue(this.myCompany?.email || '');
+        this.phone.setValue(this.myCompany?.phone || '');
+        this.address.setValue(company.address || '');
+        this.url.setValue(company.url || '');
         this.logo.setValue(company.logo || '');
-
+        this.foundedDate.setValue(company.foundedDate || '');
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -65,6 +57,7 @@ export class CompanyPanelComponent implements OnInit {
       }
     });
   }
+
   openLink(url: string | null): void {
     if (url) {
       window.open(url, '_blank');
@@ -88,16 +81,14 @@ export class CompanyPanelComponent implements OnInit {
 
   saveChanges(): void {
     if (this.isSaving) return;
-
-    // Validar campos
     this.companyName.markAsTouched();
     this.description.markAsTouched();
     this.companyEmail.markAsTouched();
-    this.login.markAsTouched();
     this.phone.markAsTouched();
     this.address.markAsTouched();
     this.url.markAsTouched();
     this.logo.markAsTouched();
+    this.foundedDate.markAsTouched();
 
     if (this.hasFormErrors()) {
       console.error('Hay errores en el formulario');
@@ -106,33 +97,23 @@ export class CompanyPanelComponent implements OnInit {
 
     this.isSaving = true;
 
-    // Crear interfaz específica para actualización
-    interface CompanyUpdate {
-      name?: string;
-      login?: string;
-      description?: string;
-      email?: string;
-      phone?: string;
-      address?: string;
-      url?: string;
-      logo?: string;
-    }
-
-    const companyData: CompanyUpdate = {
-      name: this.companyName.value || undefined,
-      login: this.login.value || undefined,
-      description: this.description.value || undefined,
-      email: this.companyEmail.value || undefined,
+    const companyData: Company = {
+      id: this.myCompany?.id || 0,
+      login: this.companyName.value || '',
+      description: this.description.value || '',
+      email: this.companyEmail.value || '',
       phone: this.phone.value || undefined,
       address: this.address.value || undefined,
       url: this.url.value || undefined,
-      logo: this.logo.value || undefined
+      logo: this.logo.value || undefined,
+      foundedDate: this.foundedDate.value || undefined
     };
 
-    this.companyService.updateCompanyDetails(companyData).subscribe({
-      next: (response) => {
+
+    this.companyService.updateCompany(companyData).subscribe({
+      next: () => {
         console.log('Datos actualizados correctamente');
-        this.loadCompanyData(); // Recargar datos
+        this.loadCompanyData(); 
         this.isEditMode = false;
         this.isSaving = false;
       },
@@ -152,7 +133,7 @@ export class CompanyPanelComponent implements OnInit {
   }
 
   hasFormErrors(): boolean {
-    return this.companyName.invalid || this.companyEmail.invalid || this.login.invalid || this.phone.invalid ||
+    return this.companyName.invalid || this.companyEmail.invalid || this.phone.invalid ||
       this.address.invalid ;
   }
 
