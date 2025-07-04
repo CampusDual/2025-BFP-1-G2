@@ -46,7 +46,7 @@ export class AdminPanelComponent {
       next: (companies: Company[]) => {
         this.companies = companies
           .slice()
-          .sort((a, b) => a.login.localeCompare(b.login))
+          .sort((a, b) => a.name.localeCompare(b.name))
           .map(company => ({
             ...company,
             foundedDate: company.foundedDate ? new Date(company.foundedDate).toISOString().split('T')[0] : ''
@@ -65,8 +65,8 @@ export class AdminPanelComponent {
   private createDetailedCardData() {
     this.detailedCardData = this.companies.map(company => ({
       id: company.id,
-      title: company.login.toUpperCase(),
-      editableTitle: company.login,
+      title: company.name.toUpperCase(),
+      editableTitle: company.name,
       titleLabel: 'Empresa',
       subtitle: company.email,
       subtitleLabel: 'Email',
@@ -94,7 +94,7 @@ export class AdminPanelComponent {
 
   private createCompanyForm(): FormGroup {
     return this.fb.group({
-      login: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       address: ['', [Validators.maxLength(100)]],
@@ -108,7 +108,7 @@ export class AdminPanelComponent {
   private createCompanyFormForEdit(company: Company): FormGroup {
     const form = this.createCompanyForm();
     form.patchValue({
-      login: company.login,
+      name: company.name,
       email: company.email,
       description: company.description,
       address: company.address || '',
@@ -138,7 +138,7 @@ export class AdminPanelComponent {
 
     const newCompanyForm = this.createCompanyForm();
     newCompanyForm.reset({
-      login: '',
+      name: '',
       email: '',
       description: '',
       sector: '',
@@ -189,10 +189,10 @@ export class AdminPanelComponent {
     const formValue = form.value;
 
     if (this.isAddingNewCompany) {
-      if (confirm(`¿Crear nueva empresa "${formValue.login}"?`)) {
+      if (confirm(`¿Crear nueva empresa "${formValue.name}"?`)) {
         this.companyService.createCompany({
           id: 0,
-          login: formValue.login,
+          name: formValue.name,
           email: formValue.email,
           description: formValue.description,
           logo: formValue.logo || undefined,
@@ -216,10 +216,10 @@ export class AdminPanelComponent {
         });
       }
     } else {
-      if (confirm(`¿Actualizar empresa "${formValue.login}"?`)) {
+      if (confirm(`¿Actualizar empresa "${formValue.name}"?`)) {
         this.companyService.updateCompany({
           id: editedData.id as number,
-          login: formValue.login,
+          name: formValue.name,
           email: formValue.email,
           description: formValue.description,
           logo: formValue.logo || undefined,
@@ -247,7 +247,7 @@ export class AdminPanelComponent {
     const { action, data } = event;
     switch (action) {
       case 'deleteCompany':
-        if (confirm(`¿Estás seguro de que quieres eliminar la empresa "${data.Company.login}"?`)) {
+        if (confirm(`¿Estás seguro de que quieres eliminar la empresa "${data.Company.name}"?`)) {
           this.companyService.deleteCompany(data.Company.id).subscribe({
             next: () => {
               this.showDetailedCard = false;

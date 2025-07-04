@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class CompanyDTO extends SignupDTO {
     private int id;
+    private String name;
     private String logo;
     private String description;
     private String phone;
@@ -26,11 +27,11 @@ public class CompanyDTO extends SignupDTO {
     }
 
     public String getName() {
-        return super.getLogin();
+        return name;
     }
 
     public void setName(String name) {
-        super.setLogin(name);
+        this.name = name;
     }
 
     public String getDescription() {

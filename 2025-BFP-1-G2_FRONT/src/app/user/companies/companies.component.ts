@@ -73,7 +73,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     if (this.searchTerm.trim()) {
       const searchLower = this.searchTerm.toLowerCase();
       filtered = filtered.filter(company =>
-        company.login.toLowerCase().includes(searchLower) ||
+        company.name.toLowerCase().includes(searchLower) ||
         company.description.toLowerCase().includes(searchLower) ||
         company.address?.toLowerCase().includes(searchLower)
       );
@@ -85,7 +85,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
   openCompanyDetails(companyIndex: number) {
     this.detailedCardData = this.filteredCompanies.map(company => ({
       id: company.id,
-      title: company.login,
+      title: company.name,
       subtitle: company.email,
       content: this.formatCompanyContent(company),
       metadata: this.getMetadataForCompany(company),
@@ -154,7 +154,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       action: 'contactCompany',
       color: 'primary',
       icon: 'email',
-      data: { email: company.email, companylogin: company.login }
+      data: { email: company.email, companylogin: company.name }
     });
 
     return actions;

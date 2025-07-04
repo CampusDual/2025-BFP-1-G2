@@ -41,7 +41,7 @@ export class CompanyPanelComponent implements OnInit {
     this.companyService.getMyCompany().subscribe({
       next: (company: any) => {
         this.myCompany = company;
-        this.companyName.setValue(this.myCompany?.login || '');
+        this.companyName.setValue(this.myCompany?.name || '');
         this.description.setValue(this.myCompany?.description || '');
         this.companyEmail.setValue(this.myCompany?.email || '');
         this.phone.setValue(this.myCompany?.phone || '');
@@ -99,7 +99,7 @@ export class CompanyPanelComponent implements OnInit {
 
     const companyData: Company = {
       id: this.myCompany?.id || 0,
-      login: this.companyName.value || '',
+      name: this.companyName.value || '',
       description: this.description.value || '',
       email: this.companyEmail.value || '',
       phone: this.phone.value || undefined,

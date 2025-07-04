@@ -65,13 +65,13 @@ public class CompanyService implements ICompanyService {
 
 
     public CompanyDTO createCompany(CompanyDTO companyDTO) {
-        User user = this.userDao.findByLogin(companyDTO.getLogin());
+        User user = this.userDao.findByLogin(companyDTO.getName());
         if (user != null) {
             throw new RuntimeException("Empresa ya registrada");
         }
         userService.registerNewUser(companyDTO.getName(), "changeMe", companyDTO.getEmail(), "ROLE_COMPANY");
         Company company = CompanyMapper.INSTANCE.toEntity(companyDTO);
-        company.setUser(this.userDao.findByLogin(companyDTO.getLogin()));
+        company.setUser(this.userDao.findByLogin(companyDTO.getName()));
         return CompanyMapper.INSTANCE.toDTO(this.companyDao.saveAndFlush(company));
     }
 
@@ -84,15 +84,7 @@ public class CompanyService implements ICompanyService {
                 .noneMatch(role -> role.equals("ROLE_ADMIN")))) {
             throw new RuntimeException("No tienes permiso para modificar esta empresa");
         }
-        if (companyDTO.getLogin() != null && !companyDTO.getLogin().equals(user.getLogin())) {
-            User existingUser = userDao.findByLogin(companyDTO.getLogin());
-            if (existingUser != null) {
-                throw new RuntimeException("El login ya está en uso");
-            }
-        }
-        BeanUtils.copyProperties(companyDTO, company, "id", "user", "userId");
-        BeanUtils.copyProperties(companyDTO, company.getUser(), "id", "password", "authorities", "roles");
-        this.userDao.saveAndFlush(user);
+        BeanUtils.copyProperties(companyDTO, company, "id", "user", "userId", "login");
         this.companyDao.saveAndFlush(company);
         return companyDTO;
     }

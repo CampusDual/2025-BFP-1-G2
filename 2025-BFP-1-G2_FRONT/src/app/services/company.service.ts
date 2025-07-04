@@ -6,7 +6,7 @@ import { CompanyOffer } from './offer.service';
 
 export interface Company {
   id: number;
-  login: string;
+  name: string;
   description: string;
   email: string;
   phone?: string;

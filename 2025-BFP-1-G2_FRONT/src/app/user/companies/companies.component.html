@@ -38,7 +38,7 @@
         <img
           *ngIf="company.logo"
           [src]="company.logo"
-          [alt]="company.login + ' logo'"
+          [alt]="company.name + ' logo'"
           (error)="onImageError($event)"
         >
         <div *ngIf="!company.logo" class="logo-placeholder">
@@ -47,7 +47,7 @@
       </div>
 
       <div class="company-info">
-        <h3 class="company-name">{{ company.login }}</h3>
+        <h3 class="company-name">{{ company.name }}</h3>
         <p class="company-location" *ngIf="company.address">
           <mat-icon>location_on</mat-icon>
           A Coruña
