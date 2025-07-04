@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { catchError, throwError } from 'rxjs';
 
 export interface Company {
   id: number;
@@ -61,8 +60,8 @@ export class CompanyService {
     return this.http.get<Company>(`${this.baseUrl}/myCompany`);
   }
 
-  getCompanyOffers(companyId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/${companyId}/offers`);
+  getCompanyOffers(companyId: number): Observable<CompanyOffer[]> {
+    return this.http.get<CompanyOffer[]>(`${this.baseUrl}/${companyId}/offers`);
   }
 
   searchCompanies(searchTerm: string): Observable<Company[]> {

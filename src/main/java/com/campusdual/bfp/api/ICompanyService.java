@@ -1,6 +1,5 @@
 package com.campusdual.bfp.api;
 
-import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 
@@ -27,5 +26,11 @@ public interface ICompanyService {
 
     Optional<CompanyDTO> getCompanyByUsername(String username);
 
-    CompanyDTO updateCompanyDetails(String username, CompanyDTO companyDTO);
+    List<OfferDTO> getCompanyOffersByStatus(String username, String status);
+
+    void publishOffer(int offerId, String username);
+
+    void archiveOffer(int offerId, String username);
+
+    void draftOffer(int offerId, String username);
 }

@@ -1,9 +1,9 @@
-<div class="offer-card">
+<div class="offer-card"  [ngClass]="getOfferStatusClass()">
   <!-- Botón de bookmark en la esquina superior derecha -->
-  <button 
-    *ngIf="isCandidate" 
-    class="bookmark-button" 
-    mat-icon-button 
+  <button
+    *ngIf="isCandidate"
+    class="bookmark-button"
+    mat-icon-button
     [class.bookmark-active]="isBookmarked"
     (click)="onToggleBookmark($event)"
     [attr.aria-label]="isBookmarked ? 'Quitar de guardados' : 'Guardar oferta'"
@@ -20,6 +20,18 @@
 
   <div class="offer-info">
     <h3 class="offer-name">{{ offer.title }}</h3>
+
+    <div class="offer-status" *ngIf="isCompany && offer.status">
+      <mat-chip class="status-chip" [ngClass]="'status-' + offer.status.toLowerCase()">
+        <mat-icon *ngIf="offer.status === 'PUBLISHED' || offer.status === 'ACTIVE'">visibility</mat-icon>
+        <mat-icon *ngIf="offer.status === 'DRAFT'">edit</mat-icon>
+        <mat-icon *ngIf="offer.status === 'ARCHIVED'">archive</mat-icon>
+        {{ offer.status === 'PUBLISHED' || offer.status === 'ACTIVE' ? 'Publicada' :
+           offer.status === 'DRAFT' ? 'Borrador' :
+           offer.status === 'ARCHIVED' ? 'Archivada' : offer.status }}
+      </mat-chip>
+    </div>
+
     <p class="offer-location" *ngIf="offer.address">
       <mat-icon>location_on</mat-icon>
       A Coruña
@@ -38,7 +50,7 @@
   <div class="offer-stats">
     <div class="stat-item" *ngIf="offer.dateAdded">
       <mat-icon>schedule</mat-icon>
-      <span>{{ offer.dateAdded }}</span>
+      <span>{{ offer.dateAdded | date:'dd/MM/yyy' }}</span>
     </div>
     <div class="stat-item" *ngIf="offer?.isValid == 'PENDING'">
       <mat-icon class="pending-icon">hourglass_empty</mat-icon>

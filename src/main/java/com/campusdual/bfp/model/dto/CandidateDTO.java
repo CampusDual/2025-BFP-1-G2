@@ -15,8 +15,6 @@ public class CandidateDTO extends SignupDTO {
     private String educationLevel;
     private String languages;
     private String employmentStatus;
-    private String profilePictureUrl;
-    private String curriculumUrl;
     private String linkedinUrl;
     private String githubUrl;
     private String figmaUrl;
@@ -78,15 +76,6 @@ public class CandidateDTO extends SignupDTO {
         super.setLogin(login);
     }
 
-    public String getPassword() {
-        return super.getPassword();
-    }
-
-    public void setPassword(String password) {
-        super.setPassword(password);
-    }
-
-
     public Boolean isValid() {
         return valid;
     }
@@ -137,18 +126,6 @@ public class CandidateDTO extends SignupDTO {
     }
     public void setEmploymentStatus(String employmentStatus) {
         this.employmentStatus = employmentStatus;
-    }
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
-    }
-    public String getCurriculumUrl() {
-        return curriculumUrl;
-    }
-    public void setCurriculumUrl(String curriculumUrl) {
-        this.curriculumUrl = curriculumUrl;
     }
     public String getLinkedinUrl() {
         return linkedinUrl;

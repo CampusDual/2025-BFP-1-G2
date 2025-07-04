@@ -65,9 +65,10 @@ public class OfferService implements IOfferService {
             }
 
         }
+
+        // Añadir tags
         List<TagDTO> tagDTOs = getOfferTags(offer.getId());
         dto.setTags(tagDTOs);
-
 
         return dto;
     }
@@ -121,15 +122,12 @@ public class OfferService implements IOfferService {
 
     @Override
     public int insertOffer(OfferDTO request, String username) {
-        User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
         Offer offer = new Offer();
         offer.setTitle(request.getTitle());
         offer.setDescription(request.getDescription());
-        offer.setActive(true);
+        offer.setActive(null); // Por defecto, las ofertas se crean como borradores
         offer.setDate(new Date());
-        offer.setCompanyId(user.getId());
-
+        offer.setCompanyId(companyDao.findCompanyByUser(userDao.findByLogin(username)).getId());
         Offer savedOffer = OfferDao.saveAndFlush(offer);
         handleOfferTags(savedOffer, request.getTags(), false);
 
@@ -146,8 +144,11 @@ public class OfferService implements IOfferService {
         if (offer.getCompanyId() != companyDao.findCompanyByUser(user).getId()) {
             throw new RuntimeException("No tienes permiso para modificar esta oferta");
         }
-
+        int originalCompanyId = offer.getCompanyId();
         BeanUtils.copyProperties(request, offer, "id", "companyId");
+        offer.setCompanyId(originalCompanyId);
+
+
         handleOfferTags(offer, request.getTags(), true);
 
         Offer savedOffer = OfferDao.saveAndFlush(offer);
@@ -157,12 +158,8 @@ public class OfferService implements IOfferService {
     @Override
     @Transactional
     public int deleteOffer(int id, String username) {
-        User user = userDao.findByLogin(username);
-        if (user == null) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
         Offer offer = OfferDao.getReferenceById(id);
-        if (offer.getCompanyId() != user.getId()) {
+        if (offer.getCompanyId() != companyDao.findCompanyByUser(userDao.findByLogin(username)).getId()) {
             throw new RuntimeException("No tienes permiso para modificar esta oferta");
         }
         offerTagsDao.deleteByOfferId(offer.getId());
@@ -204,7 +201,6 @@ public class OfferService implements IOfferService {
     public List<CandidateDTO> getCompanyOffersCandidates(int offerID) {
         List<Integer> userIds = userOfferDao.findUserIdsByOfferId(offerID);
         List<CandidateDTO> candidateDTOS = new ArrayList<>();
-
         for (Integer userId : userIds) {
             User user = userDao.findUserById(userId);
             if (user != null) {
@@ -246,18 +242,19 @@ public class OfferService implements IOfferService {
     public List<OfferDTO> getMyOffers(String username) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new RuntimeException("Usuario no encontrado");
-
-        List<UserOffer> userOffers = userOfferDao.findOfferByUserId(user.getId());
-
-        return userOffers.stream()
-                .map(userOffer -> {
-                    Offer offer = OfferDao.getReferenceById(userOffer.getOffer().getId());
-                    OfferDTO dto = buildOfferDTO(offer, true);
-                    dto.setCandidateValid(userOffer.isValid());
-                    dto.setBookmarked(isOfferBookmarked(offer.getId(), username));
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<OfferDTO> offers = queryAllOffers();
+        for (OfferDTO offerDTO: offers) {
+            Offer offer = OfferDao.getReferenceById(offerDTO.getId());
+            UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(user.getId(), offerDTO.getId());
+            if (userOffer != null) {
+                offerDTO.setCandidateValid(userOffer.isValid());
+                offerDTO.setIsApplied(true);
+            }
+            boolean isBookmarked = isOfferBookmarked(offer.getId(), username);
+            offerDTO.setBookmarked(isBookmarked);
+        }
+        sortOffersByDate(offers);
+        return offers;
     }
 
     private boolean isOfferBookmarked(int offerId, String username) {

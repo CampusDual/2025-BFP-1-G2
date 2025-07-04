@@ -2,11 +2,9 @@ package com.campusdual.bfp.controller;
 
 import com.campusdual.bfp.api.ICompanyService;
 import com.campusdual.bfp.auth.JWTUtil;
-import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -126,25 +124,40 @@ public class CompanyController {
         return company.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @PutMapping("/myCompany/edit")
-    public ResponseEntity<CompanyDTO> editCompanyDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                             @RequestBody CompanyDTO companyDTO) {
-        if (companyDTO == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @GetMapping("/offers/status")
+    public ResponseEntity<List<OfferDTO>> getOffersByStatus(@RequestParam String status, @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String username = jwtUtils.getUsernameFromToken(token);
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        CompanyDTO updatedCompany = companyService.updateCompanyDetails(username, companyDTO);
-        if (updatedCompany == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(updatedCompany);
+        List<OfferDTO> offers = companyService.getCompanyOffersByStatus(username, status);
+        return ResponseEntity.ok(offers);
     }
 
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @PutMapping("/offers/publish/{id}")
+    public ResponseEntity<Void> publishOffer(@PathVariable int id, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        companyService.publishOffer(id, username);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @PutMapping("/offers/archive/{id}")
+    public ResponseEntity<Void> archiveOffer(@PathVariable int id, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        companyService.archiveOffer(id, username);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @PutMapping("/offers/draft/{id}")
+    public ResponseEntity<Void> draftOffer(@PathVariable int id, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        companyService.draftOffer(id, username);
+        return ResponseEntity.ok().build();
+    }
 }

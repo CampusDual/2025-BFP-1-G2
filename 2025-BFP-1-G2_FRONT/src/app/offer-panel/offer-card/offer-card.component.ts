@@ -8,15 +8,16 @@ import { OfferService } from "../../services/offer.service";
   templateUrl: './offer-card.component.html',
   styleUrls: ['./offer-card.component.css']
 })
-export class OfferCardComponent implements OnInit {
+export class OfferCardComponent  {
 
   @Input() offer: any;
+  @Input() isCompany: boolean = false;
   @Input() isBookmarked: boolean = false;
+  @Input() isCandidate: boolean = false;
   @Output() viewDetails = new EventEmitter<any>();
   @Output() toggleBookmark = new EventEmitter<number>();
 
   isDisabled: boolean = true;
-  isCandidate: any;
   candidates: any[] = [];
 
 
@@ -24,30 +25,6 @@ export class OfferCardComponent implements OnInit {
     protected offerService: OfferService) {
   }
 
-
-  ngOnInit() {
-    this.authService.hasRole('ROLE_CANDIDATE').subscribe({
-      next: (hasRole) => {
-        this.isCandidate = hasRole;
-        if (this.isCandidate) {
-          this.offerService.getCandidates(this.offer.id).subscribe({
-            next: (candidates) => {
-              this.offer.candidates = candidates;
-              this.offer.candidatesCount = candidates.length;
-              console.log('Candidates fetched successfully:', this.candidates);
-            },
-            error: (error) => {
-              console.error('Error fetching candidates:', error);
-            }
-          });
-        }
-      },
-      error: (error) => {
-        console.error('Error checking role:', error);
-        this.isCandidate = false;
-      }
-    });
-  }
   getFirstThreeTags(): any {
     if (!this.offer?.tags || !Array.isArray(this.offer.tags)) {
       return [];
@@ -63,7 +40,7 @@ export class OfferCardComponent implements OnInit {
     }
     return this.offer.tags.length - 3;
   }
-  
+
   onImageError(event: any) {
     event.target.style.display = 'none';
   }
@@ -74,8 +51,26 @@ export class OfferCardComponent implements OnInit {
   }
 
   onToggleBookmark(event: Event) {
-    event.stopPropagation(); 
+    event.stopPropagation();
     this.toggleBookmark.emit(this.offer.id);
+  }
+
+  getOfferStatusClass(): string {
+    if (!this.isCompany || !this.offer.status) {
+      return '';
+    }
+
+    switch (this.offer.status) {
+      case 'PUBLISHED':
+      case 'ACTIVE':
+        return 'offer-card-published';
+      case 'DRAFT':
+        return 'offer-card-draft';
+      case 'ARCHIVED':
+        return 'offer-card-archived';
+      default:
+        return '';
+    }
   }
 }
 
