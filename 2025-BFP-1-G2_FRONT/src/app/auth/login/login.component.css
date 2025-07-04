@@ -55,11 +55,20 @@ form {
   background-color: rgba(255, 255, 255, 0.9);
 
   h2 {
+    padding: 5px;
     color: var(--primary-color);
     letter-spacing: 1.4px;
     text-transform: uppercase;
-    margin-bottom: 1.5rem;
+    margin: 1.5rem;
   }
+}
+
+.formdata ::ng-deep mat-form-field {
+  width: 200px !important;
+}
+
+.formdata ::ng-deep .mat-mdc-text-field-wrapper {
+  width: 200px !important;
 }
 
 .form-actions {
@@ -72,7 +81,7 @@ form {
 
 
 .login-link {
-  padding: 10px 20px;
+  padding: 15px;
   border-radius: 10px;
   transition: color 0.3s ease, background-color 0.3s ease;
 }
