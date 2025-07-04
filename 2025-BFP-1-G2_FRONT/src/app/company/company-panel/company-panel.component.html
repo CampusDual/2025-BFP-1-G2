@@ -1,14 +1,26 @@
-<div class="user-panel" *ngIf="!isLoading">
+<div class="company-panel" *ngIf="!isLoading">
   <div class="profile-header fade-in">
-    <div class="profile-avatar">
-      <img *ngIf="profilePictureUrl.value" [src]="profilePictureUrl.value" [alt]="fullName" class="avatar-image" (error)="onImageError()">
-      <div *ngIf="!profilePictureUrl.value" class="avatar-placeholder">
+    <div class="profile-company" [ngClass]="{'edit-mode': isEditMode}">
+      <img *ngIf="getProfileImage()" [src]="getProfileImage()" [alt]="fullName" class="company-image"
+           (error)="onLogoError()">
+      <div *ngIf="!getProfileImage()" class="company-placeholder">
         <mat-icon>person</mat-icon>
       </div>
+
+      <div class="edit-overlay" (click)="openFileSelector()">
+        <div class="edit-overlay-content">
+          <mat-icon>edit</mat-icon>
+          <span>Cambiar foto</span>
+        </div>
+      </div>
+
+      <input type="file" #logoFileInput (change)="onLogoFileSelected($event)" accept="image/*" style="display: none">
     </div>
 
     <div class="profile-main-info">
-      <p class="profile-title" *ngIf="professionalTitle.value">{{ professionalTitle.value }}</p>
+      <h1 class="profile-name">
+      </h1>
+      <p class="profile-title" *ngIf="companyName.value">{{ companyName.value }}</p>
     </div>
 
     <div class="edit-controls" *ngIf="!isEditMode">
@@ -33,67 +45,48 @@
       <div class="info-item">
         <mat-icon>person</mat-icon>
         <span class="label">Nombre:</span>
-        <span class="value" *ngIf="!isEditMode">{{ userName.value || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="userName" placeholder="Ingrese su nombre">
-        <div *ngIf="isEditMode && userName.invalid && userName.touched" class="error-message">
-          <small *ngIf="userName.errors?.['required']">El nombre es requerido</small>
-          <small *ngIf="userName.errors?.['minlength']">Mínimo 3 caracteres</small>
-          <small *ngIf="userName.errors?.['maxlength']">Máximo 30 caracteres</small>
+        <span class="value" *ngIf="!isEditMode">{{ companyName.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="companyName"
+               placeholder="Ingrese su nombre">
+        <div *ngIf="isEditMode && companyName.invalid && companyName.touched" class="error-message">
+          <small *ngIf="companyName.errors?.['required']">El nombre es requerido</small>
+          <small *ngIf="companyName.errors?.['minlength']">Mínimo 3 caracteres</small>
+          <small *ngIf="companyName.errors?.['maxlength']">Máximo 30 caracteres</small>
         </div>
       </div>
       <div class="info-item">
         <mat-icon>email</mat-icon>
         <span class="label">Email:</span>
-        <span class="value" *ngIf="!isEditMode">{{ userEmail.value }}</span>
-        <input class="edit-input"
-               *ngIf="isEditMode"
-               type="email"
-               [formControl]="userEmail"
-               [class.error]="userEmail.invalid && userEmail.touched"
-               placeholder="Ingrese su email">
+        <span class="value" *ngIf="!isEditMode">{{ companyEmail.value }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="email" [formControl]="companyEmail"
+               [class.error]="companyEmail.invalid && companyEmail.touched" placeholder="Ingrese su email">
       </div>
-      <div *ngIf="isEditMode && userEmail.invalid && userEmail.touched" class="error-message">
-        <small *ngIf="userEmail.errors?.['required']">El email es requerido</small>
-        <small *ngIf="userEmail.errors?.['email']">Formato de email inválido</small>
+      <div *ngIf="isEditMode && companyEmail.invalid && companyEmail.touched" class="error-message">
+        <small *ngIf="companyEmail.errors?.['required']">El email es requerido</small>
+        <small *ngIf="companyEmail.errors?.['email']">Formato de email inválido</small>
       </div>
       <div class="info-item">
         <mat-icon>phone</mat-icon>
         <span class="label">Teléfono:</span>
-        <span class="value" *ngIf="!isEditMode">{{ phoneNumber.value || 'No especificado' }}</span>
-        <input class="edit-input"
-               *ngIf="isEditMode"
-               type="tel"
-               [formControl]="phoneNumber"
-               [class.error]="phoneNumber.invalid && phoneNumber.touched"
-               placeholder="Ingrese su teléfono">
+        <span class="value" *ngIf="!isEditMode">{{ phone.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="tel" [formControl]="phone"
+               [class.error]="phone.invalid && phone.touched" placeholder="Ingrese su teléfono">
       </div>
-      <div *ngIf="isEditMode && phoneNumber.invalid && phoneNumber.touched" class="error-message">
-        <small *ngIf="phoneNumber.errors?.['required']">El teléfono es requerido</small>
-        <small *ngIf="phoneNumber.errors?.['minlength'] || phoneNumber.errors?.['maxlength']">Debe tener exactamente 9 dígitos</small>
-        <small *ngIf="phoneNumber.errors?.['pattern']">Solo se permiten números</small>
+      <div *ngIf="isEditMode && phone.invalid && phone.touched" class="error-message">
+        <small *ngIf="phone.errors?.['required']">El teléfono es requerido</small>
+        <small *ngIf="phone.errors?.['minlength'] || phone.errors?.['maxlength']">Debe tener exactamente 9
+          dígitos</small>
+        <small *ngIf="phone.errors?.['pattern']">Solo se permiten números</small>
       </div>
       <div class="info-item">
         <mat-icon>location_on</mat-icon>
         <span class="label">Ubicación:</span>
         <span class="value" *ngIf="!isEditMode">{{ location.value || 'No especificada' }}</span>
-        <input class="edit-input"
-               *ngIf="isEditMode"
-               type="text"
-               [formControl]="location"
-               [class.error]="location.invalid && location.touched"
-               placeholder="Ingrese su ubicación">
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="location"
+               [class.error]="location.invalid && location.touched" placeholder="Ingrese su ubicación">
       </div>
       <div *ngIf="isEditMode && location.invalid && location.touched" class="error-message">
         <small *ngIf="location.errors?.['maxlength']">Máximo 100 caracteres</small>
-      </div>
-      <div class="info-item" *ngIf="isEditMode">
-        <mat-icon>image</mat-icon>
-        <span class="label">Imagen de empresa:</span>
-        <input class="edit-input"
-               type="url"
-               [formControl]="profilePictureUrl"
-               [class.error]="profilePictureUrl.invalid && profilePictureUrl.touched"
-               placeholder="URL de la imagen de perfil">
       </div>
     </div>
   </div>
@@ -105,41 +98,50 @@
         <mat-icon>account_circle</mat-icon>
         <span class="label">Usuario:</span>
         <span class="value" *ngIf="!isEditMode">{{ login.value || 'No especificado' }}</span>
-        <input class="edit-input"
-               *ngIf="isEditMode"
-               type="text"
-               [formControl]="login"
-               [class.error]="login.invalid && login.touched"
-               placeholder="Nombre de usuario">
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="login"
+               [class.error]="login.invalid && login.touched" placeholder="Nombre de usuario">
       </div>
       <div *ngIf="isEditMode && login.invalid && login.touched" class="error-message">
         <small *ngIf="login.errors?.['required']">El usuario es requerido</small>
         <small *ngIf="login.errors?.['minlength']">Mínimo 3 caracteres</small>
         <small *ngIf="login.errors?.['maxlength']">Máximo 50 caracteres</small>
       </div>
+
       <div class="info-item">
-        <mat-icon>schedule</mat-icon>
+        <mat-icon>account_circle</mat-icon>
         <span class="label">Descripcion:</span>
-        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No especificada' }}</span>
-        <input class="edit-input"
-               *ngIf="isEditMode"
-               type="text"
-               [formControl]="login"
-               [class.error]="login.invalid && login.touched"
-               placeholder="Descripcion de empresa">
+        <span class="value" *ngIf="!isEditMode">{{ description.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="description"
+               [class.error]="description.invalid && description.touched" placeholder="Descripcion">
       </div>
-      <div *ngIf="isEditMode && yearsOfExperience.invalid && yearsOfExperience.touched" class="error-message">
-        <small *ngIf="yearsOfExperience.errors?.['min']">No puede ser menor a 0</small>
-        <small *ngIf="yearsOfExperience.errors?.['max']">Máximo 50 años</small>
-      </div>
-      <div *ngIf="isEditMode && employmentStatus.invalid && employmentStatus.touched" class="error-message">
-        <small *ngIf="employmentStatus.errors?.['maxlength']">Máximo 50 caracteres</small>
+      <div *ngIf="isEditMode && login.invalid && login.touched" class="error-message">
+        <small *ngIf="description.errors?.['required']">Descripcion es requerido</small>
+        <small *ngIf="description.errors?.['minlength']">Mínimo 100 caracteres</small>
+        <small *ngIf="description.errors?.['maxlength']">Máximo 1000 caracteres</small>
       </div>
     </div>
   </div>
 
   <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <h3><mat-icon>link</mat-icon> Enlaces </h3>
+    <h3><mat-icon>link</mat-icon> Enlaces y Portafolio</h3>
+
+    <div class="edit-links" *ngIf="isEditMode">
+
+      <div class="edit-link-item">
+        <mat-icon>work</mat-icon>
+        <span class="label">LinkedIn:</span>
+        <input class="edit-input" type="url" [formControl]="linkedinUrl"
+               [class.error]="linkedinUrl.invalid && linkedinUrl.touched" placeholder="URL de LinkedIn">
+      </div>
+      <div class="edit-link-item">
+        <mat-icon>public</mat-icon>
+        <span class="label">Sitio Web:</span>
+        <input class="edit-input" type="url" [formControl]="url"
+               [class.error]="url.invalid && url.touched" placeholder="URL del sitio web">
+      </div>
+    </div>
+
+
     <div class="social-links" *ngIf="!isEditMode">
 
       <button *ngIf="linkedinUrl.value" class="social-btn linkedin-btn" (click)="openLink(linkedinUrl.value!)">
@@ -147,41 +149,23 @@
         <span>LinkedIn</span>
       </button>
 
-      <button *ngIf="personalWebsiteUrl.value" class="social-btn website-btn" (click)="openLink(personalWebsiteUrl.value!)">
+      <button *ngIf="url.value" class="social-btn website-btn"
+              (click)="openLink(url.value!)">
         <mat-icon>public</mat-icon>
         <span>Sitio Web</span>
       </button>
-
-      <div *ngIf="!curriculumUrl.value && !linkedinUrl.value && !githubUrl.value && !figmaUrl.value && !personalWebsiteUrl.value" class="no-links">
+      <div
+        *ngIf="!linkedinUrl.value && !url.value"
+        class="no-links">
         <p>No hay enlaces configurados</p>
       </div>
-
     </div>
 
-    <div class="edit-links" *ngIf="isEditMode">
-      <div class="edit-link-item">
-        <mat-icon>work</mat-icon>
-        <span class="label">LinkedIn:</span>
-        <input class="edit-input"
-               type="url"
-               [formControl]="linkedinUrl"
-               [class.error]="linkedinUrl.invalid && linkedinUrl.touched"
-               placeholder="URL de LinkedIn">
-      </div>
-      <div class="edit-link-item">
-        <mat-icon>public</mat-icon>
-        <span class="label">Sitio Web:</span>
-        <input class="edit-input"
-               type="url"
-               [formControl]="personalWebsiteUrl"
-               [class.error]="personalWebsiteUrl.invalid && personalWebsiteUrl.touched"
-               placeholder="URL del sitio web">
-      </div>
-    </div>
   </div>
 </div>
 <div class="loading-container" *ngIf="isLoading">
-  <img src="https://media.timtul.com/media/web_clustertic/Xcluster_20190917094551.png" alt="Cargando..." class="loading-logo">
-  <p>Cargando ofertas...</p>
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Cargando...</p>
 </div>
+
 <div class="spacer" *ngIf="isLoading"></div>

@@ -1,84 +1,67 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService, User} from "../../auth/services/auth.service";
 import {MatIconModule} from "@angular/material/icon";
 import {NgClass, NgStyle} from "@angular/common";
 import {CommonModule} from "@angular/common";
+import {ImageCompressionService} from "../../services/image-compression.service";
+import {CompanyService} from "../../services/company.service";
+
+
 @Component({
-  selector: 'app-user-panel',
+  selector: 'app-company-panel',
   templateUrl: './company-panel.component.html',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    NgClass
-  ],
   styleUrls: ['./company-panel.component.css']
 })
-export class CompanyPanelComponent implements OnInit, OnDestroy {
+export class CompanyPanelComponent implements OnInit {
 
-  userName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
-  userSurname1 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
-  userSurname2 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
-  userEmail = new FormControl('', [Validators.required, Validators.email]);
+  companyName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
+  description = new FormControl('', [Validators.maxLength(1000)]);
+  companyEmail = new FormControl('', [Validators.required, Validators.email]);
   login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
-  phoneNumber = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
+  phone = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
 
   location = new FormControl('', [Validators.maxLength(100)]);
-  professionalTitle = new FormControl('', [Validators.maxLength(100)]);
-  yearsOfExperience = new FormControl('', [Validators.min(0), Validators.max(50)]);
-  educationLevel = new FormControl('', [Validators.maxLength(100)]);
-  languages = new FormControl('', [Validators.maxLength(200)]);
-  employmentStatus = new FormControl('', [Validators.maxLength(50)]);
-  profilePictureUrl = new FormControl('');
-
-  curriculumUrl = new FormControl('');
   linkedinUrl = new FormControl('');
-  githubUrl = new FormControl('');
-  figmaUrl = new FormControl('');
-  personalWebsiteUrl = new FormControl('');
+  url = new FormControl('');
 
-  animatedName: string = '';
+  logo = new FormControl('');
+
+  isUploadingLogo: boolean = false;
+  logoFileName: string = '';
+
   fullName: string = '';
-  showCursor: boolean = true;
 
   isLoading: boolean = true;
   userRole: string = '';
   isEditMode: boolean = false;
   isSaving: boolean = false;
-  constructor(private authService: AuthService) {}
+  constructor(
+    private companyService : CompanyService,
+    private imageCompressionService: ImageCompressionService) {}
 
   ngOnInit(): void {
     this.loadUserData();
   }
 
   loadUserData(): void {
-    this.authService.getCandidateDetails().subscribe({
-      next: (user: any) => {
-        this.userName.setValue(user.name);
-        this.userSurname1.setValue(user.surname1);
-        this.userSurname2.setValue(user.surname2);
-        this.userEmail.setValue(user.email);
-        this.login.setValue(user.login || user.username);
-        this.phoneNumber.setValue(user.phoneNumber);
+    this.companyService.getMyCompany().subscribe({
+      next: (company: any) => {
+        console.log('Datos recibidos del backend:', company); // Debug log
+        console.log('Logo en base64:', company.logo ? 'Existe' : 'No existe'); // Debug log
 
-        this.location.setValue(user.location);
-        this.professionalTitle.setValue(user.professionalTitle);
-        this.yearsOfExperience.setValue(user.yearsOfExperience);
-        this.educationLevel.setValue(user.educationLevel);
-        this.languages.setValue(user.languages);
-        this.employmentStatus.setValue(user.employmentStatus);
-        this.profilePictureUrl.setValue(user.profilePictureUrl);
+        this.companyName.setValue(company.name);
+        this.description.setValue(company.description || '');
+        this.companyEmail.setValue(company.email);
+        this.login.setValue(company.login || company.companyName);
+        this.phone.setValue(company.phone || '');
 
-        this.curriculumUrl.setValue(user.curriculumUrl);
-        this.linkedinUrl.setValue(user.linkedinUrl);
-        this.githubUrl.setValue(user.githubUrl);
-        this.figmaUrl.setValue(user.figmaUrl);
-        this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
+        this.location.setValue(company.location);
+        this.linkedinUrl.setValue(company.linkedinUrl); //pendiente
+        this.url.setValue(company.url);
 
-        const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
-        this.fullName = parts.join(' ');
+        console.log('Cargando logoImageBase64:', company.logo ? 'Existe' : 'No existe');
+        this.logo.setValue(company.logo || '');
+
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -87,7 +70,6 @@ export class CompanyPanelComponent implements OnInit, OnDestroy {
       }
     });
   }
-
   openLink(url: string | null): void {
     if (url) {
       window.open(url, '_blank');
@@ -99,32 +81,34 @@ export class CompanyPanelComponent implements OnInit, OnDestroy {
   }
 
   onImageError(): void {
-    this.profilePictureUrl.setValue('');
+    this.logo.setValue('');
+  }
+
+  getProfileImage(): string | null {
+    if (this.logo.value) {
+      return this.logo.value;
+    }
+    return null;
+  }
+
+  onLogoError(): void {
+    console.warn('Error al cargar el logo, pero manteniendo el valor');
   }
 
   saveChanges(): void {
     if (this.isSaving) return;
 
-    this.userName.markAsTouched();
-    this.userSurname1.markAsTouched();
-    this.userSurname2.markAsTouched();
-    this.userEmail.markAsTouched();
+    this.companyName.markAsTouched();
+    this.description.markAsTouched();
+    this.companyEmail.markAsTouched();
     this.login.markAsTouched();
-    this.phoneNumber.markAsTouched();
+    this.phone.markAsTouched();
     this.location.markAsTouched();
-    this.professionalTitle.markAsTouched();
-    this.yearsOfExperience.markAsTouched();
-    this.educationLevel.markAsTouched();
-    this.languages.markAsTouched();
-    this.employmentStatus.markAsTouched();
-    this.profilePictureUrl.markAsTouched();
-    this.curriculumUrl.markAsTouched();
     this.linkedinUrl.markAsTouched();
-    this.githubUrl.markAsTouched();
-    this.figmaUrl.markAsTouched();
-    this.personalWebsiteUrl.markAsTouched();
+    this.url.markAsTouched();
+    this.logo.markAsTouched();
 
-    // Validar campos requeridos
+
     if (this.hasFormErrors()) {
       console.error('Hay errores en el formulario');
       return;
@@ -132,33 +116,21 @@ export class CompanyPanelComponent implements OnInit, OnDestroy {
 
     this.isSaving = true;
     const updatedData = {
-      name: this.userName.value,
-      surname1: this.userSurname1.value,
-      surname2: this.userSurname2.value,
-      email: this.userEmail.value,
+      name: this.companyName.value,
+      email: this.companyEmail.value,
       login: this.login.value,
-      phoneNumber: this.phoneNumber.value,
+      phoneNumber: this.phone.value,
       location: this.location.value,
-      professionalTitle: this.professionalTitle.value,
-      yearsOfExperience: this.yearsOfExperience.value,
-      educationLevel: this.educationLevel.value,
-      languages: this.languages.value,
-      employmentStatus: this.employmentStatus.value,
-      profilePictureUrl: this.profilePictureUrl.value,
-      curriculumUrl: this.curriculumUrl.value,
       linkedinUrl: this.linkedinUrl.value,
-      githubUrl: this.githubUrl.value,
-      figmaUrl: this.figmaUrl.value,
-      personalWebsiteUrl: this.personalWebsiteUrl.value
+      url: this.url.value,
+      logo: this.logo.value
     };
 
-    this.authService.updateCandidateDetails(updatedData).subscribe({
+    this.companyService.updateCompanyDetails(updatedData).subscribe({
       next: (response) => {
         console.log('Datos actualizados exitosamente', response);
         this.isEditMode = false;
         this.isSaving = false;
-        const parts = [this.userName.value, this.userSurname1.value, this.userSurname2.value].filter(Boolean);
-        this.fullName = parts.join(' ');
       },
       error: (error) => {
         console.error('Error al actualizar los datos', error);
@@ -173,14 +145,48 @@ export class CompanyPanelComponent implements OnInit, OnDestroy {
   }
 
   hasFormErrors(): boolean {
-    return this.userName.invalid || this.userSurname1.invalid || this.userSurname2.invalid ||
-           this.userEmail.invalid || this.login.invalid || this.phoneNumber.invalid ||
-           this.location.invalid || this.professionalTitle.invalid || this.yearsOfExperience.invalid ||
-           this.educationLevel.invalid || this.languages.invalid || this.employmentStatus.invalid ||
-           this.profilePictureUrl.invalid || this.curriculumUrl.invalid || this.linkedinUrl.invalid ||
-           this.githubUrl.invalid || this.figmaUrl.invalid || this.personalWebsiteUrl.invalid;
+    return this.companyName.invalid || this.companyEmail.invalid || this.login.invalid || this.phone.invalid ||
+      this.location.invalid ;
   }
-  ngOnDestroy(): void {
-    // Cleanup if necessary
+
+  async onLogoFileSelected(event: any): Promise<void> {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const validation = this.imageCompressionService.validateImageFile(file);
+    if (!validation.isValid) {
+      alert(validation.error);
+      event.target.value = '';
+      return;
+    }
+
+    this.isUploadingLogo = true;
+    try {
+      const compressedBase64 = await this.imageCompressionService.compressLogo(file);
+      this.logo.setValue(compressedBase64);
+      this.logoFileName = file.name;
+      console.log('Logo comprimido y cargado exitosamente');
+    } catch (error) {
+      console.error('Error al comprimir el logo:', error);
+      alert('Error al procesar la imagen del logo');
+    } finally {
+      this.isUploadingLogo = false;
+      event.target.value = '';
+    }
+  }
+
+  removeLogoImage(): void {
+    this.logo.setValue('');
+    this.logoFileName = '';
+  }
+
+  openFileSelector(): void {
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+      if(!this.isEditMode){
+        this.saveChanges();
+      }
+    }
   }
 }

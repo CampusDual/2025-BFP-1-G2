@@ -10,7 +10,7 @@ export interface Company {
   email: string;
   phone?: string;
   logo?: string;
-  address?: string; 
+  address?: string;
   foundedDate?: string;
   url?: string;
 }
@@ -40,7 +40,10 @@ export class CompanyService {
     return this.http.put<Company>(`${this.baseUrl}/update`, company);
   }
 
-  // Eliminar empresa
+  updateCompanyDetails(companyData: any): Observable<any> {
+    return this.http.put<Company>(`${this.baseUrl}/update`, companyData);
+  }
+
   deleteCompany(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
@@ -48,7 +51,7 @@ export class CompanyService {
   getMyCompany(): Observable<Company> {
     return this.http.get<Company>(`${this.baseUrl}/myCompany`);
   }
-  
+
   getCompanyOffers(companyId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/${companyId}/offers`);
   }

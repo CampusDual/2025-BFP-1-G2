@@ -15,13 +15,16 @@ import {  MatButtonModule } from '@angular/material/button';
 import { CandidatesComponent } from './candidates/candidates.component';
 import {  MatIconModule } from '@angular/material/icon';
 import {  MatMenuModule } from '@angular/material/menu';
+import {CompanyPanelComponent} from "./company-panel/company-panel.component";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 
 @NgModule({
   declarations: [
     OffersComponent,
     AddOfferComponent,
-    CandidatesComponent
+    CandidatesComponent,
+    CompanyPanelComponent
   ],
   imports: [
     CommonModule,
@@ -37,6 +40,7 @@ import {  MatMenuModule } from '@angular/material/menu';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
   ]
 })
 export class CompanyModule { }
