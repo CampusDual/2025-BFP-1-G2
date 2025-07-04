@@ -1,7 +1,7 @@
 <div class="offers-container">
   <div class="offers-header">
     <h2 class="page-title">
-      <mat-icon>business</mat-icon>
+      <mat-icon>work</mat-icon>
       Ofertas
     </h2>
     <div class="filter-chips" *ngIf="availableTags.length > 0">
@@ -20,7 +20,7 @@
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
-        <!-- Offer View Selectors for Candidates -->
+        <!-- Offer View Selectors -->
         <div class="offer-selectors" *ngIf="isCandidate">
           <button mat-raised-button [color]="currentOfferView === 'recommended' ? 'primary' : ''"
             class="selector-button" (click)="setOfferView('recommended')" matBadge="{{ getRecommendedOffersCount() }}"
@@ -34,6 +34,13 @@
             matBadgeSize="small" [matBadgeHidden]="getAppliedOffersCount() === 0">
             <mat-icon>assignment_turned_in</mat-icon>
             Aplicadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferView === 'bookmarks' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferView('bookmarks')" matBadge="{{ getBookmarkedOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getBookmarkedOffersCount() === 0">
+            <mat-icon>bookmark</mat-icon>
+            Guardadas
           </button>
 
           <button mat-raised-button [color]="currentOfferView === 'all' ? 'primary' : ''" class="selector-button"
@@ -82,8 +89,16 @@
     <p>Cargando ofertas...</p>
   </div>
   <div class="grid-container" *ngIf="!isLoading">
-    <app-offer-card *ngFor="let offer of filterOffers(); let i = index" [offer]="offer" [isCompany]="isCompany" (click)="openDetailedCard(i)"
-      (viewDetails)="onViewDetails($event)">
+    <app-offer-card
+      *ngFor="let offer of filterOffers(); let i = index"
+      [offer]="offer"
+      [isCompany]="isCompany"
+      [isCandidate]="isCandidate"
+      [isBookmarked]="isBookmarked(offer.id)"
+      (click)="openDetailedCard(i)"
+      (viewDetails)="onViewDetails($event)"
+      (toggleBookmark)="toggleBookmark($event)"
+    >
     </app-offer-card>
   </div>
 

@@ -2,7 +2,6 @@ package com.campusdual.bfp.model.dto;
 
 
 import com.campusdual.bfp.model.Company;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -19,14 +18,20 @@ public class OfferDTO implements Comparator <OfferDTO> {
     private String logo;
     private Company company;
     public Boolean active;
+    private Boolean isBookmarked;
 
-    @JsonProperty("status")
-    public String getStatus() {
-        if (active == null) return "DRAFT";
-        if (Boolean.TRUE.equals(active)) return "ACTIVE";
-        return "ARCHIVED";
+    public Boolean getBookmarked() {
+        return isBookmarked;
     }
 
+    public void setBookmarked(Boolean bookmarked) {
+        isBookmarked = bookmarked;
+    }
+    public String getStatus() {
+        if (active == null) return "DRAFT";
+        if (active) return "ACTIVE";
+        return "ARCHIVED";
+    }
     public Boolean getCandidateValid() {
         return candidateValid;
     }

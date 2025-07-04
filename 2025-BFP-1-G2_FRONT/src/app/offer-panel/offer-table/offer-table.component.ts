@@ -7,7 +7,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
 import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
 import { TagService } from 'src/app/services/tag.service';
-import { Offer } from '../../services/offer.service';
+import { Offer } from '../offer-panel.module';
 
 @Component({
   selector: 'app-offer-table',
@@ -17,7 +17,7 @@ import { Offer } from '../../services/offer.service';
 export class OfferTableComponent implements OnDestroy {
 
 
-  offers: any[] = [];
+  offers: Offer[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
   showDetailedCard = false;
@@ -30,8 +30,10 @@ export class OfferTableComponent implements OnDestroy {
   selectedCandidatures: any[] = [];
   tagsFilterControl = new FormControl<Tag[]>([]);
 
-  // New properties for offer view selection
-  currentOfferView: 'all' | 'recommended' | 'applied' = 'all';
+
+  currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
+  bookmarkedOffers: number[] = []; // Array de IDs de ofertas guardadas
+  serverBookmarkedOffers: any[] = []; // Ofertas bookmarked del servidor
 
   // Properties for company offer status filtering
   currentOfferStatus: 'all' | 'draft' | 'archived' | 'active' = 'all';
@@ -86,6 +88,9 @@ export class OfferTableComponent implements OnDestroy {
     this.authService.hasRole('ROLE_CANDIDATE').subscribe({
       next: (hasRole) => {
         this.isCandidate = hasRole;
+        if (hasRole) {
+          this.loadBookmarksFromServer();
+        }
       }
     });
   }
@@ -110,7 +115,7 @@ export class OfferTableComponent implements OnDestroy {
         // Filtrar ofertas según el rol del usuario
         if (!this.isCompany) {
           // Los candidatos y usuarios no logueados solo pueden ver ofertas activas/publicadas
-          filteredOffers = filteredOffers.filter(offer => 
+          filteredOffers = filteredOffers.filter(offer =>
             offer.status === 'PUBLISHED' || offer.status === 'ACTIVE'
           );
         }
@@ -152,6 +157,8 @@ export class OfferTableComponent implements OnDestroy {
         console.error('Error fetching offers', error);
       }
     });
+
+
   }
 
   openDetailedCardFromApplied(offerIndex: number) {
@@ -337,6 +344,14 @@ export class OfferTableComponent implements OnDestroy {
       }
 
     } else if (this.isCandidate) {
+      // Acción de bookmark para candidatos
+      actions.push({
+        label: this.isBookmarked(offer.id) ? 'Quitar' : 'Guardar',
+        action: 'toggleBookmark',
+        color: this.isBookmarked(offer.id) ? 'warn' : 'primary',
+        icon: this.isBookmarked(offer.id) ? 'bookmark' : 'bookmark_border',
+        data: { offer: offer }
+      });
 
       if (offer.isValid === 'VALID') {
         actions.push({
@@ -416,6 +431,12 @@ export class OfferTableComponent implements OnDestroy {
         this.router.navigate(['/company/candidates'], {
           queryParams: { offerId: data.offerId, offerTitle: data.offerTitle }
         });
+        break;
+
+      case 'toggleBookmark':
+        this.toggleBookmark(data.offer.id);
+        // Refrescar la detailed card para actualizar el botón
+        this.refreshDetailedCard();
         break;
 
       case 'loginToApply':
@@ -528,7 +549,7 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   // New methods for offer view selection
-  setOfferView(view: 'all' | 'recommended' | 'applied') {
+  setOfferView(view: 'all' | 'recommended' | 'applied' | 'bookmarks') {
     this.currentOfferView = view;
   }
 
@@ -557,6 +578,76 @@ export class OfferTableComponent implements OnDestroy {
     return this.selectedCandidaturesOffers().length;
   }
 
+  getBookmarkedOffersCount(): number {
+    return this.getBookmarkedOffers().length;
+  }
+
+  getBookmarkedOffers(): any[] {
+    return this.serverBookmarkedOffers;
+  }
+
+  toggleBookmark(offerId: number) {
+    const isCurrentlyBookmarked = this.isBookmarked(offerId);
+
+    if (isCurrentlyBookmarked) {
+      // Remover bookmark
+      this.offerService.removeBookmark(offerId).subscribe({
+        next: (response) => {
+          this.snackBar.open('Oferta eliminada de guardados', 'Cerrar', { duration: 2000 });
+          this.loadBookmarksFromServer();
+          this.refreshDetailedCard();
+        },
+        error: (error) => {
+          console.error('Error removing bookmark:', error);
+          this.snackBar.open('Error al eliminar el bookmark', 'Cerrar', {
+            duration: 2000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    } else {
+      this.offerService.addBookmark(offerId).subscribe({
+        next: (response) => {
+          this.snackBar.open('Oferta guardada correctamente', 'Cerrar', { duration: 2000 });
+          this.loadBookmarksFromServer();
+          this.refreshDetailedCard();
+        },
+        error: (error) => {
+          console.error('Error adding bookmark:', error);
+          this.snackBar.open('Error al guardar el bookmark', 'Cerrar', {
+            duration: 2000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    }
+  }
+
+  isBookmarked(offerId: number): boolean {
+    return this.serverBookmarkedOffers.some(offer => offer.id === offerId);
+  }
+
+  private loadBookmarksFromServer() {
+    if (this.isCandidate) {
+      this.offerService.getUserBookmarksOffers().subscribe({
+        next: (bookmarks) => {
+          this.serverBookmarkedOffers = bookmarks;
+            this.bookmarkedOffers = bookmarks.map(offer => offer.id || 0).filter(id => id > 0);
+            this.serverBookmarkedOffers = bookmarks.map(offer => ({
+            ...offer,
+            dateAdded: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : ''
+            }));
+
+        },
+        error: (error) => {
+          console.error('Error loading bookmarks:', error);
+        }
+      });
+    }
+  }
+
+
+
   getCurrentViewOffers(): any[] {
     let baseOffers: any[];
 
@@ -567,11 +658,13 @@ export class OfferTableComponent implements OnDestroy {
           return this.recomendedOffers();
         case 'applied':
           return this.selectedCandidaturesOffers();
+        case 'bookmarks':
+          return this.getBookmarkedOffers();
         default:
           return this.offers;
       }
-    } 
-    
+    }
+
     // For companies, filter by offer status
     if (this.isCompany) {
       if (this.currentOfferStatus === 'all') {
@@ -586,7 +679,7 @@ export class OfferTableComponent implements OnDestroy {
         return this.offers.filter(offer => offer.status === targetStatus);
       }
     }
-    
+
     // Default fallback
     return this.offers;
   }
@@ -753,5 +846,15 @@ export class OfferTableComponent implements OnDestroy {
         });
       }
     });
+  }
+
+  private refreshDetailedCard() {
+    if (this.showDetailedCard && this.detailedCardData.length > 0) {
+      // Actualizar las acciones del item currente
+      const currentOffer = this.getCurrentViewOffers()[this.currentDetailIndex];
+      if (currentOffer) {
+        this.detailedCardData[this.currentDetailIndex].actions = this.getActionsForOffer(currentOffer);
+      }
+    }
   }
 }

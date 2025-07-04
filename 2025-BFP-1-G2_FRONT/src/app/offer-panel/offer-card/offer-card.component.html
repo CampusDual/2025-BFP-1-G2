@@ -1,4 +1,16 @@
-<div class="offer-card" [ngClass]="getOfferStatusClass()">
+<div class="offer-card"  [ngClass]="getOfferStatusClass()">
+  <!-- Botón de bookmark en la esquina superior derecha -->
+  <button
+    *ngIf="isCandidate"
+    class="bookmark-button"
+    mat-icon-button
+    [class.bookmark-active]="isBookmarked"
+    (click)="onToggleBookmark($event)"
+    [attr.aria-label]="isBookmarked ? 'Quitar de guardados' : 'Guardar oferta'"
+  >
+    <mat-icon>{{ isBookmarked ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+  </button>
+
   <div class="offer-logo">
     <img *ngIf="offer.logo" [src]="offer.logo" [alt]="offer.login + ' logo'" (error)="onImageError($event)">
     <div *ngIf="!offer.logo" class="logo-placeholder">
@@ -8,19 +20,19 @@
 
   <div class="offer-info">
     <h3 class="offer-name">{{ offer.title }}</h3>
-    
+
     <!-- Status indicator for companies -->
     <div class="offer-status" *ngIf="isCompany && offer.status">
       <mat-chip class="status-chip" [ngClass]="'status-' + offer.status.toLowerCase()">
         <mat-icon *ngIf="offer.status === 'PUBLISHED' || offer.status === 'ACTIVE'">visibility</mat-icon>
         <mat-icon *ngIf="offer.status === 'DRAFT'">edit</mat-icon>
         <mat-icon *ngIf="offer.status === 'ARCHIVED'">archive</mat-icon>
-        {{ offer.status === 'PUBLISHED' || offer.status === 'ACTIVE' ? 'Publicada' : 
-           offer.status === 'DRAFT' ? 'Borrador' : 
+        {{ offer.status === 'PUBLISHED' || offer.status === 'ACTIVE' ? 'Publicada' :
+           offer.status === 'DRAFT' ? 'Borrador' :
            offer.status === 'ARCHIVED' ? 'Archivada' : offer.status }}
       </mat-chip>
     </div>
-    
+
     <p class="offer-location" *ngIf="offer.address">
       <mat-icon>location_on</mat-icon>
       A Coruña

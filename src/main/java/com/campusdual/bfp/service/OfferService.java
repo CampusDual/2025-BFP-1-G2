@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,10 @@ public class OfferService implements IOfferService {
     @Autowired
     private CompanyDao companyDao;
 
+    @Autowired
+    private CandidateBookmarksDao candidateBookmarksDao;
+
+
     private static final int MAX_TAGS_PER_OFFER = 5;
 
     private OfferDTO buildOfferDTO(Offer offer, boolean includeCompanyInfo) {
@@ -48,7 +53,6 @@ public class OfferService implements IOfferService {
         dto.setDateAdded(offer.getDate());
 
         if (includeCompanyInfo && offer.getCompany() != null) {
-            // Usar la relación JPA en lugar de companyId
             Company company = offer.getCompany();
             User user = company.getUser();
 
@@ -137,7 +141,7 @@ public class OfferService implements IOfferService {
         if (user == null) throw new RuntimeException("Usuario no encontrado");
 
         Offer offer = OfferDao.getReferenceById(request.getId());
-        if (offer.getCompanyId() != user.getId()) {
+        if (offer.getCompanyId() != companyDao.findCompanyByUser(user).getId()) {
             throw new RuntimeException("No tienes permiso para modificar esta oferta");
         }
 
@@ -244,70 +248,32 @@ public class OfferService implements IOfferService {
                     Offer offer = OfferDao.getReferenceById(userOffer.getOffer().getId());
                     OfferDTO dto = buildOfferDTO(offer, true);
                     dto.setCandidateValid(userOffer.isValid());
+                    dto.setBookmarked(isOfferBookmarked(offer.getId(), username));
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
+    private boolean isOfferBookmarked(int offerId, String username) {
+        if (username == null) return false;
+
+        User user = userDao.findByLogin(username);
+        if (user == null) return false;
+
+        return candidateBookmarksDao.existsByUserIdAndOfferId(user.getId(), offerId);
+    }
+
     @Override
-    public List<OfferDTO> getCompanyOffersByStatus(String companyName, String status) {
-        User userCompany = userDao.findByLogin(companyName);
-        if (userCompany == null) throw new RuntimeException("Usuario no encontrado");
+    public List<OfferDTO> getUserBookmarks(String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new RuntimeException("Usuario no encontrado");
 
-        Company company = companyDao.findCompanyByUser(userCompany);
-        if (company == null) throw new RuntimeException("Empresa no encontrada");
+        List<CandidateBookmarks> bookmarks = candidateBookmarksDao.findByUserId(user.getId());
 
-        List<Offer> offers = OfferDao.findOffersByCompanyIdAndStatus(company.getId(), status);
-
-        List<OfferDTO> dtos = offers.stream()
-                .map(offer -> buildOfferDTO(offer, false))
+        return bookmarks.stream()
+                .map(bookmark -> buildOfferDTO(bookmark.getOffer(), true))
                 .collect(Collectors.toList());
-        sortOffersByDate(dtos);
-        return dtos;
     }
 
-    @Override
-    @Transactional
-    public void publishOffer(int offerId, String username) {
-        User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
 
-        Offer offer = OfferDao.getReferenceById(offerId);
-        if (offer.getCompanyId() != user.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
-        }
-
-        offer.setActive(true);
-        OfferDao.saveAndFlush(offer);
-    }
-
-    @Override
-    @Transactional
-    public void archiveOffer(int offerId, String username) {
-        User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
-
-        Offer offer = OfferDao.getReferenceById(offerId);
-        if (offer.getCompanyId() != user.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
-        }
-
-        offer.setActive(false);
-        OfferDao.saveAndFlush(offer);
-    }
-
-    @Override
-    @Transactional
-    public void draftOffer(int offerId, String username) {
-        User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
-
-        Offer offer = OfferDao.getReferenceById(offerId);
-        if (offer.getCompanyId() != user.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
-        }
-
-        offer.setActive(null); // null = draft
-        OfferDao.saveAndFlush(offer);
-    }
 }

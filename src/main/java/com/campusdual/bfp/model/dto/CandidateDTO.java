@@ -21,6 +21,8 @@ public class CandidateDTO extends SignupDTO {
     private String githubUrl;
     private String figmaUrl;
     private String personalWebsiteUrl;
+    private String cvPdfBase64;
+    private String logoImageBase64;
     private String[] allDates;
     private int[] tagIds;
 
@@ -172,6 +174,23 @@ public class CandidateDTO extends SignupDTO {
     public void setPersonalWebsiteUrl(String personalWebsiteUrl) {
         this.personalWebsiteUrl = personalWebsiteUrl;
     }
+
+    public String getCvPdfBase64() {
+        return cvPdfBase64;
+    }
+
+    public void setCvPdfBase64(String cvPdfBase64) {
+        this.cvPdfBase64 = cvPdfBase64;
+    }
+
+    public String getLogoImageBase64() {
+        return logoImageBase64;
+    }
+
+    public void setLogoImageBase64(String logoImageBase64) {
+        this.logoImageBase64 = logoImageBase64;
+    }
+
     public int[] getTagIds() {
         return tagIds;
     }
