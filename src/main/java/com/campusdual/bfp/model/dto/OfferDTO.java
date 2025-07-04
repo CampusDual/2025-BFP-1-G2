@@ -16,7 +16,7 @@ public class OfferDTO implements Comparator <OfferDTO> {
     private Date dateAdded;
     private List<TagDTO> tags;
     private String logo;
-    private Company company;
+    private CompanyDTO company;
     public Boolean active;
     private Boolean isBookmarked;
     private List<CandidateDTO> candidates;
@@ -107,11 +107,11 @@ public class OfferDTO implements Comparator <OfferDTO> {
         return o1.getDateAdded().compareTo(o2.getDateAdded());
     }
 
-    public Company getCompany() {
+    public CompanyDTO getCompany() {
         return company;
     }
 
-    public void setCompany(Company company) {
+    public void setCompany(CompanyDTO company) {
         this.company = company;
     }
 

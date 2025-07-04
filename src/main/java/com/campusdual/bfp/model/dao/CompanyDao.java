@@ -17,6 +17,4 @@ public interface CompanyDao extends JpaRepository<Company, Integer> {
     List<CompanyDTO> findBySearchTerm(@Param("searchTerm") String searchTerm);
 
     List<Company> findByAddressContainingIgnoreCase(String location);
-
-    Company findCompanyByUserLogin(String userLogin);
 }

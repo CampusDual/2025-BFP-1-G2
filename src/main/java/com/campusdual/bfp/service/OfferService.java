@@ -57,7 +57,7 @@ public class OfferService implements IOfferService {
             User user = company.getUser();
 
             if (user != null) {
-                dto.setCompanyName(user.getLogin());
+                dto.setCompanyName(company.getName());
                 dto.setEmail(user.getEmail());
             }
             if (company.getLogo() != null) {

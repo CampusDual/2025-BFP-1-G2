@@ -1,0 +1,159 @@
+<div class="company-panel" *ngIf="!isLoading">
+  <div class="profile-header fade-in">
+    <div class="profile-company" [ngClass]="{'edit-mode': isEditMode}">
+      <img *ngIf="getProfileImage()" [src]="getProfileImage()" [alt]="fullName" class="company-image"
+           (error)="onLogoError()">
+      <div *ngIf="!getProfileImage()" class="company-placeholder">
+        <mat-icon>person</mat-icon>
+      </div>
+
+      <div class="edit-overlay" (click)="openFileSelector()">
+        <div class="edit-overlay-content">
+          <mat-icon>edit</mat-icon>
+          <span>Cambiar foto</span>
+        </div>
+      </div>
+
+      <input type="file" #logoFileInput (change)="onLogoFileSelected($event)" accept="image/*" style="display: none">
+    </div>
+
+    <div class="profile-main-info">
+      <h1 class="profile-name"*ngIf="companyName.value">{{ companyName.value }}
+      </h1>
+    </div>
+
+    <div class="edit-controls" *ngIf="!isEditMode">
+      <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+
+    <div class="edit-controls" *ngIf="isEditMode">
+      <button
+        class="save-btn"
+        (click)="saveChanges()"
+        title="Guardar cambios"
+        [disabled]="isSaving || hasFormErrors()"
+      >
+        <mat-icon>save</mat-icon>
+      </button>
+      <button class="cancel-btn" (click)="cancelEdit()" [disabled]="isSaving" title="Cancelar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+    <h3><mat-icon>contact_page</mat-icon> Información de Contacto</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <mat-icon>person</mat-icon>
+        <span class="label">Nombre:</span>
+        <span class="value" *ngIf="!isEditMode">{{ companyName.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="companyName"
+               placeholder="Ingrese su nombre">
+        <div *ngIf="isEditMode && companyName.invalid && companyName.touched" class="error-message">
+          <small *ngIf="companyName.errors?.['required']">El nombre es requerido</small>
+          <small *ngIf="companyName.errors?.['minlength']">Mínimo 3 caracteres</small>
+          <small *ngIf="companyName.errors?.['maxlength']">Máximo 30 caracteres</small>
+        </div>
+      </div>
+      <div class="info-item">
+        <mat-icon>email</mat-icon>
+        <span class="label">Email:</span>
+        <span class="value" *ngIf="!isEditMode">{{ companyEmail.value }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="email" [formControl]="companyEmail"
+               [class.error]="companyEmail.invalid && companyEmail.touched" placeholder="Ingrese su email">
+      </div>
+      <div *ngIf="isEditMode && companyEmail.invalid && companyEmail.touched" class="error-message">
+        <small *ngIf="companyEmail.errors?.['required']">El email es requerido</small>
+        <small *ngIf="companyEmail.errors?.['email']">Formato de email inválido</small>
+      </div>
+      <div class="info-item">
+        <mat-icon>phone</mat-icon>
+        <span class="label">Teléfono:</span>
+        <span class="value" *ngIf="!isEditMode">{{ phone.value || 'No especificado' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="tel" [formControl]="phone"
+               [class.error]="phone.invalid && phone.touched" placeholder="Ingrese su teléfono">
+      </div>
+      <div *ngIf="isEditMode && phone.invalid && phone.touched" class="error-message">
+        <small *ngIf="phone.errors?.['required']">El teléfono es requerido</small>
+        <small *ngIf="phone.errors?.['minlength'] || phone.errors?.['maxlength']">Debe tener exactamente 9
+          dígitos</small>
+        <small *ngIf="phone.errors?.['pattern']">Solo se permiten números</small>
+      </div>
+      <div class="info-item">
+        <mat-icon>location_on</mat-icon>
+        <span class="label">Ubicación:</span>
+        <span class="value" *ngIf="!isEditMode">{{ address.value || 'No especificada' }}</span>
+        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="address"
+               [class.error]="address.invalid && address.touched" placeholder="Ingrese su ubicación">
+      </div>
+      <div class="info-item">
+        <mat-icon>date_range</mat-icon>
+        <span class="label">Fecha de Fundación:</span>
+        <span class="value" *ngIf="!isEditMode">{{ foundedDate.value || 'No especificada' }}</span>
+        <input class="edit-input"
+               *ngIf="isEditMode"
+               type="text"
+               [formControl]="foundedDate"
+               [class.error]="foundedDate.invalid && foundedDate.touched"
+               placeholder="AAAA-MM-DD (Formato ISO)">
+      </div>
+      <div *ngIf="isEditMode && address.invalid && address.touched" class="error-message">
+        <small *ngIf="address.errors?.['maxlength']">Máximo 100 caracteres</small>
+      </div>
+    </div>
+
+      <div class="info-item">
+        <mat-icon>description</mat-icon>
+        <span class="label">Descripcion:</span>
+        <span class="value" *ngIf="!isEditMode">{{ description.value || 'No especificado' }}</span>
+        <textarea class="edit-input-description"
+                  *ngIf="isEditMode"
+                  [formControl]="description"
+                  [class.error]="description.invalid && description.touched"
+                  placeholder="Descripcion"
+                  rows="9"></textarea>
+      </div>
+      <div *ngIf="isEditMode && description.invalid && description.touched" class="error-message">
+        <small *ngIf="description.errors?.['required']">Descripcion es requerido</small>
+        <small *ngIf="description.errors?.['minlength']">Mínimo 100 caracteres</small>
+        <small *ngIf="description.errors?.['maxlength']">Máximo 1000 caracteres</small>
+      </div>
+  </div>
+
+  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+    <h3><mat-icon>link</mat-icon> Enlaces </h3>
+
+    <div class="edit-links" *ngIf="isEditMode">
+      <div class="edit-link-item">
+        <mat-icon>public</mat-icon>
+        <span class="label">Sitio Web:</span>
+        <input class="edit-input" type="url" [formControl]="url"
+               [class.error]="url.invalid && url.touched" placeholder="URL del sitio web">
+      </div>
+    </div>
+
+
+    <div class="social-links" *ngIf="!isEditMode">
+      <button *ngIf="url.value" class="social-btn website-btn"
+              (click)="openLink(url.value!)">
+        <mat-icon>public</mat-icon>
+        <span>Sitio Web</span>
+      </button>
+      <div
+        *ngIf="!url.value"
+        class="no-links">
+        <p>No hay enlaces configurados</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="loading-container" *ngIf="isLoading">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Cargando...</p>
+</div>
+
+<div class="spacer" *ngIf="isLoading"></div>

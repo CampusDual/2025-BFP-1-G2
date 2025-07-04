@@ -11,7 +11,7 @@ import java.util.List;
 public interface CompanyMapper {
     CompanyMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(CompanyMapper.class);
 
-    @Mapping(source = "user.login", target = "login") // Company.user.login -> CompanyDTO.login (heredado de SignupDTO)
+    @Mapping(source = "name", target = "name") // Company.user.login -> CompanyDTO.login (heredado de SignupDTO)
     @Mapping(source = "user.email", target = "email") // Company.user.email -> CompanyDTO.email (heredado de SignupDTO)
     @Mapping(source = "id", target = "id")
     @Mapping(source = "logo", target = "logo")
@@ -24,6 +24,7 @@ public interface CompanyMapper {
 
     @Mapping(target = "user", ignore = true) // Se maneja en el servicio
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "name", target = "name")
     @Mapping(source = "logo", target = "logo")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "phone", target = "phone")

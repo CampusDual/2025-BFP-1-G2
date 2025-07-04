@@ -6,12 +6,12 @@ import { CompanyOffer } from './offer.service';
 
 export interface Company {
   id: number;
-  login: string;
+  name: string;
   description: string;
   email: string;
   phone?: string;
   logo?: string;
-  address?: string; 
+  address?: string;
   foundedDate?: string;
   url?: string;
 }
@@ -48,7 +48,7 @@ export class CompanyService {
   getMyCompany(): Observable<Company> {
     return this.http.get<Company>(`${this.baseUrl}/myCompany`);
   }
-  
+
   getCompanyOffers(companyId: number): Observable<CompanyOffer[]> {
     return this.http.get<CompanyOffer[]>(`${this.baseUrl}/${companyId}/offers`);
   }
@@ -59,10 +59,6 @@ export class CompanyService {
 
   getCompaniesByLocation(location: string): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.baseUrl}/byLocation?location=${encodeURIComponent(location)}`);
-  }
-
-  getCompanyOffersByStatus(status: string): Observable<CompanyOffer[]> {
-    return this.http.get<CompanyOffer[]>(`${this.baseUrl}/offers/status?status=${status}`);
   }
 
   publishOffer(offerId: number): Observable<any> {
@@ -76,5 +72,4 @@ export class CompanyService {
   draftOffer(offerId: number): Observable<any> {
     return this.http.put(`${this.baseUrl}/offers/draft/${offerId}`, {});
   }
-
 }

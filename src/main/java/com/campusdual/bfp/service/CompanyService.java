@@ -16,6 +16,7 @@ import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -64,20 +65,26 @@ public class CompanyService implements ICompanyService {
 
 
     public CompanyDTO createCompany(CompanyDTO companyDTO) {
-        User user = this.userDao.findByLogin(companyDTO.getLogin());
+        User user = this.userDao.findByLogin(companyDTO.getName());
         if (user != null) {
             throw new RuntimeException("Empresa ya registrada");
         }
         userService.registerNewUser(companyDTO.getName(), "changeMe", companyDTO.getEmail(), "ROLE_COMPANY");
         Company company = CompanyMapper.INSTANCE.toEntity(companyDTO);
-        company.setUser(this.userDao.findByLogin(companyDTO.getLogin()));
+        company.setUser(this.userDao.findByLogin(companyDTO.getName()));
         return CompanyMapper.INSTANCE.toDTO(this.companyDao.saveAndFlush(company));
     }
 
-    public CompanyDTO updateCompany(CompanyDTO companyDTO) {
+    public CompanyDTO updateCompany(CompanyDTO companyDTO, String username) {
         Company company = this.companyDao.findById(companyDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        BeanUtils.copyProperties(companyDTO, company, "user_id");
+        User user = this.userDao.findByLogin(username);
+        if (user == null || (!(user.getId() == (company.getUser().getId())) && user.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .noneMatch(role -> role.equals("ROLE_ADMIN")))) {
+            throw new RuntimeException("No tienes permiso para modificar esta empresa");
+        }
+        BeanUtils.copyProperties(companyDTO, company, "id", "user", "userId", "login");
         this.companyDao.saveAndFlush(company);
         return companyDTO;
     }
@@ -94,8 +101,6 @@ public class CompanyService implements ICompanyService {
     public List<CompanyDTO> searchCompanies(String searchTerm) {
         return companyDao.findBySearchTerm(searchTerm);
     }
-
-
     public List<OfferDTO> getCompanyOffers(Integer companyId) {
         List<Offer> offers = offerDao.findOfferByCompanyId(companyId);
         List<OfferDTO> offerDTOS =
@@ -116,7 +121,6 @@ public class CompanyService implements ICompanyService {
             userOfferDao.findUserIdsByOfferId(offerDTO.getId()).stream().map(candidateDao::findCandidateByUserId)
                     .forEach(candidate -> {
                         CandidateDTO candidateDTO = CandidateMapper.INSTANCE.toDTO(candidate);
-
                         offerDTO.getCandidates().add(candidateDTO);
                     });
         }
