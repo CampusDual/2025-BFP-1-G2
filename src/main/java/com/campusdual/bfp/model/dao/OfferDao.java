@@ -28,4 +28,11 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
     // Buscar ofertas activas por ID de usuario
     @Query("SELECT o FROM Offer o WHERE o.company.user.id = :userId AND o.active = true")
     List<Offer> findActiveOffersByUserId(@Param("userId") int userId);
+
+    @Query("SELECT o FROM Offer o WHERE o.company.id = :companyId AND " +
+            "((:status = 'draft' AND o.active IS NULL) OR " +
+            "(:status = 'active' AND o.active = true) OR " +
+            "(:status = 'archived' AND o.active = false))")
+    List<Offer> findOffersByCompanyIdAndStatus(@Param("companyId") int companyId, @Param("status") String status);
+
 }

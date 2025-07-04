@@ -6,19 +6,15 @@
       <div *ngIf="!getProfileImage()" class="avatar-placeholder">
         <mat-icon>person</mat-icon>
       </div>
-      
-      <div class="edit-overlay"  (click)="openFileSelector()">
+
+      <div class="edit-overlay" (click)="openFileSelector()">
         <div class="edit-overlay-content">
           <mat-icon>edit</mat-icon>
           <span>Cambiar foto</span>
         </div>
       </div>
-      
-      <input type="file" 
-             #logoFileInput 
-             (change)="onLogoFileSelected($event)" 
-             accept="image/*"
-             style="display: none">
+
+      <input type="file" #logoFileInput (change)="onLogoFileSelected($event)" accept="image/*" style="display: none">
     </div>
 
     <div class="profile-main-info">
@@ -203,7 +199,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <h3><mat-icon>link</mat-icon> Enlaces y Portafolio</h3>
 
@@ -246,7 +242,7 @@
         <mat-icon>picture_as_pdf</mat-icon>
         <span>Currículum</span>
       </button>
-       <button *ngIf="cvPdfBase64.value" class="social-btn cv-btn" (click)="downloadCVImage()">
+      <button *ngIf="cvPdfBase64.value" class="social-btn cv-btn" (click)="downloadCVImage()">
         <mat-icon>picture_as_pdf</mat-icon>
         <span>Currículum</span>
       </button>
@@ -277,8 +273,8 @@
   </div>
 </div>
 <div class="loading-container" *ngIf="isLoading">
-  <img src="https://media.timtul.com/media/web_clustertic/Xcluster_20190917094551.png" alt="Cargando..."
-    class="loading-logo">
-  <p>Cargando ofertas...</p>
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Cargando...</p>
 </div>
+
 <div class="spacer" *ngIf="isLoading"></div>

@@ -93,8 +93,8 @@ public class UserService implements UserDetailsService, IUserService {
     public void registerNewCandidate(String username, String password, String email, String name,
                                      String surname1, String surname2, String phoneNumber, String roleName,
                                      String location, String professionalTitle, String yearsOfExperience, String educationLevel,
-                                     String languages, String employmentStatus, String profilePictureUrl, String curriculumUrl,
-                                     String linkedinUrl, String githubUrl, String figmaUrl, String personalWebsiteUrl, int[] tags) {
+                                     String languages, String employmentStatus, String linkedinUrl, String githubUrl,
+                                     String figmaUrl, String personalWebsiteUrl, int[] tags) {
         int id;
         Candidate candidate = new Candidate();
         candidate.setName(name);
@@ -107,8 +107,6 @@ public class UserService implements UserDetailsService, IUserService {
         candidate.setEducationLevel(educationLevel);
         candidate.setLanguages(languages);
         candidate.setEmploymentStatus(employmentStatus);
-        candidate.setProfilePictureUrl(profilePictureUrl);
-        candidate.setCurriculumUrl(curriculumUrl);
         candidate.setLinkedinUrl(linkedinUrl);
         candidate.setGithubUrl(githubUrl);
         candidate.setFigmaUrl(figmaUrl);
@@ -165,8 +163,6 @@ public class UserService implements UserDetailsService, IUserService {
         candidateDTO.setEducationLevel(candidate.getEducationLevel());
         candidateDTO.setLanguages(candidate.getLanguages());
         candidateDTO.setEmploymentStatus(candidate.getEmploymentStatus());
-        candidateDTO.setProfilePictureUrl(candidate.getProfilePictureUrl());
-        candidateDTO.setCurriculumUrl(candidate.getCurriculumUrl());
         candidateDTO.setLinkedinUrl(candidate.getLinkedinUrl());
         candidateDTO.setGithubUrl(candidate.getGithubUrl());
         candidateDTO.setFigmaUrl(candidate.getFigmaUrl());

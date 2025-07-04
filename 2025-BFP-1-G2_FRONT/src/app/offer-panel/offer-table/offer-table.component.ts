@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { OfferService } from "../../services/offer.service";
+import { CandidateOffer, CompanyOffer, OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
@@ -7,7 +7,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
 import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
 import { TagService } from 'src/app/services/tag.service';
-import { Offer } from '../offer-panel.module';
+import { Offer } from "../../services/offer.service";
+import { CompanyService } from 'src/app/services/company.service';
 
 @Component({
   selector: 'app-offer-table',
@@ -35,6 +36,9 @@ export class OfferTableComponent implements OnDestroy {
   bookmarkedOffers: number[] = []; // Array de IDs de ofertas guardadas
   serverBookmarkedOffers: any[] = []; // Ofertas bookmarked del servidor
 
+  // Properties for company offer status filtering
+  currentOfferStatus: 'all' | 'draft' | 'archived' | 'active' = 'all';
+
   isLoading = true;
 
   constructor(
@@ -43,12 +47,11 @@ export class OfferTableComponent implements OnDestroy {
     private snackBar: MatSnackBar,
     private router: Router,
     private formBuilder: FormBuilder,
-    private tagService: TagService
+    private tagService: TagService,
+    private companyService: CompanyService
   ) {
-    this.loadOffers();
-    this.loadMyTags();
-    this.loadUserRole();
     this.loadAllTags();
+    this.loadUserRole();
   }
 
 
@@ -80,69 +83,85 @@ export class OfferTableComponent implements OnDestroy {
     this.authService.hasRole('ROLE_COMPANY').subscribe({
       next: (hasRole) => {
         this.isCompany = hasRole;
+        if (hasRole) {
+          this.loadCompanyOffers();
+        }
+        else {
+          this.authService.hasRole('ROLE_CANDIDATE').subscribe({
+            next: (hasRole) => {
+              this.isCandidate = hasRole;
+              if (hasRole) {
+                this.loadCandidateOffers();
+                this.loadMyTags();
+                this.loadBookmarksFromServer();
+              }
+              else {
+                this.loadOffers();
+              }
+            }
+          });
+        }
       }
     });
-    this.authService.hasRole('ROLE_CANDIDATE').subscribe({
-      next: (hasRole) => {
-        this.isCandidate = hasRole;
-        if (hasRole) {
-          this.loadBookmarksFromServer();
+
+  }
+
+  loadCompanyOffers() {
+    this.companyService.getMyCompany().subscribe({
+      next: (company) => {
+        if (company) {
+          this.companyService.getCompanyOffers(company.id).subscribe({
+            next: (offers: CompanyOffer[]) => {
+              this.offers = offers.map((offer: CompanyOffer) => ({
+                ...offer,
+                dateToString: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : new Date().toLocaleDateString(),
+              }));
+              this.isLoading = false;
+              this.filteredOffers = [...this.offers];
+            },
+            error: (error: any) => {
+              console.error('Error fetching company offers', error);
+            }
+          });
+        } else {
+          console.warn('No company found for the user');
+          this.isLoading = false;
         }
+      },
+      error: (error: any) => {
+        console.error('Error fetching company data', error);
+      }
+    });
+  }
+
+  loadCandidateOffers() {
+    this.offerService.getCandidateOffers().subscribe({
+      next: (offers: CandidateOffer[]) => {
+        this.offers = offers.map((offer: CandidateOffer) => ({
+          ...offer,
+          dateToString: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : new Date().toLocaleDateString(),
+          isValid: (offer.applied && offer.candidateValid === true) ? 'VALID' :
+            (offer.applied && offer.candidateValid === false) ? 'INVALID' : (offer.applied )? 'PENDING' : undefined
+        }));
+        this.isLoading = false;
+        this.filteredOffers = [...this.offers];
+      },
+      error: (error: any) => {
+        console.error('Error fetching candidate offers', error);
       }
     });
   }
 
   loadOffers() {
     this.offerService.getOffers().subscribe({
-      next: (offers: any[]) => {
-        this.offers = offers.map((offer: any) => ({
-          id: offer.id,
-          title: offer.title,
-          description: offer.description,
-          companyName: offer.companyName,
-          email: offer.email,
-          dateAdded: new Date(offer.dateAdded).toLocaleDateString(),
-          candidatesCount: offer.candidatesCount || 0,
-          candidates: offer.candidates || [],
-          tags: offer.tags || [],
-          metadata: {
-            email: offer.email,
-            companyName: offer.companyName,
-            dateAdded: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : '',
-          },
-          logo: offer.logo || '',
-        }));
+      next: (offers: Offer[]) => {
+        this.offers = offers;
+        offers = offers.filter(offer =>
+          offer.status === 'PUBLISHED'
+        );
         this.isLoading = false;
-        this.offerService.getCandidateOffers().subscribe({
-          next: (offers: any[]) => {
-            this.selectedCandidatures = offers.map((offer: any) => ({
-              id: offer.id,
-              title: offer.title,
-              description: offer.description,
-              companyName: offer.companyName,
-              email: offer.email,
-              dateAdded: new Date(offer.dateAdded).toLocaleDateString(),
-              candidatesCount: offer.candidatesCount || 0,
-              candidates: offer.candidates || [],
-              tags: offer.tags || [],
-              isValid: offer.candidateValid === true ? 'VALID' : offer.candidateValid === false ? 'INVALID' : 'PENDING',
-              logo: offer.logo || ''
-            }));
-            this.offers = this.offers.map(offer => {
-              const matched = this.selectedCandidatures.find(sel => sel.id === offer.id);
-              if (matched) {
-                return { ...offer, isValid: matched.isValid };
-              }
-              return offer;
-            });
-          },
-          error: (error: any) => {
-            console.error('Error fetching candidate offers', error);
-          }
-        });
         console.log('Offers loaded successfully:', this.offers);
         this.filteredOffers = [...this.offers];
-        
       },
       error: (error: any) => {
         console.error('Error fetching offers', error);
@@ -204,7 +223,7 @@ export class OfferTableComponent implements OnDestroy {
       title: offer.title,
       editableTitle: offer.title,
       titleLabel: 'Título de la oferta',
-      subtitle: `${offer.companyName}  ${offer.email}`,
+      subtitle: !this.isCompany ? `${offer.companyName}  ${offer.email}` : '',
       content: offer.description,
       contentLabel: 'Descripción de la oferta',
       metadata: this.getMetadataForOffer(offer),
@@ -255,20 +274,65 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   private getMetadataForOffer(offer: any): { [key: string]: any } {
-    if (this.isCompany)
-      return {
-        'Fecha de publicación': offer.dateAdded,
+    if (this.isCompany) {
+      const metadata: { [key: string]: any } = {
+        'Fecha de publicación': offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString('es-ES') : '',
       };
-    else return {
-      'Fecha de publicación': offer.dateAdded,
-      'Empresa': offer.companyName,
-      'Email': offer.email,
-    };
+
+      // Agregar estado de la oferta si existe
+      if (offer.status) {
+        const statusLabels: { [key: string]: string } = {
+          'PUBLISHED': 'Publicada',
+          'DRAFT': 'Borrador',
+          'ARCHIVED': 'Archivada',
+          'ACTIVE': 'Activa'
+        };
+        metadata['Estado'] = statusLabels[offer.status] || offer.status;
+      }
+
+      return metadata;
+    } else {
+      return {
+        'Fecha de publicación': offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString('es-ES') : '',
+        'Empresa': offer.companyName,
+        'Email': offer.email,
+      };
+    }
   }
 
   private getActionsForOffer(offer: any): DetailedCardAction[] {
     const actions: DetailedCardAction[] = [];
     if (this.isCompany) {
+
+      if (offer.status !== 'ACTIVE' && offer.status !== 'PUBLISHED') {
+        actions.push({
+          label: 'Publicar oferta',
+          action: 'publishOffer',
+          color: 'accent',
+          icon: 'publish',
+          data: { offer: offer }
+        });
+      }
+
+      if (offer.status !== 'DRAFT') {
+        actions.push({
+          label: 'Guardar como borrador',
+          action: 'draftOffer',
+          color: 'accent',
+          icon: 'save',
+          data: { offer: offer }
+        });
+      }
+
+      if (offer.status !== 'ARCHIVED') {
+        actions.push({
+          label: 'Archivar oferta',
+          action: 'archiveOffer',
+          color: 'accent',
+          icon: 'archive',
+          data: { offer: offer }
+        });
+      }
 
       actions.push({
         label: 'Eliminar oferta',
@@ -289,7 +353,7 @@ export class OfferTableComponent implements OnDestroy {
       }
 
     } else if (this.isCandidate) {
-      // Acción de bookmark para candidatos
+
       actions.push({
         label: this.isBookmarked(offer.id) ? 'Quitar' : 'Guardar',
         action: 'toggleBookmark',
@@ -360,6 +424,18 @@ export class OfferTableComponent implements OnDestroy {
         this.deleteOffer(data.offer);
         break;
 
+      case 'publishOffer':
+        this.updateOfferStatus(data.offer.id, 'PUBLISHED');
+        break;
+
+      case 'archiveOffer':
+        this.updateOfferStatus(data.offer.id, 'ARCHIVED');
+        break;
+
+      case 'draftOffer':
+        this.updateOfferStatus(data.offer.id, 'DRAFT');
+        break;
+
       case 'viewCandidates':
         this.router.navigate(['/company/candidates'], {
           queryParams: { offerId: data.offerId, offerTitle: data.offerTitle }
@@ -368,7 +444,6 @@ export class OfferTableComponent implements OnDestroy {
 
       case 'toggleBookmark':
         this.toggleBookmark(data.offer.id);
-        // Refrescar la detailed card para actualizar el botón
         this.refreshDetailedCard();
         break;
 
@@ -409,7 +484,7 @@ export class OfferTableComponent implements OnDestroy {
       this.offerService.deleteOffer(offer.id).subscribe({
         next: () => {
           this.snackBar.open('Oferta eliminada exitosamente', 'Cerrar', { duration: 3000 });
-          this.loadOffers();
+          this.loadCompanyOffers();
           this.closeDetailedCard();
         },
         error: (error) => {
@@ -434,9 +509,8 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   filterOffers(): any[] {
-    // Get the base offers based on current view
     let filtered = [...this.getCurrentViewOffers()];
-    
+
     if (this.searchTerm.trim()) {
       const searchLower = this.searchTerm.toLowerCase();
       filtered = filtered.filter(offer =>
@@ -459,7 +533,7 @@ export class OfferTableComponent implements OnDestroy {
     return filtered;
   }
 
- 
+
   recomendedOffers(): any[] {
     const selectedTagIds = this.selectedTags.map(tag => tag.id);
     let filtered = this.offers.filter((offer: any) =>
@@ -475,15 +549,31 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   selectedCandidaturesOffers(): any[] {
-    let filtered = this.selectedCandidatures.filter((offer: any) =>
-      offer.id
+    let filtered = this.offers.filter((offer: CandidateOffer) =>
+      offer.applied === true
     );
     return filtered;
   }
 
-  // New methods for offer view selection
   setOfferView(view: 'all' | 'recommended' | 'applied' | 'bookmarks') {
     this.currentOfferView = view;
+  }
+
+  // New methods for company offer status filtering
+  setOfferStatus(status: 'all' | 'draft' | 'archived' | 'active') {
+    this.currentOfferStatus = status;
+  }
+
+  getDraftOffersCount(): number {
+    return this.offers.filter(offer => offer.status === 'DRAFT').length;
+  }
+
+  getArchivedOffersCount(): number {
+    return this.offers.filter(offer => offer.status === 'ARCHIVED').length;
+  }
+
+  getActiveOffersCount(): number {
+    return this.offers.filter(offer => offer.status === 'ACTIVE').length;
   }
 
   getRecommendedOffersCount(): number {
@@ -504,7 +594,7 @@ export class OfferTableComponent implements OnDestroy {
 
   toggleBookmark(offerId: number) {
     const isCurrentlyBookmarked = this.isBookmarked(offerId);
-    
+
     if (isCurrentlyBookmarked) {
       // Remover bookmark
       this.offerService.removeBookmark(offerId).subscribe({
@@ -515,7 +605,7 @@ export class OfferTableComponent implements OnDestroy {
         },
         error: (error) => {
           console.error('Error removing bookmark:', error);
-          this.snackBar.open('Error al eliminar el bookmark', 'Cerrar', { 
+          this.snackBar.open('Error al eliminar el bookmark', 'Cerrar', {
             duration: 2000,
             panelClass: ['error-snackbar']
           });
@@ -530,7 +620,7 @@ export class OfferTableComponent implements OnDestroy {
         },
         error: (error) => {
           console.error('Error adding bookmark:', error);
-          this.snackBar.open('Error al guardar el bookmark', 'Cerrar', { 
+          this.snackBar.open('Error al guardar el bookmark', 'Cerrar', {
             duration: 2000,
             panelClass: ['error-snackbar']
           });
@@ -548,11 +638,11 @@ export class OfferTableComponent implements OnDestroy {
       this.offerService.getUserBookmarksOffers().subscribe({
         next: (bookmarks) => {
           this.serverBookmarkedOffers = bookmarks;
-            this.bookmarkedOffers = bookmarks.map(offer => offer.id || 0).filter(id => id > 0); 
-            this.serverBookmarkedOffers = bookmarks.map(offer => ({
+          this.bookmarkedOffers = bookmarks.map(offer => offer.id || 0).filter(id => id > 0);
+          this.serverBookmarkedOffers = bookmarks.map(offer => ({
             ...offer,
             dateAdded: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : ''
-            }));
+          }));
 
         },
         error: (error) => {
@@ -565,16 +655,39 @@ export class OfferTableComponent implements OnDestroy {
 
 
   getCurrentViewOffers(): any[] {
-    switch (this.currentOfferView) {
-      case 'recommended':
-        return this.recomendedOffers();
-      case 'applied':
-        return this.selectedCandidaturesOffers();
-      case 'bookmarks':
-        return this.getBookmarkedOffers();
-      default:
-        return this.offers;
+    let baseOffers: any[];
+
+    // For candidates, use the existing view logic
+    if (this.isCandidate) {
+      switch (this.currentOfferView) {
+        case 'recommended':
+          return this.recomendedOffers();
+        case 'applied':
+          return this.selectedCandidaturesOffers();
+        case 'bookmarks':
+          return this.getBookmarkedOffers();
+        default:
+          return this.offers;
+      }
     }
+
+    // For companies, filter by offer status
+    if (this.isCompany) {
+      if (this.currentOfferStatus === 'all') {
+        return this.offers;
+      } else {
+        const statusMap = {
+          'draft': 'DRAFT',
+          'archived': 'ARCHIVED',
+          'active': 'ACTIVE'
+        };
+        const targetStatus = statusMap[this.currentOfferStatus];
+        return this.offers.filter(offer => offer.status === targetStatus);
+      }
+    }
+
+    // Default fallback
+    return this.offers;
   }
 
   onDetailedCardSave(editedOffer: any) {
@@ -597,7 +710,7 @@ export class OfferTableComponent implements OnDestroy {
               duration: 3000,
               panelClass: ['success-snackbar']
             });
-            this.loadOffers();
+            this.loadCompanyOffers();
             this.closeDetailedCard();
           },
           error: (error) => {
@@ -613,7 +726,7 @@ export class OfferTableComponent implements OnDestroy {
           id: editedOffer.id,
           title: formValues.title,
           description: formValues.description,
-          tags: tags || []
+          tags: tags || [],
         };
 
         this.offerService.updateOffer(offerData).subscribe({
@@ -621,7 +734,7 @@ export class OfferTableComponent implements OnDestroy {
             this.snackBar.open('Oferta actualizada con exito', 'Cerrar', {
               duration: 3000,
             });
-            this.loadOffers();
+            this.loadCompanyOffers();
             this.closeDetailedCard();
           },
           error: (error) => {
@@ -692,10 +805,53 @@ export class OfferTableComponent implements OnDestroy {
   onViewDetails(offer: any) {
     const filteredOffers = this.filterOffers();
     const offerIndex = filteredOffers.findIndex(o => o.id === offer.id);
-    
+
     if (offerIndex !== -1) {
       this.openDetailedCard(offerIndex);
     }
+  }
+
+  updateOfferStatus(offerId: number, newStatus: 'PUBLISHED' | 'ARCHIVED' | 'DRAFT') {
+    let updateObservable;
+
+    switch (newStatus) {
+      case 'PUBLISHED':
+        updateObservable = this.companyService.publishOffer(offerId);
+        break;
+      case 'ARCHIVED':
+        updateObservable = this.companyService.archiveOffer(offerId);
+        break;
+      case 'DRAFT':
+        updateObservable = this.companyService.draftOffer(offerId);
+        break;
+      default:
+        console.error('Estado de oferta no válido:', newStatus);
+        return;
+    }
+
+    updateObservable.subscribe({
+      next: () => {
+        const statusMessages = {
+          'PUBLISHED': 'publicada',
+          'ARCHIVED': 'archivada',
+          'DRAFT': 'guardada como borrador'
+        };
+
+        this.snackBar.open(`Oferta ${statusMessages[newStatus]} exitosamente`, 'Cerrar', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+        this.loadCompanyOffers();
+        this.closeDetailedCard();
+      },
+      error: (error) => {
+        console.error(`Error al cambiar estado de oferta a ${newStatus}:`, error);
+        this.snackBar.open(`Error al cambiar el estado de la oferta`, 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
   }
 
   private refreshDetailedCard() {

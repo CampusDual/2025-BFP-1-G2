@@ -226,6 +226,95 @@
   box-shadow: 0 4px 8px rgba(var(--primary-color-rgb, 63, 81, 181), 0.3);
 }
 
+/* Status-based card styles */
+.offer-card-published {
+  border: 2px solid #4caf50;
+  background: linear-gradient(to bottom, rgba(76, 175, 80, 0.05), white);
+}
+
+.offer-card-published::before {
+  background: linear-gradient(90deg, #4caf50, #66bb6a);
+  opacity: 1;
+}
+
+.offer-card-draft {
+  border: 2px solid #ff9800;
+  background: linear-gradient(to bottom, rgba(255, 152, 0, 0.05), white);
+}
+
+.offer-card-draft::before {
+  background: linear-gradient(90deg, #ff9800, #ffb74d);
+  opacity: 1;
+}
+
+.offer-card-archived {
+  border: 2px solid #9e9e9e;
+  background: linear-gradient(to bottom, rgba(158, 158, 158, 0.05), white);
+  opacity: 0.8;
+}
+
+.offer-card-archived::before {
+  background: linear-gradient(90deg, #9e9e9e, #bdbdbd);
+  opacity: 1;
+}
+
+/* Status chip styles */
+.offer-status {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.status-chip {
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-chip mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.status-published,
+.status-active {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.status-draft {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #ff9800;
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+.status-archived {
+  background-color: rgba(158, 158, 158, 0.1);
+  color: #9e9e9e;
+  border: 1px solid rgba(158, 158, 158, 0.3);
+}
+
+/* Hover effects for status cards */
+.offer-card-published:hover {
+  border-color: #4caf50;
+  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.2);
+}
+
+.offer-card-draft:hover {
+  border-color: #ff9800;
+  box-shadow: 0 8px 24px rgba(255, 152, 0, 0.2);
+}
+
+.offer-card-archived:hover {
+  border-color: #9e9e9e;
+  box-shadow: 0 8px 24px rgba(158, 158, 158, 0.2);
+}
+
 /* Botón de bookmark */
 .bookmark-button {
   position: absolute;
@@ -238,7 +327,7 @@
   height: 50px;
   border-radius: 50%;
   display: flex;
-  align-items: center;  
+  align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -274,4 +363,4 @@
   0% { transform: scale(1); }
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
-} 
+}

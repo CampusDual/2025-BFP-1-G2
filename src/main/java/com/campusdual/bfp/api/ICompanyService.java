@@ -25,4 +25,12 @@ public interface ICompanyService {
     List<CompanyDTO> getCompaniesByLocation(String location);
 
     Optional<CompanyDTO> getCompanyByUsername(String username);
+
+    List<OfferDTO> getCompanyOffersByStatus(String username, String status);
+
+    void publishOffer(int offerId, String username);
+
+    void archiveOffer(int offerId, String username);
+
+    void draftOffer(int offerId, String username);
 }

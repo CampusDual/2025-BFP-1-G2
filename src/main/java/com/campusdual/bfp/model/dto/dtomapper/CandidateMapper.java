@@ -12,7 +12,6 @@ public interface CandidateMapper {
     CandidateMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(CandidateMapper.class);
 
     @Mapping(source = "user.login", target = "login")
-    @Mapping(source = "user.password", target = "password")
     @Mapping(source = "user.email", target = "email")
     @Mapping(source = "phoneNumber", target = "phoneNumber")
     @Mapping(source = "cvPdfBase64", target = "cvPdfBase64")
@@ -22,7 +21,6 @@ public interface CandidateMapper {
     List<CandidateDTO> toDTOList(List<Candidate> candidates);
 
     @Mapping(target = "user.login", source = "login")
-    @Mapping(target = "user.password", source = "password")
     @Mapping(target = "user.email", source = "email")
     @Mapping(target = "cvPdfBase64", source = "cvPdfBase64")
     @Mapping(target = "logoImageBase64", source = "logoImageBase64")

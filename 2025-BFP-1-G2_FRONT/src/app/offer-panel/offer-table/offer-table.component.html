@@ -20,6 +20,7 @@
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
+        <!-- Offer View Selectors -->
         <div class="offer-selectors" *ngIf="isCandidate">
           <button mat-raised-button [color]="currentOfferView === 'recommended' ? 'primary' : ''"
             class="selector-button" (click)="setOfferView('recommended')" matBadge="{{ getRecommendedOffersCount() }}"
@@ -48,6 +49,36 @@
             Todas
           </button>
         </div>
+
+        <!-- Offer Status Selectors for Companies -->
+        <div class="offer-selectors" *ngIf="isCompany">
+          <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : ''"
+            class="selector-button" (click)="setOfferStatus('active')" matBadge="{{ getActiveOffersCount() }}"
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getActiveOffersCount() === 0">
+            <mat-icon>visibility</mat-icon>
+            Activas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferStatus === 'draft' ? 'primary' : ''"
+            class="selector-button" (click)="setOfferStatus('draft')" matBadge="{{ getDraftOffersCount() }}"
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getDraftOffersCount() === 0">
+            <mat-icon>edit</mat-icon>
+            Borradores
+          </button>
+
+          <button mat-raised-button [color]="currentOfferStatus === 'archived' ? 'primary' : ''"
+            class="selector-button" (click)="setOfferStatus('archived')" matBadge="{{ getArchivedOffersCount() }}"
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getArchivedOffersCount() === 0">
+            <mat-icon>archive</mat-icon>
+            Archivadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferStatus === 'all' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferStatus('all')">
+            <mat-icon>list</mat-icon>
+            Todas
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -61,6 +92,8 @@
     <app-offer-card
       *ngFor="let offer of filterOffers(); let i = index"
       [offer]="offer"
+      [isCompany]="isCompany"
+      [isCandidate]="isCandidate"
       [isBookmarked]="isBookmarked(offer.id)"
       (click)="openDetailedCard(i)"
       (viewDetails)="onViewDetails($event)"

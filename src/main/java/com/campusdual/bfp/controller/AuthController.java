@@ -85,7 +85,7 @@ public class AuthController {
         this.userService.registerNewCandidate(request.getLogin(), request.getPassword(), request.getEmail(),
                 request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE",
                 request.getLocation(), request.getProfessionalTitle(), request.getYearsOfExperience(), request.getEducationLevel(),
-                request.getLanguages(), request.getEmploymentStatus(), request.getProfilePictureUrl(), request.getCurriculumUrl(),
+                request.getLanguages(), request.getEmploymentStatus(),
                 request.getLinkedinUrl(), request.getGithubUrl(), request.getFigmaUrl(), request.getPersonalWebsiteUrl(), request.getTagIds());
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
     }

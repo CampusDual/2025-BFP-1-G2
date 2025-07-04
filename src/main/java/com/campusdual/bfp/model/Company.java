@@ -1,7 +1,5 @@
 package com.campusdual.bfp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -36,9 +34,6 @@ public class Company {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Offer> offers;
 
     public int getId() {
         return id;
@@ -104,16 +99,4 @@ public class Company {
         this.foundedDate = foundedDate;
     }
 
-    public List<Offer> getOffers() {
-        return offers;
-    }
-
-    public void setOffers(List<Offer> offers) {
-        this.offers = offers;
-    }
-
-    public int getActiveOffers() {
-        if (offers == null) return 0;
-        return (int) offers.stream().filter(Offer::isActive).count();
-    }
 }

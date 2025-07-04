@@ -17,7 +17,24 @@ public class OfferDTO implements Comparator <OfferDTO> {
     private List<TagDTO> tags;
     private String logo;
     private Company company;
+    public Boolean active;
     private Boolean isBookmarked;
+    private List<CandidateDTO> candidates;
+    private boolean isApplied;
+
+
+    public OfferDTO() {
+    }
+
+
+
+    public List<CandidateDTO> getCandidates() {
+        return candidates;
+    }
+
+    public void setCandidates(List<CandidateDTO> candidates) {
+        this.candidates = candidates;
+    }
 
     public Boolean getBookmarked() {
         return isBookmarked;
@@ -26,7 +43,11 @@ public class OfferDTO implements Comparator <OfferDTO> {
     public void setBookmarked(Boolean bookmarked) {
         isBookmarked = bookmarked;
     }
-
+    public String getStatus() {
+        if (active == null) return "DRAFT";
+        if (active) return "ACTIVE";
+        return "ARCHIVED";
+    }
     public Boolean getCandidateValid() {
         return candidateValid;
     }
@@ -94,5 +115,11 @@ public class OfferDTO implements Comparator <OfferDTO> {
         this.company = company;
     }
 
+    public void setIsApplied(boolean isApplied) {
+        this.isApplied = isApplied;
+    }
 
+    public boolean isApplied() {
+        return isApplied;
+    }
 }
