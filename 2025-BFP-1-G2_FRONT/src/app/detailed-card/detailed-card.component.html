@@ -81,7 +81,7 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-card-subtitle *ngIf="currentItem.subtitle && !isEditing">
+        <mat-card-subtitle *ngIf="currentItem.subtitle && currentItem.subtitle && !isEditing">
           {{ currentItem.subtitle }}
         </mat-card-subtitle>
 
@@ -142,7 +142,7 @@
 
         <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-            <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
+            <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
           </div>
           <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'"
             class="tags-section-static">

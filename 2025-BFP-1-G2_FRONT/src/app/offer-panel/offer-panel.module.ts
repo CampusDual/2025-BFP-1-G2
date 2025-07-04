@@ -30,6 +30,7 @@ export interface Offer {
   email: string;
   companyName: string;
   dateAdded: string;
+  status: string;
 }
 
 @NgModule({

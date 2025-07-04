@@ -8,16 +8,16 @@ import { OfferService } from "../../services/offer.service";
   templateUrl: './offer-card.component.html',
   styleUrls: ['./offer-card.component.css']
 })
-export class OfferCardComponent implements OnInit {
+export class OfferCardComponent  {
 
   @Input() offer: any;
   @Input() isCompany: boolean = false;
   @Input() isBookmarked: boolean = false;
+  @Input() isCandidate: boolean = false;
   @Output() viewDetails = new EventEmitter<any>();
   @Output() toggleBookmark = new EventEmitter<number>();
 
   isDisabled: boolean = true;
-  isCandidate: any;
   candidates: any[] = [];
 
 
@@ -25,30 +25,6 @@ export class OfferCardComponent implements OnInit {
     protected offerService: OfferService) {
   }
 
-
-  ngOnInit() {
-    this.authService.hasRole('ROLE_CANDIDATE').subscribe({
-      next: (hasRole) => {
-        this.isCandidate = hasRole;
-        if (this.isCandidate) {
-          this.offerService.getCandidates(this.offer.id).subscribe({
-            next: (candidates) => {
-              this.offer.candidates = candidates;
-              this.offer.candidatesCount = candidates.length;
-              console.log('Candidates fetched successfully:', this.candidates);
-            },
-            error: (error) => {
-              console.error('Error fetching candidates:', error);
-            }
-          });
-        }
-      },
-      error: (error) => {
-        console.error('Error checking role:', error);
-        this.isCandidate = false;
-      }
-    });
-  }
   getFirstThreeTags(): any {
     if (!this.offer?.tags || !Array.isArray(this.offer.tags)) {
       return [];

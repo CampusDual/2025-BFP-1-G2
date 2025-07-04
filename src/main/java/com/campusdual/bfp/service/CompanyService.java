@@ -5,10 +5,12 @@ import com.campusdual.bfp.model.Company;
 import com.campusdual.bfp.model.OfferTags;
 import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dao.*;
+import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
 import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import com.campusdual.bfp.model.dto.TagDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
 import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,6 +47,10 @@ public class CompanyService implements ICompanyService {
 
     @Autowired
     private OfferTagsDao offerTagsDao;
+    @Autowired
+    private UserOfferDao userOfferDao;
+    @Autowired
+    private CandidateDao candidateDao;
 
     public List<CompanyDTO> getAllCompanies() {
         return companyDao.findAll().stream()
@@ -93,7 +100,11 @@ public class CompanyService implements ICompanyService {
         List<Offer> offers = offerDao.findOfferByCompanyId(companyId);
         List<OfferDTO> offerDTOS =
         offers.stream()
-                .map(OfferMapper.INSTANCE::toDTO)
+                .map(offer -> {
+                    OfferDTO offerDTO = OfferMapper.INSTANCE.toDTO(offer);
+                    offerDTO.setDateAdded(offer.getDate());
+                    return offerDTO;
+                })
                 .collect(Collectors.toList());
         for (OfferDTO offerDTO : offerDTOS) {
             offerDTO.setLogo(companyDao.findById(companyId)
@@ -101,9 +112,14 @@ public class CompanyService implements ICompanyService {
                     .orElse(null));
             List<TagDTO> tagDTOs = getOfferTags(offerDTO.getId());
             offerDTO.setTags(tagDTOs);
+            offerDTO.setCandidates(new ArrayList<>());
+            userOfferDao.findUserIdsByOfferId(offerDTO.getId()).stream().map(candidateDao::findCandidateByUserId)
+                    .forEach(candidate -> {
+                        CandidateDTO candidateDTO = CandidateMapper.INSTANCE.toDTO(candidate);
+
+                        offerDTO.getCandidates().add(candidateDTO);
+                    });
         }
-
-
         return offerDTOS;
     }
 

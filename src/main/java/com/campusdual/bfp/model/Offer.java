@@ -24,7 +24,7 @@ public class Offer {
     private Boolean active;
 
     @Column(name = "date_added", nullable = false)
-    private Date date;
+    private Date dateAdded;
 
     public Offer() {
     }
@@ -34,14 +34,14 @@ public class Offer {
         this.title = title;
         this.description = description;
         this.active = active;
-        this.date = date;
+        this.dateAdded = date;
     }
 
     public Offer(String title, String description, Boolean active, Date date) {
         this.title = title;
         this.description = description;
         this.active = active;
-        this.date = date;
+        this.dateAdded = date;
     }
 
     public int getId() {
@@ -77,11 +77,11 @@ public class Offer {
     }
 
     public Date getDate() {
-        return date;
+        return dateAdded;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.dateAdded = date;
     }
 
     public Company getCompany() {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { CompanyOffer } from './offer.service';
 
 export interface Company {
   id: number;
@@ -40,7 +41,6 @@ export class CompanyService {
     return this.http.put<Company>(`${this.baseUrl}/update`, company);
   }
 
-  // Eliminar empresa
   deleteCompany(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
@@ -49,8 +49,8 @@ export class CompanyService {
     return this.http.get<Company>(`${this.baseUrl}/myCompany`);
   }
   
-  getCompanyOffers(companyId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/${companyId}/offers`);
+  getCompanyOffers(companyId: number): Observable<CompanyOffer[]> {
+    return this.http.get<CompanyOffer[]>(`${this.baseUrl}/${companyId}/offers`);
   }
 
   searchCompanies(searchTerm: string): Observable<Company[]> {
@@ -61,8 +61,8 @@ export class CompanyService {
     return this.http.get<Company[]>(`${this.baseUrl}/byLocation?location=${encodeURIComponent(location)}`);
   }
 
-  getCompanyOffersByStatus(status: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/offers/status?status=${status}`);
+  getCompanyOffersByStatus(status: string): Observable<CompanyOffer[]> {
+    return this.http.get<CompanyOffer[]>(`${this.baseUrl}/offers/status?status=${status}`);
   }
 
   publishOffer(offerId: number): Observable<any> {
@@ -76,4 +76,5 @@ export class CompanyService {
   draftOffer(offerId: number): Observable<any> {
     return this.http.put(`${this.baseUrl}/offers/draft/${offerId}`, {});
   }
+
 }

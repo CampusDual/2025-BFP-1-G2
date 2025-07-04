@@ -20,7 +20,6 @@ public interface CompanyMapper {
     @Mapping(source = "url", target = "url")
     @Mapping(source = "address", target = "address")
     @Mapping(source = "foundedDate", target = "foundedDate")
-    @Mapping(target = "password", ignore = true) // Se maneja aparte
     CompanyDTO toDTO(Company company);
 
     @Mapping(target = "user", ignore = true) // Se maneja en el servicio

@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CandidateDao extends JpaRepository<Candidate, Integer> {
     Candidate findCandidateByUser(User user);
+
+    Candidate findCandidateByUserId(int userId);
 }
