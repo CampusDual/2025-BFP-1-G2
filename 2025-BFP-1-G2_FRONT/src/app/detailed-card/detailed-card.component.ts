@@ -241,6 +241,10 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     return `${this.currentIndex + 1} de ${this.data.length}`;
   }
 
+  get hasFewItems(): boolean {
+    return this.data.length < 30;
+  }
+
   executeAction(action: DetailedCardAction) {
     this.onAction.emit({
       action: action.action,
@@ -387,6 +391,14 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
 
     const wrapperWidth = wrapper.offsetWidth;
     const dotsContainerWidth = dotsContainer.scrollWidth;
+
+    // Si hay menos de 30 elementos, usar centrado y no aplicar scroll
+    if (this.hasFewItems) {
+      dotsContainer.style.transform = 'translateX(0px)';
+      dotsContainer.style.justifyContent = 'center';
+      this.updateContentIndicators(0, 0);
+      return;
+    }
 
     if (dotsContainerWidth <= wrapperWidth) {
       dotsContainer.style.transform = 'translateX(0px)';

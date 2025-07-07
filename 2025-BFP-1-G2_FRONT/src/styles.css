@@ -24,3 +24,7 @@ body {
   background: rgb(234, 234, 234);
 }
 
+/* Forzar color primario personalizado en todos los mat-spinner */
+.mat-mdc-progress-spinner circle, .mat-mdc-progress-spinner svg {
+  stroke: var(--primary-color) !important;
+}

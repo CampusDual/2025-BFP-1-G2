@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {NgChartsModule} from "ng2-charts";
 import {SharedModule} from "../shared/shared.module";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import {SharedModule} from "../shared/shared.module";
     MatInputModule,
     MatTooltipModule,
     NgChartsModule,
-    SharedModule
+    SharedModule,
+    MatProgressSpinnerModule
   ]
 })
 export class AdminModule { }

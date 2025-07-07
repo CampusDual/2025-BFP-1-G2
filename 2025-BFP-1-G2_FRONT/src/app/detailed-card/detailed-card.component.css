@@ -6,26 +6,25 @@
   height: 100vh;
   background: rgba(30, 30, 30, 0.55);
   backdrop-filter: blur(6px) brightness(0.9);
-  display: flex;
-  padding-block: 20px;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   overflow-y: auto;
   animation: fadeIn 0.3s ease-out;
+  display: flex;
 }
 
 .detailed-container {
   position: relative;
   top: 0;
-  max-width: 90vw;
-  max-height: 85vh;
-  min-height: 85vh;
-  min-width: 90vw;
+  width: 90vw;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
   overflow: visible;
+  transition: padding-bottom 0.3s;
+  border-radius: 16px;
 }
 
 .close-button {
@@ -78,20 +77,13 @@
   padding: 8px 16px 12px;
 }
 
-.navigation-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-}
-
 .position-indicator {
   font-size: 0.9rem;
   color: var(--secondary-color);
   font-weight: 500;
 }
 
-.navigation-dots-container-fixed {
+.iner-fixed {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -100,10 +92,12 @@
 }
 
 .card-content-wrapper {
-  flex-grow: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
+  min-height: 0;
+  /* Elimina max-height para permitir crecimiento natural */
 }
 
 .navigation-header {
@@ -144,8 +138,9 @@
 
 .navigation-controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 16px;
 }
 
 .navigation-dots-container-fixed {
@@ -163,7 +158,6 @@
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) white;
   overflow: auto;
-  max-height: calc(95vh - 140px);
 }
 
 mat-card {
@@ -204,7 +198,6 @@ mat-card-header {
 }
 
 .navigation-dots-container {
-  margin-top: 16px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -541,6 +534,58 @@ mat-chip-option[disabled] ::ng-deep span {
   color: #999 !important;
 }
 
+.navigation-dots.few-items {
+  justify-content: center;
+  width: auto;
+  min-width: auto;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.navigation-dots-container-fixed .navigation-dots.few-items {
+  justify-content: center;
+  width: auto;
+  min-width: auto;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.navigation-dots-wrapper:has(.navigation-dots.few-items) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navigation-dots-container-fixed:has(.navigation-dots.few-items) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .navigation-dots.few-items {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+  
+  .navigation-dots-container-fixed .navigation-dots.few-items {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navigation-dots.few-items {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+  
+  .navigation-dots-container-fixed .navigation-dots.few-items {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+}
+
 @media (max-width: 768px) {
   .detailed-container {
     max-width: 95vw;
@@ -656,7 +701,6 @@ mat-chip-option[disabled] ::ng-deep span {
     width: 20px;
   }
   
-  /* Estilos para navegación fija en móvil */
   .navigation-fixed-header {
     padding: 4px 8px 6px;
     gap: 4px;
@@ -690,11 +734,8 @@ mat-chip-option[disabled] ::ng-deep span {
   .navigation-dots-container-fixed .navigation-dots-wrapper::after {
     width: 20px;
   }
-  
-  .card-content-wrapper {
-    max-height: calc(95vh - 120px);
-  }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -724,3 +765,4 @@ mat-chip-option[disabled] ::ng-deep span {
   width: 100%;
   margin-bottom: 16px;
 }
+
