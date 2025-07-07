@@ -7,7 +7,7 @@
         <mat-icon>person</mat-icon>
       </div>
 
-      <div class="edit-overlay" (click)="openFileSelector()">
+      <div *ngIf="isCompany" class="edit-overlay" (click)="openFileSelector()">
         <div class="edit-overlay-content">
           <mat-icon>edit</mat-icon>
           <span>Cambiar foto</span>
@@ -22,7 +22,7 @@
       </h1>
     </div>
 
-    <div class="edit-controls" *ngIf="!isEditMode">
+    <div  class="edit-controls" *ngIf="isCompany && !isEditMode">
       <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
         <mat-icon>edit</mat-icon>
       </button>

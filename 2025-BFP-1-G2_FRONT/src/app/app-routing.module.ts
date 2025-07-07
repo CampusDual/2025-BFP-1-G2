@@ -11,9 +11,12 @@ const routes: Routes = [
   {
     path: 'company',
     loadChildren: () => import('./company/company.module').then(m => m.CompanyModule),
-    canActivate: [AuthGuard], data: { roles: ['ROLE_COMPANY'] }
   },
-  {path: 'user',  loadChildren: () => import('./user/user.module').then(m => m.UserModule), data: { roles: ['ROLE_CANDIDATE'] } },
+  {
+    path: 'user',  loadChildren: () => import('./user/user.module').then(m => m.UserModule), 
+    data: { roles: ['ROLE_CANDIDATE', 'ROLE_COMPANY'] },
+    canActivate: [AuthGuard]
+  },
   {
     path:'admin',
     loadChildren:() => import('./admin/admin.module').then(m=>m.AdminModule),

@@ -15,6 +15,7 @@ thead th {
     text-align: center;
     border-left: 6px solid var(--primary-color);
 }
+
 .sortable-header {
     cursor: pointer;
     user-select: none;
@@ -29,7 +30,7 @@ thead th {
 
 .sort-icon {
     font-size: 18px;
-    width: 18px ;
+    width: 18px;
     height: 18px;
     transition: transform 0.3s ease;
 }
@@ -44,10 +45,23 @@ tbody td {
     font-size: 1rem;
     min-height: 80px;
     transition: color 0.3s ease, border-left 0.3s ease, padding-block 0.3s ease;
+
+}
+
+.gotoUser {
+    cursor: pointer;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: var(--important-text-color);
+    }
 }
 
 tbody tr.validated {
     background-color: #e0f7e9;
+
     >td:first-child {
         border-left: 6px solid #39b43d;
     }

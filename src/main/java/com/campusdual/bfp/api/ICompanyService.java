@@ -13,6 +13,8 @@ public interface ICompanyService {
 
     Optional<CompanyDTO> getCompanyById(Integer id);
 
+    CompanyDTO getCompanyByName(String name);
+
     CompanyDTO createCompany(CompanyDTO company);
 
     CompanyDTO updateCompany(CompanyDTO company, String username);

@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { animate, style, transition, trigger } from "@angular/animations";
 import { RouterOutlet, NavigationEnd, Router } from "@angular/router";
 import { AuthService } from './auth/services/auth.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { CompanyService } from './services/company.service';
 
 @Component({
   selector: 'app-root',
@@ -12,19 +12,21 @@ import { filter } from 'rxjs/operators';
 })
 
 export class AppComponent implements OnInit, OnDestroy {
-
   showFiller = false;
   isCompany = false;
   isCandidate = false;
   isAdmin = false;
   showHeader = true;
   showFooter = true;
+  userName?: string;
+  companyName?: string;
   private authSubscription?: Subscription;
   private routerSubscription?: Subscription;
 
   constructor(
     protected authService: AuthService,
-    private router: Router
+    private router: Router,
+    private companyService: CompanyService
   ) { }
 
   ngOnInit() {
@@ -36,6 +38,8 @@ export class AppComponent implements OnInit, OnDestroy {
           this.isCompany = false;
           this.isCandidate = false;
           this.isAdmin = false;
+          this.userName = '';
+          this.companyName = '';
         }
       }
     });
@@ -68,43 +72,64 @@ export class AppComponent implements OnInit, OnDestroy {
 
   checkAuthStatus() {
     const isAuth = this.authService.isLoggedIn();
-    console.log('Checking auth status:', isAuth);
     if (isAuth) {
       this.loadUserRole();
     } else {
       this.isCompany = false;
       this.isCandidate = false;
       this.isAdmin = false;
+      this.userName = '';
+      this.companyName = '';
     }
   }
 
   loadUserRole() {
-    console.log('Loading user roles...'); // Debug
-
     this.authService.hasRole('ROLE_COMPANY').subscribe({
       next: (hasRole) => {
-        console.log('Is Company:', hasRole); // Debug
+        if (hasRole) {
+          this.companyService.getMyCompany().subscribe({
+            next: (company) => {
+              this.companyName = company.name;
+            },
+            error: (error) => {
+              console.error('Error fetching company details:', error);
+              this.companyName = '';
+            }
+          });
+        } else {
+          this.companyName = '';
+        }
         this.isCompany = hasRole;
       },
       error: (error) => {
         console.error('Error checking company role:', error);
         this.isCompany = false;
+        this.companyName = '';
       }
     });
 
     this.authService.hasRole('ROLE_CANDIDATE').subscribe({
       next: (hasRole) => {
-        console.log('Is Candidate:', hasRole); // Debug
+        if (hasRole) {
+          this.userName = this.authService.getLogin() || '';
+          console.log('User name loaded for navigation:', this.userName);
+        } else {
+          this.userName = '';
+        }
         this.isCandidate = hasRole;
       },
       error: (error) => {
         console.error('Error checking candidate role:', error);
         this.isCandidate = false;
+        this.userName = '';
       }
     });
+    
     this.authService.hasRole('ROLE_ADMIN').subscribe({
       next: (hasRole) => {
-        console.log('Is Admin:', hasRole); // Debug
+        if (hasRole) {
+          this.userName = this.authService.getLogin() || '';
+        }
         this.isAdmin = hasRole;
       },
       error: (error) => {

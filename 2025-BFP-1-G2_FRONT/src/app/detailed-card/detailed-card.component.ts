@@ -5,6 +5,7 @@ import {MatDatepicker} from "@angular/material/datepicker";
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 
 export interface Candidate {
+  login: string;
   name: string;
   surname1: string;
   surname2: string;

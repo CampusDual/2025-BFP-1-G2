@@ -18,8 +18,6 @@ export class CandidatesComponent implements OnInit {
   
   candidates: Candidate[] = [];
   sortedCandidates: Candidate[] = [];
-  
-  // Variables para el ordenamiento
   currentSortColumn: SortColumn | null = null;
   currentSortDirection: SortDirection = 'asc';
 

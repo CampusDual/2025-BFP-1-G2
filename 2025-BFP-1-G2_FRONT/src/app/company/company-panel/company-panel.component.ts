@@ -1,7 +1,10 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
-import {ImageCompressionService} from "../../services/image-compression.service";
-import {Company, CompanyService} from "../../services/company.service";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+import { ImageCompressionService } from "../../services/image-compression.service";
+import { Company, CompanyService } from "../../services/company.service";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Route } from '@angular/router';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-company-panel',
@@ -11,7 +14,7 @@ import {Company, CompanyService} from "../../services/company.service";
 
 
 export class CompanyPanelComponent implements OnInit {
-
+  companyNameInput: string = '';
   myCompany: Company | null = null;
   companyName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   description = new FormControl('', [Validators.maxLength(1000)]);
@@ -23,18 +26,62 @@ export class CompanyPanelComponent implements OnInit {
   foundedDate = new FormControl('', [Validators.pattern('^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$')]);
   isUploadingLogo: boolean = false;
   logoFileName: string = '';
-
   fullName: string = '';
-
   isLoading: boolean = true;
   isEditMode: boolean = false;
   isSaving: boolean = false;
+  isCompany: boolean = false;
   constructor(
-    private companyService : CompanyService,
-    private imageCompressionService: ImageCompressionService) {}
+    private companyService: CompanyService,
+    private imageCompressionService: ImageCompressionService,
+    private snackbar: MatSnackBar,
+    private route: ActivatedRoute,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.loadCompanyData();
+
+    this.route.paramMap.subscribe(params => {
+      const companyName = params.get('companyName');
+      if (companyName) {
+        this.companyNameInput = companyName;
+        this.authService.hasRole('ROLE_COMPANY').subscribe({
+          next: (hasRole: boolean) => {
+            if (hasRole) {
+              this.isCompany = true;
+              this.loadCompanyData();
+            }
+            else {
+              this.loadSpecificCompanyData();
+            }
+          },
+          error: (error: any) => {
+            console.error('Error checking user role', error);
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
+
+  loadSpecificCompanyData() {
+    this.companyService.getCompanyByName(this.companyNameInput).subscribe({
+      next: (company: any) => {
+        this.myCompany = company;
+        this.companyName.setValue(this.myCompany?.name || '');
+        this.description.setValue(this.myCompany?.description || '');
+        this.companyEmail.setValue(this.myCompany?.email || '');
+        this.phone.setValue(this.myCompany?.phone || '');
+        this.address.setValue(company.address || '');
+        this.url.setValue(company.url || '');
+        this.logo.setValue(company.logo || '');
+        this.foundedDate.setValue(company.foundedDate || '');
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error fetching user data', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   loadCompanyData(): void {
@@ -113,12 +160,14 @@ export class CompanyPanelComponent implements OnInit {
     this.companyService.updateCompany(companyData).subscribe({
       next: () => {
         console.log('Datos actualizados correctamente');
-        this.loadCompanyData(); 
+        this.loadCompanyData();
         this.isEditMode = false;
         this.isSaving = false;
+        this.snackbar.open('Datos actualizados correctamente', 'Cerrar', { duration: 3000 });
       },
       error: (error) => {
         console.error('Error al actualizar:', error);
+        this.snackbar.open('Error al actualizar:', 'Cerrar', { panelClass: 'mat-error' });
         this.isSaving = false;
       },
       complete: () => {
@@ -134,7 +183,7 @@ export class CompanyPanelComponent implements OnInit {
 
   hasFormErrors(): boolean {
     return this.companyName.invalid || this.companyEmail.invalid || this.phone.invalid ||
-      this.address.invalid ;
+      this.address.invalid;
   }
 
   async onLogoFileSelected(event: any): Promise<void> {
@@ -153,6 +202,7 @@ export class CompanyPanelComponent implements OnInit {
       const compressedBase64 = await this.imageCompressionService.compressLogo(file);
       this.logo.setValue(compressedBase64);
       this.logoFileName = file.name;
+      this.saveChanges();
       console.log('Logo comprimido y cargado exitosamente');
     } catch (error) {
       console.error('Error al comprimir el logo:', error);
@@ -172,9 +222,6 @@ export class CompanyPanelComponent implements OnInit {
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) {
       fileInput.click();
-      if(!this.isEditMode){
-        this.saveChanges();
-      }
     }
   }
 }

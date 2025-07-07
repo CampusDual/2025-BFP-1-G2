@@ -140,6 +140,15 @@ public class AuthController {
         return ResponseEntity.ok(candidateDetails);
     }
 
+    @GetMapping("/candidateDetails/{username}")
+        public ResponseEntity<CandidateDTO> getSpecificCandidateDetails(@PathVariable String username) {
+        CandidateDTO candidateDetails = userService.getCandidateDetails(username);
+        if (candidateDetails == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(candidateDetails);
+    }
+
     @PutMapping("/candidateDetails/edit")
     public ResponseEntity<CandidateDTO> editCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
                                                              @RequestBody CandidateDTO candidateDTO) {

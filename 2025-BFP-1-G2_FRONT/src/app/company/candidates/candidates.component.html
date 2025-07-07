@@ -34,7 +34,7 @@
         <tr *ngFor="let candidate of sortedCandidates; let i = index"  
             [ngClass]="candidate.valid === true ? 'validated' : (candidate.valid === false ? 'rejected' : '')">
             <td>{{ offerTitle }}</td>
-            <td>{{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}</td>
+            <td class="gotoUser" routerLink="/user/profile/{{candidate.login}}">{{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}</td>
             <td>{{ candidate.email }}</td>
             <td>
                 <a [href]="candidate.Linkedin" target="_blank" (click)="$event.stopPropagation()">

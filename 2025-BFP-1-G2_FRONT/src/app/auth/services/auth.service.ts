@@ -4,6 +4,7 @@ import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { TagService } from 'src/app/services/tag.service';
+import { Company } from 'src/app/services/company.service';
 
 export interface User {
   username: string;
@@ -139,6 +140,10 @@ export class AuthService {
 
   getCandidateDetails(): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/candidateDetails`);
+  }
+
+  getSpecificCandidateDetails(username: string): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/candidateDetails/${username}`);
   }
 
   updateCandidateDetails(candidateData: any): Observable<any> {

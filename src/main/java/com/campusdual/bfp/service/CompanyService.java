@@ -62,7 +62,9 @@ public class CompanyService implements ICompanyService {
         return companyDao.findById(id).map(CompanyMapper.INSTANCE::toDTO);
     }
 
-
+    public CompanyDTO getCompanyByName(String name) {
+        return CompanyMapper.INSTANCE.toDTO(companyDao.findByName(name));
+    }
 
     public CompanyDTO createCompany(CompanyDTO companyDTO) {
         User user = this.userDao.findByLogin(companyDTO.getName());

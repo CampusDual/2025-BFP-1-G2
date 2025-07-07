@@ -2,7 +2,6 @@ package com.campusdual.bfp.model;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "companies")
@@ -15,7 +14,7 @@ public class Company {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT")
     private String logo;
 
     @Column
