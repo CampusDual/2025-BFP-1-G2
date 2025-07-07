@@ -17,6 +17,7 @@ import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.campusdual.bfp.exception.*;
 
@@ -77,10 +78,12 @@ public class CompanyService implements ICompanyService {
     public CompanyDTO updateCompany(CompanyDTO companyDTO, String username) {
         Company company = this.companyDao.findById(companyDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+        UserDetails userDetails = userService.loadUserByUsername(username);
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()).contains("ROLE_ADMIN");
         User user = this.userDao.findByLogin(username);
-        if (user == null || ((user.getId() != (company.getUser().getId())) && user.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .noneMatch(role -> role.equals("ROLE_ADMIN")))) {
+        if (user == null || ((user.getId() != (company.getUser().getId())) && !isAdmin)) {
             throw new UnauthorizedOperationException("No tienes permiso para modificar esta empresa");
         }
         BeanUtils.copyProperties(companyDTO, company, "id", "user", "userId", "login");

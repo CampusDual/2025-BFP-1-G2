@@ -76,7 +76,6 @@ public class CompanyController {
     public ResponseEntity<CompanyDTO> updateCompany(@RequestBody CompanyDTO company, Principal principal) {
         CompanyDTO updatedCompany = companyService.updateCompany(company, principal.getName());
         return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
-
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

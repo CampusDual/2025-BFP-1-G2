@@ -30,20 +30,21 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    console.log('AppComponent: Initializing...');
+    
+    // Suscribirse al estado de autenticación
     this.authSubscription = this.authService.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
+        console.log('AppComponent: Auth status changed:', isAuthenticated);
         if (isAuthenticated) {
           this.loadUserRole();
         } else {
-          this.isCompany = false;
-          this.isCandidate = false;
-          this.isAdmin = false;
-          this.userName = '';
-          this.companyName = '';
+          this.resetUserState();
         }
       }
     });
 
+    // Suscribirse a cambios de ruta
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event) => {
@@ -54,11 +55,20 @@ export class AppComponent implements OnInit, OnDestroy {
         this.showFooter = !isLoginOrRegister;
       });
 
+    // Verificar estado inicial
     this.checkAuthStatus();
     const initialUrl = this.router.url;
     const isLoginOrRegister = initialUrl.includes('/login') || initialUrl === '/auth/login' || initialUrl === '/login' || initialUrl.includes('/register') || initialUrl === '/auth/register' || initialUrl === '/register';
     this.showHeader = !isLoginOrRegister;
     this.showFooter = !isLoginOrRegister;
+  }
+
+  private resetUserState() {
+    this.isCompany = false;
+    this.isCandidate = false;
+    this.isAdmin = false;
+    this.userName = '';
+    this.companyName = '';
   }
 
   ngOnDestroy() {
@@ -72,31 +82,38 @@ export class AppComponent implements OnInit, OnDestroy {
 
   checkAuthStatus() {
     const isAuth = this.authService.isLoggedIn();
+    console.log('AppComponent: Checking auth status:', isAuth);
+    
     if (isAuth) {
       this.loadUserRole();
     } else {
-      this.isCompany = false;
-      this.isCandidate = false;
-      this.isAdmin = false;
-      this.userName = '';
-      this.companyName = '';
+      this.resetUserState();
     }
   }
 
   loadUserRole() {
-    // Usar métodos cached para verificación rápida si hay roles disponibles
+    console.log('AppComponent: Loading user roles...');
+    
+    // Primero verificar si hay roles en caché
     const cachedRoles = this.authService.getRolesCached();
     
     if (cachedRoles.length > 0) {
-      // Usar roles cached para asignación inmediata
+      console.log('AppComponent: Using cached roles:', cachedRoles);
       this.updateRoleFlags(cachedRoles);
       this.loadUserData();
     } else {
-      // Si no hay roles cached, suscribirse a la carga de roles
-      this.authService.roles$.subscribe(roles => {
-        if (roles.length > 0) {
-          this.updateRoleFlags(roles);
-          this.loadUserData();
+      console.log('AppComponent: No cached roles, subscribing to roles observable...');
+      
+      this.authService.ensureRolesLoaded().subscribe({
+        next: (roles) => {
+          console.log('AppComponent: Roles loaded from observable:', roles);
+          if (roles.length > 0) {
+            this.updateRoleFlags(roles);
+            this.loadUserData();
+          }
+        },
+        error: (error) => {
+          console.error('AppComponent: Error loading roles:', error);
         }
       });
     }

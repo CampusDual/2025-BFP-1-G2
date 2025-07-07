@@ -49,8 +49,25 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
+    console.log('AuthService: Initializing...');
+    
+    // Verificar y cargar roles al inicializar si hay un token válido
     if (this.isLoggedIn()) {
-      this.loadUserRoles().subscribe();
+      console.log('AuthService: Token found on initialization, loading user roles...');
+      this.loadUserRoles().subscribe({
+        next: (roles) => {
+          console.log('AuthService: Roles loaded on initialization:', roles);
+        },
+        error: (error) => {
+          console.error('AuthService: Failed to load roles on initialization:', error);
+          if (error.status === 401 || error.status === 403) {
+            console.log('AuthService: Token invalid, clearing auth state');
+            this.clearAuthState();
+          }
+        }
+      });
+    } else {
+      console.log('AuthService: No valid token found on initialization');
     }
   }
 
@@ -288,7 +305,6 @@ export class AuthService {
   }
 
   redirectToUserHome(): void {
-    console.log('Redirecting user to appropriate home...');
     const roles = this.getRolesCached();
     if (roles.includes('ROLE_CANDIDATE')) {
       console.log('Redirecting to candidate portal');
@@ -298,7 +314,7 @@ export class AuthService {
       this.router.navigate(['/company/myoffers']);
     } else if (roles.includes('ROLE_ADMIN')) {
       console.log('Redirecting to admin panel');
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/admin/dashboard']);
     } else {
       console.log('No specific role found, redirecting to default');
       this.router.navigate(['/offers/portal']);
@@ -325,17 +341,62 @@ export class AuthService {
   ensureRolesLoaded(): Observable<string[]> {
     const currentRoles = this.getRolesCached();
     
+    // Si ya tenemos roles en caché, devolverlos inmediatamente
     if (currentRoles.length > 0) {
-      console.log('Roles already cached:', currentRoles);
+      console.log('AuthService: Roles already cached:', currentRoles);
       return of(currentRoles);
     }
     
+    // Si no está logueado, devolver array vacío
     if (!this.isLoggedIn()) {
-      console.log('User not logged in, returning empty roles');
+      console.log('AuthService: User not logged in, returning empty roles');
       return of([]);
     }
     
-    console.log('No roles cached, attempting to load from server...');
-    return this.loadUserRoles();
+    // Intentar obtener roles del servidor, pero primero esperar un poco
+    // por si ya hay una petición en curso desde la inicialización
+    console.log('AuthService: No roles cached, attempting to load from server...');
+    
+    return new Observable<string[]>(observer => {
+      // Esperar brevemente por si los roles se están cargando
+      const checkInterval = setInterval(() => {
+        const cachedRoles = this.getRolesCached();
+        if (cachedRoles.length > 0) {
+          clearInterval(checkInterval);
+          observer.next(cachedRoles);
+          observer.complete();
+        }
+      }, 100);
+      
+      // Si después de 1 segundo no hay roles, hacer petición al servidor
+      setTimeout(() => {
+        const stillNoCached = this.getRolesCached();
+        if (stillNoCached.length === 0) {
+          clearInterval(checkInterval);
+          
+          this.loadUserRoles().subscribe({
+            next: (roles) => {
+              observer.next(roles);
+              observer.complete();
+            },
+            error: (error) => {
+              console.error('AuthService: Error loading roles in ensureRolesLoaded:', error);
+              observer.next([]);
+              observer.complete();
+            }
+          });
+        }
+      }, 1000);
+      
+      // Timeout total después de 6 segundos
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        if (!observer.closed) {
+          console.warn('AuthService: Timeout loading roles, returning cached or empty');
+          observer.next(this.getRolesCached());
+          observer.complete();
+        }
+      }, 6000);
+    });
   }
 }

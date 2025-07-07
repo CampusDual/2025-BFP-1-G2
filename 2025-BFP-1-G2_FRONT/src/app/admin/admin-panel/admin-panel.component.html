@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let company of companies; let i = index" (click)="openDetailedCard(i)">
+      <tr *ngFor="let company of companies; let i = index" routerLink="/company/profile/{{company.name}}">
         <td>{{ company.name.charAt(0).toUpperCase() + company.name.substring(1) }}</td>
         <td>{{ company.email }}</td>
         <td>

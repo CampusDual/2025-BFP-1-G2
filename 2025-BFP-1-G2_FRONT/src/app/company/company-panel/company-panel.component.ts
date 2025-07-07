@@ -36,7 +36,7 @@ export class CompanyPanelComponent implements OnInit {
     private imageCompressionService: ImageCompressionService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
-    private authService: AuthService) { }
+    protected authService: AuthService) { }
 
   ngOnInit(): void {
 
@@ -74,7 +74,9 @@ export class CompanyPanelComponent implements OnInit {
         this.address.setValue(company.address || '');
         this.url.setValue(company.url || '');
         this.logo.setValue(company.logo || '');
-        this.foundedDate.setValue(company.foundedDate || '');
+        const fullDate = company.foundedDate  || '';
+        const year = fullDate ? new Date(fullDate).getFullYear().toString() : '';
+        this.foundedDate.setValue(year);
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -95,11 +97,9 @@ export class CompanyPanelComponent implements OnInit {
         this.address.setValue(company.address || '');
         this.url.setValue(company.url || '');
         this.logo.setValue(company.logo || '');
-
         const fullDate = company.foundedDate  || '';
         const year = fullDate ? new Date(fullDate).getFullYear().toString() : '';
         this.foundedDate.setValue(year);
-
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -160,11 +160,12 @@ export class CompanyPanelComponent implements OnInit {
       foundedDate: this.foundedDate.value ? `${this.foundedDate.value}-01-01` : undefined
     };
 
-
     this.companyService.updateCompany(companyData).subscribe({
       next: () => {
         console.log('Datos actualizados correctamente');
-        this.loadCompanyData();
+        if(this.authService.getRolesCached().includes("ROLE_COMPANY")) {
+          this.loadCompanyData();
+        }
         this.isEditMode = false;
         this.isSaving = false;
         this.snackbar.open('Datos actualizados correctamente', 'Cerrar', { duration: 3000 });

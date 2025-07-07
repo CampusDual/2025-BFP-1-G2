@@ -4,17 +4,19 @@ import {AuthGuard} from "./auth/auth.guard";
 
 const routes: Routes = [
   {path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)},
-  {path: 'offers', loadChildren: () => import('./offer-panel/offer-panel.module').then(m => m.OfferPanelModule),
-    canActivate: [AuthGuard],
-    data: { roles: ['ROLE_CANDIDATE', 'ROLE_ADMIN']
-    }
+  {
+    path: 'offers', 
+    loadChildren: () => import('./offer-panel/offer-panel.module').then(m => m.OfferPanelModule),
+    data: { roles: ['ROLE_CANDIDATE', 'ROLE_ADMIN'] },
+    canActivate: [AuthGuard]
   },
   {
     path: 'company',
-    loadChildren: () => import('./company/company.module').then(m => m.CompanyModule),
+    loadChildren: () => import('./company/company.module').then(m => m.CompanyModule)
   },
   {
-    path: 'user',  loadChildren: () => import('./user/user.module').then(m => m.UserModule), 
+    path: 'user',  
+    loadChildren: () => import('./user/user.module').then(m => m.UserModule), 
     data: { roles: ['ROLE_CANDIDATE', 'ROLE_COMPANY'] },
     canActivate: [AuthGuard]
   },
