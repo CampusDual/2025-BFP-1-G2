@@ -92,14 +92,20 @@
       <div class="info-item">
         <mat-icon>date_range</mat-icon>
         <span class="label">Fecha de Fundación:</span>
-        <span class="value" *ngIf="!isEditMode">{{ foundedDate.value || 'No especificada' }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ foundedDate.value || 'No especificado' }}</span>
         <input class="edit-input"
                *ngIf="isEditMode"
                type="text"
                [formControl]="foundedDate"
                [class.error]="foundedDate.invalid && foundedDate.touched"
-               placeholder="AAAA-MM-DD (Formato ISO)">
+               placeholder="AAAA"
+               maxlength="4">
       </div>
+
+      <div *ngIf="isEditMode && foundedDate.invalid && foundedDate.touched" class="error-message">
+        <small *ngIf="foundedDate.errors?.['pattern']">Ingrese un año válido (1900-2099)</small>
+      </div>
+
       <div *ngIf="isEditMode && address.invalid && address.touched" class="error-message">
         <small *ngIf="address.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
