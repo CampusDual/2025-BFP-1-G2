@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { CompanyRoutingModule } from './company-routing.module';
 import { OffersComponent } from './offers/offers.component';
 import { OfferPanelModule } from "../offer-panel/offer-panel.module";
-import { AddOfferComponent } from './add-offer/add-offer.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -22,7 +21,6 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 @NgModule({
   declarations: [
     OffersComponent,
-    AddOfferComponent,
     CandidatesComponent,
     CompanyPanelComponent
   ],

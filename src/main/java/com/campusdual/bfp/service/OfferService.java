@@ -1,20 +1,16 @@
 package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.IOfferService;
+import com.campusdual.bfp.exception.*;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
-import com.campusdual.bfp.model.dto.CandidateDTO;
-import com.campusdual.bfp.model.dto.OfferDTO;
-import com.campusdual.bfp.model.dto.TagDTO;
-import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
-import com.campusdual.bfp.model.dto.dtomapper.OfferMapper;
-import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
+import com.campusdual.bfp.model.dto.*;
+import com.campusdual.bfp.model.dto.dtomapper.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,7 +18,7 @@ import java.util.stream.Collectors;
 public class OfferService implements IOfferService {
 
     @Autowired
-    private OfferDao OfferDao;
+    private OfferDao offerDao;
 
     @Autowired
     private UserDao userDao;
@@ -84,7 +80,7 @@ public class OfferService implements IOfferService {
         if (tagDTOs == null) return;
 
         if (tagDTOs.size() > MAX_TAGS_PER_OFFER) {
-            throw new RuntimeException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
+            throw new TooManyTagsException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
         }
 
         if (isUpdate) {
@@ -105,14 +101,14 @@ public class OfferService implements IOfferService {
     }
 
     @Override
-    public OfferDTO queryOffer(OfferDTO OfferDTO) {
-        Offer Offer = OfferMapper.INSTANCE.toEntity(OfferDTO);
-        return OfferMapper.INSTANCE.toDTO(OfferDao.getReferenceById(Offer.getId()));
+    public OfferDTO queryOffer(OfferDTO offerDTO) {
+        Offer offer = OfferMapper.INSTANCE.toEntity(offerDTO);
+        return OfferMapper.INSTANCE.toDTO(offerDao.getReferenceById(offer.getId()));
     }
 
     @Override
     public List<OfferDTO> queryAllOffers() {
-        List<Offer> offers = OfferDao.findAll();
+        List<Offer> offers = offerDao.findAll();
         List<OfferDTO> dtos = offers.stream()
                 .map(offer -> buildOfferDTO(offer, true))
                 .collect(Collectors.toList());
@@ -128,7 +124,7 @@ public class OfferService implements IOfferService {
         offer.setActive(null); // Por defecto, las ofertas se crean como borradores
         offer.setDate(new Date());
         offer.setCompanyId(companyDao.findCompanyByUser(userDao.findByLogin(username)).getId());
-        Offer savedOffer = OfferDao.saveAndFlush(offer);
+        Offer savedOffer = offerDao.saveAndFlush(offer);
         handleOfferTags(savedOffer, request.getTags(), false);
 
         return savedOffer.getId();
@@ -138,11 +134,11 @@ public class OfferService implements IOfferService {
     @Transactional
     public int updateOffer(OfferDTO request, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
-        Offer offer = OfferDao.getReferenceById(request.getId());
+        Offer offer = offerDao.getReferenceById(request.getId());
         if (offer.getCompanyId() != companyDao.findCompanyByUser(user).getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
         int originalCompanyId = offer.getCompanyId();
         BeanUtils.copyProperties(request, offer, "id", "companyId");
@@ -151,31 +147,31 @@ public class OfferService implements IOfferService {
 
         handleOfferTags(offer, request.getTags(), true);
 
-        Offer savedOffer = OfferDao.saveAndFlush(offer);
+        Offer savedOffer = offerDao.saveAndFlush(offer);
         return savedOffer.getId();
     }
 
     @Override
     @Transactional
     public int deleteOffer(int id, String username) {
-        Offer offer = OfferDao.getReferenceById(id);
+        Offer offer = offerDao.getReferenceById(id);
         if (offer.getCompanyId() != companyDao.findCompanyByUser(userDao.findByLogin(username)).getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
         offerTagsDao.deleteByOfferId(offer.getId());
         userOfferDao.deleteUserOfferByOffer(offer);
-        OfferDao.delete(offer);
+        offerDao.delete(offer);
         return id;
     }
 
     @Override
     public int userApplyOffer(int offerId, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
-        Offer offer = OfferDao.getReferenceById(offerId);
+        Offer offer = offerDao.getReferenceById(offerId);
         if (userOfferDao.existsByUserIdAndOfferId(user.getId(), offer.getId())) {
-            throw new RuntimeException("Ya has aplicado a esta oferta");
+            throw new DuplicateApplicationException("Ya has aplicado a esta oferta");
         }
 
         UserOffer userOffer = new UserOffer();
@@ -189,7 +185,7 @@ public class OfferService implements IOfferService {
     @Override
     public List<OfferDTO> getCompanyOffers(String companyName) {
         User userCompany = userDao.findByLogin(companyName);
-        List<Offer> offers = OfferDao.findOfferByCompanyId(userCompany.getId());
+        List<Offer> offers = offerDao.findOfferByCompanyId(userCompany.getId());
         List<OfferDTO> dtos = offers.stream()
                 .map(offer -> buildOfferDTO(offer, false))
                 .collect(Collectors.toList());
@@ -220,20 +216,20 @@ public class OfferService implements IOfferService {
     @Override
     public void updateCandidateValidity(int offerID, CandidateDTO candidateDTO) {
         if (candidateDTO == null || candidateDTO.getLogin() == null) {
-            throw new RuntimeException("Invalid candidate data");
+            throw new InvalidDataException("Invalid candidate data");
         }
 
         User user = userDao.findByLogin(candidateDTO.getLogin());
         if (user == null) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new UserNotFoundException("Usuario no encontrado");
         }
 
         UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(user.getId(), offerID);
         if (userOffer == null) {
-            throw new RuntimeException("No se encontró la oferta para el usuario");
+            throw new OfferNotFoundException("No se encontró la oferta para el usuario");
         }
 
-        userOffer.setValid(candidateDTO.isValid());
+        userOffer.setValid(candidateDTO.getValid());
         userOfferDao.saveAndFlush(userOffer);
     }
 
@@ -241,10 +237,10 @@ public class OfferService implements IOfferService {
     @Override
     public List<OfferDTO> getMyOffers(String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
         List<OfferDTO> offers = queryAllOffers();
         for (OfferDTO offerDTO: offers) {
-            Offer offer = OfferDao.getReferenceById(offerDTO.getId());
+            Offer offer = offerDao.getReferenceById(offerDTO.getId());
             UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(user.getId(), offerDTO.getId());
             if (userOffer != null) {
                 offerDTO.setCandidateValid(userOffer.isValid());
@@ -269,7 +265,7 @@ public class OfferService implements IOfferService {
     @Override
     public List<OfferDTO> getUserBookmarks(String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
         List<CandidateBookmarks> bookmarks = candidateBookmarksDao.findByUserId(user.getId());
 

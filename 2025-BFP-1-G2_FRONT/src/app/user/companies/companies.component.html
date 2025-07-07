@@ -18,12 +18,10 @@
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
     </div>
-
-  
   </div>
 
   <div class="loading-container" *ngIf="isLoading">
-    <mat-spinner diameter="50"></mat-spinner>
+    <mat-spinner color="primary" diameter="50"></mat-spinner>
     <p>Cargando empresas...</p>
   </div>
 
@@ -31,7 +29,7 @@
     <div
       class="company-card"
       *ngFor="let company of filteredCompanies; let i = index"
-      (click)="openCompanyDetails(i)"
+      routerLink="/company/profile/{{company.name}}"
       [attr.data-index]="i"
     >
       <div class="company-logo">
@@ -62,7 +60,7 @@
       </div>
 
       <div class="company-actions"> 
-        <button mat-raised-button color="primary" (click)="openCompanyDetails(i); $event.stopPropagation()">
+        <button mat-raised-button color="primary" routerLink="/company/{{company.name}}">
           <mat-icon>visibility</mat-icon>
           Ver detalles
         </button>
@@ -86,16 +84,3 @@
   </div>
 
 </div>
-
-<app-detailed-card
-  [isVisible]="showDetailedCard"
-  [data]="detailedCardData"
-  [currentIndex]="currentDetailIndex"
-  [showNavigation]="detailedCardData.length > 1"
-  [cardType]="'company'"
-  [editMode]="false"
-  (onClose)="closeDetailedCard()"
-  (onNavigate)="onDetailedCardNavigate($event)"
-  (onAction)="onDetailedCardAction($event)"
->
-</app-detailed-card>

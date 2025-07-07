@@ -1,7 +1,7 @@
 .user-panel {
   max-width: 100%;
   margin: auto;
-  padding: 0px;
+  padding: 5px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: auto auto auto;
@@ -22,6 +22,7 @@
   overflow: hidden;
   min-height: 200px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
 }
 
 .profile-avatar {
@@ -156,7 +157,6 @@
 }
 
 .info-section {
-  margin-inline: 20px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
@@ -186,11 +186,14 @@
   grid-row: 2;
   background: #9f9f9f;
   color: #ffffff;
+  align-items: start;
 }
 .info-section:nth-child(4) {
   grid-column: 3;
   grid-row: 2;
   background: #ffffff;
+  align-items: start;
+  align-content: start;
 }
 
 .info-section h3 {
@@ -223,13 +226,6 @@
   color: #1e40af;
 }
 
-.info-grid {
-  display: flex;
-  
-  flex-direction: column;
-  gap: 20px;
-}
-
 .info-item {
   display: grid;
   grid-template-columns: 24px 1fr 2fr;
@@ -247,18 +243,6 @@
   padding: 12px 0;
   gap: 16px;
 }
-
-.info-section:nth-child(3).edit-mode .info-item {
-  grid-template-columns: 20px 0.4fr 2.2fr;
-  padding-right: 0px;
-}
-
-.info-section:nth-child(3).edit-mode .edit-input,
-.info-section:nth-child(3).edit-mode .edit-select {
-  width: 250px;
-}
-
-
 
 .info-section.edit-mode .edit-input,
 .info-section.edit-mode .edit-select {
@@ -516,6 +500,49 @@
 
 .edit-select {
   cursor: pointer;
+}
+
+.file-upload-container {
+  width: 100%;
+}
+
+.file-upload-btn {
+  background: #ffffff;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-family: 'Rubik', sans-serif;
+  transition: all 0.3s ease;
+  outline: none;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #666;
+}
+
+.file-upload-btn:hover {
+  border-color: var(--primary-color);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.file-upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.file-upload-btn mat-icon {
+  font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
 .error-message {

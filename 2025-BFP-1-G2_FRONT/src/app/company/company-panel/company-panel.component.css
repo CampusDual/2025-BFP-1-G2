@@ -1,7 +1,7 @@
 .company-panel {
   max-width: 100%;
   margin: auto;
-  padding: 0px;
+  padding: 5px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto auto;
@@ -13,7 +13,7 @@
 
 .profile-header {
   grid-column: 1 / -1;
-  background: #1e40af;
+  background: #9f9f9f;
   padding-inline: 30px;
   display: flex;
   align-items: center;
@@ -22,6 +22,7 @@
   overflow: hidden;
   min-height: 200px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
 }
 
 .profile-company{
@@ -130,7 +131,6 @@
 }
 
 .info-section {
-  margin-inline: 20px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
@@ -152,19 +152,26 @@
 .info-section:nth-child(2) {
   grid-column: 1;
   grid-row: 2;
-  background: #ffffff;
+  background: var(--primary-color);
+  color: #fff;
+  align-items: start;
 }
 
 .info-section:nth-child(3) {
   grid-column: 2;
   grid-row: 2;
-  background: #9f9f9f;
-  color: #ffffff;
+  background: #ffffff;
+  color: #000;
+  align-items: start;
+  align-content: start;
 }
 .info-section:nth-child(4) {
   grid-column: 3;
   grid-row: 2;
-  background: #ffffff;
+  background: #1e40af;
+  color: #fff;
+  align-items: start;
+  align-content: start;
 }
 
 .info-section h3 {
@@ -179,21 +186,21 @@
 }
 .info-section h3 mat-icon {
   font-size: 1.4rem;
-  color: #ffffff;
+  color: #fff;
   width: 1.4rem;
   height: 1.4rem;
 }
 
 .info-section:nth-child(2) h3 mat-icon {
-  color: #000000;
+  color: #fff;
 }
 
 .info-section:nth-child(3) h3 mat-icon {
-  color: #ffffff;
+  color: var(--primary-color);
 }
 
 .info-section:nth-child(4) h3 mat-icon {
-  color: #1e40af;
+  color: #fbbf24;
 }
 
 .info-grid {
@@ -238,9 +245,6 @@
   height: 28px;
 }
 
-.info-section:nth-child(2) .info-item mat-icon {
-  color: #000000;
-}
 
 .info-section:nth-child(3) .info-item mat-icon {
   color: #ffffff;

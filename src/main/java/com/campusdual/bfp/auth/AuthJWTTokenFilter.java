@@ -1,7 +1,6 @@
 package com.campusdual.bfp.auth;
 
 import com.campusdual.bfp.api.IUserService;
-import com.campusdual.bfp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,13 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AuthJWTTokenFilter extends OncePerRequestFilter {
+
     @Autowired
     private JWTUtil jwtUtil;
     @Autowired
     private IUserService userService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, UsernameNotFoundException {
         try {
             String jwt = this.parseJwt(request);
             if(jwt != null && this.jwtUtil.validateJwtToken(jwt)){
@@ -34,7 +34,7 @@ public class AuthJWTTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (UsernameNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new UsernameNotFoundException(e.getMessage());
         }
 
         filterChain.doFilter(request,response);

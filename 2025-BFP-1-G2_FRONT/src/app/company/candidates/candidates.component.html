@@ -2,8 +2,8 @@
     <thead>
         <tr>
             <th>Oferta</th>
-            <th class="sortable-header" 
-                [class]="getSortClass('name')" 
+            <th class="sortable-header"
+                [class]="getSortClass('name')"
                 (click)="sortBy('name')">
                 <div class="header-content">
                     <span>Nombre</span>
@@ -12,16 +12,16 @@
             </th>
             <th>Email</th>
             <th>Linkedin</th>
-            <th class="sortable-header" 
-                [class]="getSortClass('date')" 
+            <th class="sortable-header"
+                [class]="getSortClass('date')"
                 (click)="sortBy('date')">
                 <div class="header-content">
                     <span>Fecha</span>
                     <mat-icon class="sort-icon">{{ getSortIcon('date') }}</mat-icon>
                 </div>
             </th>
-            <th class="sortable-header" 
-                [class]="getSortClass('status')" 
+            <th class="sortable-header"
+                [class]="getSortClass('status')"
                 (click)="sortBy('status')">
                 <div class="header-content">
                     <span>Estado</span>
@@ -31,10 +31,10 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let candidate of sortedCandidates; let i = index"  
+        <tr *ngFor="let candidate of sortedCandidates"
             [ngClass]="candidate.valid === true ? 'validated' : (candidate.valid === false ? 'rejected' : '')">
             <td>{{ offerTitle }}</td>
-            <td>{{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}</td>
+            <td class="gotoUser" routerLink="/user/profile/{{candidate.login}}">{{candidate.name}} {{candidate.surname1}} {{candidate.surname2}}</td>
             <td>{{ candidate.email }}</td>
             <td>
                 <a [href]="candidate.Linkedin" target="_blank" (click)="$event.stopPropagation()">
@@ -50,19 +50,19 @@
                         <span *ngIf="candidate.valid === null" class="status-badge pending">Pendiente</span>
                     </div>
                     <div class="action-buttons">
-                        <button mat-icon-button class="undo" 
+                        <button mat-icon-button class="undo"
                                 *ngIf="candidate.valid !== null"
                                 (click)="deleteOptionCandidate(candidate)"
                                 matTooltip="Resetear estado">
                             <mat-icon>undo</mat-icon>
                         </button>
-                        <button mat-icon-button class="check" 
+                        <button mat-icon-button class="check"
                                 *ngIf="candidate.valid !== true"
                                 (click)="aceptCandidate(candidate)"
                                 matTooltip="Aceptar candidato">
                             <mat-icon>check</mat-icon>
                         </button>
-                        <button mat-icon-button class="close" 
+                        <button mat-icon-button class="close"
                                 *ngIf="candidate.valid !== false"
                                 (click)="rejectCandidate(candidate)"
                                 matTooltip="Rechazar candidato">

@@ -33,6 +33,10 @@ export class CompanyService {
     return this.http.get<Company>(`${this.baseUrl}/${id}`);
   }
 
+  getCompanyByName(name: string): Observable<Company> {
+    return this.http.get<Company>(`${this.baseUrl}/byName/${encodeURIComponent(name)}`);
+  }
+
   createCompany(company: Company): Observable<Company> {
     return this.http.post<Company>(`${this.baseUrl}/create`, company);
   }

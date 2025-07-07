@@ -36,7 +36,6 @@ export class OfferTableComponent implements OnDestroy {
   bookmarkedOffers: number[] = []; // Array de IDs de ofertas guardadas
   serverBookmarkedOffers: any[] = []; // Ofertas bookmarked del servidor
 
-  // Properties for company offer status filtering
   currentOfferStatus: 'all' | 'draft' | 'archived' | 'active' = 'all';
 
   isLoading = true;
@@ -53,7 +52,6 @@ export class OfferTableComponent implements OnDestroy {
     this.loadAllTags();
     this.loadUserRole();
   }
-
 
   loadAllTags() {
     this.tagService.getAllTags().subscribe({
@@ -80,30 +78,20 @@ export class OfferTableComponent implements OnDestroy {
 
 
   loadUserRole() {
-    this.authService.hasRole('ROLE_COMPANY').subscribe({
-      next: (hasRole) => {
-        this.isCompany = hasRole;
-        if (hasRole) {
-          this.loadCompanyOffers();
-        }
-        else {
-          this.authService.hasRole('ROLE_CANDIDATE').subscribe({
-            next: (hasRole) => {
-              this.isCandidate = hasRole;
-              if (hasRole) {
-                this.loadCandidateOffers();
-                this.loadMyTags();
-                this.loadBookmarksFromServer();
-              }
-              else {
-                this.loadOffers();
-              }
-            }
-          });
-        }
-      }
-    });
-
+    if (this.authService.getRolesCached().includes('ROLE_COMPANY')) {
+      this.isCompany = true;
+      this.loadCompanyOffers();
+    }else if(this.authService.getRolesCached().includes('ROLE_CANDIDATE')){
+      this.isCandidate = true;
+      this.loadCandidateOffers();
+      this.loadMyTags();
+      this.loadBookmarksFromServer();
+    }
+    else {
+      this.isCompany = false;
+      this.isCandidate = false;
+      this.loadOffers();
+    }
   }
 
   loadCompanyOffers() {
@@ -141,7 +129,7 @@ export class OfferTableComponent implements OnDestroy {
           ...offer,
           dateToString: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : new Date().toLocaleDateString(),
           isValid: (offer.applied && offer.candidateValid === true) ? 'VALID' :
-            (offer.applied && offer.candidateValid === false) ? 'INVALID' : (offer.applied )? 'PENDING' : undefined
+            (offer.applied && offer.candidateValid === false) ? 'INVALID' : (offer.applied) ? 'PENDING' : undefined
         }));
         console.log('Candidate offers loaded successfully:', this.offers);
         this.isLoading = false;

@@ -46,7 +46,6 @@ public class SecurityConfig {
                 .antMatchers("/api/auth/**", "/test/all", "/public/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/offer/getAll").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/tags/{offerId}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
 
                 // Tags - administración
@@ -55,6 +54,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/api/tags/{tagId}").hasRole("ADMIN")
 
                 // Tags - ofertas (COMPANY)
+                .antMatchers(HttpMethod.GET, "/api/tags/{offerId}").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/tags/{offerId}").hasRole("COMPANY")
                 .antMatchers(HttpMethod.PUT, "/api/tags/{offerId}").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/tags/{offerId}/{tagId}").hasRole("COMPANY")

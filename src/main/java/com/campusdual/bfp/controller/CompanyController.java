@@ -46,6 +46,20 @@ public class CompanyController {
         }
     }
 
+    @GetMapping("/byName/{name}")
+    public ResponseEntity<CompanyDTO> getCompanyByName(@PathVariable String name) {
+        try {
+            CompanyDTO company = companyService.getCompanyByName(name);
+            if (company != null) {
+                return new ResponseEntity<>(company, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyDTO company) {
@@ -62,7 +76,6 @@ public class CompanyController {
     public ResponseEntity<CompanyDTO> updateCompany(@RequestBody CompanyDTO company, Principal principal) {
         CompanyDTO updatedCompany = companyService.updateCompany(company, principal.getName());
         return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
-
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

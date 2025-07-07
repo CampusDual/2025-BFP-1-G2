@@ -5,6 +5,7 @@ import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.TagDTO;
 import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
+import com.campusdual.bfp.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class TagService implements ITagService {
 
     @Autowired
-    private OfferDao OfferDao;
+    private OfferDao offerDao;
 
     @Autowired
     private UserDao userDao;
@@ -37,10 +38,10 @@ public class TagService implements ITagService {
     @Override
     public long addTag(String tag) {
         if (tag == null || tag.isEmpty()) {
-            throw new RuntimeException("Tag cannot be null or empty");
+            throw new InvalidDataException("Tag cannot be null or empty");
         }
         if (tagDao.existsTagByName(tag)) {
-            throw new RuntimeException("Tag already exists");
+            throw new TagAlreadyExistsException("Tag already exists");
         }
         return tagDao.saveAndFlush(new Tag(tag)).getId();
     }
@@ -61,7 +62,7 @@ public class TagService implements ITagService {
     public long updateTag(long id, String name){
         Tag tag = tagDao.findById(id).orElseThrow(() -> new RuntimeException("Tag not found"));
         if (name == null || name.isEmpty()) {
-            throw new RuntimeException("Tag name cannot be null or empty");
+            throw new InvalidDataException("Tag name cannot be null or empty");
         }
         tag.setName(name);
         tagDao.saveAndFlush(tag);
@@ -72,21 +73,21 @@ public class TagService implements ITagService {
     @Transactional
     public int addTagsToOffer(int offerId, List<Long> tagIds, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
-        Offer offer = OfferDao.getReferenceById(offerId);
+        Offer offer = offerDao.getReferenceById(offerId);
         if (offer.getCompanyId() != user.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
 
         int currentTagCount = offerTagsDao.countByOfferId(offerId);
         if (currentTagCount + tagIds.size() > MAX_TAGS_PER_OFFER) {
-            throw new RuntimeException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
+            throw new TooManyTagsException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
         }
 
         for (Long tagId : tagIds) {
             Tag tag = tagDao.findById(tagId)
-                    .orElseThrow(() -> new RuntimeException("Tag no encontrado: " + tagId));
+                    .orElseThrow(() -> new TagNotFoundException("Tag no encontrado"));
             OfferTags existingOfferTag = offerTagsDao.findByOfferIdAndTagId(offerId, tagId);
             if (existingOfferTag == null) {
                 OfferTags offerTag = new OfferTags(offer, tag);
@@ -101,11 +102,11 @@ public class TagService implements ITagService {
     @Transactional
     public int removeTagFromOffer(int offerId, long tagId, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
-        Offer offer = OfferDao.getReferenceById(offerId);
+        Offer offer = offerDao.getReferenceById(offerId);
         if (offer.getCompanyId() != user.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
 
         offerTagsDao.deleteByOfferIdAndTagId(offerId, tagId);
@@ -124,13 +125,13 @@ public class TagService implements ITagService {
     @Transactional
     public int replaceOfferTags(int offerId, List<Long> tagIds, String username) {
         if (tagIds.size() > MAX_TAGS_PER_OFFER) {
-            throw new RuntimeException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
+            throw new TooManyTagsException("Una oferta no puede tener más de " + MAX_TAGS_PER_OFFER + " tags");
         }
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
-        Offer offer = OfferDao.getReferenceById(offerId);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Offer offer = offerDao.getReferenceById(offerId);
         if (offer.getCompanyId() != user.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
         offerTagsDao.deleteByOfferId(offerId);
         for (Long tagId : tagIds) {
@@ -146,7 +147,7 @@ public class TagService implements ITagService {
     public List<TagDTO> getCandidateTags(String username) {
         User user = userDao.findByLogin(username);
         if (user == null) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new UserNotFoundException("Usuario no encontrado");
         }
 
         List<Tag> tags = candidateTagsDao.findCandidateTagsByCandidate(candidateDao.findCandidateByUser(user))
@@ -162,11 +163,11 @@ public class TagService implements ITagService {
     public int updateCandidateTags(List<Integer> tagIds, String name) {
         User user = userDao.findByLogin(name);
         if (user == null) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new UserNotFoundException("Usuario no encontrado");
         }
         Candidate candidate = candidateDao.findCandidateByUser(user);
         if (candidate == null) {
-            throw new RuntimeException("Candidato no encontrado");
+            throw new CandidateNotFoundException("Candidato no encontrado");
         }
         candidateTagsDao.deleteByCandidate(candidate);
 
@@ -183,13 +184,13 @@ public class TagService implements ITagService {
     public int deleteCandidateTag(int tagId, String name) {
         User user = userDao.findByLogin(name);
         if (user == null) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new UserNotFoundException("Usuario no encontrado");
         }
         Candidate candidate = candidateDao.findCandidateByUser(user);
         if (candidate == null) {
-            throw new RuntimeException("Candidato no encontrado");
+            throw new CandidateNotFoundException("Candidato no encontrado");
         }
-        return candidateTagsDao.deleteByCandidateIdAndTagId(candidate.getCandidate_id(), tagId);
+        return candidateTagsDao.deleteByCandidateIdAndTagId(candidate.getCandidateId(), tagId);
     }
 
 

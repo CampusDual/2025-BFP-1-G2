@@ -7,7 +7,7 @@
         <mat-icon>person</mat-icon>
       </div>
 
-      <div class="edit-overlay" (click)="openFileSelector()">
+      <div *ngIf="isCandidate" class="edit-overlay" (click)="openFileSelector()">
         <div class="edit-overlay-content">
           <mat-icon>edit</mat-icon>
           <span>Cambiar foto</span>
@@ -26,7 +26,7 @@
       <p class="profile-title" *ngIf="professionalTitle.value">{{ professionalTitle.value }}</p>
     </div>
 
-    <div class="edit-controls" *ngIf="!isEditMode">
+    <div class="edit-controls" *ngIf="isCandidate && !isEditMode">
       <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
         <mat-icon>edit</mat-icon>
       </button>
@@ -150,8 +150,7 @@
       <div class="info-item">
         <mat-icon>schedule</mat-icon>
         <span class="label">Experiencia:</span>
-        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No
-          especificada' }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No especificada' }}</span>
         <input class="edit-input" *ngIf="isEditMode" type="number" [formControl]="yearsOfExperience"
           [class.error]="yearsOfExperience.invalid && yearsOfExperience.touched" placeholder="Años de experiencia"
           min="0">
@@ -207,8 +206,17 @@
       <div class="edit-link-item">
         <mat-icon>picture_as_pdf</mat-icon>
         <span class="label">Currículum:</span>
-        <input class="edit-input" type="url" [formControl]="curriculumUrl"
-          [class.error]="curriculumUrl.invalid && curriculumUrl.touched" placeholder="URL del currículum">
+        <div class="file-upload-container">
+          <button type="button" class="file-upload-btn" (click)="openCVFileSelector()"
+                  [disabled]="isUploadingCV">
+            <mat-icon>upload_file</mat-icon>
+            <span *ngIf="!isUploadingCV && !cvFileName">Subir PDF</span>
+            <span *ngIf="!isUploadingCV && cvFileName">{{ cvFileName }}</span>
+            <span *ngIf="isUploadingCV">Subiendo...</span>
+          </button>
+          <input type="file" #cvFileInput id="cvFileInput" (change)="onCVFileSelected($event)"
+                 accept=".pdf" style="display: none">
+        </div>
       </div>
       <div class="edit-link-item">
         <mat-icon>work</mat-icon>
@@ -273,7 +281,7 @@
   </div>
 </div>
 <div class="loading-container" *ngIf="isLoading">
-  <mat-spinner diameter="50"></mat-spinner>
+  <mat-spinner color="primary" diameter="50"></mat-spinner>
   <p>Cargando...</p>
 </div>
 

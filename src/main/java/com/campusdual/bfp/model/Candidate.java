@@ -69,10 +69,6 @@ public class Candidate {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public Candidate() {
-
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -105,12 +101,12 @@ public class Candidate {
         this.surname1 = surname1;
     }
 
-    public int getCandidate_id() {
+    public int getCandidateId() {
         return id;
     }
 
-    public void setCandidate_id(int candidate_id) {
-        this.id = candidate_id;
+    public void setCandidateId(int candidateId) {
+        this.id = candidateId;
     }
 
     public User getUser() {

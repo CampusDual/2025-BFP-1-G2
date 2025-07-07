@@ -17,7 +17,9 @@ import com.campusdual.bfp.model.dto.dtomapper.TagMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import com.campusdual.bfp.exception.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -42,10 +44,6 @@ public class CompanyService implements ICompanyService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private OfferService offerService;
-
     @Autowired
     private OfferTagsDao offerTagsDao;
     @Autowired
@@ -62,12 +60,14 @@ public class CompanyService implements ICompanyService {
         return companyDao.findById(id).map(CompanyMapper.INSTANCE::toDTO);
     }
 
-
+    public CompanyDTO getCompanyByName(String name) {
+        return CompanyMapper.INSTANCE.toDTO(companyDao.findByName(name));
+    }
 
     public CompanyDTO createCompany(CompanyDTO companyDTO) {
         User user = this.userDao.findByLogin(companyDTO.getName());
         if (user != null) {
-            throw new RuntimeException("Empresa ya registrada");
+            throw new CompanyAlreadyExistsException("Empresa ya registrada");
         }
         userService.registerNewUser(companyDTO.getName(), "changeMe", companyDTO.getEmail(), "ROLE_COMPANY");
         Company company = CompanyMapper.INSTANCE.toEntity(companyDTO);
@@ -78,11 +78,13 @@ public class CompanyService implements ICompanyService {
     public CompanyDTO updateCompany(CompanyDTO companyDTO, String username) {
         Company company = this.companyDao.findById(companyDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+        UserDetails userDetails = userService.loadUserByUsername(username);
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()).contains("ROLE_ADMIN");
         User user = this.userDao.findByLogin(username);
-        if (user == null || (!(user.getId() == (company.getUser().getId())) && user.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .noneMatch(role -> role.equals("ROLE_ADMIN")))) {
-            throw new RuntimeException("No tienes permiso para modificar esta empresa");
+        if (user == null || ((user.getId() != (company.getUser().getId())) && !isAdmin)) {
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta empresa");
         }
         BeanUtils.copyProperties(companyDTO, company, "id", "user", "userId", "login");
         this.companyDao.saveAndFlush(company);
@@ -91,7 +93,7 @@ public class CompanyService implements ICompanyService {
 
     public void deleteCompany(Integer id) {
         Company company = this.companyDao.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+                .orElseThrow(() -> new CompanyNotFoundException("Empresa no encontrada"));
         this.userRoleDao.delete(userRoleDao.findUserRoleByUserId(company.getUser().getId()));
         this.offerDao.deleteAllByCompanyId(id);
         this.companyDao.deleteById(id);
@@ -144,10 +146,10 @@ public class CompanyService implements ICompanyService {
     @Override
     public List<OfferDTO> getCompanyOffersByStatus(String username, String status) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
         Company company = companyDao.findCompanyByUser(user);
-        if (company == null) throw new RuntimeException("Empresa no encontrada");
+        if (company == null) throw new CompanyNotFoundException("Empresa no encontrada");
 
         List<Offer> offers = offerDao.findOffersByCompanyIdAndStatus(company.getId(), status);
         List<OfferDTO> offerDTOS = offers.stream()
@@ -165,14 +167,14 @@ public class CompanyService implements ICompanyService {
     @Transactional
     public void publishOffer(int offerId, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
         Company company = companyDao.findCompanyByUser(user);
-        if (company == null) throw new RuntimeException("Empresa no encontrada");
+        if (company == null) throw new CompanyNotFoundException("Empresa no encontrada");
 
         Offer offer = offerDao.getReferenceById(offerId);
         if (offer.getCompany().getId() != company.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
 
         offer.setActive(true);
@@ -183,14 +185,14 @@ public class CompanyService implements ICompanyService {
     @Transactional
     public void archiveOffer(int offerId, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
         Company company = companyDao.findCompanyByUser(user);
-        if (company == null) throw new RuntimeException("Empresa no encontrada");
+        if (company == null) throw new CompanyNotFoundException("Empresa no encontrada");
 
         Offer offer = offerDao.getReferenceById(offerId);
         if (offer.getCompany().getId() != company.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
 
         offer.setActive(false);
@@ -201,14 +203,14 @@ public class CompanyService implements ICompanyService {
     @Transactional
     public void draftOffer(int offerId, String username) {
         User user = userDao.findByLogin(username);
-        if (user == null) throw new RuntimeException("Usuario no encontrado");
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
 
         Company company = companyDao.findCompanyByUser(user);
-        if (company == null) throw new RuntimeException("Empresa no encontrada");
+        if (company == null) throw new CompanyNotFoundException("Empresa no encontrada");
 
         Offer offer = offerDao.getReferenceById(offerId);
         if (offer.getCompany().getId() != company.getId()) {
-            throw new RuntimeException("No tienes permiso para modificar esta oferta");
+            throw new UnauthorizedOperationException("No tienes permiso para modificar esta oferta");
         }
 
         offer.setActive(null); // null = draft
