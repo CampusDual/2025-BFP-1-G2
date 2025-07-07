@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String email;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<UserRole> userRoles = new HashSet<>();
+    private transient Set<UserRole> userRoles = new HashSet<>();
 
     public User(){ }
 

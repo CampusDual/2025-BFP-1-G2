@@ -10,6 +10,5 @@ import java.util.List;
 public interface TagMapper {
     TagMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(TagMapper.class);
     TagDTO toTagDTO(Tag tag);
-    Tag toTag(TagDTO tagDTO);
     List<TagDTO> toTagDTOs(List<Tag> tags);
 }

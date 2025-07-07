@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final String header = "Bearer ";
+
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
@@ -50,14 +52,9 @@ public class AuthController {
             Authentication authentication = this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(values[0], values[1])
             );
-
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = this.jwtUtils.generateJWTToken(userDetails.getUsername());
-
-            userService.addRoleToUser(15, (long) 6);
-
             return ResponseEntity.ok(token);
-
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bad credentials");
         }
@@ -77,11 +74,7 @@ public class AuthController {
         if (this.userService.existsByUsername(request.getLogin())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists.");
         }
-        this.userService.registerNewCandidate(request.getLogin(), request.getPassword(), request.getEmail(),
-                request.getName(), request.getSurname1(), request.getSurname2(), request.getPhoneNumber(), "ROLE_CANDIDATE",
-                request.getLocation(), request.getProfessionalTitle(), request.getYearsOfExperience(), request.getEducationLevel(),
-                request.getLanguages(), request.getEmploymentStatus(),
-                request.getLinkedinUrl(), request.getGithubUrl(), request.getFigmaUrl(), request.getPersonalWebsiteUrl(), request.getTagIds());
+        this.userService.registerNewCandidate(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
     }
 
@@ -97,7 +90,7 @@ public class AuthController {
 
     @GetMapping("/me/username")
     public String getCurrentUsername(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith(header)) {
             return "Token no proporcionado.";
         }
         String token = authHeader.substring(7);
@@ -109,18 +102,30 @@ public class AuthController {
     }
 
     @GetMapping("/user/roles")
-    public List<String> getUserRoles(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
+    public List<String> getUserRoles(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith(header)) {
             return List.of("No roles available");
         }
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+
+        if (username == null) {
+            return List.of("Invalid token");
+        }
+
+        try {
+            UserDetails userDetails = userService.loadUserByUsername(username);
+            return userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            return List.of("Error retrieving roles");
+        }
     }
 
     @GetMapping("/candidateDetails")
     public ResponseEntity<CandidateDTO> getCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith(header)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token = authHeader.substring(7);
@@ -150,7 +155,7 @@ public class AuthController {
         if (candidateDTO == null) {
             return ResponseEntity.badRequest().body(null);
         }
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith(header)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token = authHeader.substring(7);
@@ -168,7 +173,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listCandidates")
     public ResponseEntity<List<CandidateDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith(header)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<CandidateDTO> candidatos = userService.getAllCandidates();

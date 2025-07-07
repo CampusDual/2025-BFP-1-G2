@@ -9,12 +9,10 @@ import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
-import com.campusdual.bfp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -92,14 +90,10 @@ public class OfferController {
     public ResponseEntity<String> applyForOffer(@RequestParam int offerId, Principal principal) {
         String username = principal.getName();
         int appliedOfferId;
-        try {
-            appliedOfferId = offerService.userApplyOffer(offerId, username);
-            if (appliedOfferId > 0) {
-                return ResponseEntity.ok("Aplicado correctamente a la oferta");
-            } else {
-                return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
-            }
-        } catch (RuntimeException e) {
+        appliedOfferId = offerService.userApplyOffer(offerId, username);
+        if (appliedOfferId > 0) {
+            return ResponseEntity.ok("Aplicado correctamente a la oferta");
+        } else {
             return ResponseEntity.badRequest().body("Ya has aplicado a esta oferta.");
         }
     }
@@ -133,11 +127,7 @@ public class OfferController {
         if (candidateDTO.getLogin() == null) {
             return ResponseEntity.badRequest().body("Invalid candidate data");
         }
-        try {
-            offerService.updateCandidateValidity(offerID, candidateDTO);
-        }catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        offerService.updateCandidateValidity(offerID, candidateDTO);
         return ResponseEntity.ok("Candidato actualizado correctamente");
     }
 

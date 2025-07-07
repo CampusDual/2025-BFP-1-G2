@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, NavigationEnd, Router } from "@angular/router";
 import { AuthService } from './auth/services/auth.service';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { CompanyService } from './services/company.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     protected authService: AuthService,
     private router: Router,
-    private companyService: CompanyService
+    private companyService: CompanyService 
   ) { }
 
   ngOnInit() {
@@ -84,59 +84,52 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   loadUserRole() {
-    this.authService.hasRole('ROLE_COMPANY').subscribe({
-      next: (hasRole) => {
-        if (hasRole) {
-          this.companyService.getMyCompany().subscribe({
-            next: (company) => {
-              this.companyName = company.name;
-            },
-            error: (error) => {
-              console.error('Error fetching company details:', error);
-              this.companyName = '';
-            }
-          });
-        } else {
+    // Usar métodos cached para verificación rápida si hay roles disponibles
+    const cachedRoles = this.authService.getRolesCached();
+    
+    if (cachedRoles.length > 0) {
+      // Usar roles cached para asignación inmediata
+      this.updateRoleFlags(cachedRoles);
+      this.loadUserData();
+    } else {
+      // Si no hay roles cached, suscribirse a la carga de roles
+      this.authService.roles$.subscribe(roles => {
+        if (roles.length > 0) {
+          this.updateRoleFlags(roles);
+          this.loadUserData();
+        }
+      });
+    }
+  }
+
+  private updateRoleFlags(roles: string[]) {
+    this.isCompany = roles.includes('ROLE_COMPANY');
+    this.isCandidate = roles.includes('ROLE_CANDIDATE');
+    this.isAdmin = roles.includes('ROLE_ADMIN');
+  }
+
+  private loadUserData() {
+    if (this.isCompany) {
+      this.companyService.getMyCompany().subscribe({
+        next: (company) => {
+          this.companyName = company.name;
+          console.log('Company name loaded for navigation:', this.companyName);
+        },
+        error: (error) => {
+          console.error('Error fetching company details:', error);
           this.companyName = '';
         }
-        this.isCompany = hasRole;
-      },
-      error: (error) => {
-        console.error('Error checking company role:', error);
-        this.isCompany = false;
-        this.companyName = '';
-      }
-    });
+      });
+    } else {
+      this.companyName = '';
+    }
 
-    this.authService.hasRole('ROLE_CANDIDATE').subscribe({
-      next: (hasRole) => {
-        if (hasRole) {
-          this.userName = this.authService.getLogin() || '';
-          console.log('User name loaded for navigation:', this.userName);
-        } else {
-          this.userName = '';
-        }
-        this.isCandidate = hasRole;
-      },
-      error: (error) => {
-        console.error('Error checking candidate role:', error);
-        this.isCandidate = false;
-        this.userName = '';
-      }
-    });
-    
-    this.authService.hasRole('ROLE_ADMIN').subscribe({
-      next: (hasRole) => {
-        if (hasRole) {
-          this.userName = this.authService.getLogin() || '';
-        }
-        this.isAdmin = hasRole;
-      },
-      error: (error) => {
-        console.error('Error checking admin role:', error);
-        this.isAdmin = false;
-      }
-    });
+    if (this.isCandidate || this.isAdmin) {
+      this.userName = this.authService.getLogin();
+      console.log('User name loaded for navigation:', this.userName);
+    } else {
+      this.userName = '';
+    }
   }
   navigateToAddOffer() {
     if (this.router.url.includes('/company/myoffers')) {

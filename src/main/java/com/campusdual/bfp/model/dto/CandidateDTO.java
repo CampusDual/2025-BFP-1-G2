@@ -68,18 +68,6 @@ public class CandidateDTO extends SignupDTO {
         this.surname2 = surname2;
     }
 
-    public String getLogin() {
-        return super.getLogin();
-    }
-
-    public void setLogin(String login) {
-        super.setLogin(login);
-    }
-
-    public Boolean isValid() {
-        return valid;
-    }
-
     public void setValid(Boolean valid) {
         this.valid = valid;
     }

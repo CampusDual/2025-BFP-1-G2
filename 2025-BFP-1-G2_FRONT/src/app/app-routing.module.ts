@@ -7,7 +7,8 @@ const routes: Routes = [
   {path: 'offers', loadChildren: () => import('./offer-panel/offer-panel.module').then(m => m.OfferPanelModule),
     canActivate: [AuthGuard],
     data: { roles: ['ROLE_CANDIDATE', 'ROLE_ADMIN']
-    }},
+    }
+  },
   {
     path: 'company',
     loadChildren: () => import('./company/company.module').then(m => m.CompanyModule),

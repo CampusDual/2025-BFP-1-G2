@@ -12,7 +12,6 @@ import javax.persistence.Table;
 @Table(name = "user_roles")
 public class UserRole {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +23,6 @@ public class UserRole {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-
-    public UserRole() { }
 
     public Long getId() {
         return this.id;

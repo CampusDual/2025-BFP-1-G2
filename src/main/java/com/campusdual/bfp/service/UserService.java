@@ -1,6 +1,7 @@
 package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.IUserService;
+import com.campusdual.bfp.exception.*;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
@@ -11,6 +12,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,11 +59,29 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.userDao.findByLogin(username);
+        User user = userDao.findByLogin(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
+        List<UserRole> userRoles = userRoleDao.findUserRolesByUser(user);
+        List<GrantedAuthority> authorities = userRoles.stream()
+                .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
+                .collect(Collectors.toList());
+        if (authorities.isEmpty()) {
+            Candidate candidate = candidateDao.findCandidateByUser(user);
+            Company company = companyDao.findCompanyByUser(user);
+
+            if (candidate != null) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_CANDIDATE"));
+            } else if (company != null) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_COMPANY"));
+            }
+        }
+        return new org.springframework.security.core.userdetails.User(
+                user.getLogin(),
+                user.getPassword(),
+                authorities
+        );
     }
 
     @Override
@@ -90,32 +111,14 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Transactional
     @Override
-    public void registerNewCandidate(String username, String password, String email, String name,
-                                     String surname1, String surname2, String phoneNumber, String roleName,
-                                     String location, String professionalTitle, String yearsOfExperience, String educationLevel,
-                                     String languages, String employmentStatus, String linkedinUrl, String githubUrl,
-                                     String figmaUrl, String personalWebsiteUrl, int[] tags) {
+    public void registerNewCandidate(CandidateDTO candidateDTO) {
         int id;
-        Candidate candidate = new Candidate();
-        candidate.setName(name);
-        candidate.setSurname1(surname1);
-        candidate.setSurname2(surname2);
-        candidate.setPhoneNumber(phoneNumber);
-        candidate.setLocation(location);
-        candidate.setProfessionalTitle(professionalTitle);
-        candidate.setYearsOfExperience(yearsOfExperience);
-        candidate.setEducationLevel(educationLevel);
-        candidate.setLanguages(languages);
-        candidate.setEmploymentStatus(employmentStatus);
-        candidate.setLinkedinUrl(linkedinUrl);
-        candidate.setGithubUrl(githubUrl);
-        candidate.setFigmaUrl(figmaUrl);
-        candidate.setPersonalWebsiteUrl(personalWebsiteUrl);
-        id = this.registerNewUser(username, password, email, roleName);
+        Candidate candidate = CandidateMapper.INSTANCE.toEntity(candidateDTO);
+        id = this.registerNewUser(candidateDTO.getLogin(), candidateDTO.getPassword(), candidateDTO.getEmail(), "ROLE_CANDIDATE");
         candidate.setUser(this.userDao.findUserById(id));
         this.candidateDao.saveAndFlush(candidate);
-        if (tags != null) {
-            for (Integer tagId : tags) {
+        if (candidateDTO.getTagIds() != null) {
+            for (Integer tagId : candidateDTO.getTagIds()) {
                 Tag tag = tagDao.findById(tagId.longValue()).orElse(null);
                 if (tag != null) {
                     CandidateTags candidateTag = new CandidateTags(candidate, tag);
@@ -200,18 +203,10 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     public List<CandidateDTO> getAllCandidates() {
         List<Candidate> candidates = this.candidateDao.findAll();
-        System.out.println("Candidates found: " + candidates.size());
         List<CandidateDTO> candidateDTOs = CandidateMapper.INSTANCE.toDTOList(candidates);
-
         for (int i = 0; i < candidates.size(); i++) {
             Candidate candidate = candidates.get(i);
             CandidateDTO candidateDTO = candidateDTOs.get(i);
-
-            if (candidate.getUser() == null) {
-                System.out.println("Warning: Candidate without user found");
-                continue;
-            }
-
             candidateDTO.setAllDates(userOfferDao.findDatesByUserId(candidate.getUser().getId()).stream()
                     .map(date -> new java.text.SimpleDateFormat("dd/MM/yyyy").format(date))
                     .toArray(String[]::new));
@@ -224,7 +219,7 @@ public class UserService implements UserDetailsService, IUserService {
         companyDTO.setId(0);
         User user = this.userDao.findByLogin(companyDTO.getLogin());
         if (user != null) {
-            throw new RuntimeException("Empresa ya registrada");
+            throw new CompanyAlreadyExistsException("Empresa ya registrada");
         }
         registerNewUser(companyDTO.getName(), "changeMe", companyDTO.getEmail(), "ROLE_COMPANY");
         Company company = CompanyMapper.INSTANCE.toEntity(companyDTO);
@@ -268,26 +263,26 @@ public class UserService implements UserDetailsService, IUserService {
 
         User user = this.userDao.findByLogin(username);
         if (user == null) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new UserNotFoundException("Usuario no encontrado");
         }
 
         Candidate candidate = this.candidateDao.findCandidateByUser(user);
         if (candidate == null) {
-            throw new RuntimeException("Candidato no encontrado");
+            throw new CandidateNotFoundException("Candidato no encontrado");
         }
 
         // Validar duplicados solo si el login/email han cambiado
         if (!user.getLogin().equals(candidateDTO.getLogin())) {
             User existingUser = this.userDao.findByLogin(candidateDTO.getLogin());
             if (existingUser != null) {
-                throw new RuntimeException("El nombre de usuario ya existe");
+                throw new DuplicateUserException("El nombre de usuario ya existe");
             }
         }
 
         if (!user.getEmail().equals(candidateDTO.getEmail())) {
             User existingUserByEmail = this.userDao.findByEmail(candidateDTO.getEmail());
             if (existingUserByEmail != null) {
-                throw new RuntimeException("El email ya está en uso");
+                throw new DuplicateEmailException("El email ya está en uso");
             }
         }
 

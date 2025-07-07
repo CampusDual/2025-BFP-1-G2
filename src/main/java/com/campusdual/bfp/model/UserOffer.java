@@ -24,8 +24,6 @@ public class UserOffer {
     @Column
     private Boolean valid;
 
-    public UserOffer(){
-    }
     public long getId() {
         return id;
     }

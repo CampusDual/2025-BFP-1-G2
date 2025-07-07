@@ -1,8 +1,5 @@
 package com.campusdual.bfp.model.dto;
 
-
-import com.campusdual.bfp.model.Company;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -17,16 +14,10 @@ public class OfferDTO implements Comparator <OfferDTO> {
     private List<TagDTO> tags;
     private String logo;
     private CompanyDTO company;
-    public Boolean active;
+    private Boolean active;
     private Boolean isBookmarked;
     private List<CandidateDTO> candidates;
     private boolean isApplied;
-
-
-    public OfferDTO() {
-    }
-
-
 
     public List<CandidateDTO> getCandidates() {
         return candidates;
@@ -121,5 +112,12 @@ public class OfferDTO implements Comparator <OfferDTO> {
 
     public boolean isApplied() {
         return isApplied;
+    }
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
