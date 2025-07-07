@@ -17,14 +17,14 @@
 .detailed-container {
   position: relative;
   top: 0;
-  max-width: 90vw;
-  max-height: 90vh;
-  min-height: 90vh;
-  min-width: 90vw;
+  width: 90vw;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
   overflow: visible;
+  transition: padding-bottom 0.3s;
+  border-radius: 16px;
 }
 
 .close-button {
@@ -92,10 +92,12 @@
 }
 
 .card-content-wrapper {
-  flex-grow: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
+  min-height: 0;
+  /* Elimina max-height para permitir crecimiento natural */
 }
 
 .navigation-header {
@@ -156,7 +158,6 @@
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) white;
   overflow: auto;
-  max-height: calc(95vh - 140px);
 }
 
 mat-card {
