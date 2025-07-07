@@ -1,7 +1,7 @@
 .user-panel {
   max-width: 100%;
   margin: auto;
-  padding: 0;
+  padding: 5px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: auto auto auto;
@@ -22,6 +22,7 @@
   overflow: hidden;
   min-height: 200px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
 }
 
 .profile-avatar {
@@ -156,7 +157,6 @@
 }
 
 .info-section {
-  margin-inline: 20px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
@@ -186,11 +186,14 @@
   grid-row: 2;
   background: #9f9f9f;
   color: #ffffff;
+  align-items: start;
 }
 .info-section:nth-child(4) {
   grid-column: 3;
   grid-row: 2;
   background: #ffffff;
+  align-items: start;
+  align-content: start;
 }
 
 .info-section h3 {
@@ -223,13 +226,6 @@
   color: #1e40af;
 }
 
-.info-grid {
-  display: flex;
-
-  flex-direction: column;
-  gap: 20px;
-}
-
 .info-item {
   display: grid;
   grid-template-columns: 24px 1fr 2fr;
@@ -247,18 +243,6 @@
   padding: 12px 0;
   gap: 16px;
 }
-
-.info-section:nth-child(3).edit-mode .info-item {
-  grid-template-columns: 20px 0.4fr 2.2fr;
-  padding-right: 0;
-}
-
-.info-section:nth-child(3).edit-mode .edit-input,
-.info-section:nth-child(3).edit-mode .edit-select {
-  width: 250px;
-}
-
-
 
 .info-section.edit-mode .edit-input,
 .info-section.edit-mode .edit-select {

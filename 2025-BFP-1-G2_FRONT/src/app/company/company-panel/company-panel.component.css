@@ -1,7 +1,7 @@
 .company-panel {
   max-width: 100%;
   margin: auto;
-  padding: 0px;
+  padding: 5px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto auto;
@@ -22,6 +22,7 @@
   overflow: hidden;
   min-height: 200px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
 }
 
 .profile-company{
@@ -130,7 +131,6 @@
 }
 
 .info-section {
-  margin-inline: 20px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
@@ -153,6 +153,7 @@
   grid-column: 1;
   grid-row: 2;
   background: #ffffff;
+  align-items: start;
 }
 
 .info-section:nth-child(3) {
@@ -160,11 +161,15 @@
   grid-row: 2;
   background: #9f9f9f;
   color: #ffffff;
+  align-items: start;
+  align-content: start;
 }
 .info-section:nth-child(4) {
   grid-column: 3;
   grid-row: 2;
   background: #ffffff;
+  align-items: start;
+  align-content: start;
 }
 
 .info-section h3 {

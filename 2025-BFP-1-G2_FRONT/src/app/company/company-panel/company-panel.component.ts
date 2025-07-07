@@ -23,7 +23,7 @@ export class CompanyPanelComponent implements OnInit {
   address = new FormControl('', [Validators.maxLength(100)]);
   url = new FormControl('');
   logo = new FormControl('');
-  foundedDate = new FormControl('', [Validators.pattern('^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$')]);
+  foundedDate = new FormControl('', [Validators.pattern('^(19|20)\\d{2}$')]);
   isUploadingLogo: boolean = false;
   logoFileName: string = '';
   fullName: string = '';
@@ -95,7 +95,11 @@ export class CompanyPanelComponent implements OnInit {
         this.address.setValue(company.address || '');
         this.url.setValue(company.url || '');
         this.logo.setValue(company.logo || '');
-        this.foundedDate.setValue(company.foundedDate || '');
+
+        const fullDate = company.foundedDate  || '';
+        const year = fullDate ? new Date(fullDate).getFullYear().toString() : '';
+        this.foundedDate.setValue(year);
+
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -153,7 +157,7 @@ export class CompanyPanelComponent implements OnInit {
       address: this.address.value || undefined,
       url: this.url.value || undefined,
       logo: this.logo.value || undefined,
-      foundedDate: this.foundedDate.value || undefined
+      foundedDate: this.foundedDate.value ? `${this.foundedDate.value}-01-01` : undefined
     };
 
 
