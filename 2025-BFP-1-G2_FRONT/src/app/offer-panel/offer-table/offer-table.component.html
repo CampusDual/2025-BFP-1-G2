@@ -53,21 +53,24 @@
         <div class="offer-selectors" *ngIf="isCompany">
           <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : ''"
             class="selector-button" (click)="setOfferStatus('active')" matBadge="{{ getActiveOffersCount() }}"
-            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getActiveOffersCount() === 0">
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getActiveOffersCount() === 0"
+            [class.selected]="currentOfferStatus === 'active'">
             <mat-icon>visibility</mat-icon>
             Activas
           </button>
 
           <button mat-raised-button [color]="currentOfferStatus === 'draft' ? 'primary' : ''"
             class="selector-button" (click)="setOfferStatus('draft')" matBadge="{{ getDraftOffersCount() }}"
-            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getDraftOffersCount() === 0">
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getDraftOffersCount() === 0"
+            [class.selected]="currentOfferStatus === 'draft'">
             <mat-icon>edit</mat-icon>
             Borradores
           </button>
 
           <button mat-raised-button [color]="currentOfferStatus === 'archived' ? 'primary' : ''"
             class="selector-button" (click)="setOfferStatus('archived')" matBadge="{{ getArchivedOffersCount() }}"
-            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getArchivedOffersCount() === 0">
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getArchivedOffersCount() === 0"
+            [class.selected]="currentOfferStatus === 'archived'">
             <mat-icon>archive</mat-icon>
             Archivadas
           </button>

@@ -85,7 +85,6 @@ app-offer-card {
   max-width: 500px;
 }
 
-/* Offer Selectors Styles */
 .offer-selectors {
   display: flex;
   gap: 12px;
@@ -107,29 +106,6 @@ app-offer-card {
   white-space: nowrap;
 }
 
-.selector-button:not([color="primary"]) {
-  background-color: #f5f5f5;
-  color: var(--text-color);
-  border-color: #e0e0e0;
-}
-
-.selector-button:not([color="primary"]):hover {
-  background-color: #e8e8e8;
-  border-color: var(--primary-color);
-}
-
-.selector-button[color="primary"] {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.selector-button[color="primary"]:hover {
-  background-color: var(--primary-color-dark, #3f51b5);
-  border-color: var(--primary-color-dark, #3f51b5);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(var(--primary-color-rgb, 63, 81, 181), 0.3);
-}
 
 .selector-button mat-icon {
   font-size: 18px;
@@ -137,7 +113,13 @@ app-offer-card {
   height: 18px;
 }
 
-/* Badge customization for selectors - Changed color to primary */
+.selector-button.selected{
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 8px rgba(var(--primary-color-rgb, 63, 81, 181), 0.3);
+}
+
 ::ng-deep .selector-button .mat-badge-content {
   background-color:  white !important;
   color:  var(--primary-color) !important;
