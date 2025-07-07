@@ -33,7 +33,7 @@
 
       <div class="navigation-dots-container-fixed">
         <div class="navigation-dots-wrapper" #navigationDotsWrapper>
-          <div class="navigation-dots" #navigationDots>
+          <div class="navigation-dots" #navigationDots [class.few-items]="hasFewItems">
             <button *ngFor="let item of data; let i = index" mat-icon-button class="dot" [class.active]="i === currentIndex"
               (click)="navigateToIndex(i)">
               <div class="dot-indicator"></div>
