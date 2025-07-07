@@ -4,7 +4,6 @@ import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { TagService } from 'src/app/services/tag.service';
-import { Company } from 'src/app/services/company.service';
 
 export interface User {
   username: string;
@@ -50,8 +49,7 @@ export class AuthService {
   }
 
   constructor(private http: HttpClient,
-    private router: Router,
-    private tagsService: TagService
+    private router: Router
   ) {
   }
 
@@ -111,7 +109,7 @@ export class AuthService {
       tap({
         next: (response: any) => {
           console.log('Usuario registrado exitosamente con todos los datos:', response);
-        
+
         },
         error: (error) => {
           console.error('Error en el registro completo:', error);

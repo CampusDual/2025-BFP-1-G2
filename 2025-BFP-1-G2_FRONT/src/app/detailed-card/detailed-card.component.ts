@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { FormControl, AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import { FormControl, FormGroup} from '@angular/forms';
 import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from "@angular/material/core";
 import {MatDatepicker} from "@angular/material/datepicker";
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
@@ -101,7 +101,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   addingNewItem: boolean = false;
   maxDate: Date = new Date();
   minDate: Date = new Date(1800, 0, 1);
-  private fb: any;
 
   ngOnInit() {
     this.updateCurrentItem();

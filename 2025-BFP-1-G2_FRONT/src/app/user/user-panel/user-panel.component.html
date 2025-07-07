@@ -150,8 +150,7 @@
       <div class="info-item">
         <mat-icon>schedule</mat-icon>
         <span class="label">Experiencia:</span>
-        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No
-          especificada' }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No especificada' }}</span>
         <input class="edit-input" *ngIf="isEditMode" type="number" [formControl]="yearsOfExperience"
           [class.error]="yearsOfExperience.invalid && yearsOfExperience.touched" placeholder="Años de experiencia"
           min="0">
@@ -208,14 +207,14 @@
         <mat-icon>picture_as_pdf</mat-icon>
         <span class="label">Currículum:</span>
         <div class="file-upload-container">
-          <button type="button" class="file-upload-btn" (click)="openCVFileSelector()" 
+          <button type="button" class="file-upload-btn" (click)="openCVFileSelector()"
                   [disabled]="isUploadingCV">
             <mat-icon>upload_file</mat-icon>
             <span *ngIf="!isUploadingCV && !cvFileName">Subir PDF</span>
             <span *ngIf="!isUploadingCV && cvFileName">{{ cvFileName }}</span>
             <span *ngIf="isUploadingCV">Subiendo...</span>
           </button>
-          <input type="file" #cvFileInput id="cvFileInput" (change)="onCVFileSelected($event)" 
+          <input type="file" #cvFileInput id="cvFileInput" (change)="onCVFileSelected($event)"
                  accept=".pdf" style="display: none">
         </div>
       </div>

@@ -42,10 +42,6 @@ public class CompanyService implements ICompanyService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private OfferService offerService;
-
     @Autowired
     private OfferTagsDao offerTagsDao;
     @Autowired

@@ -56,11 +56,6 @@ public class AuthController {
 
             userService.addRoleToUser(15, (long) 6);
 
-            String role = userDetails.getAuthorities().stream()
-                    .findFirst()
-                    .map(GrantedAuthority::getAuthority)
-                    .orElse("ROLE_USER");
-
             return ResponseEntity.ok(token);
 
         } catch (AuthenticationException ex) {
