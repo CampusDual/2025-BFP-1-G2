@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControl, AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from "@angular/material/core";
 import {MatDatepicker} from "@angular/material/datepicker";
@@ -102,7 +102,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   maxDate: Date = new Date();
   minDate: Date = new Date(1800, 0, 1);
   private fb: any;
-  private dateAdapter: DateAdapter<Date> = new CustomDateAdapter('es');
 
   ngOnInit() {
     this.updateCurrentItem();
@@ -189,24 +188,7 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private createCompanyForm(): FormGroup {
-    return this.fb.group({
-      foundedDate: ['', [
-        Validators.required,
-        this.dateValidator()
-      ]]
-    });
-  }
 
-  private dateValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const date = control.value;
-      if (!date) return null;
-      if (date < this.minDate) return {matDatepickerMin: true};
-      if (date > this.maxDate) return {matDatepickerMax: true};
-      return null;
-    };
-  }
 
   saveEdit() {
     if (this.editedItem?.form) {
@@ -376,9 +358,9 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
 
   private initializeDotsNavigation(): void {
     if (!this.navigationDots?.nativeElement) return;
-    
+
     const dotsContainer = this.navigationDots.nativeElement;
-    
+
     dotsContainer.style.display = 'flex';
     dotsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
     dotsContainer.style.willChange = 'transform';
@@ -396,35 +378,35 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
 
   private scrollToActiveDot(): void {
     if (!this.navigationDots?.nativeElement || !this.navigationDotsWrapper?.nativeElement) return;
-    
+
     const dotsContainer = this.navigationDots.nativeElement;
     const wrapper = this.navigationDotsWrapper.nativeElement;
-    
+
     const activeDot = dotsContainer.children[this.currentIndex] as HTMLElement;
-    
+
     if (!activeDot) return;
-    
+
     const wrapperWidth = wrapper.offsetWidth;
     const dotsContainerWidth = dotsContainer.scrollWidth;
-    
+
     if (dotsContainerWidth <= wrapperWidth) {
       dotsContainer.style.transform = 'translateX(0px)';
       dotsContainer.style.justifyContent = 'center';
       this.updateContentIndicators(0, 0);
       return;
     }
-    
+
     dotsContainer.style.justifyContent = 'flex-start';
     const dotPosition = activeDot.offsetLeft;
     const dotWidth = activeDot.offsetWidth;
-    
+
     const idealPosition = dotPosition - (wrapperWidth / 2) + (dotWidth / 2);
     const maxScroll = dotsContainerWidth - wrapperWidth;
     const targetScroll = Math.max(0, Math.min(idealPosition, maxScroll));
-    
+
     dotsContainer.style.transform = `translateX(-${targetScroll}px)`;
     dotsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    
+
     setTimeout(() => {
       this.updateContentIndicators(targetScroll, maxScroll);
     }, 300);
@@ -432,13 +414,13 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
 
   private updateContentIndicators(currentScroll: number, maxScroll: number): void {
     if (!this.navigationDotsWrapper?.nativeElement) return;
-    
+
     const wrapper = this.navigationDotsWrapper.nativeElement;
-    
+
     const hasContentLeft = currentScroll > 10;
-   
+
     const hasContentRight = currentScroll < (maxScroll - 10);
-    
+
     wrapper.classList.toggle('has-content-left', hasContentLeft);
     wrapper.classList.toggle('has-content-right', hasContentRight);
   }

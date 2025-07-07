@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService, User } from "../../auth/services/auth.service";
+import { AuthService } from "../../auth/services/auth.service";
 import { ImageCompressionService } from "../../services/image-compression.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
 
