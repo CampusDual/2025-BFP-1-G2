@@ -33,10 +33,9 @@ export class OfferTableComponent implements OnDestroy {
 
 
   currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
-  bookmarkedOffers: number[] = []; // Array de IDs de ofertas guardadas
-  serverBookmarkedOffers: any[] = []; // Ofertas bookmarked del servidor
-
-  currentOfferStatus: 'all' | 'draft' | 'archived' | 'active' = 'all';
+  bookmarkedOffers: number[] = [];
+  serverBookmarkedOffers: any[] = [];
+  currentOfferStatus: 'draft' | 'archived' | 'active' = 'active';
 
   isLoading = true;
 
@@ -81,7 +80,7 @@ export class OfferTableComponent implements OnDestroy {
     if (this.authService.getRolesCached().includes('ROLE_COMPANY')) {
       this.isCompany = true;
       this.loadCompanyOffers();
-    }else if(this.authService.getRolesCached().includes('ROLE_CANDIDATE')){
+    } else if (this.authService.getRolesCached().includes('ROLE_CANDIDATE')) {
       this.isCandidate = true;
       this.loadCandidateOffers();
       this.loadMyTags();
@@ -548,8 +547,7 @@ export class OfferTableComponent implements OnDestroy {
     this.currentOfferView = view;
   }
 
-  // New methods for company offer status filtering
-  setOfferStatus(status: 'all' | 'draft' | 'archived' | 'active') {
+  setOfferStatus(status: 'draft' | 'archived' | 'active') {
     this.currentOfferStatus = status;
   }
 
@@ -646,7 +644,6 @@ export class OfferTableComponent implements OnDestroy {
   getCurrentViewOffers(): any[] {
     let baseOffers: any[];
 
-    // For candidates, use the existing view logic
     if (this.isCandidate) {
       switch (this.currentOfferView) {
         case 'recommended':
@@ -660,22 +657,17 @@ export class OfferTableComponent implements OnDestroy {
       }
     }
 
-    // For companies, filter by offer status
     if (this.isCompany) {
-      if (this.currentOfferStatus === 'all') {
-        return this.offers;
-      } else {
-        const statusMap = {
-          'draft': 'DRAFT',
-          'archived': 'ARCHIVED',
-          'active': 'ACTIVE'
-        };
-        const targetStatus = statusMap[this.currentOfferStatus];
-        return this.offers.filter(offer => offer.status === targetStatus);
-      }
-    }
 
-    // Default fallback
+      const statusMap = {
+        'draft': 'DRAFT',
+        'archived': 'ARCHIVED',
+        'active': 'ACTIVE'
+      };
+      const targetStatus = statusMap[this.currentOfferStatus];
+      return this.offers.filter(offer => offer.status === targetStatus);
+
+    }
     return this.offers;
   }
 
@@ -692,7 +684,6 @@ export class OfferTableComponent implements OnDestroy {
           description: formValues.description,
           tags: tags || []
         };
-
         this.offerService.createOffer(newOfferData).subscribe({
           next: () => {
             this.snackBar.open('Oferta creada exitosamente', 'Cerrar', {
