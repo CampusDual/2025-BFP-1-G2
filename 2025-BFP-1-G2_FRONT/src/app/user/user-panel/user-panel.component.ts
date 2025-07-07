@@ -32,7 +32,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   figmaUrl = new FormControl('');
   personalWebsiteUrl = new FormControl('');
   cvPdfBase64 = new FormControl('');
-  profileImageBase64 = new FormControl('');
+  logoImageBase64 = new FormControl('');
   isUploadingCV: boolean = false;
   isUploadingLogo: boolean = false;
   cvFileName: string = '';
@@ -100,7 +100,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.figmaUrl.setValue(user.figmaUrl);
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
-        this.profileImageBase64.setValue(user.profileImageBase64 || user.logoImageBase64 || '');
+        this.logoImageBase64.setValue(user.logoImageBase64 || '');
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -134,7 +134,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.figmaUrl.setValue(user.figmaUrl);
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
-        this.profileImageBase64.setValue(user.profileImageBase64 || user.logoImageBase64 || '');
+        this.logoImageBase64.setValue(user.logoImageBase64 || '');
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -178,12 +178,12 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   onImageError(): void {
-    this.profileImageBase64.setValue('');
+    this.logoImageBase64.setValue('');
   }
 
   getProfileImage(): string | null {
-    if (this.profileImageBase64.value) {
-      return this.profileImageBase64.value;
+    if (this.logoImageBase64.value) {
+      return this.logoImageBase64.value;
     }
     return null;
   }
@@ -213,7 +213,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.figmaUrl.markAsTouched();
     this.personalWebsiteUrl.markAsTouched();
     this.cvPdfBase64.markAsTouched();
-    this.profileImageBase64.markAsTouched();
+    this.logoImageBase64.markAsTouched();
 
     if (this.hasFormErrors()) {
       console.error('Hay errores en el formulario');
@@ -240,7 +240,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       figmaUrl: this.figmaUrl.value,
       personalWebsiteUrl: this.personalWebsiteUrl.value,
       cvPdfBase64: this.cvPdfBase64.value,
-      profileImageBase64: this.profileImageBase64.value
+      logoImageBase64: this.logoImageBase64.value
     };
 
     this.authService.updateCandidateDetails(updatedData).subscribe({
@@ -271,7 +271,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.educationLevel.invalid || this.languages.invalid || this.employmentStatus.invalid ||
       this.curriculumUrl.invalid || this.linkedinUrl.invalid ||
       this.githubUrl.invalid || this.figmaUrl.invalid || this.personalWebsiteUrl.invalid ||
-      this.cvPdfBase64.invalid || this.profileImageBase64.invalid;
+      this.cvPdfBase64.invalid || this.logoImageBase64.invalid;
   }
 
 
@@ -316,7 +316,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.isUploadingLogo = true;
     try {
       const compressedBase64 = await this.imageCompressionService.compressLogo(file);
-      this.profileImageBase64.setValue(compressedBase64);
+      this.logoImageBase64.setValue(compressedBase64);
       this.logoFileName = file.name;
       console.log('Logo comprimido y cargado exitosamente');
       this.saveChanges();
@@ -335,7 +335,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   removeLogoImage(): void {
-    this.profileImageBase64.setValue('');
+    this.logoImageBase64.setValue('');
     this.logoFileName = '';
   }
 
