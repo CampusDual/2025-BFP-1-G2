@@ -50,7 +50,6 @@
           </button>
         </div>
 
-        <!-- Offer Status Selectors for Companies -->
         <div class="offer-selectors" *ngIf="isCompany">
           <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : ''"
             class="selector-button" (click)="setOfferStatus('active')" matBadge="{{ getActiveOffersCount() }}"
@@ -71,12 +70,6 @@
             matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getArchivedOffersCount() === 0">
             <mat-icon>archive</mat-icon>
             Archivadas
-          </button>
-
-          <button mat-raised-button [color]="currentOfferStatus === 'all' ? 'primary' : ''" class="selector-button"
-            (click)="setOfferStatus('all')">
-            <mat-icon>list</mat-icon>
-            Todas
           </button>
         </div>
       </div>
