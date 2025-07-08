@@ -258,19 +258,7 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
-
-  onReset() {
-    this.email.reset();
-    this.password.reset();
-    this.confirmPassword.reset();
-    this.login.reset();
-    this.name.reset();
-    this.surname1.reset();
-    this.surname2.reset();
-    this.phoneNumber.reset();
-  }
-
-
+    
   getLoginErrorMessage(): string {
     if (this.login.hasError('required')) {
       return 'Debes introducir un nombre de usuario';

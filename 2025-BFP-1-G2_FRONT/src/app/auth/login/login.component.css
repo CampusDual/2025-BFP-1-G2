@@ -44,7 +44,7 @@ form {
 }
 
 .formdata {
-  min-width: 300px;
+  min-width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,6 +54,7 @@ form {
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
   background-color: rgba(255, 255, 255, 0.9);
+  padding: 40px;
 
   h2 {
     padding: 5px;
@@ -64,12 +65,10 @@ form {
   }
 }
 
-.formdata ::ng-deep mat-form-field {
-  width: 200px !important;
-}
-
+.formdata ::ng-deep mat-form-field,
 .formdata ::ng-deep .mat-mdc-text-field-wrapper {
-  width: 200px !important;
+  min-width: auto;
+  width: 400px;
 }
 
 .form-actions {
@@ -80,16 +79,19 @@ form {
   margin-bottom: 1rem;
 }
 
-
-.login-link {
-  padding: 15px;
-  border-radius: 10px;
-  transition: color 0.3s ease, background-color 0.3s ease;
+.register-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
 }
-
-.login-link:hover {
-  background-color: var(--background-hover-color);
+.register-section a {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+.register-section a:hover {
   cursor: pointer;
   color: var(--primary-color);
+  transition: color 0.3s ease, background-color 0.3s ease;
 }
-

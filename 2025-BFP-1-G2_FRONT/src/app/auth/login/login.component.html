@@ -26,15 +26,18 @@
     <br>
 
     <div class="form-actions">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!formValid()">Iniciar sesión</button>
-      <button mat-raised-button color="warn" type="reset">Cancelar</button>
+      <button mat-raised-button color="warn" type="submit" [disabled]="!formValid()">Iniciar sesión</button>
+      <button mat-raised-button color="primary" type="reset">Cancelar</button>
     </div>
     <br>
+    <div class="register-section">
+      <p>¿Aún no tienes cuenta?
+        <a routerLink="../register" class="login-link animated-hover"> Regístrate </a>
+      </p>
+    </div>
   </mat-card>
     <mat-progress-bar *ngIf="isLoading" mode="query"></mat-progress-bar>
   </div>
-  <p>¿Aún no tienes cuenta? </p>
-  <button mat-raised-button color="primary" routerLink="../register" class="login-link">Registrarse</button>
 
 </form>
 
