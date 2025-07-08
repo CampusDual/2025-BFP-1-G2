@@ -183,9 +183,6 @@
           <button mat-raised-button color="accent" [disabled]="!isStep1Valid()" (click)="nextStep()">
             Completar datos
           </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">
-            Cancelar
-          </button>
           <button class="home-button" mat-raised-button color="primary" type="button" (click)="goHome()">
             <mat-icon>home</mat-icon>
           </button>
@@ -194,9 +191,6 @@
         <div class="step-buttons" *ngIf="stepper.selectedIndex === 1">
           <button mat-raised-button color="primary" (click)="nextStep()">
             Continuar
-          </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">
-            Cancelar
           </button>
           <button mat-raised-button color="basic" (click)="previousStep()">
             Volver
@@ -207,7 +201,6 @@
           <button mat-raised-button color="primary" type="submit" (click)="onSubmit()" [disabled]="!formValid()">
             Finalizar Registro
           </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
           <button mat-raised-button color="accent" (click)="previousStep()">Volver</button>
           <button class="home-button" mat-raised-button color="primary" type="button" (click)="goHome()">
             <mat-icon>home</mat-icon>
