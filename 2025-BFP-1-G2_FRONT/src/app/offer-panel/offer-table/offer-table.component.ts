@@ -9,6 +9,8 @@ import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
 import { TagService } from 'src/app/services/tag.service';
 import { Offer } from "../../services/offer.service";
 import { CompanyService } from 'src/app/services/company.service';
+import { Observable, combineLatest } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-offer-table',
@@ -30,6 +32,8 @@ export class OfferTableComponent implements OnDestroy {
   selectedTags: Tag[] = [];
   selectedCandidatures: any[] = [];
   tagsFilterControl = new FormControl<Tag[]>([]);
+  tagSearchControl = new FormControl('');
+  filteredTags: Observable<Tag[]>;
 
 
   currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
@@ -50,6 +54,12 @@ export class OfferTableComponent implements OnDestroy {
   ) {
     this.loadAllTags();
     this.loadUserRole();
+    this.filteredTags = combineLatest([
+      this.tagSearchControl.valueChanges.pipe(startWith('')),
+      this.tagsFilterControl.valueChanges.pipe(startWith([]))
+    ]).pipe(
+      map(([searchValue, selectedTags]) => this._filterTags(searchValue || ''))
+    );
   }
 
   loadAllTags() {
@@ -519,6 +529,46 @@ export class OfferTableComponent implements OnDestroy {
       }
     }
     return filtered;
+  }
+
+  private _filterTags(value: string): Tag[] {
+    const filterValue = value.toLowerCase();
+    const currentTags = this.tagsFilterControl.value || [];
+    const currentTagIds = currentTags.map(tag => tag.id);
+    
+    return this.availableTags.filter(tag => 
+      tag.name.toLowerCase().includes(filterValue) && 
+      !currentTagIds.includes(tag.id)
+    );
+  }
+
+  onTagSelected(event: any) {
+    const selectedTag = event.option.value;
+    const currentTags = this.tagsFilterControl.value || [];
+    
+    if (!currentTags.find(tag => tag.id === selectedTag.id)) {
+      const updatedTags = [...currentTags, selectedTag];
+      this.tagsFilterControl.setValue(updatedTags);
+    }
+    this.filteredTags = combineLatest([
+      this.tagSearchControl.valueChanges.pipe(startWith('')),
+      this.tagsFilterControl.valueChanges.pipe(startWith([]))
+    ]).pipe(
+      map(([searchValue]) => this._filterTags(searchValue || ''))
+    );
+    this.tagSearchControl.setValue('');
+  }
+
+  onSearchFocus() {
+    if (!this.tagSearchControl.value) {
+      this.tagSearchControl.setValue('');
+    }
+  }
+
+  removeTagFilter(tagToRemove: Tag) {
+    const currentTags = this.tagsFilterControl.value || [];
+    const updatedTags = currentTags.filter(tag => tag.id !== tagToRemove.id);
+    this.tagsFilterControl.setValue(updatedTags);
   }
 
 

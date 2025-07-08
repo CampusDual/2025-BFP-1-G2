@@ -43,7 +43,7 @@ export class AdminDashboardComponent implements OnInit {
     private tagService: TagService,
     private offerService: OfferService,
     private matSnackBar: MatSnackBar
-  ) {}
+  ) { }
 
   public offersChartData: ChartData<'line'> = {
     labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -121,8 +121,8 @@ export class AdminDashboardComponent implements OnInit {
     datasets: [{
       data: Array(12).fill(0),
       label: 'Candidatos Registrados',
-      backgroundColor:'rgba(13, 148, 137, 0.55)',
-      borderColor:'#0d9488',
+      backgroundColor: 'rgba(13, 148, 137, 0.55)',
+      borderColor: '#0d9488',
       borderWidth: 2,
       borderRadius: 8,
       borderSkipped: false,
@@ -274,18 +274,18 @@ export class AdminDashboardComponent implements OnInit {
 
   private calculateStatistics(): void {
     this.activeOffers = this.offers.length;
-    const offersWithCandidates = this.offers.filter(offer => 
+    const offersWithCandidates = this.offers.filter(offer =>
       offer.candidatesCount && offer.candidatesCount > 0
     ).length;
-    
-    this.averageCandidatesPerOffer = this.totalOffers > 0 ? 
+
+    this.averageCandidatesPerOffer = this.totalOffers > 0 ?
       Math.round((this.totalCandidates / this.totalOffers) * 10) / 10 : 0;
   }
 
   private updateCandidatesChart(): void {
     const currentYear = new Date().getFullYear();
     const monthlyData = this.getDataByMonth(this.candidates, currentYear);
-    
+
     this.candidatesChartData = {
       ...this.candidatesChartData,
       datasets: [{
@@ -309,7 +309,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private updateOffersStatusChart(): void {
-    const offersWithCandidates = this.offers.filter(offer => 
+    const offersWithCandidates = this.offers.filter(offer =>
       offer.candidatesCount && offer.candidatesCount > 0
     ).length;
     const offersWithoutCandidates = this.totalOffers - offersWithCandidates;
@@ -353,17 +353,26 @@ export class AdminDashboardComponent implements OnInit {
 
   add(): void {
     const value = this.tag.value?.toString().trim();
-
     if (this.tag.valid && value) {
       const exists = this.tags.some(existingTag =>
         existingTag.name.toLowerCase() === value.toLowerCase()
       );
-
       if (!exists) {
-        this.tags.push({ name: value });
-        this.tag.reset();
-        this.matSnackBar.open('Etiqueta añadida exitosamente', 'Cerrar', {
-          duration: 3000
+        this.tagService.createTag({ name: value }).subscribe({
+          next: (newTag: Tag) => {
+            this.tags.push({ name: value });
+            this.tag.reset();
+            this.matSnackBar.open('Etiqueta añadida exitosamente', 'Cerrar', {
+              duration: 3000
+            });
+          },
+          error: (error) => {
+            console.error('Error al crear la etiqueta:', error);
+            this.matSnackBar.open('Error al añadir la etiqueta', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['error-snackbar']
+            });
+          }
         });
       } else {
         this.matSnackBar.open('La etiqueta ya existe', 'Cerrar', {
@@ -376,12 +385,21 @@ export class AdminDashboardComponent implements OnInit {
 
   remove(tag: Tag): void {
     const index = this.tags.indexOf(tag);
-    if (index >= 0) {
-      this.tags.splice(index, 1);
-      this.matSnackBar.open('Etiqueta eliminada exitosamente', 'Cerrar', {
-        duration: 3000
-      });
-    }
+    this.tagService.deleteTag(tag.id!).subscribe({
+      next: () => {
+        this.tags.splice(index, 1);
+        this.matSnackBar.open('Etiqueta eliminada exitosamente', 'Cerrar', {
+          duration: 3000
+        });
+      },
+      error: (error) => {
+        console.error('Error al eliminar la etiqueta:', error);
+        this.matSnackBar.open('Error al eliminar la etiqueta', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
   }
 
   edit(tag: Tag, event: MatChipEditedEvent): void {
@@ -398,17 +416,22 @@ export class AdminDashboardComponent implements OnInit {
 
     if (!exists) {
       const index = this.tags.indexOf(tag);
-      if (index >= 0) {
-        this.tags[index].name = value;
-        this.matSnackBar.open('Etiqueta actualizada exitosamente', 'Cerrar', {
-          duration: 3000
-        });
-      }
-    } else {
-      this.matSnackBar.open('La etiqueta ya existe', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
+      this.tagService.updateTag({ id: tag.id, name: value }).subscribe({
+        next: (updatedTag: Tag) => {
+          this.tags[index].name = value;
+          this.matSnackBar.open('Etiqueta actualizada exitosamente', 'Cerrar', {
+            duration: 3000
+          });
+        },
+        error: (error) => {
+          console.error('Error al actualizar la etiqueta:', error);
+          this.matSnackBar.open('Error al actualizar la etiqueta', 'Cerrar', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
       });
     }
+
   }
 }

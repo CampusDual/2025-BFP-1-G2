@@ -150,12 +150,10 @@
         <form [formGroup]="thirdFormGroup">
           <mat-card class="formdata">
             <h2>Áreas de interés</h2>
-            <p class="tags-subtitle">Selecciona hasta 5 áreas que te interesen (opcional).</p>
-            
+            <p class="tags-subtitle">Selecciona hasta 10 áreas que te interesen (opcional).</p>
             <div class="selected-tags-count" *ngIf="availableTags.length > 0">
               Áreas seleccionadas: {{getSelectedTagsCount()}} / 10
             </div>
-
             <div class="tags-container" *ngIf="availableTags.length > 0">
               <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl()">
                 <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
