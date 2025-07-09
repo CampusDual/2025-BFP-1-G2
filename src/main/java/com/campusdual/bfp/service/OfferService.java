@@ -6,10 +6,15 @@ import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.*;
 import com.campusdual.bfp.model.dto.dtomapper.*;
+import org.mapstruct.Context;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,9 +50,9 @@ public class OfferService implements IOfferService {
     private static final int MAX_TAGS_PER_OFFER = 5;
 
     private OfferDTO buildOfferDTO(Offer offer, boolean includeCompanyInfo) {
+
         OfferDTO dto = OfferMapper.INSTANCE.toDTO(offer);
         dto.setDateAdded(offer.getDate());
-
         if (includeCompanyInfo && offer.getCompany() != null) {
             Company company = offer.getCompany();
             User user = company.getUser();
@@ -58,8 +63,6 @@ public class OfferService implements IOfferService {
             if (company.getLogo() != null) {
                 dto.setLogo(company.getLogo());
             }
-
-
         }
 
         List<TagDTO> tagDTOs = getOfferTags(offer.getId());
@@ -238,7 +241,7 @@ public class OfferService implements IOfferService {
         User user = userDao.findByLogin(username);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
         List<OfferDTO> offers = queryAllOffers();
-        for (OfferDTO offerDTO: offers) {
+        for (OfferDTO offerDTO : offers) {
             Offer offer = offerDao.getReferenceById(offerDTO.getId());
             UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(user.getId(), offerDTO.getId());
             if (userOffer != null) {
@@ -274,7 +277,7 @@ public class OfferService implements IOfferService {
     }
 
     @Override
-    public List<OfferDTO> getCadidateOffers(String listType, String username){
+    public List<OfferDTO> getCadidateOffers(String listType, String username) {
         List<Offer> offers;
         User user = userDao.findByLogin(username);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
@@ -307,7 +310,8 @@ public class OfferService implements IOfferService {
     }
 
     @Override
-    public List<OfferDTO> searchCandidateOffers(String searchTerm, String listType, String username){
+    public List<OfferDTO> searchCandidateOffers(String searchTerm, String listType, String username) {
+
         List<Offer> offers;
         User user = userDao.findByLogin(username);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
@@ -346,7 +350,7 @@ public class OfferService implements IOfferService {
     }
 
     @Override
-    public int getCadidateOffersCount(String listType, String name){
+    public int getCadidateOffersCount(String listType, String name) {
         User user = userDao.findByLogin(name);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
         switch (listType) {
@@ -362,4 +366,44 @@ public class OfferService implements IOfferService {
                 throw new InvalidListTypeException("Tipo de lista no válido: " + listType);
         }
     }
+
+    @Override
+    public Page<OfferDTO> getCandidateOffersPaginated(
+            String listType,
+            String username,
+            String searchTerm,
+            int page,
+            int size) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dateAdded").descending());
+        Page<Offer> offers;
+        boolean hasSearch = searchTerm != null && !searchTerm.trim().isEmpty();
+        switch (listType) {
+            case "bookmarks":
+                offers = hasSearch ?
+                        offerDao.findBookmarkedOffersBySearchTerm(user.getId(), searchTerm, pageable) :
+                        offerDao.findBookmarkedOffersByUserId(user.getId(), pageable);
+                break;
+            case "applied":
+                offers = hasSearch ?
+                        offerDao.findAppliedOffersByAndSearchTerm(user.getId(), searchTerm, pageable) :
+                        offerDao.findAppliedOffersByUserId(user.getId(), pageable);
+                break;
+            case "recommended":
+                offers = hasSearch ?
+                        offerDao.findRecommendedOffersByAndSearchTerm(user.getId(), searchTerm, pageable) :
+                        offerDao.findRecommendedOffersByUserId(user.getId(), pageable);
+                break;
+            case "all":
+                offers = hasSearch ?
+                        offerDao.findOffersBySearchTerm(searchTerm, pageable) :
+                        offerDao.findActiveOffers(pageable);
+                break;
+            default:
+                throw new InvalidListTypeException("Tipo de lista no válido: " + listType);
+        }
+        return offers.map(offer ->  OfferMapper.INSTANCE.toDTO(offer, false, true, offerDao, user));
+    }
+
 }

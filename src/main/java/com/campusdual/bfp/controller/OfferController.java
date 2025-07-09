@@ -206,7 +206,8 @@ public class OfferController {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
-        List<OfferDTO> offers = offerService.searchCandidateOffers(searchTerm.trim(), listType, principal.getName());
+
+        List<OfferDTO> offers = offerService.getCandidateOffersPaginated(listType, principal.getName(), searchTerm.trim(), 1, 10).getContent();
         return ResponseEntity.ok(offers);
     }
 }
