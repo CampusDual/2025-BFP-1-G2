@@ -19,4 +19,10 @@ public interface IOfferService {
     void updateCandidateValidity(int offerID, CandidateDTO candidateDTO);
     List<OfferDTO> getMyOffers(String username);
     List<OfferDTO> getUserBookmarks(String username);
+    List<OfferDTO> getCadidateOffers(String listType, String username);
+    List<OfferDTO> searchCandidateOffers(String searchTerm, String listType, String username);
+    List<OfferDTO> searchOffers(String searchTerm);
+    List<OfferDTO> searchCompanyOffers(String searchTerm, Boolean active);
+
+    int getCadidateOffersCount(String listType, String name);
 }

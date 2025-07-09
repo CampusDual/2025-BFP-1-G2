@@ -51,7 +51,6 @@ public class OfferService implements IOfferService {
         if (includeCompanyInfo && offer.getCompany() != null) {
             Company company = offer.getCompany();
             User user = company.getUser();
-
             if (user != null) {
                 dto.setCompanyName(company.getName());
                 dto.setEmail(user.getEmail());
@@ -60,9 +59,9 @@ public class OfferService implements IOfferService {
                 dto.setLogo(company.getLogo());
             }
 
+
         }
 
-        // Añadir tags
         List<TagDTO> tagDTOs = getOfferTags(offer.getId());
         dto.setTags(tagDTOs);
 
@@ -274,5 +273,93 @@ public class OfferService implements IOfferService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<OfferDTO> getCadidateOffers(String listType, String username){
+        List<Offer> offers;
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        switch (listType) {
+            case "bookmarks":
+                offers = offerDao.findBookmarkedOffersByUserId(user.getId());
+                break;
+            case "applied":
+                offers = offerDao.findAppliedOffersByUserId(user.getId());
+                break;
+            case "recommended":
+                offers = offerDao.findRecommendedOffersByUserId(user.getId());
+                break;
+            case "all":
+                offers = offerDao.findActiveOffers();
+                break;
+            default:
+                throw new InvalidListTypeException("Tipo de lista no válido: " + listType);
+        }
 
+        List<OfferDTO> offerDTOS = offers.stream()
+                .map(offer -> buildOfferDTO(offer, true))
+                .collect(Collectors.toList());
+        for (OfferDTO offerDTO : offerDTOS) {
+            offerDTO.setIsApplied(offerDao.isOfferAppliedByUserIdAndOfferId(user.getId(), offerDTO.getId()));
+            offerDao.getAppliedByUserIdAndOfferId(user.getId(), offerDTO.getId())
+                    .ifPresent(offerDTO::setCandidateValid);
+        }
+        return offerDTOS;
+    }
+
+    @Override
+    public List<OfferDTO> searchCandidateOffers(String searchTerm, String listType, String username){
+        List<Offer> offers;
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        switch (listType) {
+            case "bookmarks":
+                offers = offerDao.findBookmarkedOffersBySearchTerm(user.getId(), searchTerm);
+                break;
+            case "applied":
+                offers = offerDao.findAppliedOffersByAndSearchTerm(user.getId(), searchTerm);
+                break;
+            case "recommended":
+                offers = offerDao.findRecommendedOffersByAndSearchTerm(user.getId(), searchTerm);
+                break;
+            case "all":
+                offers = offerDao.findOffersBySearchTerm(searchTerm);
+                break;
+            default:
+                throw new InvalidListTypeException("Tipo de lista no válido: " + listType);
+        }
+        return offers.stream()
+                .map(offer -> buildOfferDTO(offer, true))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OfferDTO> searchCompanyOffers(String searchTerm, Boolean active) {
+        return List.of();
+    }
+
+    @Override
+    public List<OfferDTO> searchOffers(String searchTerm) {
+        List<Offer> offers = offerDao.findOffersBySearchTerm(searchTerm);
+        return offers.stream()
+                .map(offer -> buildOfferDTO(offer, true))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getCadidateOffersCount(String listType, String name){
+        User user = userDao.findByLogin(name);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        switch (listType) {
+            case "bookmarks":
+                return offerDao.getBookmarksCount(user.getId());
+            case "applied":
+                return offerDao.getAppliedOffersCount(user.getId());
+            case "recommended":
+                return offerDao.getRecommendedOffersCount(user.getId());
+            case "all":
+                return offerDao.getActiveOffersCount();
+            default:
+                throw new InvalidListTypeException("Tipo de lista no válido: " + listType);
+        }
+    }
 }

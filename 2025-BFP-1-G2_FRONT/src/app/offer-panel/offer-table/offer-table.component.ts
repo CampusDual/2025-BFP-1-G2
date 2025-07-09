@@ -18,11 +18,10 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent implements OnDestroy {
-
-
   offers: Offer[] = [];
   filteredOffers: any[] = [];
   searchTerm: string = '';
+  lastSearchTerm: string = '';
   showDetailedCard = false;
   detailedCardData: DetailedCardData[] = [];
   currentDetailIndex = 0;
@@ -34,7 +33,10 @@ export class OfferTableComponent implements OnDestroy {
   tagsFilterControl = new FormControl<Tag[]>([]);
   tagSearchControl = new FormControl('');
   filteredTags: Observable<Tag[]>;
-
+  bookmarkedOfferCount: number = 0;
+  recomendedOfferCount: number = 0;
+  appliedOfferCount: number = 0;
+  activeOfferCount: number = 0;
 
   currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
   bookmarkedOffers: number[] = [];
@@ -132,7 +134,8 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   loadCandidateOffers() {
-    this.offerService.getCandidateOffers().subscribe({
+    this.isLoading = true;
+    this.offerService.getCandidateOffers(this.currentOfferView).subscribe({
       next: (offers: CandidateOffer[]) => {
         this.offers = offers.map((offer: CandidateOffer) => ({
           ...offer,
@@ -140,12 +143,37 @@ export class OfferTableComponent implements OnDestroy {
           isValid: (offer.applied && offer.candidateValid === true) ? 'VALID' :
             (offer.applied && offer.candidateValid === false) ? 'INVALID' : (offer.applied) ? 'PENDING' : undefined
         }));
+        this.setBookmarkedOffersCount();
+        this.setRecommendedOffersCount();
+        this.setAppliedOffersCount();
+        this.setAllOffersCount();
         console.log('Candidate offers loaded successfully:', this.offers);
         this.isLoading = false;
-        this.filteredOffers = [...this.offers];
       },
       error: (error: any) => {
         console.error('Error fetching candidate offers', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadCandidateOffersBySearchTerm() {
+    this.isLoading = true;
+    this.offerService.searchCandidateOffers(this.searchTerm, this.currentOfferView).subscribe({
+      next: (offers) => {
+        this.offers = offers.map((offer: CandidateOffer) => ({
+          ...offer,
+          dateToString: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : new Date().toLocaleDateString(),
+          isValid: (offer.applied && offer.candidateValid === true) ? 'VALID' :
+            (offer.applied && offer.candidateValid === false) ? 'INVALID' : (offer.applied) ? 'PENDING' : undefined
+        }));
+        console.log('Candidate offers loaded successfully:', this.offers);
+        console.log('bajo el termino de busqueda', this.searchTerm);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error al buscar ofertas desde el backend:', error);
+        this.isLoading = false;
       }
     });
   }
@@ -165,59 +193,11 @@ export class OfferTableComponent implements OnDestroy {
         console.error('Error fetching offers', error);
       }
     });
-
-
-  }
-
-  openDetailedCardFromApplied(offerIndex: number) {
-    this.detailedCardData = this.selectedCandidatures.map(offer => ({
-      id: offer.id,
-      title: offer.title,
-      editableTitle: offer.title,
-      titleLabel: 'Título de la oferta',
-      subtitle: `${offer.companyName}  ${offer.email}`,
-      content: offer.description,
-      contentLabel: 'Descripción de la oferta',
-      metadata: this.getMetadataForOffer(offer),
-      actions: this.getActionsForOffer(offer),
-      candidates: offer.candidates,
-      editable: false,
-      form: undefined,
-      tags: offer.tags || [],
-    }));
-
-    this.currentDetailIndex = offerIndex;
-    this.showDetailedCard = true;
-    this.disableBodyScroll();
-  }
-
-  openDetailedCardFromSuggested(offerIndex: number) {
-    const recommendedOffers = this.recomendedOffers();
-
-    this.detailedCardData = recommendedOffers.map(offer => ({
-      id: offer.id,
-      title: offer.title,
-      editableTitle: offer.title,
-      titleLabel: 'Título de la oferta',
-      subtitle: `${offer.companyName}  ${offer.email}`,
-      content: offer.description,
-      contentLabel: 'Descripción de la oferta',
-      metadata: this.getMetadataForOffer(offer),
-      actions: this.getActionsForOffer(offer),
-      candidates: offer.candidates,
-      editable: this.isCompany,
-      form: this.isCompany ? this.createOfferForm(offer) : undefined,
-      tags: offer.tags || [],
-    }));
-
-    this.currentDetailIndex = offerIndex;
-    this.showDetailedCard = true;
-    this.disableBodyScroll();
   }
 
   openDetailedCard(offerIndex: number) {
-    this.detailedCardData = this.filterOffers().map(offer => ({
-      id: offer.id,
+    this.detailedCardData = this.offers.map((offer: Offer) => ({
+      id: offer.id!,
       title: offer.title,
       editableTitle: offer.title,
       titleLabel: 'Título de la oferta',
@@ -276,8 +256,6 @@ export class OfferTableComponent implements OnDestroy {
       const metadata: { [key: string]: any } = {
         'Fecha de publicación': offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString('es-ES') : '',
       };
-
-      // Agregar estado de la oferta si existe
       if (offer.status) {
         const statusLabels: { [key: string]: string } = {
           'PUBLISHED': 'Publicada',
@@ -506,38 +484,14 @@ export class OfferTableComponent implements OnDestroy {
     this.enableBodyScroll();
   }
 
-  filterOffers(): any[] {
-    let filtered = [...this.getCurrentViewOffers()];
-
-    if (this.searchTerm.trim()) {
-      const searchLower = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(offer =>
-        offer.title.toLowerCase().includes(searchLower) ||
-        offer.description.toLowerCase().includes(searchLower) ||
-        offer.companyName.toLowerCase().includes(searchLower) ||
-        offer.email.toLowerCase().includes(searchLower)
-      );
-    }
-
-    if (this.tagsFilterControl.value) {
-      const selectedTags = this.tagsFilterControl.value || [];
-      if (selectedTags.length > 0) {
-        const selectedTagIds = selectedTags.map(tag => tag.id);
-        filtered = filtered.filter((offer: any) =>
-          offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id))
-        );
-      }
-    }
-    return filtered;
-  }
 
   private _filterTags(value: string): Tag[] {
     const filterValue = value.toLowerCase();
     const currentTags = this.tagsFilterControl.value || [];
     const currentTagIds = currentTags.map(tag => tag.id);
-    
-    return this.availableTags.filter(tag => 
-      tag.name.toLowerCase().includes(filterValue) && 
+
+    return this.availableTags.filter(tag =>
+      tag.name.toLowerCase().includes(filterValue) &&
       !currentTagIds.includes(tag.id)
     );
   }
@@ -545,7 +499,7 @@ export class OfferTableComponent implements OnDestroy {
   onTagSelected(event: any) {
     const selectedTag = event.option.value;
     const currentTags = this.tagsFilterControl.value || [];
-    
+
     if (!currentTags.find(tag => tag.id === selectedTag.id)) {
       const updatedTags = [...currentTags, selectedTag];
       this.tagsFilterControl.setValue(updatedTags);
@@ -595,6 +549,9 @@ export class OfferTableComponent implements OnDestroy {
 
   setOfferView(view: 'all' | 'recommended' | 'applied' | 'bookmarks') {
     this.currentOfferView = view;
+    if (this.isCandidate) {
+      this.loadCandidateOffers();
+    }
   }
 
   setOfferStatus(status: 'draft' | 'archived' | 'active') {
@@ -613,16 +570,52 @@ export class OfferTableComponent implements OnDestroy {
     return this.offers.filter(offer => offer.status === 'ACTIVE').length;
   }
 
-  getRecommendedOffersCount(): number {
-    return this.recomendedOffers().length;
+  setAllOffersCount() {
+    this.offerService.getAllOffersCount().subscribe({
+      next: (count) => {
+        this.activeOfferCount = count;
+      },
+      error: (error) => {
+        console.error('Error fetching active offers count:', error);
+        this.activeOfferCount = 0;
+      }
+    });
   }
 
-  getAppliedOffersCount(): number {
-    return this.selectedCandidaturesOffers().length;
+  setRecommendedOffersCount() {
+    this.offerService.getRecommendedOffersCount().subscribe({
+      next: (count) => {
+        this.recomendedOfferCount = count;
+      },
+      error: (error) => {
+        console.error('Error fetching recommended offers count:', error);
+        this.recomendedOfferCount = 0;
+      }
+    });
   }
 
-  getBookmarkedOffersCount(): number {
-    return this.getBookmarkedOffers().length;
+  setAppliedOffersCount() {
+    this.offerService.getAppliedOffersCount().subscribe({
+      next: (count) => {
+        this.appliedOfferCount = count;
+      },
+      error: (error) => {
+        console.error('Error fetching recommended offers count:', error);
+        this.appliedOfferCount = 0;
+      }
+    });
+  }
+
+  setBookmarkedOffersCount() {
+    this.offerService.getBookmarkedOffersCount().subscribe({
+      next: (count) => {
+        this.bookmarkedOfferCount = count;
+      },
+      error: (error) => {
+        console.error('Error fetching recommended offers count:', error);
+        this.bookmarkedOfferCount = 0;
+      }
+    });
   }
 
   getBookmarkedOffers(): any[] {
@@ -633,7 +626,6 @@ export class OfferTableComponent implements OnDestroy {
     const isCurrentlyBookmarked = this.isBookmarked(offerId);
 
     if (isCurrentlyBookmarked) {
-      // Remover bookmark
       this.offerService.removeBookmark(offerId).subscribe({
         next: (response) => {
           this.snackBar.open('Oferta eliminada de guardados', 'Cerrar', { duration: 2000 });
@@ -692,8 +684,6 @@ export class OfferTableComponent implements OnDestroy {
 
 
   getCurrentViewOffers(): any[] {
-    let baseOffers: any[];
-
     if (this.isCandidate) {
       switch (this.currentOfferView) {
         case 'recommended':
@@ -702,13 +692,13 @@ export class OfferTableComponent implements OnDestroy {
           return this.selectedCandidaturesOffers();
         case 'bookmarks':
           return this.getBookmarkedOffers();
+        case 'all':
         default:
           return this.offers;
       }
     }
 
     if (this.isCompany) {
-
       const statusMap = {
         'draft': 'DRAFT',
         'archived': 'ARCHIVED',
@@ -716,8 +706,8 @@ export class OfferTableComponent implements OnDestroy {
       };
       const targetStatus = statusMap[this.currentOfferStatus];
       return this.offers.filter(offer => offer.status === targetStatus);
-
     }
+
     return this.offers;
   }
 
@@ -833,9 +823,7 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   onViewDetails(offer: any) {
-    const filteredOffers = this.filterOffers();
-    const offerIndex = filteredOffers.findIndex(o => o.id === offer.id);
-
+    const offerIndex = this.offers.findIndex(o => o.id === offer.id);
     if (offerIndex !== -1) {
       this.openDetailedCard(offerIndex);
     }
@@ -886,7 +874,7 @@ export class OfferTableComponent implements OnDestroy {
 
   private refreshDetailedCard() {
     if (this.showDetailedCard && this.detailedCardData.length > 0) {
-      const currentOffer = this.getCurrentViewOffers()[this.currentDetailIndex];
+      const currentOffer = this.offers[this.currentDetailIndex];
       if (currentOffer) {
         this.detailedCardData[this.currentDetailIndex].actions = this.getActionsForOffer(currentOffer);
       }

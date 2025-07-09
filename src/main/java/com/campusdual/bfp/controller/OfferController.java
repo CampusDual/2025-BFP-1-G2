@@ -131,15 +131,6 @@ public class OfferController {
         return ResponseEntity.ok("Candidato actualizado correctamente");
     }
 
-    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
-    @GetMapping(value = "/myOffers")
-    public ResponseEntity<List<OfferDTO>> getMyOffers(Principal principal) {
-        String username = principal.getName();
-        List<OfferDTO> offers = offerService.getMyOffers(username);
-        return ResponseEntity.ok(offers);
-    }
-
-
     @PostMapping("/bookmark/{offerId}")
     @PreAuthorize("hasRole('CANDIDATE')")
     public ResponseEntity<String> addBookmark(@PathVariable int offerId, Principal principal) {
@@ -191,4 +182,31 @@ public class OfferController {
         return ResponseEntity.ok(isBookmarked);
     }
 
+    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
+    @GetMapping(value = "/count/candidate")
+    public ResponseEntity<Integer> getOffersCount(@RequestParam String listType,
+                                                       Principal principal) {
+        Integer offersCount = offerService.getCadidateOffersCount(listType, principal.getName());
+        return ResponseEntity.ok(offersCount);
+    }
+
+    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
+    @GetMapping(value = "/candidate")
+    public ResponseEntity<List<OfferDTO>> searchOffers(@RequestParam String listType,
+                                                       Principal principal) {
+        List<OfferDTO> offers = offerService.getCadidateOffers(listType, principal.getName());
+        return ResponseEntity.ok(offers);
+    }
+
+    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
+    @GetMapping(value = "/candidate/search")
+    public ResponseEntity<List<OfferDTO>> searchOffers(@RequestParam String searchTerm,
+                                                       @RequestParam String listType,
+                                                       Principal principal) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        List<OfferDTO> offers = offerService.searchCandidateOffers(searchTerm.trim(), listType, principal.getName());
+        return ResponseEntity.ok(offers);
+    }
 }

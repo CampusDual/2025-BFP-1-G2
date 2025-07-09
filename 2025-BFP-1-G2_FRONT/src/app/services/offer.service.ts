@@ -37,7 +37,7 @@ export interface CandidateOffer {
   isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
   applied?: boolean;
   logo?: string;
-  isBookmarked?: boolean; 
+  isBookmarked?: boolean;
   status?: string;
 }
 
@@ -55,16 +55,20 @@ export interface Offer {
   email?: string;
   logo?: string;
   status?: string;
+  candidateValid?: boolean;
+  candidates?: Candidate[];
+  isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
+  applied?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class OfferService {
+
   private baseUrl = `${environment.apiUrl}/offer`;
 
   constructor(private http: HttpClient) { }
-
 
   createOffer(offer: Offer): Observable<any> {
     return this.http.post(`${this.baseUrl}/add`, offer, { responseType: 'text' });
@@ -89,8 +93,27 @@ export class OfferService {
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
   }
-  getCandidateOffers(): Observable<CandidateOffer[]> {
-    return this.http.get<CandidateOffer[]>(`${this.baseUrl}/myOffers`);
+
+  getBookmarkedOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=bookmarks`);
+  }
+  getAppliedOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=applied`);
+
+  }
+  getRecommendedOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=recommended`);
+  }
+  getAllOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=all`);
+  }
+
+  getCandidateOffers(listType: string): Observable<CandidateOffer[]> {
+    return this.http.get<CandidateOffer[]>(`${this.baseUrl}/candidate?listType=${listType}`);
+  }
+
+  searchCandidateOffers(searchTerm: string, listType: string): Observable<CandidateOffer[]> {
+    return this.http.get<CandidateOffer[]>(`${this.baseUrl}/candidate/search?searchTerm=${searchTerm}&listType=${listType}`);
   }
 
   addBookmark(offerId: number): Observable<string> {
