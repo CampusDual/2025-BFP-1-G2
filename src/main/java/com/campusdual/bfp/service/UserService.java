@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
 
 @Service
 @Lazy
@@ -174,7 +175,11 @@ public class UserService implements UserDetailsService, IUserService {
         // Agregar los nuevos campos
         candidateDTO.setCvPdfBase64(candidate.getCvPdfBase64());
         candidateDTO.setLogoImageBase64(candidate.getLogoImageBase64());
-
+        if (candidate.getExperiences() != null) {
+            candidateDTO.setExperiences(
+                    CandidateExperienceMapper.INSTANCE.toDTOList(candidate.getExperiences())
+            );
+        }
         return candidateDTO;
     }
 

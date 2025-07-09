@@ -120,3 +120,14 @@ create table candidate_bookmarks
         constraint candidate_bookmarks_offers_id_fk
             references offers
 );
+
+CREATE TABLE candidate_experience (
+    id SERIAL PRIMARY KEY,
+    candidate_id INT NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    job_title VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    responsibilities TEXT,
+    CONSTRAINT fk_candidate_experience FOREIGN KEY (candidate_id) REFERENCES candidates(candidate_id) ON DELETE CASCADE
+);

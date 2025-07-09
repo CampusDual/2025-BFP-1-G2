@@ -115,11 +115,6 @@
       <div *ngIf="isEditMode && location.invalid && location.touched" class="error-message">
         <small *ngIf="location.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
-    </div>
-  </div>
-</mat-tab>
-      <mat-tab label="Información Profesional"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <div class="info-grid">
       <div class="info-item">
         <mat-icon>account_circle</mat-icon>
         <span class="label">Usuario:</span>
@@ -131,48 +126,6 @@
         <small *ngIf="login.errors?.['required']">El usuario es requerido</small>
         <small *ngIf="login.errors?.['minlength']">Mínimo 3 caracteres</small>
         <small *ngIf="login.errors?.['maxlength']">Máximo 50 caracteres</small>
-      </div>
-      <div class="info-item">
-        <mat-icon>work_outline</mat-icon>
-        <span class="label">Título:</span>
-        <span class="value" *ngIf="!isEditMode">{{ professionalTitle.value || 'No especificado' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="professionalTitle"
-          [class.error]="professionalTitle.invalid && professionalTitle.touched" placeholder="Título profesional">
-      </div>
-      <div *ngIf="isEditMode && professionalTitle.invalid && professionalTitle.touched" class="error-message">
-        <small *ngIf="professionalTitle.errors?.['maxlength']">Máximo 100 caracteres</small>
-      </div>
-      <div class="info-item">
-        <mat-icon>schedule</mat-icon>
-        <span class="label">Experiencia:</span>
-        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No especificada' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="number" [formControl]="yearsOfExperience"
-          [class.error]="yearsOfExperience.invalid && yearsOfExperience.touched" placeholder="Años de experiencia"
-          min="0">
-      </div>
-      <div *ngIf="isEditMode && yearsOfExperience.invalid && yearsOfExperience.touched" class="error-message">
-        <small *ngIf="yearsOfExperience.errors?.['min']">No puede ser menor a 0</small>
-        <small *ngIf="yearsOfExperience.errors?.['max']">Máximo 50 años</small>
-      </div>
-      <div class="info-item">
-        <mat-icon>school</mat-icon>
-        <span class="label">Educación:</span>
-        <span class="value" *ngIf="!isEditMode">{{ educationLevel.value || 'No especificada' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="educationLevel"
-          [class.error]="educationLevel.invalid && educationLevel.touched" placeholder="Nivel educativo">
-      </div>
-      <div *ngIf="isEditMode && educationLevel.invalid && educationLevel.touched" class="error-message">
-        <small *ngIf="educationLevel.errors?.['maxlength']">Máximo 100 caracteres</small>
-      </div>
-      <div class="info-item">
-        <mat-icon>language</mat-icon>
-        <span class="label">Idiomas:</span>
-        <span class="value" *ngIf="!isEditMode">{{ languages.value || 'No especificados' }}</span>
-        <input class="edit-input" *ngIf="isEditMode" type="text" [formControl]="languages"
-          [class.error]="languages.invalid && languages.touched" placeholder="Idiomas que habla">
-      </div>
-      <div *ngIf="isEditMode && languages.invalid && languages.touched" class="error-message">
-        <small *ngIf="languages.errors?.['maxlength']">Máximo 200 caracteres</small>
       </div>
       <div class="info-item">
         <mat-icon>badge</mat-icon>
@@ -193,6 +146,23 @@
       </div>
     </div>
   </div>
+</mat-tab>
+      <mat-tab label="Información Profesional"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+    <div class="info-grid">
+    <div *ngIf="professionalExperiences.length > 0; else noExperience">
+      <div *ngFor="let exp of professionalExperiences" class="experience-item">
+        <h3>{{ exp.position }}</h3>
+        <p><strong>Empresa:</strong> {{ exp.company }}</p>
+        <p><strong>Desde:</strong> {{ exp.startDate | date:'yyyy-MM' }} <strong>Hasta:</strong> {{ exp.endDate ? (exp.endDate | date:'yyyy-MM') : 'Actualidad' }}</p>
+        <p><strong>Descripción:</strong> {{ exp.description }}</p>
+      </div>
+    </div>
+    <ng-template #noExperience>
+      <p>No hay experiencias profesionales registradas.</p>
+    </ng-template>
+  </div>
+    </div>
+
 </mat-tab>
       <mat-tab label="Enlaces y Portafolio"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
 

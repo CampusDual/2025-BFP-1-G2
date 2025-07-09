@@ -47,6 +47,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   isSaving: boolean = false;
   userNameInput: string = '';
   isCandidate: boolean = false;
+  professionalExperiences: any[] = [];
 
   constructor(private authService: AuthService,
     private imageCompressionService: ImageCompressionService,
@@ -101,6 +102,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        this.professionalExperiences = user.professionalExperiences || [];
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
