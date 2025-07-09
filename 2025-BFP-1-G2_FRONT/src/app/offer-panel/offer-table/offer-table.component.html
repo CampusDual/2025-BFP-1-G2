@@ -1,0 +1,121 @@
+<div class="offers-container">
+  <div class="offers-header">
+    <h2 class="page-title">
+      <mat-icon>work</mat-icon>
+      Ofertas
+    </h2>
+    <div class="search-and-filters-section">
+      <div class="filter-chips" *ngIf="availableTags.length > 0">
+
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar ofertas</mat-label>
+          <input matInput placeholder="Oferta, ubicación, empresa..." [(ngModel)]="searchTerm" (input)="filterOffers()">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="tags-search-field">
+          <mat-label>Buscar áreas para filtrar</mat-label>
+          <input matInput [formControl]="tagSearchControl" [matAutocomplete]="auto"
+            placeholder="Escribe para buscar áreas..." (focus)="onSearchFocus()">
+          <mat-icon matSuffix>search</mat-icon>
+
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTagSelected($event)" class="chips-autocomplete">
+            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag" class="chip-option">
+                {{tag.name}}
+            </mat-option>
+
+            <mat-option *ngIf="(filteredTags | async)?.length === 0 && tagSearchControl.value" disabled>
+              <em>No se encontraron áreas que coincidan</em>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <div class="selected-tags-chips" *ngIf="tagsFilterControl.value && tagsFilterControl.value.length > 0">
+          <mat-label class="selected-label">Filtros activos:</mat-label>
+          <mat-chip-set>
+            <mat-chip *ngFor="let tag of tagsFilterControl.value" removable (removed)="removeTagFilter(tag)">
+              {{tag.name}}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </div>
+
+      <!-- Selectores de vista/estado -->
+      <div class="view-selectors-container">
+        <div class="offer-selectors" *ngIf="isCandidate">
+          <button mat-raised-button [color]="currentOfferView === 'recommended' ? 'primary' : ''"
+            class="selector-button" (click)="setOfferView('recommended')" matBadge="{{ getRecommendedOffersCount() }}"
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="getRecommendedOffersCount() === 0">
+            <mat-icon>star</mat-icon>
+            Recomendadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferView === 'applied' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferView('applied')" matBadge="{{ getAppliedOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getAppliedOffersCount() === 0">
+            <mat-icon>assignment_turned_in</mat-icon>
+            Aplicadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferView === 'bookmarks' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferView('bookmarks')" matBadge="{{ getBookmarkedOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getBookmarkedOffersCount() === 0">
+            <mat-icon>bookmark</mat-icon>
+            Guardadas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferView === 'all' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferView('all')">
+            <mat-icon>list</mat-icon>
+            Todas
+          </button>
+        </div>
+
+        <div class="offer-selectors" *ngIf="isCompany">
+          <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferStatus('active')" matBadge="{{ getActiveOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getActiveOffersCount() === 0"
+            [class.selected]="currentOfferStatus === 'active'">
+            <mat-icon>visibility</mat-icon>
+            Activas
+          </button>
+
+          <button mat-raised-button [color]="currentOfferStatus === 'draft' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferStatus('draft')" matBadge="{{ getDraftOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getDraftOffersCount() === 0"
+            [class.selected]="currentOfferStatus === 'draft'">
+            <mat-icon>edit</mat-icon>
+            Borradores
+          </button>
+
+          <button mat-raised-button [color]="currentOfferStatus === 'archived' ? 'primary' : ''" class="selector-button"
+            (click)="setOfferStatus('archived')" matBadge="{{ getArchivedOffersCount() }}" matBadgePosition="after"
+            matBadgeSize="small" [matBadgeHidden]="getArchivedOffersCount() === 0"
+            [class.selected]="currentOfferStatus === 'archived'">
+            <mat-icon>archive</mat-icon>
+            Archivadas
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner color="primary" diameter="50"></mat-spinner>
+    <p>Cargando ofertas...</p>
+  </div>
+  <div class="grid-container" *ngIf="!isLoading">
+    <app-offer-card *ngFor="let offer of filterOffers(); let i = index" [offer]="offer" [isCompany]="isCompany"
+      [isCandidate]="isCandidate" [isBookmarked]="isBookmarked(offer.id)" (click)="openDetailedCard(i)"
+      (viewDetails)="onViewDetails($event)" (toggleBookmark)="toggleBookmark($event)">
+    </app-offer-card>
+  </div>
+
+  <app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
+    [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
+    (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)">
+  </app-detailed-card>
+
+</div>
