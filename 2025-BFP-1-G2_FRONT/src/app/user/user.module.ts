@@ -15,6 +15,7 @@ import { UserRoutingModule } from './user-routing.module';
 import { CompaniesComponent } from './companies/companies.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserPanelComponent } from './user-panel/user-panel.component';
+import { MatTabsModule } from '@angular/material/tabs'; // Import MatTabsModule
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { UserPanelComponent } from './user-panel/user-panel.component';
     MatProgressSpinnerModule,
     MatButtonModule,
     MatSnackBarModule,
-    SharedModule
+    SharedModule,
+    MatTabsModule
   ]
 })
 export class UserModule { }

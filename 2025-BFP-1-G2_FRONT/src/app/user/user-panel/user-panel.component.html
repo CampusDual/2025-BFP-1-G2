@@ -41,9 +41,9 @@
       </button>
     </div>
   </div>
-
-  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <h3><mat-icon>contact_page</mat-icon> Información de Contacto</h3>
+    <div class="profile-tabs">
+    <mat-tab-group [dynamicHeight]="true" animationDuration="300ms" class="fade-in">
+      <mat-tab label="Información de Contacto"><div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <div class="info-grid">
       <div class="info-item">
         <mat-icon>person</mat-icon>
@@ -117,9 +117,8 @@
       </div>
     </div>
   </div>
-
-  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <h3><mat-icon>work</mat-icon> Información Profesional</h3>
+</mat-tab>
+      <mat-tab label="Información Profesional"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <div class="info-grid">
       <div class="info-item">
         <mat-icon>account_circle</mat-icon>
@@ -194,9 +193,8 @@
       </div>
     </div>
   </div>
-
-  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <h3><mat-icon>link</mat-icon> Enlaces y Portafolio</h3>
+</mat-tab>
+      <mat-tab label="Enlaces y Portafolio"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
 
     <div class="edit-links" *ngIf="isEditMode">
       <div class="edit-link-item">
@@ -275,6 +273,14 @@
     </div>
 
   </div>
+ </mat-tab>
+    </mat-tab-group>
+  </div>
+  
+
+  
+
+  
 </div>
 <div class="loading-container" *ngIf="isLoading">
   <mat-spinner color="primary" diameter="50"></mat-spinner>

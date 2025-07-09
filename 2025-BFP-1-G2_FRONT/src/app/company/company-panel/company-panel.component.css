@@ -1,28 +1,25 @@
 .company-panel {
-  max-width: 100%;
+  max-width: 70%;
   margin: auto;
   padding: 5px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 4px;
-  min-height: 80vh;
   font-family: 'Rubik', sans-serif;
-  margin-bottom: 0;
+  margin-bottom:0;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 170px);
 }
 
 .profile-header {
-  grid-column: 1 / -1;
-  background: #9f9f9f;
+  background: transparent;
   padding-inline: 30px;
   display: flex;
   align-items: center;
   gap: 30px;
   position: relative;
-  overflow: hidden;
   min-height: 200px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
+  border-bottom: grey 1px solid;
+  max-height: 300px;
 }
 
 .profile-company{
@@ -35,6 +32,8 @@
   transition: all 0.3s ease;
   overflow: hidden;
 }
+
+
 
 .profile-company:hover {
   border-color: rgba(255, 255, 255, 0.5);
@@ -116,31 +115,27 @@
   padding-right: 20px;
 }
 
+.profile-name {
+  color: var(--primary-color);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  letter-spacing: -2px;
+  line-height: 1.1;
+}
+
 @keyframes blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
 }
 
 .profile-title {
+  color: black;
   font-size: 1.2rem;
   font-weight: 300;
   margin: 0;
   opacity: 0.9;
   letter-spacing: 1px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.info-section {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto;
-  background: #ffffff;
-  padding: 30px;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f0f0f0;
 }
 
 .info-section:hover {
@@ -152,26 +147,31 @@
 .info-section:nth-child(2) {
   grid-column: 1;
   grid-row: 2;
-  background: var(--primary-color);
-  color: #fff;
+  background: #ffffff00;
+  color: #000000;
   align-items: start;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .info-section:nth-child(3) {
   grid-column: 2;
   grid-row: 2;
-  background: #ffffff;
-  color: #000;
+  background: #9f9f9f00;
+  color: #000000;
   align-items: start;
-  align-content: start;
+  border: none !important;
+  box-shadow: none !important;
 }
 .info-section:nth-child(4) {
   grid-column: 3;
   grid-row: 2;
-  background: #1e40af;
-  color: #fff;
+  background: #ffffff00;
+  color: black;
   align-items: start;
   align-content: start;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .info-section h3 {
@@ -184,30 +184,25 @@
   align-items: center;
   gap: 10px;
 }
+
 .info-section h3 mat-icon {
   font-size: 1.4rem;
-  color: #fff;
+  color: rgb(0, 0, 0);
   width: 1.4rem;
   height: 1.4rem;
 }
 
 .info-section:nth-child(2) h3 mat-icon {
-  color: #fff;
+  color: #000000;
 }
 
 .info-section:nth-child(3) h3 mat-icon {
-  color: var(--primary-color);
+  color: #000000;
 }
 
 .info-section:nth-child(4) h3 mat-icon {
-  color: #fbbf24;
-}
-
-.info-grid {
-  display: flex;
-
-  flex-direction: column;
-  gap: 20px;
+  color: #000000;
+  padding-right: 5px;
 }
 
 .info-item {
@@ -215,12 +210,70 @@
   grid-template-columns: 24px 1fr 2fr;
   gap: 16px;
   align-items: center;
+  justify-content: center;
   padding: 16px 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+
+.info-grid:first-child {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 10px;
+}
+
+.info-item mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  display: flex;
+  width: 100%;
+}
+
 
 .info-item:last-child {
   border-bottom: none;
+}
+
+.info-item-text{
+  padding: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: justify;
+  font-size: 1.05rem;
+  color: #222;
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.info-item-text::before {
+  content: "“";
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  font-size: 5rem;
+  color: var(--primary-color);
+  opacity: 0.08;
+  font-family: serif;
+  pointer-events: none;
+  z-index: 0;
+  line-height: 1;
+}
+
+.info-item-text::after {
+  content: "”";
+  position: absolute;
+  bottom: -10px;
+  right: 16px;
+  font-size: 5rem;
+  color: var(--primary-color);
+  opacity: 0.08;
+  font-family: serif;
+  pointer-events: none;
+  z-index: 0;
+  line-height: 1;
 }
 
 .info-section.edit-mode .info-item {
@@ -267,8 +320,9 @@
 }
 
 .social-links {
-  display: flex;
-  flex-direction: column;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
@@ -276,8 +330,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 15px 20px;
-  background: #ffffff;
+  padding: 15px;
+  padding-left: 35px;
   color: #000000;
   text-decoration: none;
   font-weight: 600;
@@ -290,9 +344,7 @@
 }
 
 .social-btn:hover {
-  background: #000000;
-  color: #ffffff;
-  transform: translateX(5px);
+  color: var(--primary-color);
 }
 
 .social-btn mat-icon {
@@ -303,60 +355,6 @@
   align-items: center;
   justify-content: center;
 }
-
-.social-btn:first-child::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: #fbbf24;
-}
-
-.social-btn:nth-child(2)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: #1e40af;
-}
-
-.social-btn:nth-child(3)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: #1e40af;
-}
-
-.social-btn:nth-child(4)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: #000000;
-}
-
-.social-btn:nth-child(5)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: #9f9f9f;
-}
-
-.cv-btn:hover { background: #000000; }
-.linkedin-btn:hover { background: #000000; }
-.website-btn:hover { background: #000000; }
 
 .loading-container {
   display: flex;
@@ -421,7 +419,7 @@
 
 .edit-btn {
   background: transparent;
-  color: #fff;
+  color: var(--primary-color);
   transition: transform 0.3s ease;
 }
 
@@ -430,22 +428,22 @@
 }
 
 .save-btn {
-  background: #10b981;
-  color: #ffffff;
+  background: #ffffff;
+  color: #000000;
+  border-radius: 50%;
 }
 
 .save-btn:hover:not(:disabled) {
-  background: #059669;
   transform: scale(1.1);
 }
 
 .cancel-btn {
-  background: #ef4444;
+  background: var(--primary-color);
   color: #ffffff;
+  border-radius: 50%;
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background: #dc2626;
   transform: scale(1.1);
 }
 

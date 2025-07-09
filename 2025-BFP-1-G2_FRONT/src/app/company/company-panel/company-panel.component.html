@@ -41,9 +41,10 @@
       </button>
     </div>
   </div>
-
+  <div class="profile-tabs">
+  <mat-tab-group [dynamicHeight]="true" animationDuration="300ms" class="fade-in">
+  <mat-tab label="Información de Contacto">
   <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <h3><mat-icon>contact_page</mat-icon> Información de Contacto</h3>
     <div class="info-grid">
       <div class="info-item">
         <mat-icon>person</mat-icon>
@@ -104,10 +105,12 @@
         <small *ngIf="address.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
     </div>
+  </div>
 
-    <div class="info-item">
-      <mat-icon>description</mat-icon>
-      <span class="label">Descripcion:</span>
+  </mat-tab>
+  <mat-tab label="Descripción">
+    <div class="info-item-text">
+      <span class="label"></span>
       <span class="value" *ngIf="!isEditMode">{{ description.value || 'No especificado' }}</span>
       <textarea class="edit-input-description" *ngIf="isEditMode" [formControl]="description"
         [class.error]="description.invalid && description.touched" placeholder="Descripcion" rows="9"></textarea>
@@ -117,10 +120,9 @@
       <small *ngIf="description.errors?.['minlength']">Mínimo 100 caracteres</small>
       <small *ngIf="description.errors?.['maxlength']">Máximo 1000 caracteres</small>
     </div>
-  </div>
-
-  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <h3><mat-icon>link</mat-icon> Enlaces </h3>
+  </mat-tab>
+  <mat-tab label="Enlaces">
+    <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
 
     <div class="edit-links" *ngIf="isEditMode">
       <div class="edit-link-item">
@@ -143,6 +145,11 @@
     </div>
 
   </div>
+  </mat-tab>
+</mat-tab-group>
+
+
+  
 </div>
 <div class="loading-container" *ngIf="isLoading">
   <mat-spinner color="primary" diameter="50"></mat-spinner>
