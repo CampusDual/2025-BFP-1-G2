@@ -226,7 +226,7 @@
 
 .info-item {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 24px 1fr 2fr;
   gap: 16px;
   align-items: center;
   justify-content: center;
