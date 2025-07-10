@@ -65,6 +65,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/api/tags/candidate/{tagId}").hasRole("CANDIDATE")
 
                 // Ofertas
+                .antMatchers(HttpMethod.PUT, "/api/offer/status/{offerId}").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/offer/delete/{offerId}").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/offer/delete/**").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/offer/bookmark/**").hasRole("CANDIDATE")

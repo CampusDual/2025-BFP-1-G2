@@ -20,15 +20,14 @@ public interface OfferMapper {
     @Mapping(target = "logo", ignore = true)
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "candidates", ignore = true)
-    OfferDTO toDTO(Offer offer, @Context boolean isCompany,
-                   @Context boolean isCandidate,
+    OfferDTO toDTO(Offer offer,
+                   @Context boolean isCompany,
                    @Context OfferDao offerDao,
                    @Context User user);
 
     @AfterMapping
     default void mapCompanyInfo(@MappingTarget OfferDTO dto, Offer offer,
                                 @Context boolean isCompany,
-                                @Context boolean isCandidate,
                                 @Context OfferDao offerDao,
                                 @Context User user) {
         Company company = offerDao.findCompanyByOfferId(offer.getId());
@@ -39,15 +38,16 @@ public interface OfferMapper {
             User compUser = company.getUser();
             dto.setCompanyName(company.getName());
             dto.setEmail(compUser.getEmail());
+            if (user != null) {
+                dto.setIsApplied(offerDao.isOfferAppliedByUserIdAndOfferId(user.getId(), offer.getId()));
+                offerDao.getAppliedByUserIdAndOfferId(user.getId(), offer.getId())
+                        .ifPresent(dto::setCandidateValid);
+                dto.setBookmarked(offerDao.isOfferBookmarkedByUserIdAndOfferId(user.getId(), offer.getId()));
+            }
         }else{
             dto.setCandidates(offerDao.findCandidatesByOfferId(offer.getId()).stream()
                     .map(CandidateMapper.INSTANCE::toDTO)
                     .collect(Collectors.toList()));
-        }
-        if (isCandidate) {
-            dto.setIsApplied(offerDao.isOfferAppliedByUserIdAndOfferId(user.getId(), offer.getId()));
-            offerDao.getAppliedByUserIdAndOfferId(user.getId(), offer.getId())
-                    .ifPresent(dto::setCandidateValid);
         }
         dto.setTags(offerDao.findTagsByOfferId(offer.getId()).stream()
                 .map(TagMapper.INSTANCE::toTagDTO)
@@ -55,4 +55,5 @@ public interface OfferMapper {
     }
 
     Offer toEntity(OfferDTO offerDto);
+
 }

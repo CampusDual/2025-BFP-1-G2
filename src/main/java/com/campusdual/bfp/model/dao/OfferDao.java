@@ -45,9 +45,11 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
     Integer getAppliedOffersCount(@Param("userId") int userId);
 
     @Query("SELECT COUNT(o) FROM Offer o " +
-            "JOIN CandidateBookmarks cb ON cb.offer.id = o.id " +
-            "WHERE cb.user.id = :userId AND " +
-            "o.active = true")
+            "JOIN OfferTags ot ON ot.offer.id = o.id " +
+            "JOIN CandidateTags ct ON ct.tag.id = ot.tag.id " +
+            "JOIN Candidate c ON c.id = ct.candidate.id " +
+            "WHERE c.user.id = :userId AND " +
+            "o.active = true ")
     Integer getRecommendedOffersCount(int userId);
 
     @Query("SELECT COUNT(o) FROM Offer o " +
@@ -138,4 +140,98 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
             "JOIN OfferTags ot ON ot.tag.id = t.id " +
             "WHERE ot.offer.id = :offerId")
     List<Tag> findTagsByOfferId(int offerId);
+
+    @Query("SELECT COUNT(cb) > 0 FROM CandidateBookmarks cb " +
+            "WHERE cb.user.id = :userId AND cb.offer.id = :offerId")
+    boolean isOfferBookmarkedByUserIdAndOfferId(int userId, int offerId);
+
+    @Query("SELECT o FROM Offer o WHERE o.company.id = :companyId "+
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findByCompanyId(int companyId, Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE o.active = true AND o.company.id = :companyId "+
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findByActive(int companyId, Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE o.active = false AND o.company.id = :companyId " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findByArchived(int companyId, Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE o.active = null AND o.company.id = :companyId")
+    Page<Offer> findByDraft(int companyId, Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE " +
+            "o.active = true AND o.company.id = :companyId AND (" +
+            "LOWER(o.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(o.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(o.company.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findByActiveSearchTerm(int companyId, String searchTerm, Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE " +
+            "o.active = false AND o.company.id = :companyId AND (" +
+            "LOWER(o.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(o.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(o.company.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findByArchivedSearchTerm(int companyId, String searchTerm, Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE " +
+            "o.active = null AND o.company.id = :companyId AND (" +
+            "LOWER(o.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(o.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(o.company.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findByDraftSearchTerm(int companyId, String searchTerm, Pageable pageable);
+
+    @Query("SELECT COUNT(o) FROM Offer o WHERE o.company.id = :companyId AND o.active = true")
+    Integer countActiveByCompanyId(int companyId);
+
+    @Query("SELECT COUNT(o) FROM Offer o WHERE o.company.id = :companyId AND o.active = false")
+    Integer countArchivedByCompanyId(int companyId);
+
+    @Query("SELECT COUNT(o) FROM Offer o WHERE o.company.id = :companyId AND o.active IS NULL")
+    Integer countDraftByCompanyId(int companyId);
+
+    @Query("SELECT DISTINCT o FROM Offer o " +
+            "JOIN OfferTags ot ON ot.offer.id = o.id " +
+            "WHERE o.active = true AND ot.tag.id IN :tagIds " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findActiveOffersByTags(@Param("tagIds") List<Integer> tagIds, Pageable pageable);
+
+    @Query("SELECT DISTINCT o FROM Offer o " +
+            "JOIN UserOffer uo ON uo.offer.id = o.id " +
+            "JOIN OfferTags ot ON ot.offer.id = o.id " +
+            "WHERE uo.user.id = :userId AND o.active = true AND ot.tag.id IN :tagIds " +
+            "ORDER BY uo.date DESC")
+    Page<Offer> findAppliedOffersByUserIdAndTags(@Param("userId") int userId, @Param("tagIds") List<Integer> tagIds, Pageable pageable);
+
+    @Query("SELECT DISTINCT o FROM Offer o " +
+            "JOIN OfferTags ot ON ot.offer.id = o.id " +
+            "JOIN CandidateTags ct ON ct.tag.id = ot.tag.id " +
+            "JOIN Candidate c ON c.id = ct.candidate.id " +
+            "WHERE c.user.id = :userId AND o.active = true AND ot.tag.id IN :tagIds " +
+            "GROUP BY o.id " +
+            "ORDER BY COUNT(ot.tag.id) DESC")
+    Page<Offer> findRecommendedOffersByUserIdAndTags(@Param("userId") int userId, @Param("tagIds") List<Integer> tagIds, Pageable pageable);
+
+    @Query("SELECT DISTINCT o FROM Offer o " +
+            "JOIN CandidateBookmarks cb ON cb.offer.id = o.id " +
+            "JOIN OfferTags ot ON ot.offer.id = o.id " +
+            "WHERE cb.user.id = :userId AND o.active = true AND ot.tag.id IN :tagIds " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findBookmarkedOffersByUserIdAndTags(@Param("userId") int userId, @Param("tagIds") List<Integer> tagIds, Pageable pageable);
+
+    //findDraftOffersByTags
+    @Query("SELECT DISTINCT o FROM Offer o " +
+            "JOIN OfferTags ot ON ot.offer.id = o.id " +
+            "WHERE o.active IS NULL AND ot.tag.id IN :tagIds " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findDraftOffersByTags(@Param("tagIds") List<Integer> tagIds, Pageable pageable);
+
+    @Query("SELECT DISTINCT o FROM Offer o " +
+            "JOIN OfferTags ot ON ot.offer.id = o.id " +
+            "WHERE o.active = false AND ot.tag.id IN :tagIds " +
+            "ORDER BY o.dateAdded DESC")
+    Page<Offer> findArchivedOffersByTags(@Param("tagIds") List<Integer> tagIds, Pageable pageable);
 }

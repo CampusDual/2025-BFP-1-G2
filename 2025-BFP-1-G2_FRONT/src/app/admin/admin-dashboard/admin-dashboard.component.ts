@@ -254,14 +254,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private loadPublicationsData(): void {
-    this.offerService.getOffers().subscribe({
-      next: (publications: ExtendedOffer[]) => {
-        if (!publications || publications.length === 0) {
-          console.warn('No se encontraron publicaciones');
-          return;
-        }
-        this.offers = publications;
-        this.totalOffers = publications.length;
+    this.offerService.getAllOffersCount().subscribe({
+      next: (count: number) => {
+        this.totalOffers = count;
         this.calculateStatistics();
         this.updateOffersChart();
         this.updateOffersStatusChart();
@@ -274,12 +269,6 @@ export class AdminDashboardComponent implements OnInit {
 
   private calculateStatistics(): void {
     this.activeOffers = this.offers.length;
-    const offersWithCandidates = this.offers.filter(offer =>
-      offer.candidatesCount && offer.candidatesCount > 0
-    ).length;
-
-    this.averageCandidatesPerOffer = this.totalOffers > 0 ?
-      Math.round((this.totalCandidates / this.totalOffers) * 10) / 10 : 0;
   }
 
   private updateCandidatesChart(): void {

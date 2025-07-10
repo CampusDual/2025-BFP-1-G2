@@ -13,13 +13,12 @@
   gap: 24px;
   align-items: stretch;
   margin-bottom: 32px;
-  /* Asegurar que todas las cards tengan la misma altura */
   grid-auto-rows: 1fr;
 }
 
 app-offer-card {
   opacity: 0;
-  animation: fadeInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, 
+  animation: fadeInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
     fadeInGrid 0.5s ease-out forwards;
 }
 
@@ -28,15 +27,13 @@ app-offer-card {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-
-
-/* Loading */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -57,7 +54,6 @@ app-offer-card {
   margin-bottom: 32px;
 }
 
-/* ===== HEADER Y ORGANIZACIÓN PRINCIPAL ===== */
 .offers-header {
   margin-bottom: 24px;
 }
@@ -73,10 +69,11 @@ app-offer-card {
 }
 
 .search-and-filters-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 0.3fr);
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
 }
 
 .main-search-container {
@@ -85,19 +82,41 @@ app-offer-card {
 }
 
 .search-field {
-  grid-row: 1;
-  grid-column: 1;
-  width: 100%;
-  max-width: 500px;
-  min-width: 300px;
+  grid-area: 1 / 1 / 2 / 2;
+
 }
 
-/* Selectores de vista */
 .view-selectors-container {
+  grid-area: 2 / 1 / 3 / 2;
+}
+
+.tags-search-field {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+.selected-tags-chips {
+   grid-area: 2 / 2 / 3 / 3;
+}
+
+.selected-tags-chips mat-chip-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination-container{
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  gap: 16px;
+  span{
+  color: var(--secondary-color);
+  }
 }
+
 
 .offer-selectors {
   display: flex;
@@ -126,7 +145,7 @@ app-offer-card {
   height: 18px;
 }
 
-.selector-button.selected{
+.selector-button.selected {
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
@@ -134,8 +153,8 @@ app-offer-card {
 }
 
 ::ng-deep .selector-button .mat-badge-content {
-  background-color:  white !important;
-  color:  var(--primary-color) !important;
+  background-color: white !important;
+  color: var(--primary-color) !important;
   font-size: 11px;
   font-weight: 600;
   min-width: 18px;
@@ -150,9 +169,17 @@ app-offer-card {
 }
 
 @keyframes bookmarkSave {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Estilo para cuando no está en bookmarks */
@@ -195,17 +222,17 @@ app-offer-card {
     align-items: stretch;
     gap: 16px;
   }
-  
+
   .search-field {
     min-width: unset;
     max-width: unset;
   }
-  
+
   .offer-selectors {
     justify-content: center;
     gap: 8px;
   }
-  
+
   .selector-button {
     flex: 1;
     min-width: 100px;
@@ -213,7 +240,7 @@ app-offer-card {
     font-size: 0.875rem;
     padding: 6px 12px;
   }
-  
+
   .selector-button mat-icon {
     font-size: 16px;
     width: 16px;
@@ -228,7 +255,7 @@ app-offer-card {
     gap: 8px;
     width: 100%;
   }
-  
+
   .selector-button {
     min-width: unset;
     font-size: 0.8rem;
@@ -238,7 +265,7 @@ app-offer-card {
 
 .filter-chips {
   display: grid;
-  grid-template-columns:1fr, 1fr;
+  grid-template-columns: 1fr, 1fr;
   align-items: center;
   padding: 20px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -257,14 +284,6 @@ app-offer-card {
   letter-spacing: 0.5px;
 }
 
-/* Campo de búsqueda de tags */
-.tags-search-field {
-  grid-row: 1;
-  grid-column: 2;
-  width: 100%;
-  max-width: 500px;
-  margin-bottom: 12px;
-}
 
 .chips-autocomplete {
   background: white;
@@ -289,52 +308,40 @@ app-offer-card {
   font-size: 13px;
 }
 
-.selected-tags-chips {
-  grid-column: 1 / -1;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid #e0e6ed;
-}
-
-.selected-tags-chips mat-chip-set {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 
 
 @media (max-width: 768px) {
   .search-and-filters-section {
     gap: 16px;
   }
-  
+
   .main-search-container {
     justify-content: center;
   }
-  
+
   .search-field {
     min-width: 100%;
     max-width: none;
   }
-  
+
   .filter-chips {
     padding: 16px;
     margin: 12px 0;
   }
-  
+
   .tags-search-field {
     max-width: none;
   }
-  
+
   .view-selectors-container {
     margin-top: 12px;
   }
-  
+
   .offer-selectors {
     justify-content: center;
     gap: 8px;
   }
-  
+
   .selector-button {
     font-size: 13px;
     padding: 6px 12px;
@@ -346,28 +353,28 @@ app-offer-card {
     font-size: 1.5rem;
     margin-bottom: 20px;
   }
-  
+
   .search-and-filters-section {
     gap: 12px;
   }
-  
+
   .filter-chips {
     padding: 12px;
     border-radius: 8px;
   }
-  
+
   .filter-label,
   .selected-label {
     font-size: 12px;
   }
-  
+
 
   .offer-selectors {
     flex-direction: column;
     gap: 6px;
     width: 100%;
   }
-  
+
   .selector-button {
     width: 100%;
     justify-content: center;
