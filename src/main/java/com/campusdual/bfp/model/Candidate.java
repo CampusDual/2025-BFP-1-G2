@@ -73,6 +73,9 @@ public class Candidate {
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CandidateExperience> experiences;
 
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CandidateEducation> educations;
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -240,5 +243,12 @@ public class Candidate {
 
     public void setExperiences(List<CandidateExperience> experiences) {
         this.experiences = experiences;
+    }
+
+    public List<CandidateEducation> getEducations() {
+        return educations;
+    }
+    public void setEducations(List<CandidateEducation> educations) {
+        this.educations = educations;
     }
 }

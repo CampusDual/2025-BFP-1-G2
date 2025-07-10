@@ -25,6 +25,7 @@ public class CandidateDTO extends SignupDTO {
     private String[] allDates;
     private int[] tagIds;
     private List<CandidateExperienceDTO> experiences;
+    private List<CandidateEducationDTO> educations;
 
     public String[] getAllDates() {
         return allDates;
@@ -174,4 +175,11 @@ public class CandidateDTO extends SignupDTO {
         this.experiences = experiences;
     }
 
+    public List<CandidateEducationDTO> getEducations() {
+        return educations;
+    }
+
+    public void setEducations(List<CandidateEducationDTO> educations) {
+        this.educations = educations;
+    }
 }

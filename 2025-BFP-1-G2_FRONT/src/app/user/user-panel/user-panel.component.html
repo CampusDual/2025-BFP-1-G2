@@ -43,6 +43,7 @@
   </div>
   <div class="profile-tabs">
     <mat-tab-group [dynamicHeight]="true" animationDuration="300ms" class="fade-in">
+
       <mat-tab label="Información de Contacto"><div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <div class="info-grid">
       <div class="info-item">
@@ -183,6 +184,43 @@
   </div>
 
 </mat-tab>
+          <mat-tab label="Formación">
+  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+    <div *ngIf="educations.length > 0; else noEducation">
+      <div class="experience-carousel">
+        <div class="carousel-wrapper">
+          <button class="carousel-arrow" (click)="prevEducation()" [disabled]="currentEducationIndex === 0">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <mat-card class="experience-card">
+            <h3 class="card-title">{{ educations[currentEducationIndex]?.degree }}</h3>
+            <p class="card-date"><i>{{ educations[currentEducationIndex]?.startDate | date:'yyyy-MM-dd' }} - {{ educations[currentEducationIndex]?.endDate ? (educations[currentEducationIndex]?.endDate | date:'yyyy-MM-dd') : 'Actualidad' }}</i></p>
+            <p class="card-company"><strong>Centro:</strong> {{ educations[currentEducationIndex]?.institution }}</p>
+            <p class="card-description"><strong>Descripción:</strong> {{ educations[currentEducationIndex]?.description }}</p>
+            <button *ngIf="isEditMode" (click)="removeEducation(currentEducationIndex)" type="button" class="remove-experience-btn">
+              <mat-icon>delete</mat-icon> Eliminar
+            </button>
+          </mat-card>
+          <button class="carousel-arrow" (click)="nextEducation()" [disabled]="currentEducationIndex === educations.length - 1">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        <div class="carousel-indicators">
+          <span *ngFor="let edu of educations; let i = index" [class.active]="i === currentEducationIndex" (click)="goToEducation(i)"></span>
+        </div>
+      </div>
+    </div>
+    <ng-template #noEducation>
+      <p>No hay formación registrada.</p>
+    </ng-template>
+    <div *ngIf="isEditMode" class="add-experience-btn-container">
+      <button mat-mini-fab color="primary" (click)="openAddEducationForm()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-tab>
+
       <mat-tab label="Enlaces y Portafolio"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
 
     <div class="edit-links" *ngIf="isEditMode">
@@ -228,6 +266,7 @@
     </div>
 
 
+
     <div class="social-links" *ngIf="!isEditMode">
       <button *ngIf="curriculumUrl.value" class="social-btn cv-btn" (click)="openLink(curriculumUrl.value!)">
         <mat-icon>picture_as_pdf</mat-icon>
@@ -263,13 +302,13 @@
 
   </div>
  </mat-tab>
+
     </mat-tab-group>
   </div>
 <div class="loading-container" *ngIf="isLoading">
   <mat-spinner color="primary" diameter="50"></mat-spinner>
   <p>Cargando...</p>
 </div>
-
 <div class="spacer" *ngIf="isLoading"></div>
 <div *ngIf="showAddExperienceForm" class="add-experience-overlay">
   <div class="add-experience-form-card">
@@ -299,6 +338,40 @@
         <div class="add-exp-actions">
           <button mat-raised-button color="primary" type="submit">Añadir</button>
           <button mat-button type="button" (click)="closeAddExperienceForm()">Cancelar</button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+<!-- Overlay para añadir formación, completamente fuera de .user-panel y cualquier wrapper/tab -->
+<div *ngIf="showAddEducationForm" class="add-experience-overlay">
+  <div class="add-experience-form-card">
+    <mat-card>
+      <h3>Añadir formación</h3>
+      <form (ngSubmit)="addEducation()">
+        <mat-form-field appearance="fill">
+          <mat-label>Título</mat-label>
+          <input matInput [(ngModel)]="newEducation.degree" name="degree" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Centro</mat-label>
+          <input matInput [(ngModel)]="newEducation.institution" name="institution" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Desde</mat-label>
+          <input matInput type="date" [(ngModel)]="newEducation.startDate" name="startDate">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Hasta</mat-label>
+          <input matInput type="date" [(ngModel)]="newEducation.endDate" name="endDate">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput [(ngModel)]="newEducation.description" name="description"></textarea>
+        </mat-form-field>
+        <div class="add-exp-actions">
+          <button mat-raised-button color="primary" type="submit">Añadir</button>
+          <button mat-button type="button" (click)="closeAddEducationForm()">Cancelar</button>
         </div>
       </form>
     </mat-card>

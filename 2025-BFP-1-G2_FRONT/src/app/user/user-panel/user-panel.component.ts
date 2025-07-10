@@ -48,6 +48,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   userNameInput: string = '';
   isCandidate: boolean = false;
   experiences: any[] = [];
+  educations: any[] = [];
 
   newExperience: any = {
     jobTitle: '',
@@ -57,7 +58,16 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     responsibilities: ''
   };
 
+  newEducation: any = {
+    degree: '',
+    institution: '',
+    startDate: '',
+    endDate: '',
+    description: ''
+  };
+
   showAddExperienceForm: boolean = false;
+  showAddEducationForm: boolean = false;
 
 
   constructor(private authService: AuthService,
@@ -121,6 +131,14 @@ export class UserPanelComponent implements OnInit, OnDestroy {
           endDate: exp.endDate || '',
           responsibilities: exp.responsibilities || ''
         }));
+        this.educations = (user.educations || []).map((edu: any) => ({
+          id: edu.id || edu.educationId,
+          degree: edu.degree || '',
+          institution: edu.institution || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || '',
+          description: edu.description || ''
+        }));
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -162,6 +180,14 @@ export class UserPanelComponent implements OnInit, OnDestroy {
           startDate: exp.startDate || '',
           endDate: exp.endDate || '',
           responsibilities: exp.responsibilities || ''
+        }));
+        this.educations = (user.educations || []).map((edu: any) => ({
+          id: edu.id || edu.educationId,
+          degree: edu.degree || '',
+          institution: edu.institution || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || '',
+          description: edu.description || ''
         }));
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
@@ -431,6 +457,33 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     });
   }
 
+  openAddEducationForm(): void {
+    this.showAddEducationForm = true;
+  }
+
+  closeAddEducationForm(): void {
+    this.showAddEducationForm = false;
+    this.newEducation = { degree: '', institution: '', startDate: '', endDate: '', description: '' };
+  }
+
+  addEducation(): void {
+    if (!this.newEducation.degree || !this.newEducation.institution) {
+      this.snackbar.open('Título y centro son obligatorios', 'Cerrar', { duration: 2000 });
+      return;
+    }
+    this.authService.createEducation(this.newEducation).subscribe({
+      next: (createdEdu: any) => {
+        this.educations.push(createdEdu);
+        this.snackbar.open('Formación añadida correctamente', 'Cerrar', { duration: 2000 });
+        this.closeAddEducationForm();
+        this.reloadEducationIds();
+      },
+      error: () => {
+        this.snackbar.open('Error al añadir la formación', 'Cerrar', { duration: 2500 });
+      }
+    });
+  }
+
   currentExperienceIndex = 0;
 
   prevExperience() {
@@ -473,6 +526,27 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     }
   }
 
+  removeEducation(index: number): void {
+    const edu = this.educations[index];
+    if (!edu) return;
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta formación?')) {
+      const educationId = edu.id || edu.educationId;
+      if (!educationId) {
+        this.snackbar.open('No se puede eliminar: falta el id de la formación', 'Cerrar', { duration: 2500 });
+        return;
+      }
+      this.authService.deleteEducation(educationId).subscribe({
+        next: () => {
+          this.educations.splice(index, 1);
+          this.snackbar.open('Formación eliminada correctamente', 'Cerrar', { duration: 2000 });
+        },
+        error: () => {
+          this.snackbar.open('Error al eliminar la formación', 'Cerrar', { duration: 2500 });
+        }
+      });
+    }
+  }
+
   reloadUserData(): void {
     this.authService.getCandidateDetails().subscribe({
       next: (user: any) => {
@@ -495,6 +569,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        
 
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
@@ -508,6 +583,45 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+  reloadEducationIds(): void {
+    this.authService.getCandidateDetails().subscribe({
+      next: (user: any) => {
+        const backendEducations = user.educations || [];
+        if (backendEducations.length && this.educations.length) {
+          const lastBackendEdu = backendEducations[backendEducations.length - 1];
+          const lastLocalEdu = this.educations[this.educations.length - 1];
+          if (
+            !lastLocalEdu.id &&
+            lastLocalEdu.degree === (lastBackendEdu.degree || '') &&
+            lastLocalEdu.institution === (lastBackendEdu.institution || '') &&
+            lastLocalEdu.startDate === (lastBackendEdu.startDate || '') &&
+            lastLocalEdu.endDate === (lastBackendEdu.endDate || '') &&
+            lastLocalEdu.description === (lastBackendEdu.description || '')
+          ) {
+            lastLocalEdu.id = lastBackendEdu.id || lastBackendEdu.educationId;
+          }
+        }
+      }
+    });
+  }
+
+  currentEducationIndex = 0;
+
+  prevEducation() {
+    if (this.currentEducationIndex > 0) {
+      this.currentEducationIndex--;
+    }
+  }
+
+  nextEducation() {
+    if (this.currentEducationIndex < this.educations.length - 1) {
+      this.currentEducationIndex++;
+    }
+  }
+
+  goToEducation(index: number) {
+    this.currentEducationIndex = index;
+  }
+
 }
 

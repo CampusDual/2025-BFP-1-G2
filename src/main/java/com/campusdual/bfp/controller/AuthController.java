@@ -198,4 +198,23 @@ public class AuthController {
         CandidateExperienceDTO created = userService.createCandidateExperience(username, experienceDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
+    @DeleteMapping("/candidateDetails/education/{id}")
+    public ResponseEntity<Void> deleteEducation(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                @PathVariable Long id) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        userService.deleteCandidateEducation(id, username);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/candidateDetails/education")
+    public ResponseEntity<CandidateEducationDTO> createEducation(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CandidateEducationDTO educationDTO) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        CandidateEducationDTO created = userService.createCandidateEducation(username, educationDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 }

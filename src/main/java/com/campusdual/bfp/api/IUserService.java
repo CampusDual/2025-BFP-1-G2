@@ -35,4 +35,8 @@ public interface IUserService {
     void deleteCandidateExperience(Long id, String username);
 
     CandidateExperienceDTO createCandidateExperience(String username, CandidateExperienceDTO experienceDTO);
+
+    void deleteCandidateEducation(Long id, String username);
+
+    CandidateEducationDTO createCandidateEducation(String username, CandidateEducationDTO educationDTO);
 }
