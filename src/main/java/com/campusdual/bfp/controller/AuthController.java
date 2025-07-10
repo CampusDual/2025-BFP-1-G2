@@ -179,4 +179,23 @@ public class AuthController {
         List<CandidateDTO> candidatos = userService.getAllCandidates();
         return ResponseEntity.ok(candidatos);
     }
+
+    @DeleteMapping("/candidateDetails/experience/{id}")
+    public ResponseEntity<Void> deleteExperience(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                 @PathVariable Long id) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        userService.deleteCandidateExperience(id, username);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/candidateDetails/experience")
+    public ResponseEntity<CandidateExperienceDTO> createExperience(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CandidateExperienceDTO experienceDTO) {
+        String token = authHeader.substring(7);
+        String username = jwtUtils.getUsernameFromToken(token);
+        CandidateExperienceDTO created = userService.createCandidateExperience(username, experienceDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 }

@@ -41,7 +41,7 @@
       </button>
     </div>
   </div>
-    <div class="profile-tabs">
+  <div class="profile-tabs">
     <mat-tab-group [dynamicHeight]="true" animationDuration="300ms" class="fade-in">
       <mat-tab label="Información de Contacto"><div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
     <div class="info-grid">
@@ -148,20 +148,39 @@
   </div>
 </mat-tab>
       <mat-tab label="Información Profesional"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
-    <div class="info-grid">
-    <div *ngIf="professionalExperiences.length > 0; else noExperience">
-      <div *ngFor="let exp of professionalExperiences" class="experience-item">
-        <h3>{{ exp.position }}</h3>
-        <p><strong>Empresa:</strong> {{ exp.company }}</p>
-        <p><strong>Desde:</strong> {{ exp.startDate | date:'yyyy-MM' }} <strong>Hasta:</strong> {{ exp.endDate ? (exp.endDate | date:'yyyy-MM') : 'Actualidad' }}</p>
-        <p><strong>Descripción:</strong> {{ exp.description }}</p>
+    <div *ngIf="experiences.length > 0; else noExperience">
+      <div class="experience-carousel">
+        <div class="carousel-wrapper">
+          <button class="carousel-arrow" (click)="prevExperience()" [disabled]="currentExperienceIndex === 0">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <mat-card class="experience-card">
+            <h3 class="card-title">{{ experiences[currentExperienceIndex]?.jobTitle }}</h3>
+            <p class="card-date"><i>{{ experiences[currentExperienceIndex]?.startDate | date:'yyyy-MM-dd' }} - {{ experiences[currentExperienceIndex]?.endDate ? (experiences[currentExperienceIndex]?.endDate | date:'yyyy-MM-dd') : 'Actualidad' }}</i></p>
+            <p class="card-company"><strong>Empresa:</strong> {{ experiences[currentExperienceIndex]?.companyName }}</p>
+            <p class="card-description"><strong>Descripción:</strong> {{ experiences[currentExperienceIndex]?.responsibilities }}</p>
+            <button *ngIf="isEditMode" (click)="removeExperience(currentExperienceIndex)" type="button" class="remove-experience-btn">
+              <mat-icon>delete</mat-icon> Eliminar
+            </button>
+          </mat-card>
+          <button class="carousel-arrow" (click)="nextExperience()" [disabled]="currentExperienceIndex === experiences.length - 1">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        <div class="carousel-indicators">
+          <span *ngFor="let exp of experiences; let i = index" [class.active]="i === currentExperienceIndex" (click)="goToExperience(i)"></span>
+        </div>
       </div>
     </div>
     <ng-template #noExperience>
       <p>No hay experiencias profesionales registradas.</p>
     </ng-template>
-  </div>
+    <div *ngIf="isEditMode" class="add-experience-btn-container">
+      <button mat-mini-fab color="primary" (click)="openAddExperienceForm()">
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
+  </div>
 
 </mat-tab>
       <mat-tab label="Enlaces y Portafolio"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
@@ -246,15 +265,42 @@
  </mat-tab>
     </mat-tab-group>
   </div>
-  
-
-  
-
-  
-</div>
 <div class="loading-container" *ngIf="isLoading">
   <mat-spinner color="primary" diameter="50"></mat-spinner>
   <p>Cargando...</p>
 </div>
 
 <div class="spacer" *ngIf="isLoading"></div>
+<div *ngIf="showAddExperienceForm" class="add-experience-overlay">
+  <div class="add-experience-form-card">
+    <mat-card>
+      <h3>Añadir experiencia</h3>
+      <form (ngSubmit)="addExperience()">
+        <mat-form-field appearance="fill">
+          <mat-label>Puesto</mat-label>
+          <input matInput [(ngModel)]="newExperience.jobTitle" name="jobTitle" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Empresa</mat-label>
+          <input matInput [(ngModel)]="newExperience.companyName" name="companyName" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Desde</mat-label>
+          <input matInput type="date" [(ngModel)]="newExperience.startDate" name="startDate">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Hasta</mat-label>
+          <input matInput type="date" [(ngModel)]="newExperience.endDate" name="endDate">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput [(ngModel)]="newExperience.responsibilities" name="responsibilities"></textarea>
+        </mat-form-field>
+        <div class="add-exp-actions">
+          <button mat-raised-button color="primary" type="submit">Añadir</button>
+          <button mat-button type="button" (click)="closeAddExperienceForm()">Cancelar</button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>

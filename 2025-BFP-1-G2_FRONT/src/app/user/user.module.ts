@@ -16,6 +16,7 @@ import { CompaniesComponent } from './companies/companies.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserPanelComponent } from './user-panel/user-panel.component';
 import { MatTabsModule } from '@angular/material/tabs'; // Import MatTabsModule
+import { MatCardModule } from '@angular/material/card'; // Import MatCardModule
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { MatTabsModule } from '@angular/material/tabs'; // Import MatTabsModule
     MatButtonModule,
     MatSnackBarModule,
     SharedModule,
-    MatTabsModule
+    MatTabsModule,
+    MatCardModule
   ]
 })
 export class UserModule { }

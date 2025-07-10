@@ -26,6 +26,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
+import com.campusdual.bfp.model.dto.CandidateExperienceDTO;
 
 @Service
 @Lazy
@@ -303,5 +304,37 @@ public class UserService implements UserDetailsService, IUserService {
         this.candidateDao.saveAndFlush(candidate);
 
         return CandidateMapper.INSTANCE.toDTO(candidate);
+    }
+
+
+    @Transactional
+    public void deleteCandidateExperience(Long experienceId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Candidate candidate = candidateDao.findCandidateByUser(user);
+        if (candidate == null) throw new CandidateNotFoundException("Candidato no encontrado");
+        CandidateExperience toDelete = candidate.getExperiences().stream()
+                .filter(exp -> exp.getId().equals(experienceId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Experiencia no encontrada"));
+        candidate.getExperiences().remove(toDelete);
+        // Si tienes un DAO para CandidateExperience, bórrala también de la base de datos:
+        // candidateExperienceDao.deleteById(experienceId);
+        candidateDao.saveAndFlush(candidate);
+    }
+
+    @Transactional
+    public CandidateExperienceDTO createCandidateExperience(String username, CandidateExperienceDTO experienceDTO) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Candidate candidate = candidateDao.findCandidateByUser(user);
+        if (candidate == null) throw new CandidateNotFoundException("Candidato no encontrado");
+
+        CandidateExperience experience = CandidateExperienceMapper.INSTANCE.toEntity(experienceDTO);
+        experience.setCandidate(candidate);
+        candidate.getExperiences().add(experience);
+        candidateDao.saveAndFlush(candidate); // Guarda cascada
+
+        return CandidateExperienceMapper.INSTANCE.toDTO(experience);
     }
 }

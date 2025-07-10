@@ -47,7 +47,18 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   isSaving: boolean = false;
   userNameInput: string = '';
   isCandidate: boolean = false;
-  professionalExperiences: any[] = [];
+  experiences: any[] = [];
+
+  newExperience: any = {
+    jobTitle: '',
+    companyName: '',
+    startDate: '',
+    endDate: '',
+    responsibilities: ''
+  };
+
+  showAddExperienceForm: boolean = false;
+
 
   constructor(private authService: AuthService,
     private imageCompressionService: ImageCompressionService,
@@ -102,7 +113,14 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
-        this.professionalExperiences = user.professionalExperiences || [];
+        this.experiences = (user.experiences || []).map((exp: any) => ({
+          id: exp.id || exp.experienceId, // <-- AÑADIDO
+          jobTitle: exp.jobTitle || '',
+          companyName: exp.companyName || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          responsibilities: exp.responsibilities || ''
+        }));
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -137,6 +155,14 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        this.experiences = (user.experiences || []).map((exp: any) => ({
+          id: exp.id || exp.experienceId, // <-- AÑADIDO
+          jobTitle: exp.jobTitle || '',
+          companyName: exp.companyName || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          responsibilities: exp.responsibilities || ''
+        }));
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -223,6 +249,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     }
 
     this.isSaving = true;
+
+    // Ya no se agrega la experiencia pendiente ni se mapean las experiencias
     const updatedData = {
       name: this.userName.value,
       surname1: this.userSurname1.value,
@@ -245,6 +273,9 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       logoImageBase64: this.logoImageBase64.value
     };
 
+    // Log para depuración
+    console.log('Datos que se envían al backend:', updatedData);
+
     this.authService.updateCandidateDetails(updatedData).subscribe({
       next: (response) => {
         console.log('Datos actualizados exitosamente', response);
@@ -263,7 +294,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   cancelEdit(): void {
     this.isEditMode = false;
-    this.loadUserData();
+    this.reloadUserData();
   }
 
   hasFormErrors(): boolean {
@@ -372,4 +403,111 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       clearInterval(this.typingInterval);
     }
   }
+
+  openAddExperienceForm(): void {
+    this.showAddExperienceForm = true;
+  }
+
+  closeAddExperienceForm(): void {
+    this.showAddExperienceForm = false;
+    this.newExperience = { jobTitle: '', companyName: '', startDate: '', endDate: '', responsibilities: '' };
+  }
+
+  addExperience(): void {
+    if (!this.newExperience.jobTitle || !this.newExperience.companyName) {
+      this.snackbar.open('Puesto y empresa son obligatorios', 'Cerrar', { duration: 2000 });
+      return;
+    }
+    this.authService.createExperience(this.newExperience).subscribe({
+      next: (createdExp: any) => {
+        this.experiences.push(createdExp);
+        this.snackbar.open('Experiencia añadida correctamente', 'Cerrar', { duration: 2000 });
+        this.closeAddExperienceForm();
+        this.reloadUserData();
+      },
+      error: () => {
+        this.snackbar.open('Error al añadir la experiencia', 'Cerrar', { duration: 2500 });
+      }
+    });
+  }
+
+  currentExperienceIndex = 0;
+
+  prevExperience() {
+    if (this.currentExperienceIndex > 0) {
+      this.currentExperienceIndex--;
+    }
+  }
+
+  nextExperience() {
+    if (this.currentExperienceIndex < this.experiences.length - 1) {
+      this.currentExperienceIndex++;
+    }
+  }
+
+  goToExperience(index: number) {
+    this.currentExperienceIndex = index;
+  }
+
+  removeExperience(index: number): void {
+    const exp = this.experiences[index];
+    if (!exp) return;
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta experiencia?')) {
+      const experienceId = exp.id || exp.experienceId;
+      if (!experienceId) {
+        this.snackbar.open('No se puede eliminar: falta el id de la experiencia', 'Cerrar', { duration: 2500 });
+        return;
+      }
+      this.authService.deleteExperience(experienceId).subscribe({
+        next: () => {
+          this.experiences.splice(index, 1);
+          if (this.currentExperienceIndex >= this.experiences.length) {
+            this.currentExperienceIndex = Math.max(0, this.experiences.length - 1);
+          }
+          this.snackbar.open('Experiencia eliminada correctamente', 'Cerrar', { duration: 2000 });
+        },
+        error: () => {
+          this.snackbar.open('Error al eliminar la experiencia', 'Cerrar', { duration: 2500 });
+        }
+      });
+    }
+  }
+
+  reloadUserData(): void {
+    this.authService.getCandidateDetails().subscribe({
+      next: (user: any) => {
+        this.userName.setValue(user.name);
+        this.userSurname1.setValue(user.surname1);
+        this.userSurname2.setValue(user.surname2);
+        this.userEmail.setValue(user.email);
+        this.login.setValue(user.login || user.username);
+        this.phoneNumber.setValue(user.phoneNumber);
+        this.location.setValue(user.location);
+        this.professionalTitle.setValue(user.professionalTitle);
+        this.yearsOfExperience.setValue(user.yearsOfExperience);
+        this.educationLevel.setValue(user.educationLevel);
+        this.languages.setValue(user.languages);
+        this.employmentStatus.setValue(user.employmentStatus);
+        this.curriculumUrl.setValue(user.curriculumUrl);
+        this.linkedinUrl.setValue(user.linkedinUrl);
+        this.githubUrl.setValue(user.githubUrl);
+        this.figmaUrl.setValue(user.figmaUrl);
+        this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
+        this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
+        this.logoImageBase64.setValue(user.logoImageBase64 || '');
+
+        const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
+        this.fullName = parts.join(' ');
+        this.isLoading = false;
+        this.startTypingAnimation();
+      },
+      error: (error: any) => {
+        console.error('Error fetching user data', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  
 }
+
