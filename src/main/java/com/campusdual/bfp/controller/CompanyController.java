@@ -100,16 +100,6 @@ public class CompanyController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
-    @GetMapping("/{companyId}/offers")
-    public ResponseEntity<List<OfferDTO>> getCompanyOffers(@PathVariable Integer companyId) {
-        try {
-            List<OfferDTO> offers = companyService.getCompanyOffers(companyId);
-            return new ResponseEntity<>(offers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     @GetMapping("/byLocation")
     public ResponseEntity<List<CompanyDTO>> getCompaniesByLocation(@RequestParam String location) {
@@ -137,39 +127,4 @@ public class CompanyController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
-    @GetMapping("/offers/status")
-    public ResponseEntity<List<OfferDTO>> getOffersByStatus(@RequestParam String status, @RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        List<OfferDTO> offers = companyService.getCompanyOffersByStatus(username, status);
-        return ResponseEntity.ok(offers);
-    }
-
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
-    @PutMapping("/offers/publish/{id}")
-    public ResponseEntity<Void> publishOffer(@PathVariable int id, @RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        companyService.publishOffer(id, username);
-        return ResponseEntity.ok().build();
-    }
-
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
-    @PutMapping("/offers/archive/{id}")
-    public ResponseEntity<Void> archiveOffer(@PathVariable int id, @RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        companyService.archiveOffer(id, username);
-        return ResponseEntity.ok().build();
-    }
-
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
-    @PutMapping("/offers/draft/{id}")
-    public ResponseEntity<Void> draftOffer(@PathVariable int id, @RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        companyService.draftOffer(id, username);
-        return ResponseEntity.ok().build();
-    }
 }
