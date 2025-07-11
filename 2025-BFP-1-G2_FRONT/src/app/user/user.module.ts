@@ -15,6 +15,11 @@ import { UserRoutingModule } from './user-routing.module';
 import { CompaniesComponent } from './companies/companies.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserPanelComponent } from './user-panel/user-panel.component';
+import { MatTabsModule } from '@angular/material/tabs'; // Import MatTabsModule
+import { MatCardModule } from '@angular/material/card'; // Import MatCardModule
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs, 'es');
 
 @NgModule({
   declarations: [
@@ -33,7 +38,9 @@ import { UserPanelComponent } from './user-panel/user-panel.component';
     MatProgressSpinnerModule,
     MatButtonModule,
     MatSnackBarModule,
-    SharedModule
+    SharedModule,
+    MatTabsModule,
+    MatCardModule,
   ]
 })
 export class UserModule { }

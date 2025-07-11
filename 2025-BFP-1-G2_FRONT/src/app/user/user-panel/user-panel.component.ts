@@ -50,6 +50,28 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   isSaving: boolean = false;
   userNameInput: string = '';
   isCandidate: boolean = false;
+  experiences: any[] = [];
+  educations: any[] = [];
+
+  newExperience: any = {
+    jobTitle: '',
+    companyName: '',
+    startDate: '',
+    endDate: '',
+    responsibilities: ''
+  };
+
+  newEducation: any = {
+    degree: '',
+    institution: '',
+    startDate: '',
+    endDate: '',
+    description: ''
+  };
+
+  showAddExperienceForm: boolean = false;
+  showAddEducationForm: boolean = false;
+
   avaliableTags: Tag[] = [];
   myTags: Tag[] = [];
 
@@ -100,7 +122,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+
   getTagsFormControl(): FormControl<Tag[]> {
     return this.tagsControl;
   }
@@ -140,6 +162,22 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        this.experiences = (user.experiences || []).map((exp: any) => ({
+          id: exp.id || exp.experienceId, // <-- AÑADIDO
+          jobTitle: exp.jobTitle || '',
+          companyName: exp.companyName || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          responsibilities: exp.responsibilities || ''
+        }));
+        this.educations = (user.educations || []).map((edu: any) => ({
+          id: edu.id || edu.educationId,
+          degree: edu.degree || '',
+          institution: edu.institution || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || '',
+          description: edu.description || ''
+        }));
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.tagsControl.setValue(user.tags || []);
         this.fullName = parts.join(' ');
@@ -175,6 +213,22 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        this.experiences = (user.experiences || []).map((exp: any) => ({
+          id: exp.id || exp.experienceId, // <-- AÑADIDO
+          jobTitle: exp.jobTitle || '',
+          companyName: exp.companyName || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          responsibilities: exp.responsibilities || ''
+        }));
+        this.educations = (user.educations || []).map((edu: any) => ({
+          id: edu.id || edu.educationId,
+          degree: edu.degree || '',
+          institution: edu.institution || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || '',
+          description: edu.description || ''
+        }));
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -261,6 +315,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     }
 
     this.isSaving = true;
+
+    // Ya no se agrega la experiencia pendiente ni se mapean las experiencias
     const updatedData = {
       name: this.userName.value,
       surname1: this.userSurname1.value,
@@ -283,6 +339,9 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       logoImageBase64: this.logoImageBase64.value
     };
 
+    // Log para depuración
+    console.log('Datos que se envían al backend:', updatedData);
+
     this.authService.updateCandidateDetails(updatedData).subscribe({
       next: (response) => {
         console.log('Datos actualizados exitosamente', response);
@@ -301,7 +360,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   cancelEdit(): void {
     this.isEditMode = false;
-    this.loadUserData();
+    this.reloadUserData();
   }
 
   hasFormErrors(): boolean {
@@ -410,4 +469,254 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       clearInterval(this.typingInterval);
     }
   }
+
+  openAddExperienceForm(): void {
+    this.showAddExperienceForm = true;
+  }
+
+  closeAddExperienceForm(): void {
+    this.showAddExperienceForm = false;
+    this.newExperience = { jobTitle: '', companyName: '', startDate: '', endDate: '', responsibilities: '' };
+  }
+
+  addExperience(): void {
+    if (!this.newExperience.jobTitle || !this.newExperience.companyName) {
+      this.snackbar.open('Puesto y empresa son obligatorios', 'Cerrar', { duration: 2000 });
+      return;
+    }
+    console.log('JSON enviado al backend (nueva experiencia):', this.newExperience);
+    this.authService.createExperience(this.newExperience).subscribe({
+      next: (createdExp: any) => {
+        console.log('Respuesta del backend (experiencia creada):', createdExp);
+        const normalizedExp = {
+          ...createdExp,
+          id: createdExp.id || createdExp.experienceId
+        };
+        this.experiences.push(normalizedExp);
+        this.snackbar.open('Experiencia añadida correctamente', 'Cerrar', { duration: 2000 });
+        this.closeAddExperienceForm();
+        // Si quieres recargar los datos completos, puedes dejar la siguiente línea:
+        // this.reloadUserData();
+      },
+      error: () => {
+        this.snackbar.open('Error al añadir la experiencia', 'Cerrar', { duration: 2500 });
+      }
+    });
+  }
+
+  openAddEducationForm(): void {
+    this.showAddEducationForm = true;
+  }
+
+  closeAddEducationForm(): void {
+    this.showAddEducationForm = false;
+    this.newEducation = { degree: '', institution: '', startDate: '', endDate: '', description: '' };
+  }
+
+  addEducation(): void {
+    if (!this.newEducation.degree || !this.newEducation.institution) {
+      this.snackbar.open('Título y centro son obligatorios', 'Cerrar', { duration: 2000 });
+      return;
+    }
+    console.log('JSON enviado al backend (nueva educación):', this.newEducation);
+    this.authService.createEducation(this.newEducation).subscribe({
+      next: (createdEdu: any) => {
+        console.log('Respuesta del backend (educación creada):', createdEdu);
+        const normalizedEdu = {
+          ...createdEdu,
+          id: createdEdu.id || createdEdu.educationId
+        };
+        this.educations.push(normalizedEdu);
+        this.snackbar.open('Formación añadida correctamente', 'Cerrar', { duration: 2000 });
+        this.closeAddEducationForm();
+
+      },
+      error: () => {
+        this.snackbar.open('Error al añadir la formación', 'Cerrar', { duration: 2500 });
+      }
+    });
+  }
+
+  currentExperienceIndex = 0;
+
+  prevExperience() {
+    if (this.currentExperienceIndex > 0) {
+      this.currentExperienceIndex--;
+    }
+  }
+
+  nextExperience() {
+    if (this.currentExperienceIndex < this.experiences.length - 1) {
+      this.currentExperienceIndex++;
+    }
+  }
+
+  goToExperience(index: number) {
+    this.currentExperienceIndex = index;
+  }
+
+  removeExperience(index: number): void {
+    const exp = this.experiences[index];
+    if (!exp) return;
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta experiencia?')) {
+      const experienceId = exp.id || exp.experienceId;
+      if (!experienceId) {
+        this.snackbar.open('No se puede eliminar: falta el id de la experiencia', 'Cerrar', { duration: 2500 });
+        return;
+      }
+      this.authService.deleteExperience(experienceId).subscribe({
+        next: () => {
+          this.experiences.splice(index, 1);
+          if (this.currentExperienceIndex >= this.experiences.length) {
+            this.currentExperienceIndex = Math.max(0, this.experiences.length - 1);
+          }
+          this.snackbar.open('Experiencia eliminada correctamente', 'Cerrar', { duration: 2000 });
+        },
+        error: () => {
+          this.snackbar.open('Error al eliminar la experiencia', 'Cerrar', { duration: 2500 });
+        }
+      });
+    }
+  }
+
+  removeEducation(index: number): void {
+    const edu = this.educations[index];
+    if (!edu) return;
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta formación?')) {
+      const educationId = edu.id || edu.educationId;
+      if (!educationId) {
+        this.snackbar.open('No se puede eliminar: falta el id de la formación', 'Cerrar', { duration: 2500 });
+        return;
+      }
+      this.authService.deleteEducation(educationId).subscribe({
+        next: () => {
+          this.educations.splice(index, 1);
+          this.snackbar.open('Formación eliminada correctamente', 'Cerrar', { duration: 2000 });
+        },
+        error: () => {
+          this.snackbar.open('Error al eliminar la formación', 'Cerrar', { duration: 2500 });
+        }
+      });
+    }
+  }
+
+  reloadUserData(): void {
+    this.authService.getCandidateDetails().subscribe({
+      next: (user: any) => {
+        this.userName.setValue(user.name);
+        this.userSurname1.setValue(user.surname1);
+        this.userSurname2.setValue(user.surname2);
+        this.userEmail.setValue(user.email);
+        this.login.setValue(user.login || user.username);
+        this.phoneNumber.setValue(user.phoneNumber);
+        this.location.setValue(user.location);
+        this.professionalTitle.setValue(user.professionalTitle);
+        this.yearsOfExperience.setValue(user.yearsOfExperience);
+        this.educationLevel.setValue(user.educationLevel);
+        this.languages.setValue(user.languages);
+        this.employmentStatus.setValue(user.employmentStatus);
+        this.curriculumUrl.setValue(user.curriculumUrl);
+        this.linkedinUrl.setValue(user.linkedinUrl);
+        this.githubUrl.setValue(user.githubUrl);
+        this.figmaUrl.setValue(user.figmaUrl);
+        this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
+        this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
+        this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        this.experiences = (user.experiences || []).map((exp: any) => ({
+          id: exp.id || exp.experienceId,
+          jobTitle: exp.jobTitle || '',
+          companyName: exp.companyName || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          responsibilities: exp.responsibilities || ''
+        }));
+        this.educations = (user.educations || []).map((edu: any) => ({
+          id: edu.id || edu.educationId,
+          degree: edu.degree || '',
+          institution: edu.institution || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || '',
+          description: edu.description || ''
+        }));
+
+
+        const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
+        this.fullName = parts.join(' ');
+        this.isLoading = false;
+        this.startTypingAnimation();
+      },
+      error: (error: any) => {
+        console.error('Error fetching user data', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  currentEducationIndex = 0;
+
+  prevEducation() {
+    if (this.currentEducationIndex > 0) {
+      this.currentEducationIndex--;
+    }
+  }
+
+  nextEducation() {
+    if (this.currentEducationIndex < this.educations.length - 1) {
+      this.currentEducationIndex++;
+    }
+  }
+
+  goToEducation(index: number) {
+    this.currentEducationIndex = index;
+  }
+
+  scrollExperienceCarousel(direction: number, carousel: HTMLElement) {
+    const cardWidth = carousel.querySelector('.experience-card')?.clientWidth || 340;
+    carousel.querySelector('.carousel-cards')?.scrollBy({
+      left: direction * (cardWidth + 24),
+      behavior: 'smooth'
+    });
+  }
+
+  scrollEducationCarousel(direction: number, carousel: HTMLElement) {
+    const cardWidth = carousel.querySelector('.experience-card')?.clientWidth || 340;
+    carousel.querySelector('.carousel-cards')?.scrollBy({
+      left: direction * (cardWidth + 24),
+      behavior: 'smooth'
+    });
+  }
+
+  // Sincroniza el dot activo con la card visible en el carrusel de experiencia
+  onExperienceCarouselScroll(carousel: HTMLElement) {
+    const cards = carousel.querySelectorAll('.experience-card');
+    const container = carousel.querySelector('.carousel-cards');
+    if (!cards.length || !container) return;
+    const scrollLeft = container.scrollLeft;
+    let activeIndex = 0;
+    for (let i = 0; i < cards.length; i++) {
+      if ((cards[i] as HTMLElement).offsetLeft + (cards[i] as HTMLElement).offsetWidth / 2 > scrollLeft) {
+        activeIndex = i;
+        break;
+      }
+    }
+    this.currentExperienceIndex = activeIndex;
+  }
+
+  // Sincroniza el dot activo con la card visible en el carrusel de educación
+  onEducationCarouselScroll(carousel: HTMLElement) {
+    const cards = carousel.querySelectorAll('.experience-card');
+    const container = carousel.querySelector('.carousel-cards');
+    if (!cards.length || !container) return;
+    const scrollLeft = container.scrollLeft;
+    let activeIndex = 0;
+    for (let i = 0; i < cards.length; i++) {
+      if ((cards[i] as HTMLElement).offsetLeft + (cards[i] as HTMLElement).offsetWidth / 2 > scrollLeft) {
+        activeIndex = i;
+        break;
+      }
+    }
+    this.currentEducationIndex = activeIndex;
+  }
+
 }
+

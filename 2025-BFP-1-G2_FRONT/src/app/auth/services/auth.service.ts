@@ -402,4 +402,21 @@ export class AuthService {
       }, 6000);
     });
   }
+
+  deleteExperience(experienceId: number): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/candidateDetails/experience/${experienceId}`);
 }
+
+createExperience(experience: any): Observable<any> {
+  return this.http.post(`${this.baseUrl}/candidateDetails/experience`, experience);
+}
+
+deleteEducation(educationId: number): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/candidateDetails/education/${educationId}`);
+}
+
+createEducation(education: any): Observable<any> {
+  return this.http.post(`${this.baseUrl}/candidateDetails/education`, education);
+}
+}
+
