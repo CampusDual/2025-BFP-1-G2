@@ -1,44 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Candidate } from '../detailed-card/detailed-card.component';
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 import { environment } from '../../environments/environment';
 
-export interface CompanyOffer {
-  id?: number;
-  title: string;
-  description: string;
-  location?: string;
-  dateAdded?: Date;
-  dateToString?: string;
-  tags?: Tag[];
-  isActive?: boolean;
-  companyId?: number;
-  candidates?: Candidate[];
-  logo?: string;
-  status?: string;
-}
-
-
-export interface CandidateOffer {
-  id?: number;
-  title: string;
-  description: string;
-  location?: string;
-  dateAdded?: Date;
-  dateToString?: string;
-  tags?: Tag[];
-  valid?: Boolean;
-  companyId?: number;
-  companyName?: string;
-  email?: string;
-  candidateValid?: boolean;
-  isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
-  applied?: boolean;
-  logo?: string;
-  isBookmarked?: boolean; 
-  status?: string;
+export interface PageResponse<T> {
+  content: T[];
+  pageable: {
+    sort: any;
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+  first: boolean;
+  numberOfElements: number;
+  size: number;
+  number: number;
+  sort: any;
+  empty: boolean;
 }
 
 export interface Offer {
@@ -55,23 +40,33 @@ export interface Offer {
   email?: string;
   logo?: string;
   status?: string;
+  candidateValid?: boolean;
+  candidates?: Candidate[];
+  isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
+  applied?: boolean;
+  bookmarked?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class OfferService {
+
   private baseUrl = `${environment.apiUrl}/offer`;
 
   constructor(private http: HttpClient) { }
-
 
   createOffer(offer: Offer): Observable<any> {
     return this.http.post(`${this.baseUrl}/add`, offer, { responseType: 'text' });
   }
 
-  getOffers(): Observable<Offer[]> {
-    return this.http.get<Offer[]>(`${this.baseUrl}/getAll`);
+  getOffers(searchTerm: string, tagIds: number[], page: number, size: number): Observable<PageResponse<Offer>> {
+    const params = new HttpParams()
+      .set('searchTerm', searchTerm)
+      .set('tagIds', tagIds.join(','))
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/getAll`, { params });
   }
 
   deleteOffer(id: number): Observable<any> {
@@ -89,8 +84,45 @@ export class OfferService {
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
   }
-  getCandidateOffers(): Observable<CandidateOffer[]> {
-    return this.http.get<CandidateOffer[]>(`${this.baseUrl}/myOffers`);
+
+  getBookmarkedOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=bookmarks`);
+  }
+  getAppliedOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=applied`);
+
+  }
+  getRecommendedOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=recommended`);
+  }
+  getAllOffersCount(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=all`);
+  }
+
+  getCompanyOffers(status: string, searchTerm: string, tagIds: number[], page: number, size: number): Observable<PageResponse<Offer>> {
+    const params = new HttpParams()
+      .set('status', status)
+      .set('searchTerm', searchTerm)
+      .set('tagIds', tagIds.join(','))
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/company`, { params });
+  }
+
+   getCompanyOffersCount(status: string): Observable<number> {
+    const params = new HttpParams()
+      .set('status', status)
+    return this.http.get<number>(`${this.baseUrl}/count/company`, { params });
+  }
+
+  getCandidateOffers(searchTerm: string, tagIds: number[], listType: string, page: number, size: number): Observable<PageResponse<Offer>> {
+    const params = new HttpParams()
+      .set('searchTerm', searchTerm)
+      .set('tagIds', tagIds.join(','))
+      .set('listType', listType)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/candidate`, { params });
   }
 
   addBookmark(offerId: number): Observable<string> {
@@ -101,11 +133,9 @@ export class OfferService {
     return this.http.delete(`${this.baseUrl}/bookmark/${offerId}`, { responseType: 'text' });
   }
 
-  getUserBookmarksOffers(): Observable<Offer[]> {
-    return this.http.get<Offer[]>(`${this.baseUrl}/bookmarks`);
+  updateOfferStatus(offerId: number, status: string): Observable<string> {
+    const params = new HttpParams().set('status', status);
+    return this.http.put(`${this.baseUrl}/status/${offerId}`, null, { params, responseType: 'text' });
   }
 
-  isBookmarked(offerId: number): Observable<boolean> {
-    return this.http.get<boolean>(`${this.baseUrl}/bookmark/check/${offerId}`);
-  }
 }

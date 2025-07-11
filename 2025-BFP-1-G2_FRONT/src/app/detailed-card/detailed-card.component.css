@@ -509,15 +509,14 @@ mat-label {
   color: #1976d2 !important;
 }
 
-.chip-info {
-  background-color: #fde3e3 !important;
-  border: 1px solid var(--primary-color) !important;
-}
 
-.chip-info ::ng-deep .mdc-evolution-chip__text-label,
-.chip-info ::ng-deep .mat-mdc-chip-action-label,
-.chip-info ::ng-deep span {
-  color: var(--primary-color) !important;
+.chip-info {
+  background-color: #f5f5f5 !important;
+  color: #333 !important;
+  border: 1px solid #ddd !important;
+}
+.chip-info:hover {
+  border: 1px solid var(--primary-color) !important;
 }
 
 mat-chip-option[disabled] {

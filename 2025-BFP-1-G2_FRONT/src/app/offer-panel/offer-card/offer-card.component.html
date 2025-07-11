@@ -1,5 +1,4 @@
 <div class="offer-card"  [ngClass]="getOfferStatusClass()">
-  <!-- Botón de bookmark en la esquina superior derecha -->
   <button
     *ngIf="isCandidate"
     class="bookmark-button"
@@ -41,10 +40,9 @@
       : '' }}</p>
   </div>
   <div class="offer-tags" *ngIf="offer.tags && offer.tags.length > 0">
-    <mat-chip *ngFor="let tag of offer.tags.slice(0, 3)" class="offer-tag">
+    <mat-chip *ngFor="let tag of offer.tags" class="offer-tag" (click)="onChipClickHandler($event, tag)">
       {{ tag.name }}
     </mat-chip>
-    <span *ngIf="offer.tags.length > 3" class="more-tags">+{{ offer.tags.length - 3 }}</span>
   </div>
 
   <div class="offer-stats">
