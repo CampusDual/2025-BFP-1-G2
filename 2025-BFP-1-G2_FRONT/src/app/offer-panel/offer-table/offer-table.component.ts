@@ -17,6 +17,7 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent implements OnDestroy {
+
   offers: Offer[] = [];
   searchTerm: string = '';
   lastSearchTerm: string = '';
@@ -102,9 +103,6 @@ export class OfferTableComponent implements OnDestroy {
     setTimeout(() => {
       if (this.searchTerm !== this.lastSearchTerm) {
         this.lastSearchTerm = this.searchTerm;
-        this.currentPage = 0;
-        this.firstFetch = true;
-        this.currentDetailIndex = 0;
         this.movePage(0);
       }
     }, 1000);
@@ -195,6 +193,9 @@ export class OfferTableComponent implements OnDestroy {
 
 
   movePage(operation: number) {
+    this.currentPage = 0;
+    this.firstFetch = true;
+    this.currentDetailIndex = 0;
     if (this.isCompany) {
       this.loadCompanyOffers(operation);
     } else if (this.isCandidate) {
@@ -442,7 +443,6 @@ export class OfferTableComponent implements OnDestroy {
   }
 
 
-
   private applyToOffer(offer: any) {
     if (this.authService.isLoggedIn()) {
       this.offerService.applyToOffer(offer.id).subscribe({
@@ -525,11 +525,13 @@ export class OfferTableComponent implements OnDestroy {
     );
 
     this.tagSearchControl.setValue('');
-
-    this.currentPage = 0;
-    this.firstFetch = true;
-    this.currentDetailIndex = 0;
     this.movePage(0);
+  }
+
+  onChipClickHandler(event: { tag: Tag }) {
+    this.clearFilters();
+    this.closeDetailedCard();
+    this.onTagSelected({ option: { value: event.tag } });
   }
 
   onSearchFocus() {
@@ -543,15 +545,12 @@ export class OfferTableComponent implements OnDestroy {
     const updatedTags = currentTags.filter(tag => tag.id !== tagToRemove.id);
     this.tagsFilterControl.setValue(updatedTags);
     this.selectedTagIds = updatedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
-    this.currentPage = 0;
-    this.firstFetch = true;
-    this.currentDetailIndex = 0;
     this.movePage(0);
   }
 
   setOfferView(view: 'all' | 'recommended' | 'applied' | 'bookmarks') {
-    if(this.isLoading) return; 
-    if (this.currentOfferView === view) return; 
+    if (this.isLoading) return;
+    if (this.currentOfferView === view) return;
     this.currentPage = 0;
     this.firstFetch = true;
     this.searchTerm = '';
@@ -563,7 +562,7 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   setOfferStatus(status: 'draft' | 'archived' | 'active') {
-    if(this.isLoading) return; 
+    if (this.isLoading) return;
     if (this.currentOfferStatus === status) return;
     this.currentPage = 0;
     this.firstFetch = true;
@@ -864,8 +863,6 @@ export class OfferTableComponent implements OnDestroy {
     this.selectedTagIds = [];
     this.tagsFilterControl.setValue([]);
     this.tagSearchControl.setValue('');
-    this.currentPage = 0;
-    this.firstFetch = true;
     this.hasNoOffers = false;
     this.movePage(0);
   }

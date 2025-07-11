@@ -2,11 +2,9 @@ package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.ICompanyService;
 import com.campusdual.bfp.model.Company;
-import com.campusdual.bfp.model.OfferTags;
 import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CompanyDTO;
-import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

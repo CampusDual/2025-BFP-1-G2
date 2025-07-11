@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { FormControl, FormGroup} from '@angular/forms';
-import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from "@angular/material/core";
-import {MatDatepicker} from "@angular/material/datepicker";
+import { FormControl, FormGroup } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from "@angular/material/core";
+import { MatDatepicker } from "@angular/material/datepicker";
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 
 export interface Candidate {
@@ -75,6 +75,11 @@ export class CustomDateAdapter extends NativeDateAdapter {
   ],
 })
 export class DetailedCardComponent implements OnInit, AfterViewInit {
+  onChipClickHandler(tag: Tag) {
+    this.onChipClick.emit({ tag: tag });
+    console.log('Chip clicked from detailed card:', tag);
+  }
+
 
   @Input() isVisible: boolean = false;
   @Input() data: DetailedCardData[] = [];
@@ -88,6 +93,7 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   @Output() onAction = new EventEmitter<{ action: string, data: any }>();
   @Output() onNavigate = new EventEmitter<number>();
   @Output() onSave = new EventEmitter<DetailedCardData>();
+  @Output() onChipClick = new EventEmitter<{ tag: Tag }>();
 
   @ViewChild('foundedDatePicker') foundedDatePicker!: MatDatepicker<Date>;
   @ViewChild('navigationDotsWrapper', { static: false }) navigationDotsWrapper!: ElementRef<HTMLDivElement>;
@@ -110,6 +116,13 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     this.updateCurrentItem();
   }
 
+  onTagClick(tag: Tag) {
+    this.onAction.emit({
+      action: 'tagClick',
+      data: { tag: tag }
+    });
+  }
+
   updateCurrentItem() {
     if (this.data.length > 0) {
       if (this.currentIndex < 0) {
@@ -124,7 +137,7 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
       this.addingNewItem = this.currentItem.id === 0 && !this.currentItem.title;
       this.isEditing = this.addingNewItem;
       this.panelOpenState = false;
-            setTimeout(() => {
+      setTimeout(() => {
         this.scrollToActiveDot();
       }, 50);
     }
@@ -182,7 +195,7 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
 
   onChipKeydown(event: KeyboardEvent): void {
     if (event.key === 'Enter' || event.key === 'Escape' ||
-        event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.stopPropagation();
     }
   }
@@ -195,7 +208,7 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
       if (formValue.foundedDate instanceof Date) {
         formValue.foundedDate = formValue.foundedDate.getFullYear();
       }
-      this.onSave.emit({...this.editedItem, form: this.editedItem.form});
+      this.onSave.emit({ ...this.editedItem, form: this.editedItem.form });
     }
   }
 

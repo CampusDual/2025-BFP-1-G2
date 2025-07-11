@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from "../../auth/services/auth.service";
 import { OfferService } from "../../services/offer.service";
+import { Tag } from 'src/app/admin/admin-dashboard/admin-dashboard.component';
 
 
 @Component({
@@ -8,7 +9,7 @@ import { OfferService } from "../../services/offer.service";
   templateUrl: './offer-card.component.html',
   styleUrls: ['./offer-card.component.css']
 })
-export class OfferCardComponent  {
+export class OfferCardComponent {
 
   @Input() offer: any;
   @Input() isCompany: boolean = false;
@@ -16,6 +17,7 @@ export class OfferCardComponent  {
   @Input() isCandidate: boolean = false;
   @Output() viewDetails = new EventEmitter<any>();
   @Output() toggleBookmark = new EventEmitter<number>();
+  @Output() onChipClick = new EventEmitter<{ tag: Tag }>();
 
   isDisabled: boolean = true;
   candidates: any[] = [];
@@ -71,6 +73,10 @@ export class OfferCardComponent  {
       default:
         return '';
     }
+  }
+  onChipClickHandler($event: MouseEvent, tag: Tag) {
+    $event.stopPropagation();
+    this.onChipClick.emit({ tag: tag });
   }
 }
 

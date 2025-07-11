@@ -110,8 +110,7 @@
       Página {{ currentPage + 1 }} de {{ totalPages }}
     </span>
 
-    <button mat-raised-button color="primary" (click)="movePage(1)"
-    [disabled]="currentPage + 1 >= totalPages" >
+    <button mat-raised-button color="primary" (click)="movePage(1)" [disabled]="currentPage + 1 >= totalPages">
       Siguiente<mat-icon>chevron_right</mat-icon>
     </button>
   </div>
@@ -130,24 +129,23 @@
       </p>
       <p *ngIf="!searchTerm && selectedTagIds.length === 0 && isCandidate">
         No hay ofertas disponibles para {{
-          currentOfferView === 'recommended' ? 'recomendadas' :
-          currentOfferView === 'applied' ? 'aplicadas' :
-          currentOfferView === 'bookmarks' ? 'guardadas' : 'esta vista'
+        currentOfferView === 'recommended' ? 'recomendadas' :
+        currentOfferView === 'applied' ? 'aplicadas' :
+        currentOfferView === 'bookmarks' ? 'guardadas' : 'esta vista'
         }}.
       </p>
       <p *ngIf="!searchTerm && selectedTagIds.length === 0 && isCompany">
         No hay ofertas {{
-          currentOfferStatus === 'active' ? 'activas' :
-          currentOfferStatus === 'draft' ? 'en borrador' :
-          currentOfferStatus === 'archived' ? 'archivadas' : ''
+        currentOfferStatus === 'active' ? 'activas' :
+        currentOfferStatus === 'draft' ? 'en borrador' :
+        currentOfferStatus === 'archived' ? 'archivadas' : ''
         }}.
       </p>
       <p *ngIf="!searchTerm && selectedTagIds.length === 0 && !isCompany && !isCandidate">
         No hay ofertas disponibles en este momento.
       </p>
-      <button mat-raised-button color="primary"
-              *ngIf="searchTerm || selectedTagIds.length > 0"
-              (click)="clearFilters()">
+      <button mat-raised-button color="primary" *ngIf="searchTerm || selectedTagIds.length > 0"
+        (click)="clearFilters()">
         <mat-icon>clear</mat-icon>
         Limpiar filtros
       </button>
@@ -157,13 +155,15 @@
   <div class="grid-container" *ngIf="!isLoading && !hasNoOffers">
     <app-offer-card *ngFor="let offer of offers; let i = index" [offer]="offer" [isCompany]="isCompany"
       [isCandidate]="isCandidate" [isBookmarked]="offer.bookmarked || false" (click)="openDetailedCard(i)"
-      (viewDetails)="onViewDetails($event)" (toggleBookmark)="toggleBookmark($event)">
+      (viewDetails)="onViewDetails($event)" (toggleBookmark)="toggleBookmark($event)" 
+      (onChipClick)="onChipClickHandler($event)">
     </app-offer-card>
   </div>
 
   <app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
     [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
-    (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)">
+    (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)"
+    (onChipClick)="onChipClickHandler($event)">
   </app-detailed-card>
 
   <div class="pagination-container" *ngIf="!isLoading && totalPages > 1">

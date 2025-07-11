@@ -149,7 +149,7 @@
             <h4>Areas de la oferta</h4>
             <div class="tags-container">
               <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (keydown)="onChipKeydown($event)">
+                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
                   {{tag.name}}
                 </mat-chip>
               </mat-chip-listbox>
@@ -258,7 +258,7 @@
             <h4>Areas de la oferta</h4>
             <div class="tags-container">
               <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (keydown)="onChipKeydown($event)">
+                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
                   {{tag.name}}
                 </mat-chip>
               </mat-chip-listbox>
