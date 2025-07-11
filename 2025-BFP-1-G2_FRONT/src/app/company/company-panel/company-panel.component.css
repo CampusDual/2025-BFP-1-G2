@@ -138,12 +138,6 @@
   letter-spacing: 1px;
 }
 
-.info-section:hover {
-  transform: translateY(-4px);
-  z-index: 10;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-}
-
 .info-section:nth-child(2) {
   grid-column: 1;
   grid-row: 2;
