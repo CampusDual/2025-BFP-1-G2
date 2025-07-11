@@ -7,7 +7,7 @@
     <div class="search-and-filters-section">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Buscar ofertas</mat-label>
-        <input matInput placeholder="Oferta, ubicación, empresa..." [(ngModel)]="searchTerm" (input)="offers" 
+        <input matInput placeholder="Oferta, ubicación, empresa..." [(ngModel)]="searchTerm" 
           (ngModelChange)="onSearchChange()">
         <button mat-icon-button matSuffix (click)="movePage(0)">
           <mat-icon>search</mat-icon>
@@ -96,11 +96,11 @@
         </div>
       </div>
     </div>
-    
+
   </div>
 
   <mat-divider></mat-divider>
-   <div class="pagination-container" *ngIf="!isLoading && totalPages > 1">
+  <div class="pagination-container" *ngIf="!isLoading && totalPages > 1">
     <button mat-raised-button color="primary" (click)="movePage(-1)" [disabled]="currentPage === 0">
       <mat-icon>chevron_left</mat-icon>
       Anterior
@@ -110,17 +110,51 @@
       Página {{ currentPage + 1 }} de {{ totalPages }}
     </span>
 
-    <button mat-raised-button color="primary" (click)="movePage(1)"
-      [disabled]="currentPage + 1 >= totalPages">
-      Siguiente
-      <mat-icon>chevron_right</mat-icon>
-    </button>
+    <button mat-raised-button color="primary" (click)="movePage(1)" 
+    [disabled]="currentPage + 1 >= totalPages" >
+      Siguiente<mat-icon>chevron_right</mat-icon>
+    </button> 
   </div>
   <div class="loading-container" *ngIf="isLoading">
     <mat-spinner color="primary" diameter="50"></mat-spinner>
     <p>Cargando ofertas...</p>
   </div>
-  <div class="grid-container" *ngIf="!isLoading">
+
+  <!-- Mensaje cuando no hay ofertas -->
+  <div class="no-offers-container" *ngIf="!isLoading && hasNoOffers">
+    <div class="no-offers-content">
+      <mat-icon class="no-offers-icon">search_off</mat-icon>
+      <h3>No se encontraron ofertas</h3>
+      <p *ngIf="searchTerm || selectedTagIds.length > 0">
+        No hay ofertas que coincidan con los filtros aplicados.
+      </p>
+      <p *ngIf="!searchTerm && selectedTagIds.length === 0 && isCandidate">
+        No hay ofertas disponibles para {{ 
+          currentOfferView === 'recommended' ? 'recomendadas' :
+          currentOfferView === 'applied' ? 'aplicadas' :
+          currentOfferView === 'bookmarks' ? 'guardadas' : 'esta vista'
+        }}.
+      </p>
+      <p *ngIf="!searchTerm && selectedTagIds.length === 0 && isCompany">
+        No hay ofertas {{ 
+          currentOfferStatus === 'active' ? 'activas' :
+          currentOfferStatus === 'draft' ? 'en borrador' :
+          currentOfferStatus === 'archived' ? 'archivadas' : ''
+        }}.
+      </p>
+      <p *ngIf="!searchTerm && selectedTagIds.length === 0 && !isCompany && !isCandidate">
+        No hay ofertas disponibles en este momento.
+      </p>
+      <button mat-raised-button color="primary" 
+              *ngIf="searchTerm || selectedTagIds.length > 0"
+              (click)="clearFilters()">
+        <mat-icon>clear</mat-icon>
+        Limpiar filtros
+      </button>
+    </div>
+  </div>
+
+  <div class="grid-container" *ngIf="!isLoading && !hasNoOffers">
     <app-offer-card *ngFor="let offer of offers; let i = index" [offer]="offer" [isCompany]="isCompany"
       [isCandidate]="isCandidate" [isBookmarked]="offer.bookmarked || false" (click)="openDetailedCard(i)"
       (viewDetails)="onViewDetails($event)" (toggleBookmark)="toggleBookmark($event)">
@@ -142,8 +176,7 @@
       Página {{ currentPage + 1 }} de {{ totalPages }}
     </span>
 
-    <button mat-raised-button color="primary" (click)="movePage(1)"
-      [disabled]="currentPage + 1 >= totalPages">
+    <button mat-raised-button color="primary" (click)="movePage(1)" [disabled]="currentPage + 1 >= totalPages">
       Siguiente
       <mat-icon>chevron_right</mat-icon>
     </button>

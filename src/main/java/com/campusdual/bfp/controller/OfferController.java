@@ -52,7 +52,7 @@ public class OfferController {
 
     @GetMapping(value = "/getAll")
     public ResponseEntity<Page<OfferDTO>> queryAllOffers(@RequestParam String searchTerm,
-                                                         @RequestParam List<Integer> tagIds,
+                                                         @RequestParam List<Long> tagIds,
                                                          @RequestParam int page,
                                                          @RequestParam int size) {
         Page<OfferDTO> offers = offerService.queryAllOffers(searchTerm, tagIds, page, size);
@@ -173,7 +173,7 @@ public class OfferController {
     @PreAuthorize("hasRole('ROLE_CANDIDATE')")
     @GetMapping(value = "/candidate")
     public ResponseEntity<Page<OfferDTO>> searchOffers(@RequestParam String searchTerm,
-                                                       @RequestParam List<Integer> tagIds,
+                                                       @RequestParam List<Long> tagIds,
                                                        @RequestParam String listType,
                                                        @RequestParam int page,
                                                        @RequestParam int size,
@@ -194,7 +194,7 @@ public class OfferController {
     @GetMapping(value = "/company")
     public ResponseEntity<Page<OfferDTO>> getCompanyOffers(@RequestParam String status,
                                                            @RequestParam String searchTerm,
-                                                           @RequestParam List<Integer> tagIds,
+                                                           @RequestParam List<Long> tagIds,
                                                            @RequestParam int page,
                                                            @RequestParam int size,
                                                            Principal principal) {

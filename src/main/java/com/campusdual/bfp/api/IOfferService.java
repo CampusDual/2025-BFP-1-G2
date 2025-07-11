@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface IOfferService {
 
-    Page<OfferDTO> queryAllOffers(String searchTerm, List<Integer> tagIds, int page, int size);
+    Page<OfferDTO> queryAllOffers(String searchTerm, List<Long> tagIds, int page, int size);
 
     int insertOffer(OfferDTO request, String username);
 
@@ -28,9 +28,9 @@ public interface IOfferService {
 
     int getCadidateOffersCount(String listType, String name);
 
-    Page<OfferDTO> getCandidateOffersPaginated(String listType, String username, String searchTerm, List<Integer> tagIds, int page, int size);
+    Page<OfferDTO> getCandidateOffersPaginated(String listType, String username, String searchTerm, List<Long> tagIds, int page, int size);
 
-    Page<OfferDTO> getCompanyOffersByStatusPaginated(String username, String status, String searchTerm, List<Integer> tagIds, int page, int size);
+    Page<OfferDTO> getCompanyOffersByStatusPaginated(String username, String status, String searchTerm, List<Long> tagIds, int page, int size);
 
     int getCompanyOffersCount(String status, String name);
 

@@ -17,9 +17,6 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent implements OnDestroy {
-
-
-
   offers: Offer[] = [];
   searchTerm: string = '';
   lastSearchTerm: string = '';
@@ -30,6 +27,7 @@ export class OfferTableComponent implements OnDestroy {
   isCandidate = false;
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
+  selectedTagIds: number[] = [];
   selectedCandidatures: any[] = [];
   tagsFilterControl = new FormControl<Tag[]>([]);
   tagSearchControl = new FormControl('');
@@ -50,6 +48,7 @@ export class OfferTableComponent implements OnDestroy {
   totalElements: number = 0;
   currentPage: number = 0;
   pageSize: number = 8;
+  hasNoOffers: boolean = false;
   constructor(
     private offerService: OfferService,
     private authService: AuthService,
@@ -64,7 +63,11 @@ export class OfferTableComponent implements OnDestroy {
       this.tagSearchControl.valueChanges.pipe(startWith('')),
       this.tagsFilterControl.valueChanges.pipe(startWith([]))
     ]).pipe(
-      map(([searchValue]) => this._filterTags(searchValue || ''))
+      map(([searchValue]) => {
+        const currentTags = this.tagsFilterControl.value || [];
+        this.selectedTagIds = currentTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+        return this._filterTags(searchValue || '');
+      })
     );
   }
 
@@ -79,17 +82,6 @@ export class OfferTableComponent implements OnDestroy {
     });
   }
 
-  loadMyTags() {
-    this.tagService.getCandidateTags().subscribe({
-      next: (tags: Tag[]) => {
-        this.selectedTags = tags;
-        console.log('Available tags loaded successfully:', this.selectedTags);
-      },
-      error: (error: any) => {
-        console.error('Error fetching available tags', error);
-      }
-    });
-  }
 
   loadUserRole() {
     if (this.authService.getRolesCached().includes('ROLE_COMPANY')) {
@@ -98,7 +90,6 @@ export class OfferTableComponent implements OnDestroy {
     } else if (this.authService.getRolesCached().includes('ROLE_CANDIDATE')) {
       this.isCandidate = true;
       this.loadCandidateOffers(0);
-      this.loadMyTags();
     }
     else {
       this.isCompany = false;
@@ -112,6 +103,8 @@ export class OfferTableComponent implements OnDestroy {
       if (this.searchTerm !== this.lastSearchTerm) {
         this.lastSearchTerm = this.searchTerm;
         this.currentPage = 0;
+        this.firstFetch = true;
+        this.currentDetailIndex = 0;
         this.movePage(0);
       }
     }, 1000);
@@ -123,7 +116,7 @@ export class OfferTableComponent implements OnDestroy {
       this.firstFetch = false;
       this.currentPage = newPage;
       this.isLoading = true;
-      this.offerService.getCompanyOffers(this.currentOfferStatus, this.searchTerm, this.currentPage, this.pageSize).subscribe({
+      this.offerService.getCompanyOffers(this.currentOfferStatus, this.searchTerm, this.selectedTagIds, this.currentPage, this.pageSize).subscribe({
         next: (response) => {
           this.offers = response.content.map((offer: Offer) => ({
             ...offer,
@@ -133,9 +126,9 @@ export class OfferTableComponent implements OnDestroy {
           this.setDraftOffersCount();
           this.serActiveOffersCount();
           this.isLoading = false;
-          this.isLoading = false;
           this.totalPages = response.totalPages;
           this.totalElements = response.totalElements;
+          this.hasNoOffers = response.content.length === 0;
         },
         error: (error: any) => {
           console.error('Error fetching offers', error);
@@ -150,7 +143,7 @@ export class OfferTableComponent implements OnDestroy {
       this.firstFetch = false;
       this.currentPage = newPage;
       this.isLoading = true;
-      this.offerService.getCandidateOffers(this.searchTerm, this.currentOfferView, this.currentPage, this.pageSize).subscribe({
+      this.offerService.getCandidateOffers(this.searchTerm, this.selectedTagIds, this.currentOfferView, this.currentPage, this.pageSize).subscribe({
         next: (response) => {
           this.offers = response.content.map((offer: Offer) => ({
             ...offer,
@@ -166,6 +159,7 @@ export class OfferTableComponent implements OnDestroy {
           this.isLoading = false;
           this.totalPages = response.totalPages;
           this.totalElements = response.totalElements;
+          this.hasNoOffers = response.content.length === 0;
         },
         error: (error: any) => {
           console.error('Error fetching candidate offers', error);
@@ -181,16 +175,16 @@ export class OfferTableComponent implements OnDestroy {
       this.firstFetch = false;
       this.currentPage = newPage;
       this.isLoading = true;
-      this.offerService.getOffers(this.searchTerm, this.currentPage, this.pageSize).subscribe({
+      this.offerService.getOffers(this.searchTerm, this.selectedTagIds, this.currentPage, this.pageSize).subscribe({
         next: (response) => {
           this.offers = response.content.map((offer: Offer) => ({
             ...offer,
             dateToString: offer.dateAdded ? new Date(offer.dateAdded).toLocaleDateString() : new Date().toLocaleDateString(),
           }));
           this.isLoading = false;
-          this.isLoading = false;
           this.totalPages = response.totalPages;
           this.totalElements = response.totalElements;
+          this.hasNoOffers = response.content.length === 0;
         },
         error: (error: any) => {
           console.error('Error fetching offers', error);
@@ -202,7 +196,7 @@ export class OfferTableComponent implements OnDestroy {
 
   movePage(operation: number) {
     if (this.isCompany) {
-      this.loadCompanyOffers();
+      this.loadCompanyOffers(operation);
     } else if (this.isCandidate) {
       this.loadCandidateOffers(operation);
     } else {
@@ -503,11 +497,12 @@ export class OfferTableComponent implements OnDestroy {
   private _filterTags(value: string): Tag[] {
     const filterValue = value.toLowerCase();
     const currentTags = this.tagsFilterControl.value || [];
-    const currentTagIds = currentTags.map(tag => tag.id);
+
+    this.selectedTagIds = currentTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
 
     return this.availableTags.filter(tag =>
       tag.name.toLowerCase().includes(filterValue) &&
-      !currentTagIds.includes(tag.id)
+      !this.selectedTagIds.includes(tag.id!)
     );
   }
 
@@ -518,14 +513,23 @@ export class OfferTableComponent implements OnDestroy {
     if (!currentTags.find(tag => tag.id === selectedTag.id)) {
       const updatedTags = [...currentTags, selectedTag];
       this.tagsFilterControl.setValue(updatedTags);
+
+      this.selectedTagIds = updatedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
     }
+
     this.filteredTags = combineLatest([
       this.tagSearchControl.valueChanges.pipe(startWith('')),
       this.tagsFilterControl.valueChanges.pipe(startWith([]))
     ]).pipe(
       map(([searchValue]) => this._filterTags(searchValue || ''))
     );
+
     this.tagSearchControl.setValue('');
+
+    this.currentPage = 0;
+    this.firstFetch = true;
+    this.currentDetailIndex = 0;
+    this.movePage(0);
   }
 
   onSearchFocus() {
@@ -538,31 +542,16 @@ export class OfferTableComponent implements OnDestroy {
     const currentTags = this.tagsFilterControl.value || [];
     const updatedTags = currentTags.filter(tag => tag.id !== tagToRemove.id);
     this.tagsFilterControl.setValue(updatedTags);
-  }
-
-
-  recomendedOffers(): any[] {
-    const selectedTagIds = this.selectedTags.map(tag => tag.id);
-    let filtered = this.offers.filter((offer: any) =>
-      offer.tags.some((tag: Tag) => selectedTagIds.includes(tag.id))
-    );
-
-    filtered = filtered.sort((a: any, b: any) => {
-      const aMatchCount = a.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
-      const bMatchCount = b.tags.filter((tag: Tag) => selectedTagIds.includes(tag.id)).length;
-      return bMatchCount - aMatchCount;
-    });
-    return filtered;
-  }
-
-  selectedCandidaturesOffers(): any[] {
-    let filtered = this.offers.filter((offer: Offer) =>
-      offer.applied === true
-    );
-    return filtered;
+    this.selectedTagIds = updatedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+    this.currentPage = 0;
+    this.firstFetch = true;
+    this.currentDetailIndex = 0;
+    this.movePage(0);
   }
 
   setOfferView(view: 'all' | 'recommended' | 'applied' | 'bookmarks') {
+    if(this.isLoading) return; 
+    if (this.currentOfferView === view) return; 
     this.currentPage = 0;
     this.firstFetch = true;
     this.searchTerm = '';
@@ -574,6 +563,8 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   setOfferStatus(status: 'draft' | 'archived' | 'active') {
+    if(this.isLoading) return; 
+    if (this.currentOfferStatus === status) return;
     this.currentPage = 0;
     this.firstFetch = true;
     this.searchTerm = '';
@@ -832,30 +823,30 @@ export class OfferTableComponent implements OnDestroy {
 
   updateOfferStatus(offerId: number, newStatus: 'active' | 'archived' | 'draft') {
     this.offerService.updateOfferStatus(offerId, newStatus)
-    .subscribe({
-      next: (response: string) => {
-        console.log('Respuesta del backend:', response);
-        const statusMessages = {
-          'active': 'publicada',
-          'archived': 'archivada',
-          'draft': 'guardada como borrador'
-        };
+      .subscribe({
+        next: (response: string) => {
+          console.log('Respuesta del backend:', response);
+          const statusMessages = {
+            'active': 'publicada',
+            'archived': 'archivada',
+            'draft': 'guardada como borrador'
+          };
 
-        this.snackBar.open(`Oferta ${statusMessages[newStatus]} exitosamente`, 'Cerrar', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
-        this.loadCompanyOffers();
-        this.closeDetailedCard();
-      },
-      error: (error: any) => {
-        console.error(`Error al cambiar estado de oferta a ${newStatus}:`, error);
-        this.snackBar.open(`Error al cambiar el estado de la oferta`, 'Cerrar', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-      }
-    });
+          this.snackBar.open(`Oferta ${statusMessages[newStatus]} exitosamente`, 'Cerrar', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+          this.loadCompanyOffers();
+          this.closeDetailedCard();
+        },
+        error: (error: any) => {
+          console.error(`Error al cambiar estado de oferta a ${newStatus}:`, error);
+          this.snackBar.open(`Error al cambiar el estado de la oferta`, 'Cerrar', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
   }
 
   private refreshDetailedCard() {
@@ -865,5 +856,17 @@ export class OfferTableComponent implements OnDestroy {
         this.detailedCardData[this.currentDetailIndex].actions = this.getActionsForOffer(currentOffer);
       }
     }
+  }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.lastSearchTerm = '';
+    this.selectedTagIds = [];
+    this.tagsFilterControl.setValue([]);
+    this.tagSearchControl.setValue('');
+    this.currentPage = 0;
+    this.firstFetch = true;
+    this.hasNoOffers = false;
+    this.movePage(0);
   }
 }

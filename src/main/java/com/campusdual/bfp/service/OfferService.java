@@ -10,7 +10,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
@@ -99,19 +98,21 @@ public class OfferService implements IOfferService {
     @Override
     public Page<OfferDTO> queryAllOffers(
             String searchTerm,
-            List<Integer> tagIds,
+            List<Long> tagIds,
             int page,
             int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("dateAdded").descending());
+        Pageable pageable = PageRequest.of(page, size);
         Page<Offer> offers;
         boolean hasSearch = searchTerm != null && !searchTerm.trim().isEmpty();
         boolean hasTags = tagIds != null && !tagIds.isEmpty();
-        if (hasTags) {
-            offers = offerDao.findActiveOffersByTags(tagIds, pageable);
+        if (hasTags && hasSearch) {
+            offers = offerDao.findOffersByTagsAndSearchTerm(tagIds, searchTerm, pageable);
+        } else if (hasTags) {
+            offers = offerDao.findOffersByTags(tagIds, pageable);
         } else if (hasSearch) {
             offers = offerDao.findOffersBySearchTerm(searchTerm, pageable);
         } else {
-            offers = offerDao.findActiveOffers(pageable);
+            offers = offerDao.findOffers(pageable);
         }
         return offers.map(offer -> OfferMapper.INSTANCE.toDTO(offer, false, offerDao, null));
     }
@@ -253,18 +254,20 @@ public class OfferService implements IOfferService {
             String listType,
             String username,
             String searchTerm,
-            List<Integer> tagIds,
+            List<Long> tagIds,
             int page,
             int size) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
-        Pageable pageable = PageRequest.of(page, size, Sort.by("dateAdded").descending());
+        Pageable pageable = PageRequest.of(page, size);
         Page<Offer> offers;
         boolean hasSearch = searchTerm != null && !searchTerm.trim().isEmpty();
         boolean hasTags = tagIds != null && !tagIds.isEmpty();
         switch (listType) {
             case "bookmarks":
-                if (hasTags) {
+                if (hasTags && hasSearch) {
+                    offers = offerDao.findBookmarkedOffersByUserIdAndTagsAndSearchTerm(user.getId(), tagIds, searchTerm, pageable);
+                } else if (hasTags) {
                     offers = offerDao.findBookmarkedOffersByUserIdAndTags(user.getId(), tagIds, pageable);
                 } else if (hasSearch) {
                     offers = offerDao.findBookmarkedOffersBySearchTerm(user.getId(), searchTerm, pageable);
@@ -273,30 +276,36 @@ public class OfferService implements IOfferService {
                 }
                 break;
             case "applied":
-                if (hasTags) {
+                if (hasTags && hasSearch) {
+                    offers = offerDao.findAppliedOffersByUserIdAndTagsAndSearchTerm(user.getId(), tagIds, searchTerm, pageable);
+                } else if (hasTags) {
                     offers = offerDao.findAppliedOffersByUserIdAndTags(user.getId(), tagIds, pageable);
                 } else if (hasSearch) {
-                    offers = offerDao.findAppliedOffersByAndSearchTerm(user.getId(), searchTerm, pageable);
+                    offers = offerDao.findAppliedOffersBySearchTerm(user.getId(), searchTerm, pageable);
                 } else {
                     offers = offerDao.findAppliedOffersByUserId(user.getId(), pageable);
                 }
                 break;
             case "recommended":
-                if (hasTags) {
-                    offers = offerDao.findRecommendedOffersByUserIdAndTags(user.getId(), tagIds, pageable);
+                if (hasTags && hasSearch) {
+                    offers = offerDao.findRecommendedOffersByTagsAndSearchTerm(user.getId(),tagIds, searchTerm, pageable);
+                } else if (hasTags) {
+                    offers = offerDao.findRecommendedOffersByTags(user.getId(),tagIds, pageable);
                 } else if (hasSearch) {
-                    offers = offerDao.findRecommendedOffersByAndSearchTerm(user.getId(), searchTerm, pageable);
+                    offers = offerDao.findOffersByTagsAndSearchTerm(offerDao.findCandidateTagIdsByUserId(user.getId()), searchTerm, pageable);
                 } else {
-                    offers = offerDao.findRecommendedOffersByUserId(user.getId(), pageable);
+                    offers = offerDao.findOffersByTags(offerDao.findCandidateTagIdsByUserId(user.getId()), pageable);
                 }
                 break;
             case "all":
-                if (hasTags) {
-                    offers = offerDao.findActiveOffersByTags(tagIds, pageable);
+                if (hasTags && hasSearch) {
+                    offers = offerDao.findOffersByTagsAndSearchTerm(tagIds, searchTerm, pageable);
+                } else if (hasTags) {
+                    offers = offerDao.findOffersByTags(tagIds, pageable);
                 } else if (hasSearch) {
                     offers = offerDao.findOffersBySearchTerm(searchTerm, pageable);
                 } else {
-                    offers = offerDao.findActiveOffers(pageable);
+                    offers = offerDao.findOffers(pageable);
                 }
                 break;
             default:
@@ -325,41 +334,47 @@ public class OfferService implements IOfferService {
     }
 
     @Override
-    public Page<OfferDTO> getCompanyOffersByStatusPaginated(String username, String status, String searchTerm, List<Integer> tagIds, int page, int size) {
+    public Page<OfferDTO> getCompanyOffersByStatusPaginated(String username, String status, String searchTerm, List<Long> tagIds, int page, int size) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
         Company company = companyDao.findCompanyByUser(user);
         if (company == null) throw new CompanyNotFoundException("Empresa no encontrada");
-        Pageable pageable = PageRequest.of(page, size, Sort.by("dateAdded").descending());
+        Pageable pageable = PageRequest.of(page, size);
         Page<Offer> offers;
         boolean hasSearch = searchTerm != null && !searchTerm.trim().isEmpty();
         boolean hasTags = tagIds != null && !tagIds.isEmpty();
         switch (status.toLowerCase()) {
             case "active":
-                if (hasTags) {
-                    offers = offerDao.findActiveOffersByTags(tagIds, pageable);
-                } else {
-                    offers = hasSearch ?
-                            offerDao.findAppliedOffersByAndSearchTerm(company.getId(), searchTerm, pageable) :
-                            offerDao.findByActive(company.getId(), pageable);
+                if (hasTags && hasSearch) {
+                    offers = offerDao.findActiveOffersByTagsAndSearchTerm(company.getId(), tagIds, searchTerm, pageable);
+                } else if (hasTags) {
+                    offers = offerDao.findActiveOffersByTags(company.getId(), tagIds, pageable);
+                } else if (hasSearch) {
+                    offers = offerDao.findByActiveSearchTerm(company.getId(), searchTerm, pageable);
+                } else  {
+                    offers = offerDao.findByActive(company.getId(), pageable);
                 }
                 break;
             case "draft":
-                if (hasTags) {
-                    offers = offerDao.findDraftOffersByTags(tagIds, pageable);
-                } else {
-                    offers = hasSearch ?
-                            offerDao.findByDraftSearchTerm(company.getId(), searchTerm, pageable) :
-                            offerDao.findByDraft(company.getId(), pageable);
+                if (hasTags && hasSearch) {
+                    offers = offerDao.findDraftOffersByTagsAndSearchTerm(company.getId(), tagIds, searchTerm, pageable);
+                } else if (hasTags) {
+                    offers = offerDao.findDraftOffersByTags(company.getId(), tagIds, pageable);
+                } else if (hasSearch) {
+                    offers = offerDao.findByDraftSearchTerm(company.getId(), searchTerm, pageable);
+                } else  {
+                    offers = offerDao.findByDraft(company.getId(), pageable);
                 }
                 break;
             case "archived":
-                if (hasTags) {
-                    offers = offerDao.findArchivedOffersByTags(tagIds, pageable);
-                } else {
-                    offers = hasSearch ?
-                            offerDao.findByArchivedSearchTerm(company.getId(), searchTerm, pageable) :
-                            offerDao.findByArchived(company.getId(), pageable);
+                if (hasTags && hasSearch) {
+                    offers = offerDao.findArchivedOffersByTagsAndSearchTerm(company.getId(), tagIds, searchTerm, pageable);
+                } else if (hasTags) {
+                    offers = offerDao.findArchivedOffersByTags(company.getId(), tagIds, pageable);
+                } else if (hasSearch) {
+                    offers = offerDao.findByArchivedSearchTerm(company.getId(), searchTerm, pageable);
+                } else  {
+                    offers = offerDao.findByArchived(company.getId(), pageable);
                 }
                 break;
             default:
@@ -392,6 +407,4 @@ public class OfferService implements IOfferService {
         offerDao.saveAndFlush(offer);
         return true;
     }
-
-
 }

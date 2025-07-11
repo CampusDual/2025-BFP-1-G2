@@ -60,9 +60,10 @@ export class OfferService {
     return this.http.post(`${this.baseUrl}/add`, offer, { responseType: 'text' });
   }
 
-  getOffers(searchTerm: string, page: number, size: number): Observable<PageResponse<Offer>> {
+  getOffers(searchTerm: string, tagIds: number[], page: number, size: number): Observable<PageResponse<Offer>> {
     const params = new HttpParams()
       .set('searchTerm', searchTerm)
+      .set('tagIds', tagIds.join(','))
       .set('page', page.toString())
       .set('size', size.toString());
     return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/getAll`, { params });
@@ -98,10 +99,11 @@ export class OfferService {
     return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=all`);
   }
 
-  getCompanyOffers(status: string, searchTerm: string, page: number, size: number): Observable<PageResponse<Offer>> {
+  getCompanyOffers(status: string, searchTerm: string, tagIds: number[], page: number, size: number): Observable<PageResponse<Offer>> {
     const params = new HttpParams()
       .set('status', status)
       .set('searchTerm', searchTerm)
+      .set('tagIds', tagIds.join(','))
       .set('page', page.toString())
       .set('size', size.toString());
     return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/company`, { params });
@@ -113,9 +115,10 @@ export class OfferService {
     return this.http.get<number>(`${this.baseUrl}/count/company`, { params });
   }
 
-  getCandidateOffers(searchTerm: string, listType: string, page: number, size: number): Observable<PageResponse<Offer>> {
+  getCandidateOffers(searchTerm: string, tagIds: number[], listType: string, page: number, size: number): Observable<PageResponse<Offer>> {
     const params = new HttpParams()
       .set('searchTerm', searchTerm)
+      .set('tagIds', tagIds.join(','))
       .set('listType', listType)
       .set('page', page.toString())
       .set('size', size.toString());
