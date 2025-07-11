@@ -150,12 +150,10 @@
         <form [formGroup]="thirdFormGroup">
           <mat-card class="formdata">
             <h2>Áreas de interés</h2>
-            <p class="tags-subtitle">Selecciona hasta 5 áreas que te interesen (opcional).</p>
-            
+            <p class="tags-subtitle">Selecciona hasta 10 áreas que te interesen (opcional).</p>
             <div class="selected-tags-count" *ngIf="availableTags.length > 0">
               Áreas seleccionadas: {{getSelectedTagsCount()}} / 10
             </div>
-
             <div class="tags-container" *ngIf="availableTags.length > 0">
               <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl()">
                 <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
@@ -183,9 +181,6 @@
           <button mat-raised-button color="accent" [disabled]="!isStep1Valid()" (click)="nextStep()">
             Completar datos
           </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">
-            Cancelar
-          </button>
           <button class="home-button" mat-raised-button color="primary" type="button" (click)="goHome()">
             <mat-icon>home</mat-icon>
           </button>
@@ -194,9 +189,6 @@
         <div class="step-buttons" *ngIf="stepper.selectedIndex === 1">
           <button mat-raised-button color="primary" (click)="nextStep()">
             Continuar
-          </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">
-            Cancelar
           </button>
           <button mat-raised-button color="basic" (click)="previousStep()">
             Volver
@@ -207,7 +199,6 @@
           <button mat-raised-button color="primary" type="submit" (click)="onSubmit()" [disabled]="!formValid()">
             Finalizar Registro
           </button>
-          <button mat-raised-button color="warn" type="reset" (click)="onReset()">Cancelar</button>
           <button mat-raised-button color="accent" (click)="previousStep()">Volver</button>
           <button class="home-button" mat-raised-button color="primary" type="button" (click)="goHome()">
             <mat-icon>home</mat-icon>

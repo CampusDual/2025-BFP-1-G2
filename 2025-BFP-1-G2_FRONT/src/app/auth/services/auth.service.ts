@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap, of, catchError, shareReplay, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { Candidate } from 'src/app/detailed-card/detailed-card.component';
+import { Tag } from 'src/app/admin/admin-dashboard/admin-dashboard.component';
 
 export interface User {
   username: string;
@@ -18,6 +20,7 @@ export interface User {
   email: string;
   phoneNumber: string;
   date: string;
+  tags?: Tag[];
 }
 
 export interface DecodedToken {
@@ -238,7 +241,7 @@ export class AuthService {
   getCandidateDetails(): Observable<User> {
     if (!this.candidateDetailsCache) {
       this.candidateDetailsCache = this.http.get<User>(`${this.baseUrl}/candidateDetails`).pipe(
-        shareReplay(1) // Cache la respuesta
+        shareReplay(1)
       );
     }
     return this.candidateDetailsCache;

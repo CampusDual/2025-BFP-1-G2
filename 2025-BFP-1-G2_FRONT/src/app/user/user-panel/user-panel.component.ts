@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from "../../auth/services/auth.service";
 import { ImageCompressionService } from "../../services/image-compression.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TagService } from 'src/app/services/tag.service';
+import { Tag } from 'src/app/admin/admin-dashboard/admin-dashboard.component';
 
 
 @Component({
@@ -26,6 +28,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   educationLevel = new FormControl('', [Validators.maxLength(100)]);
   languages = new FormControl('', [Validators.maxLength(200)]);
   employmentStatus = new FormControl('', [Validators.maxLength(50)]);
+  tagsControl = new FormControl<Tag[]>([], { nonNullable: true });
   curriculumUrl = new FormControl('');
   linkedinUrl = new FormControl('');
   githubUrl = new FormControl('');
@@ -47,11 +50,14 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   isSaving: boolean = false;
   userNameInput: string = '';
   isCandidate: boolean = false;
+  avaliableTags: Tag[] = [];
+  myTags: Tag[] = [];
 
   constructor(private authService: AuthService,
     private imageCompressionService: ImageCompressionService,
     private snackbar: MatSnackBar,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private tagService: TagService) { }
 
   ngOnInit(): void {
     this.userNameInput = this.route.snapshot.paramMap.get('userName') || '';
@@ -75,9 +81,42 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         });
       }
     });
-
-
+    this.tagService.getCandidateTags().subscribe({
+      next: (tags) => {
+        this.myTags = tags;
+        console.log('Candidate tags loaded successfully', tags);
+      },
+      error: (error: any) => {
+        console.error('Error fetching candidate tags', error);
+      }
+    });
+    this.tagService.getAllTags().subscribe({
+      next: (tags) => {
+        this.avaliableTags = tags;
+      },
+      error: (error: any) => {
+        console.error('Error fetching tags', error);
+      }
+    });
   }
+
+  
+  getTagsFormControl(): FormControl<Tag[]> {
+    return this.tagsControl;
+  }
+
+  getSelectedTagsCount(): number {
+    return this.tagsControl.value.length;
+  }
+
+  getSelectedTags(): Tag[] {
+    return this.tagsControl.value;
+  }
+
+  isTagSelected(tag: Tag): boolean {
+    return this.myTags.some(t => t.id === tag.id);
+  }
+
 
   loadUserData(): void {
     this.authService.getCandidateDetails().subscribe({
@@ -102,6 +141,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
+        this.tagsControl.setValue(user.tags || []);
         this.fullName = parts.join(' ');
         this.isLoading = false;
         this.startTypingAnimation();

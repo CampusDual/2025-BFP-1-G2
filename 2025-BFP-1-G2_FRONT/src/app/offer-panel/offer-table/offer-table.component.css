@@ -13,13 +13,12 @@
   gap: 24px;
   align-items: stretch;
   margin-bottom: 32px;
-  /* Asegurar que todas las cards tengan la misma altura */
   grid-auto-rows: 1fr;
 }
 
 app-offer-card {
   opacity: 0;
-  animation: fadeInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, 
+  animation: fadeInCard 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
     fadeInGrid 0.5s ease-out forwards;
 }
 
@@ -28,15 +27,13 @@ app-offer-card {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-
-
-/* Loading */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -57,40 +54,74 @@ app-offer-card {
   margin-bottom: 32px;
 }
 
+.offers-header {
+  margin-bottom: 24px;
+}
+
 .page-title {
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 2rem;
   color: var(--primary-color);
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   font-weight: 600;
 }
 
-.search-container {
-  margin-block: 20px;
+.search-and-filters-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 0.3fr);
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
 }
 
-.search-and-selectors {
+.main-search-container {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .search-field {
-  flex: 1;
-  min-width: 300px;
-  max-width: 500px;
+  grid-area: 1 / 1 / 2 / 2;
+
 }
+
+.view-selectors-container {
+  grid-area: 2 / 1 / 3 / 2;
+}
+
+.tags-search-field {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+.selected-tags-chips {
+   grid-area: 2 / 2 / 3 / 3;
+}
+
+.selected-tags-chips mat-chip-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  gap: 16px;
+  
+}
+
 
 .offer-selectors {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   align-items: center;
-  margin-inline-end: 20px;
+  justify-content: center;
 }
 
 .selector-button {
@@ -106,14 +137,13 @@ app-offer-card {
   white-space: nowrap;
 }
 
-
 .selector-button mat-icon {
   font-size: 18px;
   width: 18px;
   height: 18px;
 }
 
-.selector-button.selected{
+.selector-button.selected {
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
@@ -121,8 +151,8 @@ app-offer-card {
 }
 
 ::ng-deep .selector-button .mat-badge-content {
-  background-color:  white !important;
-  color:  var(--primary-color) !important;
+  background-color: white !important;
+  color: var(--primary-color) !important;
   font-size: 11px;
   font-weight: 600;
   min-width: 18px;
@@ -137,9 +167,17 @@ app-offer-card {
 }
 
 @keyframes bookmarkSave {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Estilo para cuando no está en bookmarks */
@@ -182,17 +220,17 @@ app-offer-card {
     align-items: stretch;
     gap: 16px;
   }
-  
+
   .search-field {
     min-width: unset;
     max-width: unset;
   }
-  
+
   .offer-selectors {
     justify-content: center;
     gap: 8px;
   }
-  
+
   .selector-button {
     flex: 1;
     min-width: 100px;
@@ -200,7 +238,7 @@ app-offer-card {
     font-size: 0.875rem;
     padding: 6px 12px;
   }
-  
+
   .selector-button mat-icon {
     font-size: 16px;
     width: 16px;
@@ -208,7 +246,6 @@ app-offer-card {
   }
 }
 
-/* Para pantallas muy pequeñas, hacer que los botones se apilen en dos filas */
 @media (max-width: 480px) {
   .offer-selectors {
     display: grid;
@@ -216,10 +253,176 @@ app-offer-card {
     gap: 8px;
     width: 100%;
   }
-  
+
   .selector-button {
     min-width: unset;
     font-size: 0.8rem;
     padding: 8px 6px;
   }
+}
+
+.filter-chips {
+  display: grid;
+  grid-template-columns: 1fr, 1fr;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+  display: block;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+.chips-autocomplete {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.chip-option {
+  padding: 8px 16px !important;
+  min-height: auto !important;
+}
+
+.chip-option:hover {
+  background-color: #f5f5f5;
+}
+
+.selected-label {
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+  display: block;
+  font-size: 13px;
+}
+
+
+
+@media (max-width: 768px) {
+  .search-and-filters-section {
+    gap: 16px;
+  }
+
+  .main-search-container {
+    justify-content: center;
+  }
+
+  .search-field {
+    min-width: 100%;
+    max-width: none;
+  }
+
+  .filter-chips {
+    padding: 16px;
+    margin: 12px 0;
+  }
+
+  .tags-search-field {
+    max-width: none;
+  }
+
+  .view-selectors-container {
+    margin-top: 12px;
+  }
+
+  .offer-selectors {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .selector-button {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .search-and-filters-section {
+    gap: 12px;
+  }
+
+  .filter-chips {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .filter-label,
+  .selected-label {
+    font-size: 12px;
+  }
+
+
+  .offer-selectors {
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .selector-button {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+    padding: 8px;
+  }
+}
+
+/* Estilos para el mensaje de "no hay ofertas" */
+.no-offers-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 40px 20px;
+}
+
+.no-offers-content {
+  text-align: center;
+  max-width: 500px;
+  padding: 40px;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  border: 2px dashed #ddd;
+}
+
+.no-offers-icon {
+  font-size: 64px;
+  color: #999;
+  margin-bottom: 16px;
+  width: 64px;
+  height: 64px;
+}
+
+.no-offers-content h3 {
+  color: #666;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.no-offers-content p {
+  color: #888;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.no-offers-content button {
+  margin-top: 16px;
+}
+
+.no-offers-content button mat-icon {
+  margin-right: 8px;
 }

@@ -10,6 +10,7 @@ import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dto.CandidateDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,15 +50,12 @@ public class OfferController {
         return ResponseEntity.ok("Offers controller method works!");
     }
 
-    @PostMapping(value = "/get")
-    public ResponseEntity<OfferDTO> queryOffer(@RequestBody OfferDTO offerDTO) {
-        OfferDTO result = offerService.queryOffer(offerDTO);
-        return ResponseEntity.ok(result);
-    }
-
     @GetMapping(value = "/getAll")
-    public ResponseEntity<List<OfferDTO>> queryAllOffers() {
-        List<OfferDTO> offers = offerService.queryAllOffers();
+    public ResponseEntity<Page<OfferDTO>> queryAllOffers(@RequestParam String searchTerm,
+                                                         @RequestParam List<Long> tagIds,
+                                                         @RequestParam int page,
+                                                         @RequestParam int size) {
+        Page<OfferDTO> offers = offerService.queryAllOffers(searchTerm, tagIds, page, size);
         return ResponseEntity.ok(offers);
     }
 
@@ -131,15 +129,6 @@ public class OfferController {
         return ResponseEntity.ok("Candidato actualizado correctamente");
     }
 
-    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
-    @GetMapping(value = "/myOffers")
-    public ResponseEntity<List<OfferDTO>> getMyOffers(Principal principal) {
-        String username = principal.getName();
-        List<OfferDTO> offers = offerService.getMyOffers(username);
-        return ResponseEntity.ok(offers);
-    }
-
-
     @PostMapping("/bookmark/{offerId}")
     @PreAuthorize("hasRole('CANDIDATE')")
     public ResponseEntity<String> addBookmark(@PathVariable int offerId, Principal principal) {
@@ -173,22 +162,53 @@ public class OfferController {
         return ResponseEntity.ok("Oferta eliminada de guardados");
     }
 
-    @GetMapping("/bookmarks")
-    @PreAuthorize("hasRole('CANDIDATE')")
-    public ResponseEntity<List<OfferDTO>> getUserBookmarks(Principal principal) {
-        List<OfferDTO> bookmarks = offerService.getUserBookmarks(principal.getName());
-        return ResponseEntity.ok(bookmarks);
+    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
+    @GetMapping(value = "/count/candidate")
+    public ResponseEntity<Integer> getOffersCount(@RequestParam String listType,
+                                                  Principal principal) {
+        Integer offersCount = offerService.getCadidateOffersCount(listType, principal.getName());
+        return ResponseEntity.ok(offersCount);
     }
 
-    @GetMapping("/bookmark/check/{offerId}")
-    @PreAuthorize("hasRole('CANDIDATE')")
-    public ResponseEntity<Boolean> isBookmarked(@PathVariable int offerId, Principal principal) {
-        User user = userDao.findByLogin(principal.getName());
-        if (user == null) {
-            return ResponseEntity.ok(false);
-        }
-        boolean isBookmarked = candidateBookmarksDao.existsByUserIdAndOfferId(user.getId(), offerId);
-        return ResponseEntity.ok(isBookmarked);
+    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
+    @GetMapping(value = "/candidate")
+    public ResponseEntity<Page<OfferDTO>> searchOffers(@RequestParam String searchTerm,
+                                                       @RequestParam List<Long> tagIds,
+                                                       @RequestParam String listType,
+                                                       @RequestParam int page,
+                                                       @RequestParam int size,
+                                                       Principal principal) {
+        Page<OfferDTO> offers = offerService.getCandidateOffersPaginated(listType, principal.getName(), searchTerm, tagIds, page, size);
+        return ResponseEntity.ok(offers);
     }
 
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @GetMapping(value = "/count/company")
+    public ResponseEntity<Integer> getCompanyOffersCount(@RequestParam String status,
+                                                         Principal principal) {
+        Integer offersCount = offerService.getCompanyOffersCount(status, principal.getName());
+        return ResponseEntity.ok(offersCount);
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @GetMapping(value = "/company")
+    public ResponseEntity<Page<OfferDTO>> getCompanyOffers(@RequestParam String status,
+                                                           @RequestParam String searchTerm,
+                                                           @RequestParam List<Long> tagIds,
+                                                           @RequestParam int page,
+                                                           @RequestParam int size,
+                                                           Principal principal) {
+        return ResponseEntity
+                .ok(offerService.getCompanyOffersByStatusPaginated(principal.getName(), status, searchTerm, tagIds, page, size));
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @PutMapping(value = "/status/{offerId}")
+    public ResponseEntity<String> updateOfferStatus(@PathVariable int offerId,
+                                                    @RequestParam String status,
+                                                    Principal principal) {
+        return ResponseEntity.ok(offerService.updateOfferStatus(offerId, status, principal.getName())
+                ? "Estado de la oferta actualizado correctamente"
+                : "Error al actualizar el estado de la oferta");
+    }
 }

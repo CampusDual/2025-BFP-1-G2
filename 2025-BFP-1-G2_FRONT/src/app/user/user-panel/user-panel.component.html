@@ -115,10 +115,6 @@
       <div *ngIf="isEditMode && location.invalid && location.touched" class="error-message">
         <small *ngIf="location.errors?.['maxlength']">Máximo 100 caracteres</small>
       </div>
-      <div class="info-item" *ngIf="isEditMode">
-        <mat-icon>image</mat-icon>
-        <span class="label">Foto de Perfil:</span>
-      </div>
     </div>
   </div>
 
@@ -150,7 +146,8 @@
       <div class="info-item">
         <mat-icon>schedule</mat-icon>
         <span class="label">Experiencia:</span>
-        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No especificada' }}</span>
+        <span class="value" *ngIf="!isEditMode">{{ yearsOfExperience.value ? yearsOfExperience.value + ' años' : 'No
+          especificada' }}</span>
         <input class="edit-input" *ngIf="isEditMode" type="number" [formControl]="yearsOfExperience"
           [class.error]="yearsOfExperience.invalid && yearsOfExperience.touched" placeholder="Años de experiencia"
           min="0">
@@ -207,15 +204,14 @@
         <mat-icon>picture_as_pdf</mat-icon>
         <span class="label">Currículum:</span>
         <div class="file-upload-container">
-          <button type="button" class="file-upload-btn" (click)="openCVFileSelector()"
-                  [disabled]="isUploadingCV">
+          <button type="button" class="file-upload-btn" (click)="openCVFileSelector()" [disabled]="isUploadingCV">
             <mat-icon>upload_file</mat-icon>
             <span *ngIf="!isUploadingCV && !cvFileName">Subir PDF</span>
             <span *ngIf="!isUploadingCV && cvFileName">{{ cvFileName }}</span>
             <span *ngIf="isUploadingCV">Subiendo...</span>
           </button>
-          <input type="file" #cvFileInput id="cvFileInput" (change)="onCVFileSelected($event)"
-                 accept=".pdf" style="display: none">
+          <input type="file" #cvFileInput id="cvFileInput" (change)="onCVFileSelected($event)" accept=".pdf"
+            style="display: none">
         </div>
       </div>
       <div class="edit-link-item">
@@ -275,6 +271,40 @@
         *ngIf="!curriculumUrl.value && !linkedinUrl.value && !githubUrl.value && !figmaUrl.value && !personalWebsiteUrl.value"
         class="no-links">
         <p>No hay enlaces configurados</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+    <h3><mat-icon>link</mat-icon>Areas de interés</h3>
+
+    <div class="edit-links" *ngIf="isEditMode">
+      <p class="tags-subtitle">Selecciona hasta 10 áreas que te interesen (opcional).</p>
+      <div class="selected-tags-count" *ngIf="avaliableTags.length > 0">
+        Áreas seleccionadas: {{getSelectedTagsCount()}} / 10
+      </div>
+      <div class="tags-container" *ngIf="avaliableTags.length > 0">
+        <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl()">
+          <mat-chip-option *ngFor="let tag of avaliableTags" [value]="tag" [class.chip-selected]="isTagSelected(tag)"
+            [class.chip-unselected]="!isTagSelected(tag)"
+            [disabled]="getSelectedTagsCount() >= 10 && !isTagSelected(tag)">
+            {{tag.name}}
+          </mat-chip-option>
+        </mat-chip-listbox>
+      </div>
+    </div>
+
+
+    <div class="tags" *ngIf="!isEditMode">
+      <div class="tags-container" *ngIf="avaliableTags.length > 0">
+        <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl()">
+          <mat-chip-row *ngFor="let tag of myTags" [value]="tag" [class.chip-selected]="isTagSelected(tag)"
+            [class.chip-unselected]="!isTagSelected(tag)"
+            [disabled]="getSelectedTagsCount() >= 10 && !isTagSelected(tag)">
+            {{tag.name}}
+          </mat-chip-row>
+        </mat-chip-listbox>
       </div>
     </div>
 
