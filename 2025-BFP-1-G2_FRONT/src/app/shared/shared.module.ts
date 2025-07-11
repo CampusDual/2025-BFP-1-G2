@@ -14,26 +14,28 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 import { DetailedCardComponent } from '../detailed-card/detailed-card.component';
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
     DetailedCardComponent
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatChipsModule,
-    MatExpansionModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatChipsModule,
+        MatExpansionModule,
+        MatMenuModule
+    ],
   exports: [
     DetailedCardComponent
   ]

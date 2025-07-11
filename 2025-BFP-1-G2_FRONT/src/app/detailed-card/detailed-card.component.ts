@@ -83,6 +83,7 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   @Input() cardType: 'company' | 'offer' | 'candidate' | 'generic' = 'generic';
   @Input() editMode: boolean = false;
   @Input() availableTags: Tag[] = [];
+  @Input() viewMessages = new EventEmitter<any>();
 
   @Output() onClose = new EventEmitter<void>();
   @Output() onAction = new EventEmitter<{ action: string, data: any }>();
@@ -438,5 +439,18 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
 
 
   onDotsScroll(): void {
+  }
+
+
+  onViewMessages(event: Event) {
+    this.viewMessages.emit(
+        {
+          action: 'viewMessages',
+          data: {
+            itemId: this.currentItem?.id,
+            itemType: this.cardType
+          }
+
+      });
   }
 }

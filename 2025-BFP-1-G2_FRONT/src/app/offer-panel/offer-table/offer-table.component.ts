@@ -360,6 +360,14 @@ export class OfferTableComponent implements OnDestroy {
         data: { offer: offer }
       });
 
+      actions.push({
+        label: 'Mensajes',
+        action: 'openChat',
+        color: 'primary',
+        icon: 'bookmark_border',
+        data: { offer: offer }
+      });
+
       if (offer.isValid === 'VALID') {
         actions.push({
           label: 'Validada',
@@ -535,9 +543,9 @@ export class OfferTableComponent implements OnDestroy {
     const filterValue = value.toLowerCase();
     const currentTags = this.tagsFilterControl.value || [];
     const currentTagIds = currentTags.map(tag => tag.id);
-    
-    return this.availableTags.filter(tag => 
-      tag.name.toLowerCase().includes(filterValue) && 
+
+    return this.availableTags.filter(tag =>
+      tag.name.toLowerCase().includes(filterValue) &&
       !currentTagIds.includes(tag.id)
     );
   }
@@ -545,7 +553,7 @@ export class OfferTableComponent implements OnDestroy {
   onTagSelected(event: any) {
     const selectedTag = event.option.value;
     const currentTags = this.tagsFilterControl.value || [];
-    
+
     if (!currentTags.find(tag => tag.id === selectedTag.id)) {
       const updatedTags = [...currentTags, selectedTag];
       this.tagsFilterControl.setValue(updatedTags);

@@ -41,7 +41,7 @@
           </div>
         </div>
       </div>
-      
+
     </div>
 
     <div class="card-content-wrapper">
@@ -262,6 +262,26 @@
                   {{tag.name}}
                 </mat-chip>
               </mat-chip-listbox>
+            </div>
+            <div class="message-actions">
+              <button mat-raised-button [matMenuTriggerFor]="menu" aria-label="Mensajes">
+                <mat-icon (click)="onViewMessages($event)">chat</mat-icon>
+                <span>Mensajeria</span>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item>
+                  <mat-icon>chat_add_on</mat-icon>
+                  <span>Nuevo Mensaje</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>notifications_active</mat-icon>
+                  <span>Notificaciones</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>forum</mat-icon>
+                  <span>Conversaciones</span>
+                </button>
+              </mat-menu>
             </div>
           </div>
           <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
