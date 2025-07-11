@@ -327,8 +327,6 @@ public class UserService implements UserDetailsService, IUserService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Experiencia no encontrada"));
         candidate.getExperiences().remove(toDelete);
-        // Si tienes un DAO para CandidateExperience, bórrala también de la base de datos:
-        // candidateExperienceDao.deleteById(experienceId);
         candidateDao.saveAndFlush(candidate);
     }
 
@@ -344,7 +342,12 @@ public class UserService implements UserDetailsService, IUserService {
         candidate.getExperiences().add(experience);
         candidateDao.saveAndFlush(candidate); // Guarda cascada
 
-        return CandidateExperienceMapper.INSTANCE.toDTO(experience);
+        CandidateExperience savedExperience = experience;
+        if (experience.getId() == null && candidate.getExperiences() != null && !candidate.getExperiences().isEmpty()) {
+            savedExperience = candidate.getExperiences().get(candidate.getExperiences().size() - 1);
+        }
+
+        return CandidateExperienceMapper.INSTANCE.toDTO(savedExperience);
     }
 
     @Transactional
@@ -358,8 +361,6 @@ public class UserService implements UserDetailsService, IUserService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Educación no encontrada"));
         candidate.getEducations().remove(toDelete);
-        // Si tienes un DAO para CandidateEducation, bórrala también de la base de datos:
-        // candidateEducationDao.deleteById(educationId);
         candidateDao.saveAndFlush(candidate);
     }
 
@@ -375,6 +376,11 @@ public class UserService implements UserDetailsService, IUserService {
         candidate.getEducations().add(education);
         candidateDao.saveAndFlush(candidate); // Guarda en cascada
 
-        return CandidateEducationMapper.INSTANCE.toDTO(education);
+        CandidateEducation savedEducation = education;
+        if (education.getId() == null && candidate.getEducations() != null && !candidate.getEducations().isEmpty()) {
+            savedEducation = candidate.getEducations().get(candidate.getEducations().size() - 1);
+        }
+
+        return CandidateEducationMapper.INSTANCE.toDTO(savedEducation);
     }
 }

@@ -17,6 +17,9 @@ import { SharedModule } from '../shared/shared.module';
 import { UserPanelComponent } from './user-panel/user-panel.component';
 import { MatTabsModule } from '@angular/material/tabs'; // Import MatTabsModule
 import { MatCardModule } from '@angular/material/card'; // Import MatCardModule
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs, 'es');
 
 @NgModule({
   declarations: [
@@ -37,7 +40,7 @@ import { MatCardModule } from '@angular/material/card'; // Import MatCardModule
     MatSnackBarModule,
     SharedModule,
     MatTabsModule,
-    MatCardModule
+    MatCardModule,
   ]
 })
 export class UserModule { }

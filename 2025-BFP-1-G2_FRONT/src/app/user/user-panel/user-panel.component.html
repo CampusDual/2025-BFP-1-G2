@@ -1,5 +1,5 @@
 <div class="user-panel" *ngIf="!isLoading">
-  <div class="profile-header fade-in">
+  <div class="profile-header">
     <div class="profile-avatar" [ngClass]="{'edit-mode': isEditMode}">
       <img *ngIf="getProfileImage()" [src]="getProfileImage()" [alt]="fullName" class="avatar-image"
         (error)="onLogoError()">
@@ -42,9 +42,9 @@
     </div>
   </div>
   <div class="profile-tabs">
-    <mat-tab-group [dynamicHeight]="true" animationDuration="300ms" class="fade-in">
+    <mat-tab-group [dynamicHeight]="true" animationDuration="300ms">
 
-      <mat-tab label="Información de Contacto"><div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+      <mat-tab label="Información de Contacto"><div class="info-section" [ngClass]="{'edit-mode': isEditMode}">
     <div class="info-grid">
       <div class="info-item">
         <mat-icon>person</mat-icon>
@@ -148,33 +148,42 @@
     </div>
   </div>
 </mat-tab>
-      <mat-tab label="Información Profesional"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+      <mat-tab label="Información Profesional"> <div class="info-section" [ngClass]="{'edit-mode': isEditMode}">
     <div *ngIf="experiences.length > 0; else noExperience">
       <div class="experience-carousel">
-        <div class="carousel-wrapper">
-          <button class="carousel-arrow" (click)="prevExperience()" [disabled]="currentExperienceIndex === 0">
+        <div class="carousel-wrapper scrollable-carousel" #experienceCarousel>
+          <button class="carousel-arrow" (click)="scrollExperienceCarousel(-1, experienceCarousel)">
             <mat-icon>chevron_left</mat-icon>
           </button>
-          <mat-card class="experience-card">
-            <h3 class="card-title">{{ experiences[currentExperienceIndex]?.jobTitle }}</h3>
-            <p class="card-date"><i>{{ experiences[currentExperienceIndex]?.startDate | date:'yyyy-MM-dd' }} - {{ experiences[currentExperienceIndex]?.endDate ? (experiences[currentExperienceIndex]?.endDate | date:'yyyy-MM-dd') : 'Actualidad' }}</i></p>
-            <p class="card-company"><strong>Empresa:</strong> {{ experiences[currentExperienceIndex]?.companyName }}</p>
-            <p class="card-description"><strong>Descripción:</strong> {{ experiences[currentExperienceIndex]?.responsibilities }}</p>
-            <button *ngIf="isEditMode" (click)="removeExperience(currentExperienceIndex)" type="button" class="remove-experience-btn">
-              <mat-icon>delete</mat-icon> Eliminar
-            </button>
-          </mat-card>
-          <button class="carousel-arrow" (click)="nextExperience()" [disabled]="currentExperienceIndex === experiences.length - 1">
+          <div class="carousel-cards" (scroll)="onExperienceCarouselScroll(experienceCarousel)">
+            <div *ngFor="let exp of experiences; let i = index" class="experience-card">
+              <p class="card-company">{{ exp.companyName }}</p>
+              <h3 class="card-title">{{ exp.jobTitle }}</h3>
+              <p class="card-date">
+                <i>
+                  {{ (exp.startDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:0:1 | uppercase) }}{{ (exp.startDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:1) }}
+                  -
+                  <ng-container *ngIf="exp.endDate; else actualidad">
+                    {{ (exp.endDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:0:1 | uppercase) }}{{ (exp.endDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:1) }}
+                  </ng-container>
+                  <ng-template #actualidad>Actualidad</ng-template>
+                </i>
+              </p>
+              <p class="card-description"><strong>Responsabilidades:</strong> <br>{{ exp.responsibilities }}</p>
+              <button *ngIf="isEditMode" (click)="removeExperience(i)" type="button" class="remove-experience-btn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+          <button class="carousel-arrow" (click)="scrollExperienceCarousel(1, experienceCarousel)">
             <mat-icon>chevron_right</mat-icon>
           </button>
         </div>
-        <div class="carousel-indicators">
-          <span *ngFor="let exp of experiences; let i = index" [class.active]="i === currentExperienceIndex" (click)="goToExperience(i)"></span>
-        </div>
+        <!-- Eliminados los dots y todo el código relacionado -->
       </div>
     </div>
     <ng-template #noExperience>
-      <p>No hay experiencias profesionales registradas.</p>
+      <p>No hay experiencias profesionales registradas.</p><br><br>
     </ng-template>
     <div *ngIf="isEditMode" class="add-experience-btn-container">
       <button mat-mini-fab color="primary" (click)="openAddExperienceForm()">
@@ -185,33 +194,41 @@
 
 </mat-tab>
           <mat-tab label="Formación">
-  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+  <div class="info-section" [ngClass]="{'edit-mode': isEditMode}">
     <div *ngIf="educations.length > 0; else noEducation">
       <div class="experience-carousel">
-        <div class="carousel-wrapper">
-          <button class="carousel-arrow" (click)="prevEducation()" [disabled]="currentEducationIndex === 0">
+        <div class="carousel-wrapper scrollable-carousel" #educationCarousel>
+          <button class="carousel-arrow" (click)="scrollEducationCarousel(-1, educationCarousel)">
             <mat-icon>chevron_left</mat-icon>
           </button>
-          <mat-card class="experience-card">
-            <h3 class="card-title">{{ educations[currentEducationIndex]?.degree }}</h3>
-            <p class="card-date"><i>{{ educations[currentEducationIndex]?.startDate | date:'yyyy-MM-dd' }} - {{ educations[currentEducationIndex]?.endDate ? (educations[currentEducationIndex]?.endDate | date:'yyyy-MM-dd') : 'Actualidad' }}</i></p>
-            <p class="card-company"><strong>Centro:</strong> {{ educations[currentEducationIndex]?.institution }}</p>
-            <p class="card-description"><strong>Descripción:</strong> {{ educations[currentEducationIndex]?.description }}</p>
-            <button *ngIf="isEditMode" (click)="removeEducation(currentEducationIndex)" type="button" class="remove-experience-btn">
-              <mat-icon>delete</mat-icon> Eliminar
-            </button>
-          </mat-card>
-          <button class="carousel-arrow" (click)="nextEducation()" [disabled]="currentEducationIndex === educations.length - 1">
+          <div class="carousel-cards" (scroll)="onEducationCarouselScroll(educationCarousel)">
+            <div *ngFor="let edu of educations; let i = index" class="experience-card">
+              <p class="card-company">{{ edu.institution }}</p>
+              <h3 class="card-title">{{ edu.degree }}</h3>
+              <p class="card-date">
+                <i>
+                  {{ (edu.startDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:0:1 | uppercase) }}{{ (edu.startDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:1) }}
+                  -
+                  <ng-container *ngIf="edu.endDate; else actualidadEdu">
+                    {{ (edu.endDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:0:1 | uppercase) }}{{ (edu.endDate | date:"MMMM 'de' yyyy":'':'es' | lowercase | slice:1) }}
+                  </ng-container>
+                  <ng-template #actualidadEdu>Actualidad</ng-template>
+                  <br><br>
+                </i>
+              </p>
+              <button *ngIf="isEditMode" (click)="removeEducation(i)" type="button" class="remove-experience-btn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+          <button class="carousel-arrow" (click)="scrollEducationCarousel(1, educationCarousel)">
             <mat-icon>chevron_right</mat-icon>
           </button>
-        </div>
-        <div class="carousel-indicators">
-          <span *ngFor="let edu of educations; let i = index" [class.active]="i === currentEducationIndex" (click)="goToEducation(i)"></span>
         </div>
       </div>
     </div>
     <ng-template #noEducation>
-      <p>No hay formación registrada.</p>
+      <p>No hay formación registrada.</p><br><br>
     </ng-template>
     <div *ngIf="isEditMode" class="add-experience-btn-container">
       <button mat-mini-fab color="primary" (click)="openAddEducationForm()">
@@ -221,7 +238,7 @@
   </div>
 </mat-tab>
 
-      <mat-tab label="Enlaces y Portafolio"> <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+      <mat-tab label="Enlaces y Portafolio"> <div class="info-section" [ngClass]="{'edit-mode': isEditMode}">
 
     <div class="edit-links" *ngIf="isEditMode">
       <div class="edit-link-item">
@@ -312,69 +329,73 @@
 <div class="spacer" *ngIf="isLoading"></div>
 <div *ngIf="showAddExperienceForm" class="add-experience-overlay">
   <div class="add-experience-form-card">
-    <mat-card>
-      <h3>Añadir experiencia</h3>
-      <form (ngSubmit)="addExperience()">
-        <mat-form-field appearance="fill">
-          <mat-label>Puesto</mat-label>
-          <input matInput [(ngModel)]="newExperience.jobTitle" name="jobTitle" required>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Empresa</mat-label>
-          <input matInput [(ngModel)]="newExperience.companyName" name="companyName" required>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Desde</mat-label>
-          <input matInput type="date" [(ngModel)]="newExperience.startDate" name="startDate">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Hasta</mat-label>
-          <input matInput type="date" [(ngModel)]="newExperience.endDate" name="endDate">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Descripción</mat-label>
-          <textarea matInput [(ngModel)]="newExperience.responsibilities" name="responsibilities"></textarea>
-        </mat-form-field>
-        <div class="add-exp-actions">
+      <h2 class="form-title">Añadir experiencia</h2>
+      <form (ngSubmit)="addExperience()" class="formdata">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Puesto</mat-label>
+            <input matInput [(ngModel)]="newExperience.jobTitle" name="jobTitle" required>
+            <mat-icon matPrefix class="field-icon">work</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Empresa</mat-label>
+            <input matInput [(ngModel)]="newExperience.companyName" name="companyName" required>
+            <mat-icon matPrefix class="field-icon">business</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Desde</mat-label>
+            <input matInput type="date" [(ngModel)]="newExperience.startDate" name="startDate">
+            <mat-icon matPrefix class="field-icon">calendar_today</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Hasta</mat-label>
+            <input matInput type="date" [(ngModel)]="newExperience.endDate" name="endDate">
+            <mat-icon matPrefix class="field-icon">calendar_today</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="decorated-field" style="grid-column: 1 / span 2;">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput [(ngModel)]="newExperience.responsibilities" name="responsibilities"></textarea>
+            <mat-icon matPrefix class="field-icon">description</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="add-exp-actions step-buttons">
           <button mat-raised-button color="primary" type="submit">Añadir</button>
           <button mat-button type="button" (click)="closeAddExperienceForm()">Cancelar</button>
         </div>
       </form>
-    </mat-card>
   </div>
 </div>
-<!-- Overlay para añadir formación, completamente fuera de .user-panel y cualquier wrapper/tab -->
 <div *ngIf="showAddEducationForm" class="add-experience-overlay">
   <div class="add-experience-form-card">
-    <mat-card>
-      <h3>Añadir formación</h3>
-      <form (ngSubmit)="addEducation()">
-        <mat-form-field appearance="fill">
-          <mat-label>Título</mat-label>
-          <input matInput [(ngModel)]="newEducation.degree" name="degree" required>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Centro</mat-label>
-          <input matInput [(ngModel)]="newEducation.institution" name="institution" required>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Desde</mat-label>
-          <input matInput type="date" [(ngModel)]="newEducation.startDate" name="startDate">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Hasta</mat-label>
-          <input matInput type="date" [(ngModel)]="newEducation.endDate" name="endDate">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Descripción</mat-label>
-          <textarea matInput [(ngModel)]="newEducation.description" name="description"></textarea>
-        </mat-form-field>
-        <div class="add-exp-actions">
+      <h2 class="form-title">Añadir formación</h2>
+      <form (ngSubmit)="addEducation()" class="formdata">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Título</mat-label>
+            <input matInput [(ngModel)]="newEducation.degree" name="degree" required>
+            <mat-icon matPrefix class="field-icon">school</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Centro</mat-label>
+            <input matInput [(ngModel)]="newEducation.institution" name="institution" required>
+            <mat-icon matPrefix class="field-icon">business</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Desde</mat-label>
+            <input matInput type="date" [(ngModel)]="newEducation.startDate" name="startDate">
+            <mat-icon matPrefix class="field-icon">calendar_today</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="decorated-field">
+            <mat-label>Hasta</mat-label>
+            <input matInput type="date" [(ngModel)]="newEducation.endDate" name="endDate">
+            <mat-icon matPrefix class="field-icon">calendar_today</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="add-exp-actions step-buttons">
           <button mat-raised-button color="primary" type="submit">Añadir</button>
           <button mat-button type="button" (click)="closeAddEducationForm()">Cancelar</button>
         </div>
       </form>
-    </mat-card>
   </div>
 </div>
   </div>

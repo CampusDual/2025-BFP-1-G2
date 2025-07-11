@@ -1,5 +1,5 @@
 <div class="company-panel" *ngIf="!isLoading">
-  <div class="profile-header fade-in">
+  <div class="profile-header">
     <div class="profile-company" [ngClass]="{'edit-mode': isEditMode}">
       <img *ngIf="getProfileImage()" [src]="getProfileImage()" [alt]="fullName" class="company-image"
         (error)="onLogoError()">
@@ -42,9 +42,9 @@
     </div>
   </div>
   <div class="profile-tabs">
-  <mat-tab-group [dynamicHeight]="true" animationDuration="300ms" class="fade-in">
+  <mat-tab-group [dynamicHeight]="true" animationDuration="300ms">
   <mat-tab label="Información de Contacto">
-  <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+  <div class="info-section" [ngClass]="{'edit-mode': isEditMode}">
     <div class="info-grid">
       <div class="info-item">
         <mat-icon>person</mat-icon>
@@ -122,7 +122,7 @@
     </div>
   </mat-tab>
   <mat-tab label="Enlaces">
-    <div class="info-section fade-in" [ngClass]="{'edit-mode': isEditMode}">
+    <div class="info-section" [ngClass]="{'edit-mode': isEditMode}">
 
     <div class="edit-links" *ngIf="isEditMode">
       <div class="edit-link-item">

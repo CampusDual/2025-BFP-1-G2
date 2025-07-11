@@ -1,5 +1,5 @@
 .user-panel {
-  max-width: 70%;
+  max-width: 90%;
   margin: auto;
   padding: 5px;
   display: grid;
@@ -972,8 +972,7 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 32px 0 24px 0;
-  margin-bottom: 24px;
+  padding: 20px 0 20px 0;
 }
 
 .carousel-wrapper {
@@ -982,12 +981,14 @@
   gap: 24px;
   width: 100%;
   justify-content: center;
+  padding: 20px;
 }
 
 .carousel-arrow {
-  background: #fff;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
+  background: #00000000;
+  color: grey;
+  border: none;
+  box-shadow: none;
   border-radius: 50%;
   width: 48px;
   height: 48px;
@@ -995,116 +996,119 @@
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  box-shadow: 0 2px 8px rgba(30,64,175,0.08);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
   outline: none;
 }
 .carousel-arrow:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  background: #f3f4f6;
-  border-color: #d1d5db;
+  background: #ffffff1c;
 }
 .carousel-arrow:hover:not(:disabled) {
-  background: var(--primary-color);
-  color: #fff;
+  background: #00000017;
+  color: grey;
   transform: scale(1.08);
 }
 
-.carousel-indicators {
+.scrollable-carousel {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  width: 100%;
   justify-content: center;
-  margin-top: 18px;
-}
-.carousel-indicators span {
-  display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #d1d5db;
-  transition: background 0.3s, transform 0.3s;
-  cursor: pointer;
-  border: 2px solid transparent;
-}
-.carousel-indicators span.active {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
-  transform: scale(1.2);
 }
 
 .experience-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 20px 20px 14px 20px;
-  width: 340px;
-  min-width: 220px;
-  max-width: 340px;
-  display: grid;
-  grid-template-rows: auto 1fr;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  max-width: 330px;
+  padding-top: 10px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.carousel-cards {
+  display: flex;
+  flex-direction: row;
   gap: 4px;
-  position: relative;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 25px;
+  padding: 20px;
+  padding-bottom: 0px;
+  width: 85%;
+  scrollbar-width: none;
+}
+
+.carousel-cards::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+@media (max-width: 900px) {
+  .carousel-cards {
+    max-width: 98vw;
+    gap: 12px;
+  }
+}
+
+.card-company {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #333;
+  text-decoration: underline;
 }
 
 .card-title {
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--primary-color);
-  margin-bottom: 2px;
-  padding-right: 90px; /* deja espacio para la fecha */
+  margin-bottom: 0; /* Elimina el margen inferior para que no haya espacio debajo del título */
+  margin-top: 0;
 }
 
 .card-date {
   font-size: 0.9rem;
   color: #666;
-  margin-bottom: 0;
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  font-size: 0.82rem;
-  padding: 2px 10px;
-  background: #f3f4f6;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(30,64,175,0.04);
-  z-index: 2;
-}
-
-.card-company {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 2px;
+  margin-bottom: 0; /* Asegura que no haya espacio debajo de la fecha */
+  margin-top: 0;
 }
 
 .card-description {
+  text-align: justify;
   font-size: 0.9rem;
   color: #555;
   line-height: 1.4;
-  margin-bottom: 0;
 }
 
 .remove-experience-btn {
   margin: auto;
-  background: var(--primary-color);
-  color: #fff;
+  background: transparent;
+  color: var(--primary-color);
   border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(30,64,175,0.08);
-  transition: background 0.2s, transform 0.2s;
-  margin-top: 10px;
-}
-.remove-experience-btn mat-icon {
+  justify-content: center;
   font-size: 1.2rem;
-  margin-right: 4px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  margin-top: auto;
+  margin-bottom: 0;
+  gap: 0;
+}
+
+.remove-experience-btn mat-icon {
+  font-size: 1.4rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .remove-experience-btn:hover:not(:disabled) {
   box-shadow: 0 4px 12px rgba(30,64,175,0.15);
@@ -1129,21 +1133,46 @@
   transition: background 0.2s;
 }
 
+.add-experience-btn-container{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
 .add-experience-form-card {
-  min-width: 340px;
-  max-width: 95vw;
+  min-width: 400px;
+  max-width: 540px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 40px 32px 32px 32px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   border-radius: 18px;
   background: var(--background, #fff);
-  padding: 32px 24px 24px 24px;
   animation: fadeInScale 0.25s;
+}
+
+.add-experience-form-card h2.form-title {
+  color: var(--primary-color, #1e40af);
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 18px;
+}
+
+.add-experience-form-card mat-form-field {
+  width: 100%;
+  margin-bottom: 12px;
 }
 
 .add-exp-actions {
   display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 18px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  margin-top: 22px;
 }
 
 @keyframes fadeInScale {
@@ -1156,103 +1185,67 @@
   margin-bottom: 18px;
   text-align: center;
   font-weight: 600;
-  color: var(--primary, #1976d2);
+  color: var(--primary-color);
+  font-size: 1.15rem;
 }
 
 .add-experience-form-card mat-form-field {
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.add-experience-btn-container {
-  display: flex;
-  justify-content: flex-end;
-  margin: 18px 0 0 0;
+.add-experience-form-card input.mat-input-element,
+.add-experience-form-card textarea.mat-input-element {
+  font-size: 1rem;
+  padding: 10px 12px;
+  height: 38px;
+  min-height: 38px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #222;
 }
 
-@media (max-width: 768px) {
-  .user-panel {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 10px;
-  }
+.add-experience-form-card textarea.mat-input-element {
+  min-height: 70px;
+  max-height: 140px;
+  resize: vertical;
+}
 
-  .profile-header {
-    flex-direction: column;
-    text-align: center;
-    padding: 30px 20px;
-    min-height: auto;
-  }
+.add-experience-form-card .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
 
-  .profile-avatar {
-    width: 100px;
-    height: 100px;
-  }
+.add-experience-form-card .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: var(--primary-color, #1e40af);
+  border-color: var(--primary-color, #1e40af);
+}
 
-  .info-section:nth-child(2),
-  .info-section:nth-child(3),
-  .info-section:nth-child(4) {
-    grid-column: 1;
-    grid-row: auto;
-  }
+.add-experience-form-card .mat-form-field-label {
+  color: var(--primary-color, #1e40af) !important;
+}
 
-  .uploaded-image, .uploaded-file {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
+.add-experience-form-card .mat-form-field.mat-focused .mat-form-field-label {
+  color: var(--primary-color, #1e40af) !important;
+}
 
-  .file-preview, .image-preview {
-    width: 120px;
-    height: 120px;
-  }
+.add-experience-form-card .mat-form-field.mat-focused .mat-form-field-outline {
+  border-color: var(--primary-color, #1e40af) !important;
+}
 
-  .logo-preview {
-    width: 100px;
-    height: 100px;
-  }
+.add-experience-form-card .field-icon {
+  color: #555 !important;
+}
 
-  .readonly-images {
-    grid-template-columns: 1fr;
-  }
-
-  .upload-btn {
-    min-width: auto;
-    width: 100%;
-  }
-
-  .info-item {
-    grid-template-columns: 24px 1fr;
-    text-align: left;
-  }
-
-  .info-item .label {
-    grid-column: 1 / -1;
-    margin-bottom: 8px;
-    font-size: 0.8rem;
-  }
-
-  .info-item .value, .info-item .edit-input, .info-item .edit-select {
-    grid-column: 1 / -1;
-  }
-
-  .experience-carousel {
-    padding: 16px 0 12px 0;
-  }
-  .carousel-arrow {
-    width: 38px;
-    height: 38px;
-    font-size: 1.3rem;
-  }
-  .experience-card {
-    width: 90vw;
-    min-width: 220px;
+@media (max-width: 600px) {
+  .add-experience-form-card {
+    min-width: 0;
     max-width: 98vw;
-    padding: 12px;
-  }
-  .carousel-indicators span {
-    width: 10px;
-    height: 10px;
+    padding: 12px 4vw 8px 4vw;
   }
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}

@@ -444,12 +444,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.snackbar.open('Puesto y empresa son obligatorios', 'Cerrar', { duration: 2000 });
       return;
     }
+    console.log('JSON enviado al backend (nueva experiencia):', this.newExperience);
     this.authService.createExperience(this.newExperience).subscribe({
       next: (createdExp: any) => {
-        this.experiences.push(createdExp);
+        console.log('Respuesta del backend (experiencia creada):', createdExp);
+        const normalizedExp = {
+          ...createdExp,
+          id: createdExp.id || createdExp.experienceId
+        };
+        this.experiences.push(normalizedExp);
         this.snackbar.open('Experiencia añadida correctamente', 'Cerrar', { duration: 2000 });
         this.closeAddExperienceForm();
-        this.reloadUserData();
+        // Si quieres recargar los datos completos, puedes dejar la siguiente línea:
+        // this.reloadUserData();
       },
       error: () => {
         this.snackbar.open('Error al añadir la experiencia', 'Cerrar', { duration: 2500 });
@@ -471,12 +478,18 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.snackbar.open('Título y centro son obligatorios', 'Cerrar', { duration: 2000 });
       return;
     }
+    console.log('JSON enviado al backend (nueva educación):', this.newEducation);
     this.authService.createEducation(this.newEducation).subscribe({
       next: (createdEdu: any) => {
-        this.educations.push(createdEdu);
+        console.log('Respuesta del backend (educación creada):', createdEdu);
+        const normalizedEdu = {
+          ...createdEdu,
+          id: createdEdu.id || createdEdu.educationId
+        };
+        this.educations.push(normalizedEdu);
         this.snackbar.open('Formación añadida correctamente', 'Cerrar', { duration: 2000 });
         this.closeAddEducationForm();
-        this.reloadEducationIds();
+
       },
       error: () => {
         this.snackbar.open('Error al añadir la formación', 'Cerrar', { duration: 2500 });
@@ -569,6 +582,22 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        this.experiences = (user.experiences || []).map((exp: any) => ({
+          id: exp.id || exp.experienceId,
+          jobTitle: exp.jobTitle || '',
+          companyName: exp.companyName || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          responsibilities: exp.responsibilities || ''
+        }));
+        this.educations = (user.educations || []).map((edu: any) => ({
+          id: edu.id || edu.educationId,
+          degree: edu.degree || '',
+          institution: edu.institution || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || '',
+          description: edu.description || ''
+        }));
         
 
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
@@ -579,28 +608,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       error: (error: any) => {
         console.error('Error fetching user data', error);
         this.isLoading = false;
-      }
-    });
-  }
-
-  reloadEducationIds(): void {
-    this.authService.getCandidateDetails().subscribe({
-      next: (user: any) => {
-        const backendEducations = user.educations || [];
-        if (backendEducations.length && this.educations.length) {
-          const lastBackendEdu = backendEducations[backendEducations.length - 1];
-          const lastLocalEdu = this.educations[this.educations.length - 1];
-          if (
-            !lastLocalEdu.id &&
-            lastLocalEdu.degree === (lastBackendEdu.degree || '') &&
-            lastLocalEdu.institution === (lastBackendEdu.institution || '') &&
-            lastLocalEdu.startDate === (lastBackendEdu.startDate || '') &&
-            lastLocalEdu.endDate === (lastBackendEdu.endDate || '') &&
-            lastLocalEdu.description === (lastBackendEdu.description || '')
-          ) {
-            lastLocalEdu.id = lastBackendEdu.id || lastBackendEdu.educationId;
-          }
-        }
       }
     });
   }
@@ -621,6 +628,54 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   goToEducation(index: number) {
     this.currentEducationIndex = index;
+  }
+
+  scrollExperienceCarousel(direction: number, carousel: HTMLElement) {
+    const cardWidth = carousel.querySelector('.experience-card')?.clientWidth || 340;
+    carousel.querySelector('.carousel-cards')?.scrollBy({
+      left: direction * (cardWidth + 24),
+      behavior: 'smooth'
+    });
+  }
+
+  scrollEducationCarousel(direction: number, carousel: HTMLElement) {
+    const cardWidth = carousel.querySelector('.experience-card')?.clientWidth || 340;
+    carousel.querySelector('.carousel-cards')?.scrollBy({
+      left: direction * (cardWidth + 24),
+      behavior: 'smooth'
+    });
+  }
+
+  // Sincroniza el dot activo con la card visible en el carrusel de experiencia
+  onExperienceCarouselScroll(carousel: HTMLElement) {
+    const cards = carousel.querySelectorAll('.experience-card');
+    const container = carousel.querySelector('.carousel-cards');
+    if (!cards.length || !container) return;
+    const scrollLeft = container.scrollLeft;
+    let activeIndex = 0;
+    for (let i = 0; i < cards.length; i++) {
+      if ((cards[i] as HTMLElement).offsetLeft + (cards[i] as HTMLElement).offsetWidth / 2 > scrollLeft) {
+        activeIndex = i;
+        break;
+      }
+    }
+    this.currentExperienceIndex = activeIndex;
+  }
+
+  // Sincroniza el dot activo con la card visible en el carrusel de educación
+  onEducationCarouselScroll(carousel: HTMLElement) {
+    const cards = carousel.querySelectorAll('.experience-card');
+    const container = carousel.querySelector('.carousel-cards');
+    if (!cards.length || !container) return;
+    const scrollLeft = container.scrollLeft;
+    let activeIndex = 0;
+    for (let i = 0; i < cards.length; i++) {
+      if ((cards[i] as HTMLElement).offsetLeft + (cards[i] as HTMLElement).offsetWidth / 2 > scrollLeft) {
+        activeIndex = i;
+        break;
+      }
+    }
+    this.currentEducationIndex = activeIndex;
   }
 
 }
