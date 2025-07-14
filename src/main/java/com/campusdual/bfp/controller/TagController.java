@@ -119,4 +119,10 @@ public class TagController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/candidate/{username}")
+    public ResponseEntity<List<TagDTO>> getCandidateTagsByUsername(@PathVariable("username") String username) {
+        List<TagDTO> tags = tagService.getCandidateTags(username);
+        return ResponseEntity.ok(tags);
+    }
+
 }

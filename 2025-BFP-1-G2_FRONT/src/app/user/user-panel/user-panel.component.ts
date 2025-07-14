@@ -103,7 +103,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         });
       }
     });
-    this.tagService.getCandidateTags().subscribe({
+    this.tagService.getCandidateTagsByUsername(this.userNameInput).subscribe({
       next: (tags) => {
         this.myTags = tags;
         console.log('Candidate tags loaded successfully', tags);
@@ -128,15 +128,27 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   getSelectedTagsCount(): number {
-    return this.tagsControl.value.length;
+    return this.myTags.length;
   }
 
   getSelectedTags(): Tag[] {
-    return this.tagsControl.value;
+    return this.myTags;
   }
 
   isTagSelected(tag: Tag): boolean {
     return this.myTags.some(t => t.id === tag.id);
+  }
+
+  toggleTagSelection(tag: Tag): void {
+    const index = this.myTags.findIndex(t => t.id === tag.id);
+    if (index > -1) {
+      // Deselect
+      this.myTags.splice(index, 1);
+    } else {
+      if (this.myTags.length < 10) {
+        this.myTags.push(tag);
+      }
+    }
   }
 
 
@@ -342,14 +354,25 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     // Log para depuración
     console.log('Datos que se envían al backend:', updatedData);
 
+    // Actualizar datos del usuario
     this.authService.updateCandidateDetails(updatedData).subscribe({
       next: (response) => {
-        console.log('Datos actualizados exitosamente', response);
-        this.isEditMode = false;
-        this.isSaving = false;
-        const parts = [this.userName.value, this.userSurname1.value, this.userSurname2.value].filter(Boolean);
-        this.fullName = parts.join(' ');
-        this.snackbar.open('Datos actualizados correctamente', 'Cerrar', { duration: 3000 });
+        // Actualizar tags del candidato
+        const tagIds = this.myTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
+        this.tagService.updateCandidateTags(tagIds).subscribe({
+          next: () => {
+            this.isEditMode = false;
+            this.isSaving = false;
+            const parts = [this.userName.value, this.userSurname1.value, this.userSurname2.value].filter(Boolean);
+            this.fullName = parts.join(' ');
+            this.snackbar.open('Datos actualizados correctamente', 'Cerrar', { duration: 3000 });
+          },
+          error: (error) => {
+            console.error('Error al actualizar los tags', error);
+            this.isSaving = false;
+            this.snackbar.open('Error al actualizar los tags', 'Cerrar', { duration: 3000 });
+          }
+        });
       },
       error: (error) => {
         console.error('Error al actualizar los datos', error);
