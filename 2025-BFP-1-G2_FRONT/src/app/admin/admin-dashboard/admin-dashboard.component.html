@@ -31,8 +31,6 @@
     </mat-card>
   </div>
 
-
-
   <div class="div2">
     <mat-card class="stat-card active-stat">
       <mat-card-content>
@@ -62,8 +60,10 @@
         </div>
       </mat-card-content>
     </mat-card>
+  </div>
 
-    <mat-card class="stat-card accepted-stat">
+  <div class="div3">
+      <mat-card class="stat-card accepted-stat">
       <mat-card-content>
         <div class="stat-content">
           <div class="stat-icon">
@@ -93,56 +93,4 @@
     </mat-card>
   </div>
 
-  <div class="div3">
-   <mat-card class="tags-card">
-      <mat-card-header>
-        <mat-card-title class="card-title">
-          <mat-icon class="title-icon">label</mat-icon>
-          Administrar Etiquetas
-        </mat-card-title>
-        <mat-card-subtitle>Gestiona las etiquetas de ofertas y empleados</mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content class="tags-content">
-        <div class="tags-display" *ngIf="tags.length > 0; else noTags">
-          <mat-chip-listbox aria-label="Tags existentes">
-            <mat-chip-row *ngFor="let tag of tags" [editable]="true" (edited)="edit(tag, $event)"
-                          [aria-description]="'press enter to edit ' + tag.name">
-              {{ tag.name }}
-              <button matChipRemove [attr.aria-label]="'remove ' + tag.name" (click)="remove(tag)">
-                <mat-icon>cancel</mat-icon>
-              </button>
-            </mat-chip-row>
-          </mat-chip-listbox>
-        </div>
-
-        <ng-template #noTags>
-          <p class="no-tags-message">No hay etiquetas disponibles. Añade algunas usando el formulario de abajo.</p>
-        </ng-template>
-      </mat-card-content>
-
-      <mat-card-actions class="add-tag-section">
-        <div class="input-button-container">
-          <mat-form-field appearance="outline" class="tag-input">
-            <mat-label>Nueva etiqueta</mat-label>
-            <input matInput
-                   [formControl]="tag"
-                   placeholder="Escribe el nombre del tag"
-                   (keyup.enter)="add()"
-                   maxlength="30">
-          </mat-form-field>
-
-          <button mat-icon-button
-                  color="primary"
-                  (click)="add()"
-                  [disabled]="tag.invalid"
-                  class="add-button"
-                  matTooltip="Añadir tag">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </mat-card-actions>
-    </mat-card>
-    
-  </div>
 </div>

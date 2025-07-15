@@ -16,11 +16,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {NgChartsModule} from "ng2-charts";
 import {SharedModule} from "../shared/shared.module";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AdminTagsComponent } from './admin-tags/admin-tags.component';
 
 @NgModule({
   declarations: [
     AdminPanelComponent,
-    AdminDashboardComponent
+    AdminDashboardComponent,
+    AdminTagsComponent
   ],
   imports: [
     CommonModule,
