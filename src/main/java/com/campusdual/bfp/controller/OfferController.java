@@ -8,6 +8,7 @@ import com.campusdual.bfp.model.dao.CandidateBookmarksDao;
 import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.MonthlyClosedOffersDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -210,5 +211,12 @@ public class OfferController {
         return ResponseEntity.ok(offerService.updateOfferStatus(offerId, status, principal.getName())
                 ? "Estado de la oferta actualizado correctamente"
                 : "Error al actualizar el estado de la oferta");
+    }
+
+    @GetMapping("/metrics/monthly-closed-offers")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_COMPANY')")
+    public ResponseEntity<List<MonthlyClosedOffersDTO>> getMonthlyClosedOffersWithAcceptedCandidates() {
+        List<MonthlyClosedOffersDTO> metrics = offerService.getMonthlyClosedOffersWithAcceptedCandidates();
+        return ResponseEntity.ok(metrics);
     }
 }
