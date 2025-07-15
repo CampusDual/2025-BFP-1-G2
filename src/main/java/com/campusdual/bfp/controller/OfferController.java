@@ -51,7 +51,14 @@ public class OfferController {
         return ResponseEntity.ok("Offers controller method works!");
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/getAll")
+    public ResponseEntity<List<OfferDTO>> getAllOffers() {
+        List<OfferDTO> offers = offerService.getAllOffers();
+        return ResponseEntity.ok(offers);
+    }
+
+    @GetMapping(value = "/getAll/paginated")
     public ResponseEntity<Page<OfferDTO>> queryAllOffers(@RequestParam String searchTerm,
                                                          @RequestParam List<Long> tagIds,
                                                          @RequestParam int page,

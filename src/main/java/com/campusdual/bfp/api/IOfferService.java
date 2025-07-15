@@ -38,4 +38,6 @@ public interface IOfferService {
     boolean updateOfferStatus(int offerId, String status, String username);
 
     List<MonthlyClosedOffersDTO> getMonthlyClosedOffersWithAcceptedCandidates();
+
+    List<OfferDTO> getAllOffers();
 }

@@ -5,7 +5,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
-import { Tag } from "../../admin/admin-dashboard/admin-dashboard.component";
+import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
 import { TagService } from 'src/app/services/tag.service';
 import { Offer } from "../../services/offer.service";
 import { Observable, combineLatest } from 'rxjs';

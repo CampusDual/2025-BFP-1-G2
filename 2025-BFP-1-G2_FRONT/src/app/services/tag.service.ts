@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
+import { Tag } from '../admin/admin-tags/admin-tags.component';
 import { environment } from '../../environments/environment';
 
 

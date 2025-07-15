@@ -1,23 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MatChipEditedEvent } from '@angular/material/chips';
-import { FormControl, Validators } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { Offer, OfferService } from "../../services/offer.service";
 import { Candidate } from "../../detailed-card/detailed-card.component";
-import { TagService } from 'src/app/services/tag.service';
 
 export interface MonthlyClosedOffersDTO {
   month: number;
   year: number;
   count: number;
-}
-
-export interface Tag {
-  id?: number;
-  name: string;
-  count?: number ;
 }
 
 export interface ExtendedOffer extends Offer {
@@ -32,9 +22,6 @@ export interface ExtendedOffer extends Offer {
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
-
-  tags: Tag[] = [];
-  tag = new FormControl('', [Validators.required, Validators.minLength(2)]);
 
   private candidates: Candidate[] = [];
   private offers: ExtendedOffer[] = [];
@@ -51,9 +38,7 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private tagService: TagService,
     private offerService: OfferService,
-    private matSnackBar: MatSnackBar
   ) { }
 
   public acceptedCandidatesChartData: ChartData<'bar'> = {
@@ -194,6 +179,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   };
 
+
   public candidatesChartData: ChartData<'bar'> = {
     labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
     datasets: [{
@@ -308,105 +294,15 @@ export class AdminDashboardComponent implements OnInit {
     cutout: '60%'
   };
 
-  public countTagsData: ChartData<'bar'> = {
-    labels: [],
-    datasets: [{
-      data: [],
-      label: 'Cantidad de Tags',
-      backgroundColor: 'rgba(75, 192, 192, 0.5)',
-      borderColor: '#4bc0c0',
-      borderWidth: 2,
-      borderRadius: 8,
-      borderSkipped: false,
-    }]
-  };
-
-  public countTagsOptions: ChartConfiguration<'bar'>['options'] = {
-    indexAxis: 'y',
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 500 // Añadimos animación
-    },
-    plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        callbacks: {
-          label: (context) => `Frecuencia: ${context.parsed.x}`
-        }
-      }
-    },
-    scales: {
-      y: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          font: {
-            size: 12
-          }
-        }
-      },
-      x: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(107, 114, 128, 0.1)'
-        },
-        ticks: {
-          stepSize: 1,
-          precision: 0
-        }
-      }
-    }
-  };
-
-  private updateCountTagsChart(): void {
-    this.loadTopTags();
-    const sortedTags = [...this.tags].sort((a, b) => a.count && b.count ? a.count - b.count : 0);
-    const topTags = sortedTags.slice(0, 10);
-    this.countTagsData = {
-      labels: topTags.map(tag => tag.name),
-      datasets: [{
-        data: topTags.map(tag => tag.count || 0),
-        label: 'Frecuencia de uso',
-        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-        borderColor: '#4bc0c0',
-        borderWidth: 2,
-        borderRadius: 8,
-        borderSkipped: false,
-      }]
-    };
-  }
-
-  loadTopTags() {
-    this.tagService.getTopTags().subscribe({
-      next: (tags: Tag[]) => {
-        this.tags = tags.map(tag => ({
-          ...tag,
-          count: tag.count || 0,
-          name: tag.name || 'Sin nombre'
-        }));
-        this.updateCountTagsChart();
-      },
-      error: (error) => {
-        console.error('Error al cargar tags:', error);
-        this.matSnackBar.open('Error al cargar etiquetas', 'Cerrar', {
-          duration: 3000
-        });
-      }
-    });
-  }
-
+  
 
   ngOnInit(): void {
-    this.loadTags();
     this.loadCandidatesData();
     this.loadPublicationsData();
     this.loadAcceptedCandidatesMonthly();
-    this.loadTopTags();
   }
+
+
 
   private loadCandidatesData(): void {
     this.adminService.getCandidatesOffers().subscribe({
@@ -416,6 +312,7 @@ export class AdminDashboardComponent implements OnInit {
           return;
         }
         this.candidates = candidates;
+        console.log('Candidatos cargados:', this.candidates);
         this.totalCandidates = candidates.length;
         this.updateCandidatesChart();
       },
@@ -458,9 +355,14 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private loadPublicationsData(): void {
-    this.offerService.getAllOffersCount().subscribe({
-      next: (count: number) => {
-        this.totalOffers = count;
+    this.offerService.getAllOffers().subscribe({
+      next: (publications: ExtendedOffer[]) => {
+        if (!publications || publications.length === 0) {
+          console.warn('No se encontraron publicaciones');
+          return;
+        }
+        this.offers = publications;
+        this.totalOffers = publications.length;
         this.calculateStatistics();
         this.updateOffersChart();
         this.updateOffersStatusChart();
@@ -533,15 +435,6 @@ export class AdminDashboardComponent implements OnInit {
     return monthlyData;
   }
 
-  loadTags() {
-    this.tagService.getAllTags().subscribe(
-      (tags: Tag[]) => {
-        this.tags = tags.sort((a, b) => a.name.localeCompare(b.name));
-      },
-      (error) => {
-        console.error('Error al obtener los tags:', error);
-      }
-    );
-  }
+
 
 }

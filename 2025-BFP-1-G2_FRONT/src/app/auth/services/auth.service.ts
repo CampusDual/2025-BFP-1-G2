@@ -4,7 +4,7 @@ import { BehaviorSubject, map, Observable, tap, of, catchError, shareReplay, swi
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Candidate } from 'src/app/detailed-card/detailed-card.component';
-import { Tag } from 'src/app/admin/admin-dashboard/admin-dashboard.component';
+import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
 import { Company } from 'src/app/services/company.service';
 
 export interface User {

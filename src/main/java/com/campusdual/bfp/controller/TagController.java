@@ -128,7 +128,7 @@ public class TagController {
 
     @GetMapping("/mostFrequent")
     public ResponseEntity<List<TagDTO>> getTopTags() {
-        List<TagDTO> tags = tagService.getMostFrequentTags(10);
+        List<TagDTO> tags = tagService.getMostFrequentTags();
         return ResponseEntity.ok(tags);
     }
 }

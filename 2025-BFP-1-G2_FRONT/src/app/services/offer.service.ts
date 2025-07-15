@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Candidate } from '../detailed-card/detailed-card.component';
-import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
+import { Tag } from '../admin/admin-tags/admin-tags.component';
 import { environment } from '../../environments/environment';
 
 export interface PageResponse<T> {
@@ -60,13 +60,17 @@ export class OfferService {
     return this.http.post(`${this.baseUrl}/add`, offer, { responseType: 'text' });
   }
 
+  getAllOffers(): Observable<Offer[]> {
+    return this.http.get<Offer[]>(`${this.baseUrl}/getAll`);
+  }
+
   getOffers(searchTerm: string, tagIds: number[], page: number, size: number): Observable<PageResponse<Offer>> {
     const params = new HttpParams()
       .set('searchTerm', searchTerm)
       .set('tagIds', tagIds.join(','))
       .set('page', page.toString())
       .set('size', size.toString());
-    return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/getAll`, { params });
+    return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/getAll/paginated`, { params });
   }
 
   deleteOffer(id: number): Observable<any> {
