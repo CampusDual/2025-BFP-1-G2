@@ -21,4 +21,11 @@ public interface UserOfferDao extends JpaRepository<UserOffer, Long> {
     List<Date> findDatesByUserId(@Param("userId") int userId);
 
     List<UserOffer> findOfferByUserId(int userId);
+
+    @Query("SELECT MONTH(uo.validationDate) as mes, YEAR(uo.validationDate) as anio, COUNT(uo.id) " +
+            "FROM UserOffer uo " +
+            "WHERE uo.valid = true AND uo.validationDate IS NOT NULL " +
+            "GROUP BY anio, mes " +
+            "ORDER BY anio, mes")
+    List<Object[]> countAcceptedCandidatesByMonth();
 }
