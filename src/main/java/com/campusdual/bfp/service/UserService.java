@@ -4,9 +4,7 @@ import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.exception.*;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
-import com.campusdual.bfp.model.dto.CandidateDTO;
-import com.campusdual.bfp.model.dto.CandidateEducationDTO;
-import com.campusdual.bfp.model.dto.CompanyDTO;
+import com.campusdual.bfp.model.dto.*;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateEducationMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
@@ -31,7 +29,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
-import com.campusdual.bfp.model.dto.CandidateExperienceDTO;
 
 @Service
 @Lazy
@@ -237,17 +234,14 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
-    public List<CandidateDTO> getAllCandidates() {
-        List<Object[]> candidates = this.candidateDao.findAllUsersByCandidate();
+    public List<MonthlyCountDTO> getAllCandidates() {
+        List<Object[]> candidates = this.candidateDao.countRegisteredCandidatesByMonth();
         return candidates.stream()
-                .map(user -> {
-                    CandidateDTO candidateDTO = new CandidateDTO();
-                    candidateDTO.setId((Integer) user[0]);
-                    Date dateAdded = (Date) user[1];
-
-                    candidateDTO.setDateAdded(dateAdded.toLocaleString());
-                    return candidateDTO;
-                })
+                .map(obj -> new MonthlyCountDTO(
+                        (int) obj[0], // mes
+                        (int) obj[1], // año
+                        (long) obj[2] // conteo
+                ))
                 .collect(Collectors.toList());
     }
 

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CompanyService, Company } from '../../services/company.service';
-import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
+import { CompanyService } from '../../services/company.service';
+import { Company } from 'src/app/models/company.model';
+import { Tag } from 'src/app/models/tag.model';
 
 @Component({
   selector: 'app-companies',

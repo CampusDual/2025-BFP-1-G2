@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from "../../auth/services/auth.service";
 import { OfferService } from "../../services/offer.service";
-import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
+import { Tag } from 'src/app/models/tag.model';
 
 
 @Component({

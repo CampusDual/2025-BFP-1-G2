@@ -4,8 +4,8 @@ import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Message, ChatConversation } from '../models/chat.models';
 import { AuthService } from '../auth/services/auth.service';
-import { Candidate } from '../detailed-card/detailed-card.component';
-import { Company } from './company.service';
+import { Candidate } from '../models/candidate.model';
+import { Company } from '../models/company.model';
 
 @Injectable({
     providedIn: 'root'

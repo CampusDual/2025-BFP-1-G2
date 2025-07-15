@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatStepper } from '@angular/material/stepper';
 import { TagService } from '../../services/tag.service';
-import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
+import { Tag } from 'src/app/models/tag.model';
 import { MatChipSelectionChange } from '@angular/material/chips';
 
 

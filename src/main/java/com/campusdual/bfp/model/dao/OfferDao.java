@@ -13,10 +13,12 @@ import java.util.Optional;
 
 public interface OfferDao extends JpaRepository<Offer, Integer> {
 
-    // Buscar ofertas por ID de empresa (relación directa)ç
-
-    @Query("SELECT o.id, o.dateAdded FROM Offer o WHERE o.active = true")
-    List<Object[]>findAllActive();
+    // Buscar ofertas por ID de empresa (relación directa)
+    @Query("SELECT MONTH(o.dateAdded) as mes, YEAR(o.dateAdded) as anio, COUNT(o.id) " +
+            "FROM Offer o " +
+            "WHERE o.active = true"+
+            " GROUP BY mes, anio " )
+    List<Object[]>countActiveOffersByMonth();
 
     @Query("SELECT o FROM Offer o WHERE o.company.id = :companyId")
     List<Offer> findOfferByCompanyId(@Param("companyId") int companyId);

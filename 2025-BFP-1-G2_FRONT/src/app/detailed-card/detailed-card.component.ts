@@ -2,23 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild
 import { FormControl, FormGroup } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from "@angular/material/core";
 import { MatDatepicker } from "@angular/material/datepicker";
-import { Tag } from '../admin/admin-tags/admin-tags.component';
-
-export interface Candidate {
-  id: number;
-  login: string;
-  name: string;
-  surname1: string;
-  surname2: string;
-  email: string;
-  phoneNumber: string;
-  date: string;
-  Linkedin?: string;
-  dateAdded: string;
-  valid: boolean | null;
-  logoImageBase64?: string;
-  tagIds?: Tag[];
-}
+import { Tag } from '../models/tag.model';
+import { Candidate } from '../models/candidate.model';
 
 export interface DetailedCardData {
   id: number | string;

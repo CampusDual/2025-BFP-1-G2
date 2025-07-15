@@ -5,7 +5,7 @@ import { AuthService } from "../../auth/services/auth.service";
 import { ImageCompressionService } from "../../services/image-compression.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TagService } from 'src/app/services/tag.service';
-import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
+import { Tag } from 'src/app/models/tag.model';
 
 
 @Component({

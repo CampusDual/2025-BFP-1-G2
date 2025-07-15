@@ -184,11 +184,11 @@ public class AuthController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listCandidates")
-    public ResponseEntity<List<CandidateDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<List<MonthlyCountDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        List<CandidateDTO> candidatos = userService.getAllCandidates();
+        List<MonthlyCountDTO> candidatos = userService.getAllCandidates();
         return ResponseEntity.ok(candidatos);
     }
 

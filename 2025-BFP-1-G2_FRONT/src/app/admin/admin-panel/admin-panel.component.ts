@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DetailedCardData } from "../../detailed-card/detailed-card.component";
-import { AdminService } from 'src/app/services/admin.service';
-import { CompanyService, Company } from 'src/app/services/company.service';
+import { CompanyService } from 'src/app/services/company.service';
+import { Company } from 'src/app/models/company.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -22,7 +22,6 @@ export class AdminPanelComponent {
   isLoading = true;
 
   constructor(
-    private adminService: AdminService,
     private companyService: CompanyService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder

@@ -8,7 +8,7 @@ import com.campusdual.bfp.model.dao.CandidateBookmarksDao;
 import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dao.UserDao;
 import com.campusdual.bfp.model.dto.CandidateDTO;
-import com.campusdual.bfp.model.dto.MonthlyClosedOffersDTO;
+import com.campusdual.bfp.model.dto.MonthlyCountDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,8 +53,8 @@ public class OfferController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/getAll")
-    public ResponseEntity<List<OfferDTO>> getAllOffers() {
-        List<OfferDTO> offers = offerService.getAllOffers();
+    public ResponseEntity<List<MonthlyCountDTO>> getMetricsOffer() {
+        List<MonthlyCountDTO> offers = offerService.getMetricsOffer();
         return ResponseEntity.ok(offers);
     }
 
@@ -222,8 +222,8 @@ public class OfferController {
 
     @GetMapping("/metrics/monthly-closed-offers")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_COMPANY')")
-    public ResponseEntity<List<MonthlyClosedOffersDTO>> getMonthlyClosedOffersWithAcceptedCandidates() {
-        List<MonthlyClosedOffersDTO> metrics = offerService.getMonthlyClosedOffersWithAcceptedCandidates();
+    public ResponseEntity<List<MonthlyCountDTO>> getMonthlyClosedOffersWithAcceptedCandidates() {
+        List<MonthlyCountDTO> metrics = offerService.getMonthlyClosedOffersWithAcceptedCandidates();
         return ResponseEntity.ok(metrics);
     }
 }

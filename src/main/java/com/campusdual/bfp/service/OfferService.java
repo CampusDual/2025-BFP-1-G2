@@ -94,17 +94,6 @@ public class OfferService implements IOfferService {
         Collections.reverse(offers);
     }
 
-    @Override
-    public List<OfferDTO> getAllOffers(){
-        return offerDao.findAllActive().stream()
-                .map(offer -> {
-                    OfferDTO dto = new OfferDTO();
-                    dto.setId((Integer) offer[0]);
-                    dto.setDateAdded((Date) offer[1]);
-                    return dto;
-                })
-                .collect(Collectors.toList());
-    }
 
     @Override
     public Page<OfferDTO> queryAllOffers(
@@ -423,11 +412,23 @@ public class OfferService implements IOfferService {
         offerDao.saveAndFlush(offer);
         return true;
     }
+
     @Override
-    public List<MonthlyClosedOffersDTO> getMonthlyClosedOffersWithAcceptedCandidates() {
+    public List<MonthlyCountDTO> getMetricsOffer(){
+        return offerDao.countActiveOffersByMonth().stream()
+                .map(obj -> new MonthlyCountDTO(
+                        (int) obj[0], // mes
+                        (int) obj[1], // año
+                        (long) obj[2] // conteo
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MonthlyCountDTO> getMonthlyClosedOffersWithAcceptedCandidates() {
         List<Object[]> results = userOfferDao.countAcceptedCandidatesByMonth();
         return results.stream()
-                .map(obj -> new MonthlyClosedOffersDTO(
+                .map(obj -> new MonthlyCountDTO(
                         (int) obj[0], // mes
                         (int) obj[1], // año
                         (long) obj[2] // conteo
