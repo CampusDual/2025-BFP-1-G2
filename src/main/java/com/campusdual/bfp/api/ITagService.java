@@ -18,4 +18,5 @@ public interface ITagService {
     List<TagDTO> getCandidateTags(String name);
     int updateCandidateTags(List<Integer> tagIds, String name);
     int deleteCandidateTag(int tagId, String name);
+    List<TagDTO> getMostFrequentTags();
 }

@@ -193,5 +193,15 @@ public class TagService implements ITagService {
         return candidateTagsDao.deleteByCandidateIdAndTagId(candidate.getCandidateId(), tagId);
     }
 
-
+    public List<TagDTO> getMostFrequentTags() {
+        return offerTagsDao.findMostFrequentTags().stream().map(
+                result -> {
+                    TagDTO tagDTO = new TagDTO();
+                    tagDTO.setId((long) result[0]);
+                    tagDTO.setName((String) result[1]);
+                    tagDTO.setCount((long) result[2]);
+                    return tagDTO;
+                }
+        ).collect(Collectors.toList());
+    }
 }

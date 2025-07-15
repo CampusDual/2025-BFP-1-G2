@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild
 import { FormControl, FormGroup } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from "@angular/material/core";
 import { MatDatepicker } from "@angular/material/datepicker";
-import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
+import { Tag } from '../admin/admin-tags/admin-tags.component';
 
 export interface Candidate {
   id: number;

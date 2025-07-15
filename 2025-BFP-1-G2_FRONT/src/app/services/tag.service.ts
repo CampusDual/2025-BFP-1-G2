@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
+import { Tag } from '../admin/admin-tags/admin-tags.component';
 import { environment } from '../../environments/environment';
 
 
@@ -10,64 +10,70 @@ import { environment } from '../../environments/environment';
 })
 export class TagService {
 
-    private baseUrl = `${environment.apiUrl}/tags`;
+  private baseUrl = `${environment.apiUrl}/tags`;
 
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
-    getAllTags(): Observable<Tag[]> {
-        return this.http.get<Tag[]>(`${this.baseUrl}/list`);
-    }
-    getOfferTags(offerId: number): Observable<Tag[]> {
-        return this.http.get<Tag[]>(`${this.baseUrl}/${offerId}`);
-    }
+  getAllTags(): Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/list`);
+  }
 
-    addTagsToOffer(offerId: number, tagIds: number[]): Observable<any> {
-        return this.http.post(`${this.baseUrl}/${offerId}`,
-            { tagIds },
-            { responseType: 'text' }
-        );
-    }
+  getOfferTags(offerId: number): Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/${offerId}`);
+  }
 
-
-    removeTagFromOffer(offerId: number, tagId: number): Observable<any> {
-        return this.http.delete(`${this.baseUrl}/${offerId}/${tagId}`,
-            { responseType: 'text' }
-        );
-    }
+  addTagsToOffer(offerId: number, tagIds: number[]): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${offerId}`,
+      {tagIds},
+      {responseType: 'text'}
+    );
+  }
 
 
-    updateOfferTags(offerId: number, tagIds: number[]): Observable<any> {
-        return this.http.put(`${this.baseUrl}/${offerId}`,
-            { tagIds },
-            { responseType: 'text' }
-        );
-    }
-
-    createTag(tag: Tag): Observable<Tag> {
-        return this.http.post<Tag>(`${this.baseUrl}/add`, tag);
-    }
-
-    deleteTag(tagId: number): Observable<any> {
-        return this.http.delete(`${this.baseUrl}/${tagId}`);
-    }
+  removeTagFromOffer(offerId: number, tagId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${offerId}/${tagId}`,
+      {responseType: 'text'}
+    );
+  }
 
 
-    updateTag(tag: Tag): Observable<Tag> {
-        return this.http.put<Tag>(`${this.baseUrl}`, tag);
-    }
+  updateOfferTags(offerId: number, tagIds: number[]): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${offerId}`,
+      {tagIds},
+      {responseType: 'text'}
+    );
+  }
 
-    getCandidateTags(): Observable<Tag[]> {
-        return this.http.get<Tag[]>(`${this.baseUrl}/candidate`);
-    }
+  createTag(tag: Tag): Observable<Tag> {
+    return this.http.post<Tag>(`${this.baseUrl}/add`, tag);
+  }
 
-    updateCandidateTags(tagIds: number[]): Observable<any> {
-        return this.http.put(`${environment.apiUrl}/tags/candidate`, 
-            { tagIds }, 
-            { responseType: 'text' }
-        );
-    }
-    
-    getCandidateTagsByUsername(username: string): Observable<Tag[]> {
-        return this.http.get<Tag[]>(`${this.baseUrl}/candidate/${username}`);
-    }
+  deleteTag(tagId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${tagId}`);
+  }
+
+
+  updateTag(tag: Tag): Observable<Tag> {
+    return this.http.put<Tag>(`${this.baseUrl}`, tag);
+  }
+
+  getCandidateTags(): Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/candidate`);
+  }
+
+  updateCandidateTags(tagIds: number[]): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/tags/candidate`,
+      {tagIds},
+      {responseType: 'text'}
+    );
+  }
+
+  getCandidateTagsByUsername(username: string): Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/candidate/${username}`);
+  }
+
+  getTopTags(): Observable<Tag[]> {
+    return this.http.get<Tag[]>(`${this.baseUrl}/mostFrequent`);
+  }
 }

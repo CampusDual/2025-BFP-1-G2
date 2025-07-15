@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CompanyService, Company } from '../../services/company.service';
-import { Tag } from '../../admin/admin-dashboard/admin-dashboard.component';
+import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
 
 @Component({
   selector: 'app-companies',

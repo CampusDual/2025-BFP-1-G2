@@ -31,4 +31,10 @@ public interface OfferTagsDao extends JpaRepository<OfferTags, Long> {
     @Transactional
     @Query("DELETE FROM OfferTags ot WHERE ot.offer.id = :offerId")
     void deleteByOfferId(@Param("offerId") int offerId);
+
+    @Query("SELECT ot.tag.id, ot.tag.name, COUNT(ot.tag.id) AS tagCount " +
+            "FROM OfferTags ot " +
+            "GROUP BY ot.tag.id, ot.tag.name " +
+            "ORDER BY tagCount DESC")
+    List<Object[]> findMostFrequentTags();
 }

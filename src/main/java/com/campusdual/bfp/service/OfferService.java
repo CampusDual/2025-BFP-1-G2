@@ -94,6 +94,15 @@ public class OfferService implements IOfferService {
         Collections.reverse(offers);
     }
 
+    @Override
+    public List<OfferDTO> getAllOffers(){
+        List<Offer> offers = offerDao.findAllActive();
+        List<OfferDTO> dtos = offers.stream()
+                .map(offer -> buildOfferDTO(offer, false))
+                .collect(Collectors.toList());
+        sortOffersByDate(dtos);
+        return dtos;
+    }
 
     @Override
     public Page<OfferDTO> queryAllOffers(
