@@ -27,10 +27,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
 import com.campusdual.bfp.model.dto.CandidateExperienceDTO;
-import com.campusdual.bfp.model.dto.dtomapper.CandidateEducationMapper;
-import com.campusdual.bfp.model.dto.CandidateEducationDTO;
 
 @Service
 @Lazy
@@ -194,7 +193,7 @@ public class UserService implements UserDetailsService, IUserService {
         return candidateDTO;
     }
 
-    public CompanyDTO getCompanyDetails(String username){
+    public CompanyDTO getCompanyDetails(String username) {
         User user = this.userDao.findByLogin(username);
         if (user == null) {
             return null;
@@ -236,16 +235,17 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public List<CandidateDTO> getAllCandidates() {
-        List<Candidate> candidates = this.candidateDao.findAll();
-        List<CandidateDTO> candidateDTOs = CandidateMapper.INSTANCE.toDTOList(candidates);
-        for (int i = 0; i < candidates.size(); i++) {
-            Candidate candidate = candidates.get(i);
-            CandidateDTO candidateDTO = candidateDTOs.get(i);
-            candidateDTO.setAllDates(userOfferDao.findDatesByUserId(candidate.getUser().getId()).stream()
-                    .map(date -> new java.text.SimpleDateFormat("dd/MM/yyyy").format(date))
-                    .toArray(String[]::new));
-        }
-        return candidateDTOs;
+        List<User> candidates = this.candidateDao.findAllUsersByCandidate();
+        return candidates.stream()
+                .map(user -> {
+                    CandidateDTO candidateDTO = new CandidateDTO();
+                    candidateDTO.setId(user.getId());
+                    candidateDTO.setAllDates(userOfferDao.findDatesByUserId(user.getId()).stream()
+                            .map(date -> new java.text.SimpleDateFormat("dd/MM/yyyy").format(date))
+                            .toArray(String[]::new));
+                    return candidateDTO;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

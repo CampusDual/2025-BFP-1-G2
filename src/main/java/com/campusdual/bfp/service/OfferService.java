@@ -96,12 +96,14 @@ public class OfferService implements IOfferService {
 
     @Override
     public List<OfferDTO> getAllOffers(){
-        List<Offer> offers = offerDao.findAllActive();
-        List<OfferDTO> dtos = offers.stream()
-                .map(offer -> buildOfferDTO(offer, false))
+        return offerDao.findAllActive().stream()
+                .map(offer -> {
+                    OfferDTO dto = new OfferDTO();
+                    dto.setId((Integer) offer[0]);
+                    dto.setDateAdded((Date) offer[1]);
+                    return dto;
+                })
                 .collect(Collectors.toList());
-        sortOffersByDate(dtos);
-        return dtos;
     }
 
     @Override

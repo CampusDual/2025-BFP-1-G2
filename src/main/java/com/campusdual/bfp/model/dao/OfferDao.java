@@ -15,8 +15,8 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
 
     // Buscar ofertas por ID de empresa (relación directa)ç
 
-    @Query("SELECT o FROM Offer o WHERE o.active = true ")
-    List<Offer>findAllActive();
+    @Query("SELECT o.id, o.dateAdded FROM Offer o WHERE o.active = true")
+    List<Object[]>findAllActive();
 
     @Query("SELECT o FROM Offer o WHERE o.company.id = :companyId")
     List<Offer> findOfferByCompanyId(@Param("companyId") int companyId);
