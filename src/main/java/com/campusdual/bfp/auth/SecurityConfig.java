@@ -45,7 +45,7 @@ public class SecurityConfig {
                 // Rutas públicas
                 .antMatchers("/api/auth/**", "/test/all", "/public/**").permitAll()
                 .antMatchers("/api/auth/candidateDetails/{username}").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/offer/getAll").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/offer/getAll/paginated").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
 
