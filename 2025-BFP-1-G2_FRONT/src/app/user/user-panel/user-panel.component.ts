@@ -103,7 +103,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         });
       }
     });
-    this.tagService.getCandidateTags().subscribe({
+    this.tagService.getCandidateTagsByUsername(this.userNameInput).subscribe({
       next: (tags) => {
         this.myTags = tags;
         console.log('Candidate tags loaded successfully', tags);
@@ -128,15 +128,27 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   getSelectedTagsCount(): number {
-    return this.tagsControl.value.length;
+    return this.myTags.length;
   }
 
   getSelectedTags(): Tag[] {
-    return this.tagsControl.value;
+    return this.myTags;
   }
 
   isTagSelected(tag: Tag): boolean {
     return this.myTags.some(t => t.id === tag.id);
+  }
+
+  toggleTagSelection(tag: Tag): void {
+    const index = this.myTags.findIndex(t => t.id === tag.id);
+    if (index > -1) {
+      // Deselect
+      this.myTags.splice(index, 1);
+    } else {
+      if (this.myTags.length < 10) {
+        this.myTags.push(tag);
+      }
+    }
   }
 
 
@@ -342,14 +354,25 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     // Log para depuración
     console.log('Datos que se envían al backend:', updatedData);
 
+    // Actualizar datos del usuario
     this.authService.updateCandidateDetails(updatedData).subscribe({
       next: (response) => {
-        console.log('Datos actualizados exitosamente', response);
-        this.isEditMode = false;
-        this.isSaving = false;
-        const parts = [this.userName.value, this.userSurname1.value, this.userSurname2.value].filter(Boolean);
-        this.fullName = parts.join(' ');
-        this.snackbar.open('Datos actualizados correctamente', 'Cerrar', { duration: 3000 });
+        // Actualizar tags del candidato
+        const tagIds = this.myTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
+        this.tagService.updateCandidateTags(tagIds).subscribe({
+          next: () => {
+            this.isEditMode = false;
+            this.isSaving = false;
+            const parts = [this.userName.value, this.userSurname1.value, this.userSurname2.value].filter(Boolean);
+            this.fullName = parts.join(' ');
+            this.snackbar.open('Datos actualizados correctamente', 'Cerrar', { duration: 3000 });
+          },
+          error: (error) => {
+            console.error('Error al actualizar los tags', error);
+            this.isSaving = false;
+            this.snackbar.open('Error al actualizar los tags', 'Cerrar', { duration: 3000 });
+          }
+        });
       },
       error: (error) => {
         console.error('Error al actualizar los datos', error);
@@ -360,7 +383,39 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   cancelEdit(): void {
     this.isEditMode = false;
-    this.reloadUserData();
+    // Recargar solo los datos básicos del usuario, sin experiencia ni educación
+    this.authService.getCandidateDetails().subscribe({
+      next: (user: any) => {
+        this.userName.setValue(user.name);
+        this.userSurname1.setValue(user.surname1);
+        this.userSurname2.setValue(user.surname2);
+        this.userEmail.setValue(user.email);
+        this.login.setValue(user.login || user.username);
+        this.phoneNumber.setValue(user.phoneNumber);
+        this.location.setValue(user.location);
+        this.professionalTitle.setValue(user.professionalTitle);
+        this.yearsOfExperience.setValue(user.yearsOfExperience);
+        this.educationLevel.setValue(user.educationLevel);
+        this.languages.setValue(user.languages);
+        this.employmentStatus.setValue(user.employmentStatus);
+        this.curriculumUrl.setValue(user.curriculumUrl);
+        this.linkedinUrl.setValue(user.linkedinUrl);
+        this.githubUrl.setValue(user.githubUrl);
+        this.figmaUrl.setValue(user.figmaUrl);
+        this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
+        this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
+        this.logoImageBase64.setValue(user.logoImageBase64 || '');
+        const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
+        this.tagsControl.setValue(user.tags || []);
+        this.fullName = parts.join(' ');
+        this.isLoading = false;
+        this.startTypingAnimation();
+      },
+      error: (error: any) => {
+        console.error('Error fetching user data', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   hasFormErrors(): boolean {
@@ -495,8 +550,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.experiences.push(normalizedExp);
         this.snackbar.open('Experiencia añadida correctamente', 'Cerrar', { duration: 2000 });
         this.closeAddExperienceForm();
-        // Si quieres recargar los datos completos, puedes dejar la siguiente línea:
-        // this.reloadUserData();
+
       },
       error: () => {
         this.snackbar.open('Error al añadir la experiencia', 'Cerrar', { duration: 2500 });
@@ -598,58 +652,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         }
       });
     }
-  }
-
-  reloadUserData(): void {
-    this.authService.getCandidateDetails().subscribe({
-      next: (user: any) => {
-        this.userName.setValue(user.name);
-        this.userSurname1.setValue(user.surname1);
-        this.userSurname2.setValue(user.surname2);
-        this.userEmail.setValue(user.email);
-        this.login.setValue(user.login || user.username);
-        this.phoneNumber.setValue(user.phoneNumber);
-        this.location.setValue(user.location);
-        this.professionalTitle.setValue(user.professionalTitle);
-        this.yearsOfExperience.setValue(user.yearsOfExperience);
-        this.educationLevel.setValue(user.educationLevel);
-        this.languages.setValue(user.languages);
-        this.employmentStatus.setValue(user.employmentStatus);
-        this.curriculumUrl.setValue(user.curriculumUrl);
-        this.linkedinUrl.setValue(user.linkedinUrl);
-        this.githubUrl.setValue(user.githubUrl);
-        this.figmaUrl.setValue(user.figmaUrl);
-        this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
-        this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
-        this.logoImageBase64.setValue(user.logoImageBase64 || '');
-        this.experiences = (user.experiences || []).map((exp: any) => ({
-          id: exp.id || exp.experienceId,
-          jobTitle: exp.jobTitle || '',
-          companyName: exp.companyName || '',
-          startDate: exp.startDate || '',
-          endDate: exp.endDate || '',
-          responsibilities: exp.responsibilities || ''
-        }));
-        this.educations = (user.educations || []).map((edu: any) => ({
-          id: edu.id || edu.educationId,
-          degree: edu.degree || '',
-          institution: edu.institution || '',
-          startDate: edu.startDate || '',
-          endDate: edu.endDate || '',
-          description: edu.description || ''
-        }));
-
-
-        const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
-        this.fullName = parts.join(' ');
-        this.isLoading = false;
-        this.startTypingAnimation();
-      },
-      error: (error: any) => {
-        console.error('Error fetching user data', error);
-        this.isLoading = false;
-      }
-    });
   }
 
   currentEducationIndex = 0;

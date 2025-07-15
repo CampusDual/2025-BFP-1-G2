@@ -22,6 +22,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SharedModule } from '../shared/shared.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ChatButtonComponent } from './chat-button/chat-button.component';
+import { ChatPanelComponent } from './chat-panel/chat-panel.component';
 
 
 export interface Offer {
@@ -37,11 +39,15 @@ export interface Offer {
 @NgModule({
   declarations: [
     OfferTableComponent,
-    OfferCardComponent
+    OfferCardComponent,
+    ChatButtonComponent,
+    ChatPanelComponent
   ],
   exports: [
     OfferTableComponent,
-    OfferCardComponent
+    OfferCardComponent,
+    ChatButtonComponent,
+    ChatPanelComponent
     ],
   imports: [
     CommonModule,

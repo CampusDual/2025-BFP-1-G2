@@ -3,7 +3,6 @@ package com.campusdual.bfp.controller;
 import com.campusdual.bfp.api.ICompanyService;
 import com.campusdual.bfp.auth.JWTUtil;
 import com.campusdual.bfp.model.dto.CompanyDTO;
-import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

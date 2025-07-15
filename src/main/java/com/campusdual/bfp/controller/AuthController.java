@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private static final String header = "Bearer ";
+    private static final String authHeader = "Bearer ";
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -90,7 +91,7 @@ public class AuthController {
 
     @GetMapping("/me/username")
     public String getCurrentUsername(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith(header)) {
+        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
             return "Token no proporcionado.";
         }
         String token = authHeader.substring(7);
@@ -103,7 +104,7 @@ public class AuthController {
 
     @GetMapping("/user/roles")
     public List<String> getUserRoles(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith(header)) {
+        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
             return List.of("No roles available");
         }
         String token = authHeader.substring(7);
@@ -125,7 +126,7 @@ public class AuthController {
 
     @GetMapping("/candidateDetails")
     public ResponseEntity<CandidateDTO> getCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith(header)) {
+        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token = authHeader.substring(7);
@@ -139,6 +140,17 @@ public class AuthController {
         }
         return ResponseEntity.ok(candidateDetails);
     }
+
+    @GetMapping("/companyDetails")
+    public ResponseEntity<CompanyDTO> getCompanyDetails(Principal principal) {
+
+        CompanyDTO companyDetails = userService.getCompanyDetails(principal.getName());
+        if (companyDetails == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(companyDetails);
+    }
+
 
     @GetMapping("/candidateDetails/{username}")
         public ResponseEntity<CandidateDTO> getSpecificCandidateDetails(@PathVariable String username) {
@@ -155,7 +167,7 @@ public class AuthController {
         if (candidateDTO == null) {
             return ResponseEntity.badRequest().body(null);
         }
-        if (authHeader == null || !authHeader.startsWith(header)) {
+        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token = authHeader.substring(7);
@@ -173,7 +185,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listCandidates")
     public ResponseEntity<List<CandidateDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith(header)) {
+        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<CandidateDTO> candidatos = userService.getAllCandidates();

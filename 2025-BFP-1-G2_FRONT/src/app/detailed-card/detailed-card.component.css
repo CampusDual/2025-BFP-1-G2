@@ -210,7 +210,7 @@ mat-card-header {
   max-width: none;
   overflow: hidden;
   position: relative;
-  border-radius: 24px; 
+  border-radius: 24px;
   flex-shrink: 0;
   padding: 8px 0;
 }
@@ -240,7 +240,7 @@ mat-card-header {
 
 .navigation-dots {
   scrollbar-width: none;
-  -ms-overflow-style: none; 
+  -ms-overflow-style: none;
 }
 
 .navigation-dots-wrapper::before,
@@ -270,7 +270,7 @@ mat-card-header {
   height: 32px;
   padding: 0;
   min-width: 32px;
-  flex-shrink: 0; 
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -566,7 +566,7 @@ mat-chip-option[disabled] ::ng-deep span {
     padding: 6px 12px;
     gap: 6px;
   }
-  
+
   .navigation-dots-container-fixed .navigation-dots.few-items {
     padding: 6px 12px;
     gap: 6px;
@@ -578,7 +578,7 @@ mat-chip-option[disabled] ::ng-deep span {
     padding: 4px 8px;
     gap: 4px;
   }
-  
+
   .navigation-dots-container-fixed .navigation-dots.few-items {
     padding: 4px 8px;
     gap: 4px;
@@ -611,50 +611,50 @@ mat-chip-option[disabled] ::ng-deep span {
   .navigation-dots-container {
     width: 100%;
   }
-  
+
   .navigation-dots {
     padding: 6px 12px;
     gap: 6px;
   }
-  
+
   .dot {
     width: 28px;
     height: 28px;
     min-width: 28px;
   }
-  
+
   .dot-indicator {
     width: 6px;
     height: 6px;
   }
-  
+
   .navigation-dots-wrapper::before,
   .navigation-dots-wrapper::after {
     width: 25px;
   }
-  
+
   .navigation-fixed-header {
     padding: 6px 12px 8px;
     gap: 6px;
   }
 
-  
+
   .navigation-dots-container-fixed .navigation-dots {
     padding: 6px 12px;
     gap: 6px;
   }
-  
+
   .navigation-dots-container-fixed .dot {
     width: 28px;
     height: 28px;
     min-width: 28px;
   }
-  
+
   .navigation-dots-container-fixed .dot-indicator {
     width: 6px;
     height: 6px;
   }
-  
+
   .navigation-dots-container-fixed .navigation-dots-wrapper::before,
   .navigation-dots-container-fixed .navigation-dots-wrapper::after {
     width: 25px;
@@ -683,52 +683,52 @@ mat-chip-option[disabled] ::ng-deep span {
     padding: 4px 8px;
     gap: 4px;
   }
-  
+
   .dot {
     width: 24px;
     height: 24px;
     min-width: 24px;
   }
-  
+
   .dot-indicator {
     width: 5px;
     height: 5px;
   }
-  
+
   .navigation-dots-wrapper::before,
   .navigation-dots-wrapper::after {
     width: 20px;
   }
-  
+
   .navigation-fixed-header {
     padding: 4px 8px 6px;
     gap: 4px;
   }
-  
+
   .navigation-controls {
     font-size: 0.85rem;
   }
-  
+
   .navigation-dots-container-fixed {
     margin-top: 2px;
   }
-  
+
   .navigation-dots-container-fixed .navigation-dots {
     padding: 4px 8px;
     gap: 4px;
   }
-  
+
   .navigation-dots-container-fixed .dot {
     width: 24px;
     height: 24px;
     min-width: 24px;
   }
-  
+
   .navigation-dots-container-fixed .dot-indicator {
     width: 5px;
     height: 5px;
   }
-  
+
   .navigation-dots-container-fixed .navigation-dots-wrapper::before,
   .navigation-dots-container-fixed .navigation-dots-wrapper::after {
     width: 20px;

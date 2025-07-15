@@ -24,7 +24,26 @@
           [ngStyle]="{opacity: showCursor ? 1 : 0}">|</span>
       </h1>
       <p class="profile-title" *ngIf="professionalTitle.value">{{ professionalTitle.value }}</p>
+      <div class="info-tags">
+        <div *ngIf="!isEditMode" class="tags-container">
+          <mat-chip *ngFor="let tag of myTags" color="primary">{{ tag.name }}</mat-chip>
+        </div>
+        <div *ngIf="isEditMode" class="tags-container">
+          <mat-chip-listbox #tagListbox [multiple]="true" aria-label="Selecciona hasta 10 tags">
+            <mat-chip-option *ngFor="let tag of avaliableTags"
+              [selected]="isTagSelected(tag)"
+              (click)="toggleTagSelection(tag)"
+              [disabled]="!isTagSelected(tag) && getSelectedTagsCount() >= 10">
+              {{ tag.name }}
+            </mat-chip-option>
+          </mat-chip-listbox>
+          <div class="error-message" *ngIf="getSelectedTagsCount() > 10">
+            <small>Solo puedes seleccionar hasta 10 tags.</small>
+          </div>
+        </div>
+      </div>
     </div>
+      
 
     <div class="edit-controls" *ngIf="isCandidate && !isEditMode">
       <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
@@ -39,7 +58,8 @@
       <button class="cancel-btn" (click)="cancelEdit()" [disabled]="isSaving" title="Cancelar">
         <mat-icon>close</mat-icon>
       </button>
-    </div>
+
+  </div>
   </div>
   <div class="profile-tabs">
     <mat-tab-group [dynamicHeight]="true" animationDuration="300ms">

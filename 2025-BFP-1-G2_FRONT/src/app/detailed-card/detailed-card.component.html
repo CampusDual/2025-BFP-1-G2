@@ -34,249 +34,252 @@
       <div class="navigation-dots-container-fixed">
         <div class="navigation-dots-wrapper" #navigationDotsWrapper>
           <div class="navigation-dots" #navigationDots [class.few-items]="hasFewItems">
-            <button *ngFor="let item of data; let i = index" mat-icon-button class="dot" [class.active]="i === currentIndex"
-              (click)="navigateToIndex(i)">
+            <button *ngFor="let item of data; let i = index" mat-icon-button class="dot"
+              [class.active]="i === currentIndex" (click)="navigateToIndex(i)">
               <div class="dot-indicator"></div>
             </button>
           </div>
         </div>
       </div>
-      
+
     </div>
 
     <div class="card-content-wrapper">
       <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
-      <mat-card-title *ngIf="addingNewItem && cardType==='company'" class="add-title">Añadir nueva
-        empresa</mat-card-title>
-      <mat-card-title *ngIf="addingNewItem && cardType==='offer'" class="add-title">Añadir nueva oferta</mat-card-title>
-      <mat-card-title *ngIf="!isEditing">{{ currentItem.title }}</mat-card-title>
+        <mat-card-title *ngIf="addingNewItem && cardType==='company'" class="add-title">Añadir nueva
+          empresa</mat-card-title>
+        <mat-card-title *ngIf="addingNewItem && cardType==='offer'" class="add-title">Añadir nueva
+          oferta</mat-card-title>
+        <mat-card-title *ngIf="!isEditing">{{ currentItem.title }}</mat-card-title>
 
-      <mat-card-header>
+        <mat-card-header>
 
-        <mat-form-field *ngIf="isEditing && cardType === 'company'" appearance="outline" class="edit-field">
-          <mat-label>{{currentItem.titleLabel}}</mat-label>
-          <input matInput formControlName="login">
-          <mat-error *ngIf="currentItem.form?.get('login')?.hasError('required')">
-            El nombre de la empresa es obligatorio
-          </mat-error>
-          <mat-error *ngIf="currentItem.form?.get('login')?.hasError('minlength')">
-            Mínimo 2 caracteres
-          </mat-error>
-          <mat-error *ngIf="currentItem.form?.get('login')?.hasError('maxlength')">
-            Máximo 50 caracteres
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field *ngIf="isEditing && cardType === 'company'" appearance="outline" class="edit-field">
+            <mat-label>{{currentItem.titleLabel}}</mat-label>
+            <input matInput formControlName="login">
+            <mat-error *ngIf="currentItem.form?.get('login')?.hasError('required')">
+              El nombre de la empresa es obligatorio
+            </mat-error>
+            <mat-error *ngIf="currentItem.form?.get('login')?.hasError('minlength')">
+              Mínimo 2 caracteres
+            </mat-error>
+            <mat-error *ngIf="currentItem.form?.get('login')?.hasError('maxlength')">
+              Máximo 50 caracteres
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field *ngIf="isEditing && cardType === 'offer'" appearance="outline" class="edit-field">
-          <mat-label>{{currentItem.titleLabel}}</mat-label>
-          <input matInput formControlName="title">
-          <mat-error *ngIf="currentItem.form?.get('title')?.hasError('required')">
-            El título es obligatorio
-          </mat-error>
-          <mat-error *ngIf="currentItem.form?.get('title')?.hasError('minlength')">
-            Mínimo 3 caracteres
-          </mat-error>
-          <mat-error *ngIf="currentItem.form?.get('title')?.hasError('maxlength')">
-            Máximo 100 caracteres
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field *ngIf="isEditing && cardType === 'offer'" appearance="outline" class="edit-field">
+            <mat-label>{{currentItem.titleLabel}}</mat-label>
+            <input matInput formControlName="title">
+            <mat-error *ngIf="currentItem.form?.get('title')?.hasError('required')">
+              El título es obligatorio
+            </mat-error>
+            <mat-error *ngIf="currentItem.form?.get('title')?.hasError('minlength')">
+              Mínimo 3 caracteres
+            </mat-error>
+            <mat-error *ngIf="currentItem.form?.get('title')?.hasError('maxlength')">
+              Máximo 100 caracteres
+            </mat-error>
+          </mat-form-field>
 
-        <mat-card-subtitle *ngIf="currentItem.subtitle && currentItem.subtitle && !isEditing">
-          {{ currentItem.subtitle }}
-        </mat-card-subtitle>
+          <mat-card-subtitle *ngIf="currentItem.subtitle && currentItem.subtitle && !isEditing">
+            {{ currentItem.subtitle }}
+          </mat-card-subtitle>
 
-        <mat-form-field *ngIf="isEditing && cardType === 'company'" appearance="outline" class="edit-field">
-          <mat-label>{{currentItem.subtitleLabel}}</mat-label>
-          <input matInput formControlName="email" type="email">
-          <mat-error *ngIf="currentItem.form?.get('email')?.hasError('required')">
-            El email es obligatorio
-          </mat-error>
-          <mat-error *ngIf="currentItem.form?.get('email')?.hasError('email')">
-            Ingrese un email válido
-          </mat-error>
-        </mat-form-field>
-      </mat-card-header>
+          <mat-form-field *ngIf="isEditing && cardType === 'company'" appearance="outline" class="edit-field">
+            <mat-label>{{currentItem.subtitleLabel}}</mat-label>
+            <input matInput formControlName="email" type="email">
+            <mat-error *ngIf="currentItem.form?.get('email')?.hasError('required')">
+              El email es obligatorio
+            </mat-error>
+            <mat-error *ngIf="currentItem.form?.get('email')?.hasError('email')">
+              Ingrese un email válido
+            </mat-error>
+          </mat-form-field>
+        </mat-card-header>
 
-      <mat-card-content
-        [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-        <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
+        <mat-card-content
+          [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
+          <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
 
-        <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
-          <mat-label>{{currentItem.contentLabel}}</mat-label>
-          <textarea matInput formControlName="description" rows="3"></textarea>
-          <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
-            La descripción es obligatoria
-          </mat-error>
-          <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
-            Mínimo 10 caracteres
-          </mat-error>
-          <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
-            Máximo 500 caracteres
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
+            <mat-label>{{currentItem.contentLabel}}</mat-label>
+            <textarea matInput formControlName="description" rows="3"></textarea>
+            <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
+              La descripción es obligatoria
+            </mat-error>
+            <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
+              Mínimo 10 caracteres
+            </mat-error>
+            <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
+              Máximo 500 caracteres
+            </mat-error>
+          </mat-form-field>
 
-        <div *ngIf="isEditing && cardType === 'offer' && currentItem.form" class="tags-section">
-          <h4>Tags de la oferta (máximo 5)</h4>
-          <p class="tags-subtitle">Selecciona hasta 5 tags.</p>
+          <div *ngIf="isEditing && cardType === 'offer' && currentItem.form" class="tags-section">
+            <h4>Tags de la oferta (máximo 5)</h4>
+            <p class="tags-subtitle">Selecciona hasta 5 tags.</p>
 
-          <div class="selected-tags-count">
-            Tags seleccionados: {{getSelectedTagsCount(currentItem.form)}} / 5
-          </div>
+            <div class="selected-tags-count">
+              Tags seleccionados: {{getSelectedTagsCount(currentItem.form)}} / 5
+            </div>
 
-          <div class="tags-container">
-            <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl(currentItem.form)"
-              [compareWith]="compareTagsById" (selectionChange)="onChipSelectionChange($event)"
-              (keydown)="onChipKeydown($event)">
-              <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
-                [class.chip-selected]="isTagSelected(tag, currentItem.form)"
-                [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
-                [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
-                (keydown)="onChipKeydown($event)">
-                {{tag.name}}
-              </mat-chip-option>
-            </mat-chip-listbox>
-          </div>
-        </div>
-
-
-
-        <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
-          <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-            <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
-          </div>
-          <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'"
-            class="tags-section-static">
-            <h4>Areas de la oferta</h4>
             <div class="tags-container">
-              <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
+              <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl(currentItem.form)"
+                [compareWith]="compareTagsById" (selectionChange)="onChipSelectionChange($event)"
+                (keydown)="onChipKeydown($event)">
+                <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
+                  [class.chip-selected]="isTagSelected(tag, currentItem.form)"
+                  [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
+                  [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
+                  (keydown)="onChipKeydown($event)">
                   {{tag.name}}
-                </mat-chip>
+                </mat-chip-option>
               </mat-chip-listbox>
             </div>
           </div>
-        </div>
 
-        <div class="metadata-edit" *ngIf="isEditing && currentItem.form && cardType === 'company'">
-          <h4>Información adicional:</h4>
 
-          <div class="metadata-edit-item">
-            <mat-form-field appearance="outline" class="metadata-value">
-              <mat-label>Teléfono</mat-label>
-              <input matInput formControlName="phone">
-              <mat-error *ngIf="currentItem.form?.get('phone')?.hasError('required')">
-                El teléfono es obligatorio
-              </mat-error>
-              <mat-error *ngIf="currentItem.form?.get('phone')?.hasError('pattern')">
-                Formato de teléfono inválido
-              </mat-error>
-            </mat-form-field>
+
+          <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
+            <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
+              <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
+            </div>
+            <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'"
+              class="tags-section-static">
+              <h4>Areas de la oferta</h4>
+              <div class="tags-container">
+                <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
+                  <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)"
+                    (keydown)="onChipKeydown($event)">
+                    {{tag.name}}
+                  </mat-chip>
+                </mat-chip-listbox>
+              </div>
+            </div>
           </div>
 
-          <div class="metadata-edit-item">
-            <mat-form-field appearance="outline" class="metadata-value">
-              <mat-label>Sitio Web</mat-label>
-              <input matInput formControlName="url">
-              <mat-error *ngIf="currentItem.form?.get('url')?.hasError('required')">
-                La URL es obligatoria
-              </mat-error>
-              <mat-error *ngIf="currentItem.form?.get('url')?.hasError('pattern')">
-                Debe comenzar con http:// o https://
-              </mat-error>
-            </mat-form-field>
+          <div class="metadata-edit" *ngIf="isEditing && currentItem.form && cardType === 'company'">
+            <h4>Información adicional:</h4>
+
+            <div class="metadata-edit-item">
+              <mat-form-field appearance="outline" class="metadata-value">
+                <mat-label>Teléfono</mat-label>
+                <input matInput formControlName="phone">
+                <mat-error *ngIf="currentItem.form?.get('phone')?.hasError('required')">
+                  El teléfono es obligatorio
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('phone')?.hasError('pattern')">
+                  Formato de teléfono inválido
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="metadata-edit-item">
+              <mat-form-field appearance="outline" class="metadata-value">
+                <mat-label>Sitio Web</mat-label>
+                <input matInput formControlName="url">
+                <mat-error *ngIf="currentItem.form?.get('url')?.hasError('required')">
+                  La URL es obligatoria
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('url')?.hasError('pattern')">
+                  Debe comenzar con http:// o https://
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="metadata-edit-item">
+              <mat-form-field appearance="outline" class="metadata-value">
+                <mat-label>Dirección</mat-label>
+                <input matInput formControlName="address">
+                <mat-error *ngIf="currentItem.form?.get('address')?.hasError('required')">
+                  La dirección es obligatoria
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('address')?.hasError('minlength')">
+                  Mínimo 5 caracteres
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="metadata-edit-item">
+              <mat-form-field appearance="outline" class="metadata-value">
+                <mat-label>Año de Fundación</mat-label>
+                <input matInput [matDatepicker]="foundedDatePicker" formControlName="foundedDate" [max]="maxDate">
+                <mat-datepicker-toggle matIconSuffix [for]="foundedDatePicker">
+                  <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #foundedDatePicker startView="multi-year" (yearSelected)="yearSelected($event)"
+                  panelClass="year-picker" [startAt]="startYear"></mat-datepicker>
+
+
+                <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('required')">
+                  El año de fundación es obligatorio
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('matDatepickerMin')">
+                  Año mínimo: 1800
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('matDatepickerMax')">
+                  No puede ser una fecha futura
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="metadata-edit-item">
+              <mat-form-field appearance="outline" class="metadata-value">
+                <mat-label>URL del Logo</mat-label>
+                <input matInput formControlName="logo">
+              </mat-form-field>
+            </div>
           </div>
-
-          <div class="metadata-edit-item">
-            <mat-form-field appearance="outline" class="metadata-value">
-              <mat-label>Dirección</mat-label>
-              <input matInput formControlName="address">
-              <mat-error *ngIf="currentItem.form?.get('address')?.hasError('required')">
-                La dirección es obligatoria
-              </mat-error>
-              <mat-error *ngIf="currentItem.form?.get('address')?.hasError('minlength')">
-                Mínimo 5 caracteres
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <div class="metadata-edit-item">
-            <mat-form-field appearance="outline" class="metadata-value">
-              <mat-label>Año de Fundación</mat-label>
-              <input matInput [matDatepicker]="foundedDatePicker" formControlName="foundedDate" [max]="maxDate">
-              <mat-datepicker-toggle matIconSuffix [for]="foundedDatePicker">
-                <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
-              </mat-datepicker-toggle>
-              <mat-datepicker #foundedDatePicker startView="multi-year" (yearSelected)="yearSelected($event)"
-                panelClass="year-picker" [startAt]="startYear"></mat-datepicker>
+        </mat-card-content>
 
 
-              <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('required')">
-                El año de fundación es obligatorio
-              </mat-error>
-              <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('matDatepickerMin')">
-                Año mínimo: 1800
-              </mat-error>
-              <mat-error *ngIf="currentItem.form?.get('foundedDate')?.hasError('matDatepickerMax')">
-                No puede ser una fecha futura
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <div class="metadata-edit-item">
-            <mat-form-field appearance="outline" class="metadata-value">
-              <mat-label>URL del Logo</mat-label>
-              <input matInput formControlName="logo">
-            </mat-form-field>
-          </div>
-        </div>
-      </mat-card-content>
-
-
-      <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
-        <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
-          (click)="executeAction(action)">
-          <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-          {{ action.label }}
-        </button>
-      </mat-card-actions>
+        <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
+          <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
+            (click)="executeAction(action)">
+            <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
+            {{ action.label }}
+          </button>
+        </mat-card-actions>
       </mat-card>
 
       <mat-card *ngIf="currentItem && !currentItem.editable">
-      <mat-card-title>{{ currentItem.title }}</mat-card-title>
-      <mat-card-header>
-        <mat-card-subtitle *ngIf="currentItem.subtitle">
-          {{ currentItem.subtitle }}
-        </mat-card-subtitle>
-      </mat-card-header>
+        <mat-card-title>{{ currentItem.title }}</mat-card-title>
+        <mat-card-header>
+          <mat-card-subtitle *ngIf="currentItem.subtitle">
+            {{ currentItem.subtitle }}
+          </mat-card-subtitle>
+        </mat-card-header>
 
-      <mat-card-content
-        [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-        <div [innerHTML]="currentItem.content"></div>
-        <div class="metadata" *ngIf="currentItem.metadata">
-          <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'"
-            class="tags-section-static">
-            <h4>Areas de la oferta</h4>
-            <div class="tags-container">
-              <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
-                  {{tag.name}}
-                </mat-chip>
-              </mat-chip-listbox>
+        <mat-card-content
+          [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
+          <div [innerHTML]="currentItem.content"></div>
+          <div class="metadata" *ngIf="currentItem.metadata">
+            <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing && cardType === 'offer'"
+              class="tags-section-static">
+              <h4>Areas de la oferta</h4>
+              <div class="tags-container">
+                <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
+                  <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)"
+                    (keydown)="onChipKeydown($event)">
+                    {{tag.name}}
+                  </mat-chip>
+                </mat-chip-listbox>
+              </div>
+            </div>
+            <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
+              <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
             </div>
           </div>
-          <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-            <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
-          </div>
-        </div>
-      </mat-card-content>
+        </mat-card-content>
 
-      <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
-        <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
-          (click)="executeAction(action)">
-          <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-          {{ action.label }}
-        </button>
-      </mat-card-actions>
+        <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
+          <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
+            (click)="executeAction(action)">
+            <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
+            {{ action.label }}
+          </button>
+        </mat-card-actions>
       </mat-card>
     </div>
   </div>

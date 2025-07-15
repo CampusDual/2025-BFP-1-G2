@@ -160,6 +160,7 @@ public class UserService implements UserDetailsService, IUserService {
             return null;
         }
         CandidateDTO candidateDTO = new CandidateDTO();
+        candidateDTO.setId(user.getId());
         candidateDTO.setLogin(user.getLogin());
         candidateDTO.setEmail(user.getEmail());
         candidateDTO.setName(candidate.getName());
@@ -191,6 +192,24 @@ public class UserService implements UserDetailsService, IUserService {
             );
         }
         return candidateDTO;
+    }
+
+    public CompanyDTO getCompanyDetails(String username){
+        User user = this.userDao.findByLogin(username);
+        if (user == null) {
+            return null;
+        }
+        Company company = this.companyDao.findCompanyByUser(user);
+        if (company == null) {
+            return null;
+        }
+        CompanyDTO companyDTO = new CompanyDTO();
+        companyDTO.setId(company.getId());
+        companyDTO.setName(company.getName());
+        companyDTO.setLogin(user.getLogin());
+        companyDTO.setEmail(user.getEmail());
+        companyDTO.setDescription(company.getDescription());
+        return companyDTO;
     }
 
     @Bean

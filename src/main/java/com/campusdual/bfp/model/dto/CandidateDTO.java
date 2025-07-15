@@ -3,7 +3,7 @@ package com.campusdual.bfp.model.dto;
 import java.util.List;
 
 public class CandidateDTO extends SignupDTO {
-
+    private int id;
     private String phoneNumber;
     private String name;
     private String surname1;
@@ -26,6 +26,14 @@ public class CandidateDTO extends SignupDTO {
     private int[] tagIds;
     private List<CandidateExperienceDTO> experiences;
     private List<CandidateEducationDTO> educations;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String[] getAllDates() {
         return allDates;

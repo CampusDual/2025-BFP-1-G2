@@ -1,0 +1,167 @@
+<div class="chat-panel-container">
+
+  <div class="chat-header">
+    <div class="chat-header-content">
+      <button 
+        mat-icon-button 
+        class="back-button" 
+        (click)="backToConversations()" 
+        *ngIf="currentView === 'chat'">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      
+      <div class="chat-title">
+        <h3 *ngIf="currentView === 'conversations'">
+          <mat-icon>chat</mat-icon>
+          Mensajes
+        </h3>
+        <div class="chat-contact-info" *ngIf="currentView === 'chat' && activeConversation">
+          <div class="contact-avatar">
+            <img 
+              [src]="getContactAvatar(activeConversation)" 
+              [alt]="getContactName(activeConversation)"
+              *ngIf="getContactAvatar(activeConversation)"
+              onerror="this.style.display='none'">
+            <div class="avatar-placeholder" *ngIf="!getContactAvatar(activeConversation)">
+              <mat-icon>{{ isCandidate ? 'business' : 'person' }}</mat-icon>
+            </div>
+          </div>
+          <div class="contact-details">
+            <h4>{{ getContactName(activeConversation) }}</h4>
+            <span class="contact-type">{{ isCandidate ? 'Empresa' : 'Candidato' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <button mat-icon-button class="close-button" (click)="closePanel()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido del panel -->
+  <div class="chat-content">
+    <!-- Vista de conversaciones -->
+    <div class="conversations-view" *ngIf="currentView === 'conversations'">
+      <!-- Loading state -->
+      <div class="loading-container" *ngIf="isLoading || isLoadingConversations">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>{{ loadingMessage }}</p>
+      </div>
+
+      <!-- Lista de conversaciones -->
+      <div class="conversations-list" *ngIf="!isLoading && !isLoadingConversations">
+        <div 
+          class="conversation-item" 
+          *ngFor="let conversation of conversations; trackBy: trackByConversationId"
+          (click)="openConversation(conversation)">
+          
+          <div class="conversation-avatar">
+            <img 
+              [src]="getContactAvatar(conversation)" 
+              [alt]="getContactName(conversation)"
+              *ngIf="getContactAvatar(conversation)"
+              onerror="this.style.display='none'">
+            <div class="avatar-placeholder" *ngIf="!getContactAvatar(conversation)">
+              <mat-icon>{{ isCandidate ? 'business' : 'person' }}</mat-icon>
+            </div>
+          </div>
+          
+          <div class="conversation-details">
+            <div class="conversation-header">
+              <h4 class="contact-name">{{ getContactName(conversation) }}</h4>
+              <span class="conversation-time">{{ (conversation.lastActivity | date:'short') }}</span>
+            </div>
+            
+            <div class="conversation-preview">
+              <p class="last-message" *ngIf="conversation.lastMessage">
+                {{ conversation.lastMessage.content }}
+              </p>
+              <p class="no-messages" *ngIf="!conversation.lastMessage">
+                Nueva conversación
+              </p>
+              
+              <div class="unread-badge" *ngIf="conversation.unreadCount > 0">
+                {{ conversation.unreadCount > 99 ? '99+' : conversation.unreadCount }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado vacío -->
+        <div class="empty-conversations" *ngIf="conversations.length === 0">
+          <mat-icon class="empty-icon">chat_bubble_outline</mat-icon>
+          <h4>No hay conversaciones</h4>
+          <p *ngIf="isCandidate">
+            Las empresas pueden contactarte a través de este chat.
+          </p>
+          <p *ngIf="isCompany">
+            Puedes iniciar conversaciones con candidatos desde sus perfiles.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista de chat -->
+    <div class="chat-view" *ngIf="currentView === 'chat'">
+      <!-- Loading state para mensajes -->
+      <div class="loading-container" *ngIf="isLoadingMessages">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>{{ loadingMessage }}</p>
+      </div>
+
+      <!-- Mensajes -->
+      <div class="messages-container" #messagesContainer *ngIf="!isLoadingMessages">
+        <div class="messages-list">
+          <div 
+            class="message-item" 
+            *ngFor="let message of messages; trackBy: trackByMessageId"
+            [class.my-message]="isMyMessage(message)"
+            [class.their-message]="!isMyMessage(message)">
+            
+            <div class="message-bubble">
+              <div class="message-content">
+                {{ message.content }}
+              </div>
+              <div class="message-time">
+                {{(message.timestamp | date:'short')}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado vacío de mensajes -->
+        <div class="empty-messages" *ngIf="messages.length === 0">
+          <mat-icon class="empty-icon">chat</mat-icon>
+          <h4>Inicia la conversación</h4>
+          <p>Envía tu primer mensaje para comenzar a chatear.</p>
+        </div>
+      </div>
+
+      <!-- Input de mensaje -->
+      <div class="message-input-container">
+        <div class="message-input-wrapper">
+          <mat-form-field appearance="outline" class="message-input-field">
+            <input 
+              matInput 
+              placeholder="Escribe un mensaje..."
+              [formControl]="messageControl"
+              (keydown)="onKeyDown($event)"
+              #messageInput
+              [disabled]="isSending || isLoadingMessages">
+          </mat-form-field>
+          
+          <button 
+            mat-fab 
+            color="primary" 
+            class="send-button"
+            (click)="sendMessage()"
+            [disabled]="!messageControl.valid || isSending || isLoadingMessages">
+            <mat-icon *ngIf="!isSending">send</mat-icon>
+            <mat-spinner diameter="20" *ngIf="isSending"></mat-spinner>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

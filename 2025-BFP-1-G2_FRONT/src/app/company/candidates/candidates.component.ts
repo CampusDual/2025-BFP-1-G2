@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OfferService } from '../../services/offer.service';
+import { ChatService } from '../../services/chat.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Candidate } from 'src/app/detailed-card/detailed-card.component';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 type SortColumn = 'name' | 'date' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -15,7 +17,7 @@ type SortDirection = 'asc' | 'desc';
 export class CandidatesComponent implements OnInit {
   offerId: number | null = null;
   offerTitle: string | null = null;
-  
+
   candidates: Candidate[] = [];
   sortedCandidates: Candidate[] = [];
   currentSortColumn: SortColumn | null = null;
@@ -25,14 +27,16 @@ export class CandidatesComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private offerService: OfferService,
-    private snackBar: MatSnackBar
+    private chatService: ChatService,
+    private snackBar: MatSnackBar,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const offerId = params['offerId'];
       const offerTitle = params['offerTitle'];
-      
+
       if (offerId) {
         this.offerId = offerId;
         this.offerTitle = offerTitle || 'Oferta sin título';
@@ -109,14 +113,14 @@ export class CandidatesComponent implements OnInit {
 
   private compareByStatus(a: Candidate, b: Candidate): number {
     const getStatusPriority = (status: boolean | null): number => {
-      if (status === true) return 1; 
-      if (status === false) return 2; 
+      if (status === true) return 1;
+      if (status === false) return 2;
       return 3;
     };
 
     const priorityA = getStatusPriority(a.valid);
     const priorityB = getStatusPriority(b.valid);
-    
+
     return priorityA - priorityB;
   }
 
@@ -134,7 +138,7 @@ export class CandidatesComponent implements OnInit {
     return 'sort-inactive';
   }
 
- aceptCandidate(candidate: Candidate) {
+  aceptCandidate(candidate: Candidate) {
     const lastOption = candidate.valid;
     candidate.valid = true;
     this.offerService.updateCandidateStatus(this.offerId!, candidate).subscribe({
@@ -186,5 +190,29 @@ export class CandidatesComponent implements OnInit {
         candidate.valid = lastOption;
       }
     });
+  }
+
+  openChatWithCandidate(candidate: Candidate): void {
+
+    if (candidate.login) {
+      // Necesitamos convertir el login a un ID numérico o usar un método diferente
+      // Por ahora, voy a usar el login como identificador
+      this.authService.getSpecificCandidateDetails(candidate.login).
+        subscribe({
+          next: (candidate) => {
+            this.chatService.startConversation(candidate.id);
+            this.snackBar.open(`Abriendo chat con ${candidate.name}`, 'Cerrar', {
+              duration: 3000
+            });
+          },
+          error: (error) => {
+            this.snackBar.open('Error: No se pudo obtener el ID del candidato', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+    }
+
   }
 }
