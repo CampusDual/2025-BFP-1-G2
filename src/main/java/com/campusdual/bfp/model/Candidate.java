@@ -1,6 +1,7 @@
 package com.campusdual.bfp.model;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 import java.io.Serializable;
 
@@ -23,6 +24,9 @@ public class Candidate implements Serializable {
 
     @Column
     private String surname2;
+
+    @Column(name = "dateadded")
+    private Date dateAdded;
 
     @Column(name = "location")
     private String location;
@@ -251,5 +255,13 @@ public class Candidate implements Serializable {
     }
     public void setEducations(List<CandidateEducation> educations) {
         this.educations = educations;
+    }
+
+    public Date getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(Date dateAdded) {
+        this.dateAdded = dateAdded;
     }
 }

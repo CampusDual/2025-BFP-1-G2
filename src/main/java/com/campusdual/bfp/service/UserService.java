@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
@@ -121,6 +123,7 @@ public class UserService implements UserDetailsService, IUserService {
         Candidate candidate = CandidateMapper.INSTANCE.toEntity(candidateDTO);
         id = this.registerNewUser(candidateDTO.getLogin(), candidateDTO.getPassword(), candidateDTO.getEmail(), "ROLE_CANDIDATE");
         candidate.setUser(this.userDao.findUserById(id));
+        candidate.setDateAdded(new java.util.Date());
         this.candidateDao.saveAndFlush(candidate);
         if (candidateDTO.getTagIds() != null) {
             for (Integer tagId : candidateDTO.getTagIds()) {
@@ -235,14 +238,14 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public List<CandidateDTO> getAllCandidates() {
-        List<User> candidates = this.candidateDao.findAllUsersByCandidate();
+        List<Object[]> candidates = this.candidateDao.findAllUsersByCandidate();
         return candidates.stream()
                 .map(user -> {
                     CandidateDTO candidateDTO = new CandidateDTO();
-                    candidateDTO.setId(user.getId());
-                    candidateDTO.setAllDates(userOfferDao.findDatesByUserId(user.getId()).stream()
-                            .map(date -> new java.text.SimpleDateFormat("dd/MM/yyyy").format(date))
-                            .toArray(String[]::new));
+                    candidateDTO.setId((Integer) user[0]);
+                    Date dateAdded = (Date) user[1];
+
+                    candidateDTO.setDateAdded(dateAdded.toLocaleString());
                     return candidateDTO;
                 })
                 .collect(Collectors.toList());
