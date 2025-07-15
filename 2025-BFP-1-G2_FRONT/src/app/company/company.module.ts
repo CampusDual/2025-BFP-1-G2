@@ -16,6 +16,7 @@ import {  MatIconModule } from '@angular/material/icon';
 import {  MatMenuModule } from '@angular/material/menu';
 import {CompanyPanelComponent} from "./company-panel/company-panel.component";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
@@ -39,6 +40,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     MatIconModule,
     MatMenuModule,
     MatProgressSpinnerModule,
+    MatTabsModule
   ]
 })
 export class CompanyModule { }

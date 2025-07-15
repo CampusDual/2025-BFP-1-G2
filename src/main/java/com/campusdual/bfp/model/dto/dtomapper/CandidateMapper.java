@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper
+@Mapper(uses = {CandidateExperienceMapper.class})
 public interface CandidateMapper {
     CandidateMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(CandidateMapper.class);
 
@@ -16,6 +16,7 @@ public interface CandidateMapper {
     @Mapping(source = "phoneNumber", target = "phoneNumber")
     @Mapping(source = "cvPdfBase64", target = "cvPdfBase64")
     @Mapping(source = "logoImageBase64", target = "logoImageBase64")
+    @Mapping(source = "experiences", target = "experiences")
     CandidateDTO toDTO(Candidate candidate);
 
     List<CandidateDTO> toDTOList(List<Candidate> candidates);
@@ -24,5 +25,6 @@ public interface CandidateMapper {
     @Mapping(target = "user.email", source = "email")
     @Mapping(target = "cvPdfBase64", source = "cvPdfBase64")
     @Mapping(target = "logoImageBase64", source = "logoImageBase64")
+    @Mapping(target = "experiences", source = "experiences")
     Candidate toEntity(CandidateDTO candidateDTO);
 }

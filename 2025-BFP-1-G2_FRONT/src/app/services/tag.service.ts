@@ -66,4 +66,8 @@ export class TagService {
             { responseType: 'text' }
         );
     }
+    
+    getCandidateTagsByUsername(username: string): Observable<Tag[]> {
+        return this.http.get<Tag[]>(`${this.baseUrl}/candidate/${username}`);
+    }
 }

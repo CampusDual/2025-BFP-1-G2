@@ -1,5 +1,6 @@
 package com.campusdual.bfp.model.dto;
 
+import java.util.List;
 
 public class CandidateDTO extends SignupDTO {
     private int id;
@@ -23,6 +24,8 @@ public class CandidateDTO extends SignupDTO {
     private String logoImageBase64;
     private String[] allDates;
     private int[] tagIds;
+    private List<CandidateExperienceDTO> experiences;
+    private List<CandidateEducationDTO> educations;
 
     public int getId() {
         return id;
@@ -167,8 +170,24 @@ public class CandidateDTO extends SignupDTO {
     public int[] getTagIds() {
         return tagIds;
     }
+
     public void setTagIds(int[] tagIds) {
         this.tagIds = tagIds;
     }
 
+    public List<CandidateExperienceDTO> getExperiences() {
+        return experiences;
+    }
+
+    public void setExperiences(List<CandidateExperienceDTO> experiences) {
+        this.experiences = experiences;
+    }
+
+    public List<CandidateEducationDTO> getEducations() {
+        return educations;
+    }
+
+    public void setEducations(List<CandidateEducationDTO> educations) {
+        this.educations = educations;
+    }
 }

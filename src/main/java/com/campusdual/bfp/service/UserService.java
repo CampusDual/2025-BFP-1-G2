@@ -5,7 +5,9 @@ import com.campusdual.bfp.exception.*;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.CandidateEducationDTO;
 import com.campusdual.bfp.model.dto.CompanyDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateEducationMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
 import org.springframework.beans.BeanUtils;
@@ -25,6 +27,10 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
+import com.campusdual.bfp.model.dto.CandidateExperienceDTO;
+import com.campusdual.bfp.model.dto.dtomapper.CandidateEducationMapper;
+import com.campusdual.bfp.model.dto.CandidateEducationDTO;
 
 @Service
 @Lazy
@@ -175,7 +181,16 @@ public class UserService implements UserDetailsService, IUserService {
         // Agregar los nuevos campos
         candidateDTO.setCvPdfBase64(candidate.getCvPdfBase64());
         candidateDTO.setLogoImageBase64(candidate.getLogoImageBase64());
-
+        if (candidate.getExperiences() != null) {
+            candidateDTO.setExperiences(
+                    CandidateExperienceMapper.INSTANCE.toDTOList(candidate.getExperiences())
+            );
+        }
+        if (candidate.getEducations() != null) {
+            candidateDTO.setEducations(
+                    CandidateEducationMapper.INSTANCE.toDTOList(candidate.getEducations())
+            );
+        }
         return candidateDTO;
     }
 
@@ -317,5 +332,74 @@ public class UserService implements UserDetailsService, IUserService {
         this.candidateDao.saveAndFlush(candidate);
 
         return CandidateMapper.INSTANCE.toDTO(candidate);
+    }
+
+
+    @Transactional
+    public void deleteCandidateExperience(Long experienceId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Candidate candidate = candidateDao.findCandidateByUser(user);
+        if (candidate == null) throw new CandidateNotFoundException("Candidato no encontrado");
+        CandidateExperience toDelete = candidate.getExperiences().stream()
+                .filter(exp -> exp.getId().equals(experienceId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Experiencia no encontrada"));
+        candidate.getExperiences().remove(toDelete);
+        candidateDao.saveAndFlush(candidate);
+    }
+
+    @Transactional
+    public CandidateExperienceDTO createCandidateExperience(String username, CandidateExperienceDTO experienceDTO) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Candidate candidate = candidateDao.findCandidateByUser(user);
+        if (candidate == null) throw new CandidateNotFoundException("Candidato no encontrado");
+
+        CandidateExperience experience = CandidateExperienceMapper.INSTANCE.toEntity(experienceDTO);
+        experience.setCandidate(candidate);
+        candidate.getExperiences().add(experience);
+        candidateDao.saveAndFlush(candidate); // Guarda cascada
+
+        CandidateExperience savedExperience = experience;
+        if (experience.getId() == null && candidate.getExperiences() != null && !candidate.getExperiences().isEmpty()) {
+            savedExperience = candidate.getExperiences().get(candidate.getExperiences().size() - 1);
+        }
+
+        return CandidateExperienceMapper.INSTANCE.toDTO(savedExperience);
+    }
+
+    @Transactional
+    public void deleteCandidateEducation(Long educationId, String username) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Candidate candidate = candidateDao.findCandidateByUser(user);
+        if (candidate == null) throw new CandidateNotFoundException("Candidato no encontrado");
+        CandidateEducation toDelete = candidate.getEducations().stream()
+                .filter(edu -> edu.getId().equals(educationId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Educación no encontrada"));
+        candidate.getEducations().remove(toDelete);
+        candidateDao.saveAndFlush(candidate);
+    }
+
+    @Transactional
+    public CandidateEducationDTO createCandidateEducation(String username, CandidateEducationDTO educationDTO) {
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Candidate candidate = candidateDao.findCandidateByUser(user);
+        if (candidate == null) throw new CandidateNotFoundException("Candidato no encontrado");
+
+        CandidateEducation education = CandidateEducationMapper.INSTANCE.toEntity(educationDTO);
+        education.setCandidate(candidate);
+        candidate.getEducations().add(education);
+        candidateDao.saveAndFlush(candidate); // Guarda en cascada
+
+        CandidateEducation savedEducation = education;
+        if (education.getId() == null && candidate.getEducations() != null && !candidate.getEducations().isEmpty()) {
+            savedEducation = candidate.getEducations().get(candidate.getEducations().size() - 1);
+        }
+
+        return CandidateEducationMapper.INSTANCE.toDTO(savedEducation);
     }
 }

@@ -1,6 +1,7 @@
 package com.campusdual.bfp.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.io.Serializable;
 
 @Entity
@@ -69,6 +70,12 @@ public class Candidate implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CandidateExperience> experiences;
+
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CandidateEducation> educations;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -229,5 +236,20 @@ public class Candidate implements Serializable {
 
     public void setLogoImageBase64(String logoImageBase64) {
         this.logoImageBase64 = logoImageBase64;
+    }
+
+    public List<CandidateExperience> getExperiences() {
+        return experiences;
+    }
+
+    public void setExperiences(List<CandidateExperience> experiences) {
+        this.experiences = experiences;
+    }
+
+    public List<CandidateEducation> getEducations() {
+        return educations;
+    }
+    public void setEducations(List<CandidateEducation> educations) {
+        this.educations = educations;
     }
 }

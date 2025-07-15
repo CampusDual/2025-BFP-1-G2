@@ -162,7 +162,7 @@ public class OfferController {
         return ResponseEntity.ok("Oferta eliminada de guardados");
     }
 
-    @PreAuthorize("hasRole('ROLE_CANDIDATE')")
+    @PreAuthorize("hasRole('ROLE_CANDIDATE') or hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/count/candidate")
     public ResponseEntity<Integer> getOffersCount(@RequestParam String listType,
                                                   Principal principal) {
