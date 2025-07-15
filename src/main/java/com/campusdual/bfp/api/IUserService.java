@@ -17,6 +17,8 @@ public interface IUserService {
 
     CandidateDTO getCandidateDetails(String username);
 
+    CompanyDTO getCompanyDetails(String username);
+
     UserDetails loadUserByUsername(String username);
 
     List<CompanyDTO> getAllCompanies();

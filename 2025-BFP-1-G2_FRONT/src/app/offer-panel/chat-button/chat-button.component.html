@@ -1,0 +1,18 @@
+<div class="chat-button-container" *ngIf="shouldShowButton()">
+  <!-- Botón flotante del chat -->
+  <button 
+    mat-fab 
+    color="primary" 
+    class="chat-fab"
+    (click)="toggleChat()"
+    [class.active]="isChatOpen">
+    <mat-icon>{{ isChatOpen ? 'close' : 'chat' }}</mat-icon>
+    <span class="notification-badge" *ngIf="unreadCount > 0 && !isChatOpen">
+      {{ unreadCount > 99 ? '99+' : unreadCount }}
+    </span>
+  </button>
+
+  <div class="chat-panel" *ngIf="isChatOpen" >
+    <app-chat-panel (onClose)="toggleChat()"></app-chat-panel>
+  </div>
+</div>

@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Candidate } from 'src/app/detailed-card/detailed-card.component';
 import { Tag } from 'src/app/admin/admin-dashboard/admin-dashboard.component';
+import { Company } from 'src/app/services/company.service';
 
 export interface User {
+  id: number;
   username: string;
   password: string;
   authorities: any[];
@@ -30,6 +32,8 @@ export interface DecodedToken {
   iat: number;
 }
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,7 +49,7 @@ export class AuthService {
   private rolesCache: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   public roles$ = this.rolesCache.asObservable();
   
-  private candidateDetailsCache: Observable<User> | null = null;
+  private candidateDetailsCache: Observable<Candidate> | null = null;
   private companyDetailsCache: Observable<any> | null = null;
 
   constructor(
@@ -238,17 +242,17 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  getCandidateDetails(): Observable<User> {
+  getCandidateDetails(): Observable<Candidate> {
     if (!this.candidateDetailsCache) {
-      this.candidateDetailsCache = this.http.get<User>(`${this.baseUrl}/candidateDetails`).pipe(
+      this.candidateDetailsCache = this.http.get<Candidate>(`${this.baseUrl}/candidateDetails`).pipe(
         shareReplay(1)
       );
     }
     return this.candidateDetailsCache;
   }
 
-  getSpecificCandidateDetails(username: string): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/candidateDetails/${username}`);
+  getSpecificCandidateDetails(username: string): Observable<Candidate> {
+    return this.http.get<Candidate>(`${this.baseUrl}/candidateDetails/${username}`);
   }
 
   updateCandidateDetails(candidateData: any): Observable<any> {
@@ -260,9 +264,9 @@ export class AuthService {
   }
 
 
-  getCompanyDetails(): Observable<any> {
+  getCompanyDetails(): Observable<Company> {
     if (!this.companyDetailsCache) {
-      this.companyDetailsCache = this.http.get(`${this.baseUrl}/companyDetails`).pipe(
+      this.companyDetailsCache = this.http.get<Company>(`${this.baseUrl}/companyDetails`).pipe(
         shareReplay(1) 
       );
     }

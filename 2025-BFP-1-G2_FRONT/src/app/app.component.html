@@ -47,5 +47,7 @@
         <app-footer *ngIf="showFooter"></app-footer>
       </mat-drawer-content>
     </mat-drawer-container>
+    
+    <app-chat-button *ngIf="isCandidate||isCompany"></app-chat-button>
   </div>
 </body>

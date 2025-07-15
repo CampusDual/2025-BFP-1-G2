@@ -5,6 +5,7 @@ import { MatDatepicker } from "@angular/material/datepicker";
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 
 export interface Candidate {
+  id: number;
   login: string;
   name: string;
   surname1: string;
@@ -15,6 +16,8 @@ export interface Candidate {
   Linkedin?: string;
   dateAdded: string;
   valid: boolean | null;
+  logoImageBase64?: string;
+  tagIds?: Tag[];
 }
 
 export interface DetailedCardData {
@@ -88,7 +91,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   @Input() cardType: 'company' | 'offer' | 'candidate' | 'generic' = 'generic';
   @Input() editMode: boolean = false;
   @Input() availableTags: Tag[] = [];
-  @Input() viewMessages = new EventEmitter<any>();
 
   @Output() onClose = new EventEmitter<void>();
   @Output() onAction = new EventEmitter<{ action: string, data: any }>();
@@ -452,18 +454,5 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
 
 
   onDotsScroll(): void {
-  }
-
-
-  onViewMessages(event: Event) {
-    this.viewMessages.emit(
-        {
-          action: 'viewMessages',
-          data: {
-            itemId: this.currentItem?.id,
-            itemType: this.cardType
-          }
-
-      });
   }
 }

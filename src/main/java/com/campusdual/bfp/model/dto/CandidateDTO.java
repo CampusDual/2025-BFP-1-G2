@@ -2,7 +2,7 @@ package com.campusdual.bfp.model.dto;
 
 
 public class CandidateDTO extends SignupDTO {
-
+    private int id;
     private String phoneNumber;
     private String name;
     private String surname1;
@@ -23,6 +23,14 @@ public class CandidateDTO extends SignupDTO {
     private String logoImageBase64;
     private String[] allDates;
     private int[] tagIds;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String[] getAllDates() {
         return allDates;

@@ -1,82 +1,118 @@
 package com.campusdual.bfp.model;
 
+import com.campusdual.bfp.model.dto.MessageDTO;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
+/**
+ * Entidad para mensajes del chat
+ */
 @Entity
-@Table(name = "messages")
-public class Message{
-    public enum Sender {
-        Company, Candidate
-    }
-
+@Table(name = "chat_messages")
+public class Message {
+    
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
-    private Company company;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "candidate_id", referencedColumnName = "id", nullable = false)
-    private Candidate candidate;
-
-    @Column(nullable = false, length = 30)
+    
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
+    
+    @Column(name = "receiver_id", nullable = false)
+    private Long receiverId;
+    
+    @Column(name = "content", nullable = false, length = 1000)
+    private String content;
+    
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;
+    
+    @Column(name = "is_read", nullable = false)
+    private Boolean read = false;
+    
     @Enumerated(EnumType.STRING)
-    private Sender sender;
+    @Column(name = "sender_type", nullable = false)
+    private MessageDTO.SenderType senderType;
 
-    @Column(name = "message", nullable = false)
-    private String message;
-
-    @Column(name = "date_message", nullable = false)
-    private Date dateMessage;
-
-    public Message() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conversation_id")
+    private ChatConversation conversation;
+    
+    // Constructores
+    public Message() {}
+    
+    public Message(Long senderId, Long receiverId, String content, MessageDTO.SenderType senderType) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.content = content;
+        this.senderType = senderType;
+        this.timestamp = LocalDateTime.now();
+        this.read = false;
     }
-    public Message(Company company, Candidate candidate, Sender sender, String message, Date dateMessage) {
-        this.company = company;
-        this.candidate = candidate;
-        this.sender = sender;
-        this.message = message;
-        this.dateMessage = dateMessage;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    
+    // Getters y Setters
     public Long getId() {
         return id;
     }
-    public Company getCompany() {
-        return company;
+    
+    public void setId(Long id) {
+        this.id = id;
     }
-    public void setCompany(Company company) {
-        this.company = company;
+    
+    public Long getSenderId() {
+        return senderId;
     }
-    public Candidate getCandidate() {
-        return candidate;
+    
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
     }
-    public void setCandidate(Candidate candidate) {
-        this.candidate = candidate;
+    
+    public Long getReceiverId() {
+        return receiverId;
     }
-    public Sender getSender() {
-        return sender;
+    
+    public void setReceiverId(Long receiverId) {
+        this.receiverId = receiverId;
     }
-    public void setSender(Sender sender) {
-        this.sender = sender;
+    
+    public String getContent() {
+        return content;
     }
-    public String getMessage() {
-        return message;
+    
+    public void setContent(String content) {
+        this.content = content;
     }
-    public void setMessage(String message) {
-        this.message = message;
+    
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
-    public Date getDateMessage() {
-        return dateMessage;
+    
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
-    public void setDateMessage(Date dateMessage) {
-        this.dateMessage = dateMessage;
+    
+    public Boolean getRead() {
+        return read;
+    }
+    
+    public void setRead(Boolean read) {
+        this.read = read;
+    }
+
+    public MessageDTO.SenderType getSenderType() {
+        return senderType;
+    }
+
+    public void setSenderType(MessageDTO.SenderType senderType) {
+        this.senderType = senderType;
+    }
+
+    public ChatConversation getConversation() {
+        return conversation;
+    }
+    
+    public void setConversation(ChatConversation conversation) {
+        this.conversation = conversation;
     }
 }

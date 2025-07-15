@@ -1,10 +1,11 @@
 package com.campusdual.bfp.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "candidates")
-public class Candidate {
+public class Candidate implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

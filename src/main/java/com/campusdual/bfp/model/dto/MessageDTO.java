@@ -1,24 +1,94 @@
 package com.campusdual.bfp.model.dto;
-import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+
+/**
+ * DTO para mensajes del chat
+ */
 public class MessageDTO {
-    private Long id;
-    private Long companyId;
-    private Long candidateId;
-    private String sender; // "Company" or "Candidate"
-    private String message;
-    private Date dateMessage;
-
-    public Long getMessageId() {return id;}
-    public void setId(Long id) {this.id = id;}
-    public Long getCompanyId() {return companyId;}
-    public Long getCandidateId() {return candidateId;}
-    public void setCompanyId(Long companyId) {this.companyId = companyId;}
-    public void setCandidateId(Long candidateId) {this.candidateId = candidateId;}
-    public String getSender() {return sender;}
-    public void setSender(String sender) {this.sender = sender;}
-    public String getMessage() {return message;}
-    public void setMessage(String message) {this.message = message;}
-    public Date getDateMessage() {return dateMessage;}
-    public void setDateMessage(Date date_Message) {this.dateMessage = date_Message;}
+    
+    private int id;
+    private int senderId;
+    private int receiverId;
+    private String content;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime timestamp;
+    
+    private Boolean read;
+    private SenderType senderType;
+    
+    public enum SenderType {
+        CANDIDATE, COMPANY
+    }
+    
+    // Constructores
+    public MessageDTO() {}
+    
+    public MessageDTO(int senderId, int receiverId, String content, SenderType senderType) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.content = content;
+        this.senderType = senderType;
+        this.timestamp = LocalDateTime.now();
+        this.read = false;
+    }
+    
+    // Getters y Setters
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public int getSenderId() {
+        return senderId;
+    }
+    
+    public void setSenderId(int senderId) {
+        this.senderId = senderId;
+    }
+    
+    public int getReceiverId() {
+        return receiverId;
+    }
+    
+    public void setReceiverId(int receiverId) {
+        this.receiverId = receiverId;
+    }
+    
+    public String getContent() {
+        return content;
+    }
+    
+    public void setContent(String content) {
+        this.content = content;
+    }
+    
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+    
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+    
+    public Boolean getRead() {
+        return read;
+    }
+    
+    public void setRead(Boolean read) {
+        this.read = read;
+    }
+    
+    public SenderType getSenderType() {
+        return senderType;
+    }
+    
+    public void setSenderType(SenderType senderType) {
+        this.senderType = senderType;
+    }
 }
