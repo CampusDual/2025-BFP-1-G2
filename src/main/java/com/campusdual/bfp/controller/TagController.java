@@ -106,7 +106,7 @@ public class TagController {
     @PreAuthorize("hasRole('ROLE_CANDIDATE')")
     @PutMapping("/candidate")
     public ResponseEntity<Integer> updateCandidateTags(
-            @RequestBody CandidateTagsDTO request, Principal principal){
+            @RequestBody CandidateTagsDTO request, Principal principal) {
         int result = tagService.updateCandidateTags(request.getTagIds(), principal.getName());
         return ResponseEntity.ok(result);
     }
@@ -125,4 +125,10 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
+
+    @GetMapping("/mostFrequent")
+    public ResponseEntity<List<TagDTO>> getTopTags() {
+        List<TagDTO> tags = tagService.getMostFrequentTags(10);
+        return ResponseEntity.ok(tags);
+    }
 }

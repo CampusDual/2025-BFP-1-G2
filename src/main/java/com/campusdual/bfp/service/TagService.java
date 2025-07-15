@@ -193,5 +193,19 @@ public class TagService implements ITagService {
         return candidateTagsDao.deleteByCandidateIdAndTagId(candidate.getCandidateId(), tagId);
     }
 
-
+    public List<TagDTO> getMostFrequentTags(int limit) {
+        List<TagDTO> results = offerTagsDao.findMostFrequentTags(limit).stream().map(
+                result -> {
+                    Tag tag = (Tag) result[0];
+                    int tagCount = (int) result[1];
+                    TagDTO tagDTO = TagMapper.INSTANCE.toTagDTO(tag);
+                    tagDTO.setCount(tagCount);
+                    return tagDTO;
+                }
+        ).collect(Collectors.toList());
+        if (results.isEmpty()) {
+            throw new NoTagsFoundException("No se encontraron tags frecuentes");
+        }
+        return results;
+    }
 }
