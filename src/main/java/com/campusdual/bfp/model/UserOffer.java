@@ -24,6 +24,9 @@ public class UserOffer {
     @Column
     private Boolean valid;
 
+    @Column(name="validation_date")
+    private Date validationDate;
+
     public long getId() {
         return id;
     }
@@ -55,4 +58,10 @@ public class UserOffer {
     }
     public Boolean isValid() { return valid; }
     public void setValid(Boolean valid) { this.valid = valid; }
+    public Date getValidationDate() {
+        return validationDate;
+    }
+    public void setValidationDate(Date validationDate) {
+        this.validationDate = validationDate;
+    }
 }

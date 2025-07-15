@@ -1,6 +1,7 @@
 package com.campusdual.bfp.api;
 
 import com.campusdual.bfp.model.dto.CandidateDTO;
+import com.campusdual.bfp.model.dto.MonthlyClosedOffersDTO;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -35,4 +36,6 @@ public interface IOfferService {
     int getCompanyOffersCount(String status, String name);
 
     boolean updateOfferStatus(int offerId, String status, String username);
+
+    List<MonthlyClosedOffersDTO> getMonthlyClosedOffersWithAcceptedCandidates();
 }
