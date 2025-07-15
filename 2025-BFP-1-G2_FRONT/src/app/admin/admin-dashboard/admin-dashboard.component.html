@@ -17,7 +17,7 @@
     <mat-card class="chart-card">
       <mat-card-header>
         <mat-card-title class="card-title">
-          <mat-icon class="title-icon">bar_chart</mat-icon>
+          <mat-icon class="title-icon" style="color: #0d9488;">bar_chart</mat-icon>
           Candidatos por Mes
         </mat-card-title>
         <mat-card-subtitle>Registros en {{ currentYear }}</mat-card-subtitle>
@@ -30,8 +30,6 @@
       </mat-card-content>
     </mat-card>
   </div>
-
-
 
   <div class="div2">
     <mat-card class="stat-card active-stat">
@@ -65,54 +63,33 @@
   </div>
 
   <div class="div3">
-   <mat-card class="tags-card">
+      <mat-card class="stat-card accepted-stat">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-number">{{ totalAcceptedCandidates }}</div>
+            <div class="stat-label">Candidatos Aceptados</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="chart-card">
       <mat-card-header>
         <mat-card-title class="card-title">
-          <mat-icon class="title-icon">label</mat-icon>
-          Administrar Etiquetas
+          <mat-icon class="title-icon" style="color: #2563eb;">check_circle</mat-icon>
+          Candidatos Aceptados por Mes
         </mat-card-title>
-        <mat-card-subtitle>Gestiona las etiquetas de ofertas y empleados</mat-card-subtitle>
+        <mat-card-subtitle>Aceptados en {{ currentYear }}</mat-card-subtitle>
       </mat-card-header>
-
-      <mat-card-content class="tags-content">
-        <div class="tags-display" *ngIf="tags.length > 0; else noTags">
-          <mat-chip-listbox aria-label="Tags existentes">
-            <mat-chip-row *ngFor="let tag of tags" [editable]="true" (edited)="edit(tag, $event)"
-                          [aria-description]="'press enter to edit ' + tag.name">
-              {{ tag.name }}
-              <button matChipRemove [attr.aria-label]="'remove ' + tag.name" (click)="remove(tag)">
-                <mat-icon>cancel</mat-icon>
-              </button>
-            </mat-chip-row>
-          </mat-chip-listbox>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart [data]="acceptedCandidatesChartData" [options]="acceptedCandidatesChartOptions" [type]="'bar'">
+          </canvas>
         </div>
-
-        <ng-template #noTags>
-          <p class="no-tags-message">No hay etiquetas disponibles. Añade algunas usando el formulario de abajo.</p>
-        </ng-template>
       </mat-card-content>
-
-      <mat-card-actions class="add-tag-section">
-        <div class="input-button-container">
-          <mat-form-field appearance="outline" class="tag-input">
-            <mat-label>Nueva etiqueta</mat-label>
-            <input matInput
-                   [formControl]="tag"
-                   placeholder="Escribe el nombre del tag"
-                   (keyup.enter)="add()"
-                   maxlength="30">
-          </mat-form-field>
-
-          <button mat-icon-button
-                  color="primary"
-                  (click)="add()"
-                  [disabled]="tag.invalid"
-                  class="add-button"
-                  matTooltip="Añadir tag">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </mat-card-actions>
     </mat-card>
 
     <div class="div4">
@@ -136,4 +113,5 @@
       </mat-card>
     </div>
   </div>
+
 </div>

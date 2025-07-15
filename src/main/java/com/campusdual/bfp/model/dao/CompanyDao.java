@@ -19,4 +19,6 @@ public interface CompanyDao extends JpaRepository<Company, Integer> {
     List<Company> findByAddressContainingIgnoreCase(String location);
 
     Company findByName(String name);
+
+
 }

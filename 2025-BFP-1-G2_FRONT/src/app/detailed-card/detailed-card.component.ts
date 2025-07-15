@@ -5,6 +5,7 @@ import { MatDatepicker } from "@angular/material/datepicker";
 import { Tag } from '../admin/admin-dashboard/admin-dashboard.component';
 
 export interface Candidate {
+  id: number;
   login: string;
   name: string;
   surname1: string;
@@ -15,6 +16,8 @@ export interface Candidate {
   Linkedin?: string;
   dateAdded: string;
   valid: boolean | null;
+  logoImageBase64?: string;
+  tagIds?: Tag[];
 }
 
 export interface DetailedCardData {

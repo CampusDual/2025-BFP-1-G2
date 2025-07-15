@@ -12,6 +12,7 @@
             </th>
             <th>Email</th>
             <th>Linkedin</th>
+            <th>Chat</th>
             <th class="sortable-header"
                 [class]="getSortClass('date')"
                 (click)="sortBy('date')">
@@ -40,6 +41,14 @@
                 <a [href]="candidate.Linkedin" target="_blank" (click)="$event.stopPropagation()">
                     Linkedin
                 </a>
+            </td>
+            <td>
+                <button mat-icon-button 
+                        color="primary" 
+                        (click)="openChatWithCandidate(candidate)"
+                        matTooltip="Abrir chat con candidato">
+                    <mat-icon>chat</mat-icon>
+                </button>
             </td>
             <td>{{ candidate.dateAdded}}</td>
             <td>

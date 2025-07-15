@@ -155,7 +155,7 @@
   <div class="grid-container" *ngIf="!isLoading && !hasNoOffers">
     <app-offer-card *ngFor="let offer of offers; let i = index" [offer]="offer" [isCompany]="isCompany"
       [isCandidate]="isCandidate" [isBookmarked]="offer.bookmarked || false" (click)="openDetailedCard(i)"
-      (viewDetails)="onViewDetails($event)" (toggleBookmark)="toggleBookmark($event)" 
+      (viewDetails)="onViewDetails($event)" (toggleBookmark)="toggleBookmark($event)"
       (onChipClick)="onChipClickHandler($event)">
     </app-offer-card>
   </div>
@@ -181,4 +181,6 @@
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
+  
+
 </div>

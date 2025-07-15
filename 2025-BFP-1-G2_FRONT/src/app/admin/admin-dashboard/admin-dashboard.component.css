@@ -173,6 +173,11 @@
     --gradient-end: #ea580c;
 }
 
+.accepted-stat {
+    --gradient-start: #2563eb;
+    --gradient-end: #3b82f6;
+}
+
 .stat-content {
     display: flex;
     align-items: center;

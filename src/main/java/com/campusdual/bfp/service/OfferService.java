@@ -228,6 +228,11 @@ public class OfferService implements IOfferService {
         }
 
         userOffer.setValid(candidateDTO.getValid());
+        if (Boolean.TRUE.equals(candidateDTO.getValid())) {
+            userOffer.setValidationDate(new Date()); // Guardar fecha de validación
+        } else {
+            userOffer.setValidationDate(null); // Limpiar fecha si se desvalida
+        }
         userOfferDao.saveAndFlush(userOffer);
     }
 
@@ -406,5 +411,16 @@ public class OfferService implements IOfferService {
         }
         offerDao.saveAndFlush(offer);
         return true;
+    }
+    @Override
+    public List<MonthlyClosedOffersDTO> getMonthlyClosedOffersWithAcceptedCandidates() {
+        List<Object[]> results = userOfferDao.countAcceptedCandidatesByMonth();
+        return results.stream()
+                .map(obj -> new MonthlyClosedOffersDTO(
+                        (int) obj[0], // mes
+                        (int) obj[1], // año
+                        (long) obj[2] // conteo
+                ))
+                .collect(Collectors.toList());
     }
 }

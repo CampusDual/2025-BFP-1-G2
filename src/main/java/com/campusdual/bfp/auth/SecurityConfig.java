@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 // Rutas públicas
                 .antMatchers("/api/auth/**", "/test/all", "/public/**").permitAll()
+                .antMatchers("/api/auth/candidateDetails/{username}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/offer/getAll").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
@@ -70,6 +71,16 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/api/offer/delete/**").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/offer/bookmark/**").hasRole("CANDIDATE")
                 .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+
+                // Chat
+                .antMatchers(HttpMethod.POST, "/api/chat/send").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/chat/conversation/{userId1}/{userId2}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/chat/conversation/{userId1}/{userId2}/paged").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/chat/conversations/{userId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/chat/conversations/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/chat/conversation/find/{candidateId}/{companyId}").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/chat/markread/{otherUserId}").permitAll()
+
 
                 .anyRequest().authenticated()
                 .and()
