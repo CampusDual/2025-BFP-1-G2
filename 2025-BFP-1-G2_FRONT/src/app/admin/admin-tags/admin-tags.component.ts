@@ -23,7 +23,7 @@ export class AdminTagsComponent {
   ngOnInit() {
     this.loadTags();
   }
-  
+
   public countTagsData: ChartData<'bar'> = {
       labels: [],
       datasets: [{
@@ -35,7 +35,7 @@ export class AdminTagsComponent {
         borderSkipped: false,
       }]
     };
-  
+
     public countTagsOptions: ChartConfiguration<'bar'>['options'] = {
       indexAxis: 'x',
       responsive: true,
@@ -49,7 +49,7 @@ export class AdminTagsComponent {
         },
         tooltip: {
           callbacks: {
-            label: (context) => `Frecuencia: ${context.parsed.y}`
+            label: (context) => `Ofertas: ${context.parsed.y}`
           }
         }
       },
