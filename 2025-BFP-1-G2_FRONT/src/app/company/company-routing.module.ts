@@ -19,7 +19,11 @@ const routes: Routes = [
   },
   {
       path: 'profile/:companyName', component: CompanyPanelComponent
-  }
+  },
+  {
+    path: 'new', component: CompanyPanelComponent,
+    data: { roles: ['ROLE_ADMIN'] }
+  },
 ];
 
 @NgModule({

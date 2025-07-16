@@ -34,7 +34,7 @@
   (onSave)="onSaveCompany($event)">
 </app-detailed-card>
 
-<button mat-fab class="add-company" aria-label="Añadir empresa" (click)="addCompany()">
+<button mat-fab class="add-company" aria-label="Añadir empresa"  routerLink="/company/new/" (click)="addCompany()" >
   <mat-icon>add</mat-icon>
 </button>
 <div class="loading-container" *ngIf="isLoading">
