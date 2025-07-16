@@ -88,7 +88,8 @@ export class OfferTableComponent implements OnDestroy {
       this.offerService.getAverageHiringTime().subscribe(avg => {
         this.averageHiringTime = avg;
       });
-    }
+    
+  }
 
 
   loadUserRole() {

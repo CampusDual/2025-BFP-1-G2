@@ -75,6 +75,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/api/offer/delete/**").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/offer/bookmark/**").hasRole("CANDIDATE")
                 .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/offer/company/average-hiring-time").permitAll()
 
                 // Chat
                 .antMatchers(HttpMethod.POST, "/api/chat/send").permitAll()

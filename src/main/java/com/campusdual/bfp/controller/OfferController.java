@@ -232,7 +232,6 @@ public class OfferController {
         return ResponseEntity.ok(metrics);
     }
 
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("/company/average-hiring-time")
     public ResponseEntity<Double> getAverageHiringTime(Principal principal) {
         User user = userDao.findByLogin(principal.getName());
