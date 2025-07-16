@@ -174,22 +174,34 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
-        this.experiences = (user.experiences || []).map((exp: any) => ({
-          id: exp.id || exp.experienceId, // <-- AÑADIDO
-          jobTitle: exp.jobTitle || '',
-          companyName: exp.companyName || '',
-          startDate: exp.startDate || '',
-          endDate: exp.endDate || '',
-          responsibilities: exp.responsibilities || ''
-        }));
-        this.educations = (user.educations || []).map((edu: any) => ({
-          id: edu.id || edu.educationId,
-          degree: edu.degree || '',
-          institution: edu.institution || '',
-          startDate: edu.startDate || '',
-          endDate: edu.endDate || '',
-          description: edu.description || ''
-        }));
+        this.experiences = (user.experiences || [])
+          .map((exp: any) => ({
+            id: exp.id || exp.experienceId,
+            jobTitle: exp.jobTitle || '',
+            companyName: exp.companyName || '',
+            startDate: exp.startDate || '',
+            endDate: exp.endDate || '',
+            responsibilities: exp.responsibilities || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateA - dateB;
+          });
+        this.educations = (user.educations || [])
+          .map((edu: any) => ({
+            id: edu.id || edu.educationId,
+            degree: edu.degree || '',
+            institution: edu.institution || '',
+            startDate: edu.startDate || '',
+            endDate: edu.endDate || '',
+            description: edu.description || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateB - dateA;
+          });
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.tagsControl.setValue(user.tags || []);
         this.fullName = parts.join(' ');
@@ -225,22 +237,34 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
-        this.experiences = (user.experiences || []).map((exp: any) => ({
-          id: exp.id || exp.experienceId, // <-- AÑADIDO
-          jobTitle: exp.jobTitle || '',
-          companyName: exp.companyName || '',
-          startDate: exp.startDate || '',
-          endDate: exp.endDate || '',
-          responsibilities: exp.responsibilities || ''
-        }));
-        this.educations = (user.educations || []).map((edu: any) => ({
-          id: edu.id || edu.educationId,
-          degree: edu.degree || '',
-          institution: edu.institution || '',
-          startDate: edu.startDate || '',
-          endDate: edu.endDate || '',
-          description: edu.description || ''
-        }));
+        this.experiences = (user.experiences || [])
+          .map((exp: any) => ({
+            id: exp.id || exp.experienceId,
+            jobTitle: exp.jobTitle || '',
+            companyName: exp.companyName || '',
+            startDate: exp.startDate || '',
+            endDate: exp.endDate || '',
+            responsibilities: exp.responsibilities || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateB - dateA;
+          });
+        this.educations = (user.educations || [])
+          .map((edu: any) => ({
+            id: edu.id || edu.educationId,
+            degree: edu.degree || '',
+            institution: edu.institution || '',
+            startDate: edu.startDate || '',
+            endDate: edu.endDate || '',
+            description: edu.description || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateB - dateA;
+          });
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -718,6 +742,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       }
     }
     this.currentEducationIndex = activeIndex;
+  }
+
+
+  hasOverflowLeft(carousel: HTMLElement): boolean {
+    const container = carousel.querySelector('.carousel-cards') as HTMLElement;
+    if (!container) return false;
+    return container.scrollLeft > 0;
+  }
+
+  hasOverflowRight(carousel: HTMLElement): boolean {
+    const container = carousel.querySelector('.carousel-cards') as HTMLElement;
+    if (!container) return false;
+    return Math.ceil(container.scrollLeft + container.clientWidth) < container.scrollWidth;
   }
 
 }

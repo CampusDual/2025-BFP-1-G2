@@ -13,7 +13,7 @@
         <div>
           <div class="hiring-title">Contrataciones</div>
           <div class="hiring-value" *ngIf="averageHiringTime !== null && averageHiringTime >= 0">
-            Media de días para contratar: <span class="hiring-number">{{ averageHiringTime | number:'1.0-2' }}</span>
+            Tiempo medio hasta contratación: <span class="hiring-number">{{ averageHiringTime | number:'1.0-2' }} días</span>
           </div>
           <div class="hiring-value" *ngIf="averageHiringTime === null">
             No hay contrataciones aún.
@@ -73,7 +73,7 @@
             (click)="setOfferView('applied')" matBadge="{{ appliedOfferCount }}" matBadgePosition="after"
             matBadgeSize="small" [matBadgeHidden]=" appliedOfferCount=== 0">
             <mat-icon>assignment_turned_in</mat-icon>
-            Aplicadas
+            Inscritas
           </button>
 
           <button mat-raised-button [color]="currentOfferView === 'bookmarks' ? 'primary' : ''" class="selector-button"
