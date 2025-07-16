@@ -102,12 +102,11 @@ public class TagController {
         List<TagDTO> tags = tagService.getCandidateTags(principal.getName());
         return ResponseEntity.ok(tags);
     }
-
     @PreAuthorize("hasRole('ROLE_CANDIDATE')")
     @PutMapping("/candidate")
     public ResponseEntity<Integer> updateCandidateTags(
-            @RequestBody CandidateTagsDTO request, Principal principal) {
-        int result = tagService.updateCandidateTags(request.getTagIds(), principal.getName());
+            @RequestBody List<Integer> tagIds, Principal principal) {
+        int result = tagService.updateCandidateTags(tagIds, principal.getName());
         return ResponseEntity.ok(result);
     }
 

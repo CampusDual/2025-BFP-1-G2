@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Tag } from '../admin/admin-tags/admin-tags.component';
+import { Tag } from '../models/tag.model';
 import { environment } from '../../environments/environment';
 
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class TagService {
 
@@ -25,23 +25,23 @@ export class TagService {
 
   addTagsToOffer(offerId: number, tagIds: number[]): Observable<any> {
     return this.http.post(`${this.baseUrl}/${offerId}`,
-      {tagIds},
-      {responseType: 'text'}
+      { tagIds },
+      { responseType: 'text' }
     );
   }
 
 
   removeTagFromOffer(offerId: number, tagId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${offerId}/${tagId}`,
-      {responseType: 'text'}
+      { responseType: 'text' }
     );
   }
 
 
   updateOfferTags(offerId: number, tagIds: number[]): Observable<any> {
     return this.http.put(`${this.baseUrl}/${offerId}`,
-      {tagIds},
-      {responseType: 'text'}
+      { tagIds },
+      { responseType: 'text' }
     );
   }
 
@@ -63,10 +63,7 @@ export class TagService {
   }
 
   updateCandidateTags(tagIds: number[]): Observable<any> {
-    return this.http.put(`${environment.apiUrl}/tags/candidate`,
-      {tagIds},
-      {responseType: 'text'}
-    );
+    return this.http.put(`${environment.apiUrl}/tags/candidate`, tagIds);
   }
 
   getCandidateTagsByUsername(username: string): Observable<Tag[]> {

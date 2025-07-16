@@ -13,10 +13,12 @@ import java.util.Optional;
 
 public interface OfferDao extends JpaRepository<Offer, Integer> {
 
-    // Buscar ofertas por ID de empresa (relación directa)ç
-
-    @Query("SELECT o.id, o.dateAdded FROM Offer o WHERE o.active = true")
-    List<Object[]>findAllActive();
+    // Buscar ofertas por ID de empresa (relación directa)
+    @Query("SELECT MONTH(o.dateAdded) as mes, YEAR(o.dateAdded) as anio, COUNT(o.id) " +
+            "FROM Offer o " +
+            "WHERE o.active = true"+
+            " GROUP BY mes, anio " )
+    List<Object[]>countActiveOffersByMonth();
 
     @Query("SELECT o FROM Offer o WHERE o.company.id = :companyId")
     List<Offer> findOfferByCompanyId(@Param("companyId") int companyId);
@@ -310,4 +312,11 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
             "GROUP BY o.id " +
             "ORDER BY COUNT(ot.tag.id)  DESC")
     Page<Offer> findArchivedOffersByTagsAndSearchTerm(@Param("companyId") int companyId, @Param("tagIds") List<Long> tagIds, @Param("searchTerm") String searchTerm, Pageable pageable);
+
+    @Query("SELECT o.id, o.dateAdded, MIN(uo.validationDate) " +
+            "FROM Offer o LEFT JOIN UserOffer uo ON uo.offer.id = o.id " +
+            "WHERE o.company.id = :companyId AND o.active = true " +
+            "AND (uo.valid = true OR uo.id IS NULL) " +
+            "GROUP BY o.id, o.dateAdded")
+    List<Object[]> findOfferCreationAndFirstHireDateByCompanyId(@Param("companyId") int companyId);
 }

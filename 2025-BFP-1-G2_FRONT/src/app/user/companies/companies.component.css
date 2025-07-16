@@ -72,7 +72,6 @@
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
   border: 2px solid transparent;
   position: relative;
@@ -94,7 +93,6 @@
   height: 4px;
   background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
   opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
 .company-card:hover::before {

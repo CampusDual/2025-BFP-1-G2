@@ -49,6 +49,13 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
 
+
+                // Tags - candidatos (CANDIDATE)
+                .antMatchers(HttpMethod.GET, "/api/tags/candidate").hasRole("CANDIDATE")
+                .antMatchers(HttpMethod.PUT, "/api/tags/candidate").hasRole("CANDIDATE")
+                .antMatchers(HttpMethod.DELETE, "/api/tags/candidate/{tagId}").hasRole("CANDIDATE")
+
+
                 // Tags - administración
                 .antMatchers(HttpMethod.POST, "/api/tags/add").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/api/tags").hasRole("ADMIN")
@@ -60,10 +67,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.PUT, "/api/tags/{offerId}").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/tags/{offerId}/{tagId}").hasRole("COMPANY")
 
-                // Tags - candidatos (CANDIDATE)
-                .antMatchers(HttpMethod.GET, "/api/tags/candidate").hasRole("CANDIDATE")
-                .antMatchers(HttpMethod.PUT, "/api/tags/candidate").hasRole("CANDIDATE")
-                .antMatchers(HttpMethod.DELETE, "/api/tags/candidate/{tagId}").hasRole("CANDIDATE")
+
 
                 // Ofertas
                 .antMatchers(HttpMethod.PUT, "/api/offer/status/{offerId}").hasRole("COMPANY")

@@ -1,8 +1,75 @@
+.title-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    padding: 10px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 32px;
+  font-weight: 600;
+}
+
+.company-hiring-stats {
+  display: flex;
+}
+
+.hiring-card {
+  box-shadow: none;
+  border-radius: 16px;
+  padding: 8px;
+  margin-top: 5px;
+}
+
+.hiring-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.hiring-icon {
+  color: var(--primary-color);
+  background: linear-gradient(135deg, rgb(255, 255, 255), rgb(226, 226, 226));
+  border: 3px solid rgb(208, 208, 208);
+  border-radius: 12px;
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.08);
+}
+
+.hiring-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 4px;
+}
+
+.hiring-value {
+  font-size: 1rem;
+  color: #374151;
+}
+
+.hiring-number {
+  padding-left: 2px;
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
 .offers-container {
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
   min-height: calc(100vh - 120px);
+  padding-top: 0;
 }
 
 .grid-container {
@@ -58,15 +125,7 @@ app-offer-card {
   margin-bottom: 24px;
 }
 
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 2rem;
-  color: var(--primary-color);
-  margin-bottom: 32px;
-  font-weight: 600;
-}
+
 
 .search-and-filters-section {
   display: grid;
@@ -112,7 +171,7 @@ app-offer-card {
   padding: 16px;
   border-radius: 16px;
   gap: 16px;
-  
+
 }
 
 
