@@ -36,13 +36,6 @@ mat-drawer-container {
   height: 100%;
 }
 
-app-footer {
-  grid-row: 2;
-  position: static;
-  width: 100%;
-  margin-top: 20px;
-}
-
 
 mat-drawer {
   background: #3e3e3e
