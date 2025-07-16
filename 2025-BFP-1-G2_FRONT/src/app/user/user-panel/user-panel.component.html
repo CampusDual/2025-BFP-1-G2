@@ -172,7 +172,9 @@
     <div *ngIf="experiences.length > 0; else noExperience">
       <div class="experience-carousel">
         <div class="carousel-wrapper scrollable-carousel" #experienceCarousel>
-          <button class="carousel-arrow" (click)="scrollExperienceCarousel(-1, experienceCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollExperienceCarousel(-1, experienceCarousel)"
+            [ngClass]="{'hide-left-arrow': !hasOverflowLeft(experienceCarousel)}">
             <mat-icon>chevron_left</mat-icon>
           </button>
           <div class="carousel-cards" (scroll)="onExperienceCarouselScroll(experienceCarousel)">
@@ -195,7 +197,9 @@
               </button>
             </div>
           </div>
-          <button class="carousel-arrow" (click)="scrollExperienceCarousel(1, experienceCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollExperienceCarousel(1, experienceCarousel)"
+            [ngClass]="{'hide-right-arrow': !hasOverflowRight(experienceCarousel)}">
             <mat-icon>chevron_right</mat-icon>
           </button>
         </div>
@@ -218,7 +222,9 @@
     <div *ngIf="educations.length > 0; else noEducation">
       <div class="experience-carousel">
         <div class="carousel-wrapper scrollable-carousel" #educationCarousel>
-          <button class="carousel-arrow" (click)="scrollEducationCarousel(-1, educationCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollEducationCarousel(-1, educationCarousel)"
+            [ngClass]="{'hide-left-arrow': !hasOverflowLeft(educationCarousel)}">
             <mat-icon>chevron_left</mat-icon>
           </button>
           <div class="carousel-cards" (scroll)="onEducationCarouselScroll(educationCarousel)">
@@ -241,7 +247,9 @@
               </button>
             </div>
           </div>
-          <button class="carousel-arrow" (click)="scrollEducationCarousel(1, educationCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollEducationCarousel(1, educationCarousel)"
+            [ngClass]="{'hide-right-arrow': !hasOverflowRight(educationCarousel)}">
             <mat-icon>chevron_right</mat-icon>
           </button>
         </div>
