@@ -102,4 +102,8 @@ export class OfferService {
     return this.http.put(`${this.baseUrl}/status/${offerId}`, null, { params, responseType: 'text' });
   }
 
+getAverageHiringTime() {
+  return this.http.get<number>(`${this.baseUrl}/company/average-hiring-time`);
+}
+
 }

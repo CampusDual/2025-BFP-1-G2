@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.campusdual.bfp.model.dao.CompanyDao;
+import com.campusdual.bfp.model.Company;
 
 import java.security.Principal;
 import java.util.List;
@@ -35,6 +37,9 @@ public class OfferController {
 
     @Autowired
     private OfferDao offerDao;
+
+    @Autowired
+    private CompanyDao companyDao;
 
     @GetMapping
     public ResponseEntity<String> testController() {
@@ -225,5 +230,21 @@ public class OfferController {
     public ResponseEntity<List<MonthlyCountDTO>> getMonthlyClosedOffersWithAcceptedCandidates() {
         List<MonthlyCountDTO> metrics = offerService.getMonthlyClosedOffersWithAcceptedCandidates();
         return ResponseEntity.ok(metrics);
+    }
+
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
+    @GetMapping("/company/average-hiring-time")
+    public ResponseEntity<Double> getAverageHiringTime(Principal principal) {
+        User user = userDao.findByLogin(principal.getName());
+        if (user == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        // Buscar la empresa asociada al usuario
+        Company company = companyDao.findCompanyByUser(user);
+        if (company == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        Double avg = offerService.getAverageHiringTimeByCompanyId(company.getId());
+        return ResponseEntity.ok(avg);
     }
 }

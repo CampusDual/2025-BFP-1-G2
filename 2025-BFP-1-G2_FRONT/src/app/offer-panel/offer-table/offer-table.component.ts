@@ -43,6 +43,7 @@ export class OfferTableComponent implements OnDestroy {
   currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
   bookmarkedOffers: number[] = [];
   currentOfferStatus: 'draft' | 'archived' | 'active' = 'active';
+  averageHiringTime: number | null = null;
 
   isLoading = true;
   totalPages: number = 0;
@@ -82,6 +83,12 @@ export class OfferTableComponent implements OnDestroy {
       }
     });
   }
+
+    ngOnInit() {
+      this.offerService.getAverageHiringTime().subscribe(avg => {
+        this.averageHiringTime = avg;
+      });
+    }
 
 
   loadUserRole() {
@@ -866,4 +873,8 @@ export class OfferTableComponent implements OnDestroy {
     this.hasNoOffers = false;
     this.movePage(0);
   }
+
+
+
+
 }

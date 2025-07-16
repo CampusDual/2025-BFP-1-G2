@@ -312,4 +312,11 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
             "GROUP BY o.id " +
             "ORDER BY COUNT(ot.tag.id)  DESC")
     Page<Offer> findArchivedOffersByTagsAndSearchTerm(@Param("companyId") int companyId, @Param("tagIds") List<Long> tagIds, @Param("searchTerm") String searchTerm, Pageable pageable);
+
+    @Query("SELECT o.id, o.dateAdded, MIN(uo.validationDate) " +
+            "FROM Offer o LEFT JOIN UserOffer uo ON uo.offer.id = o.id " +
+            "WHERE o.company.id = :companyId AND o.active = true " +
+            "AND (uo.valid = true OR uo.id IS NULL) " +
+            "GROUP BY o.id, o.dateAdded")
+    List<Object[]> findOfferCreationAndFirstHireDateByCompanyId(@Param("companyId") int companyId);
 }

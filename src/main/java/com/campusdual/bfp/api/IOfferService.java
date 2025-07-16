@@ -39,5 +39,7 @@ public interface IOfferService {
 
     List<MonthlyCountDTO> getMonthlyClosedOffersWithAcceptedCandidates();
 
+    Double getAverageHiringTimeByCompanyId(int companyId);
+
     List<MonthlyCountDTO> getMetricsOffer();
 }
