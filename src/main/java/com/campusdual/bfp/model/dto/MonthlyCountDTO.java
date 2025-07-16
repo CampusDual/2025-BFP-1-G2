@@ -1,11 +1,11 @@
 package com.campusdual.bfp.model.dto;
 
-public class MonthlyClosedOffersDTO {
+public class MonthlyCountDTO {
     private int month;
     private int year;
     private long count;
 
-    public MonthlyClosedOffersDTO(int month, int year, long count) {
+    public MonthlyCountDTO(int month, int year, long count) {
         this.month = month;
         this.year = year;
         this.count = count;

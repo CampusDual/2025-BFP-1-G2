@@ -1,19 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AdminService } from '../../services/admin.service';
-import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { Offer, OfferService } from "../../services/offer.service";
-import { Candidate } from "../../detailed-card/detailed-card.component";
+import { ChartConfiguration, ChartData } from 'chart.js';
+import { OfferService } from "../../services/offer.service";
+import { MonthlyCountDTO } from 'src/app/models/metrics.model';
 
-export interface MonthlyClosedOffersDTO {
-  month: number;
-  year: number;
-  count: number;
-}
 
-export interface ExtendedOffer extends Offer {
-  id?: number;
-  candidatesCount?: number;
-  candidates?: Candidate[];
+interface ChartColors {
+  backgroundColor: string;
+  borderColor: string;
+  pointBackgroundColor?: string;
+  pointBorderColor?: string;
 }
 
 @Component({
@@ -23,229 +19,192 @@ export interface ExtendedOffer extends Offer {
 })
 export class AdminDashboardComponent implements OnInit {
 
-  private candidates: Candidate[] = [];
-  private offers: ExtendedOffer[] = [];
-
-  private acceptedCandidatesMonthly: MonthlyClosedOffersDTO[] = [];
+  private candidates: MonthlyCountDTO[] = [];
+  private offers: MonthlyCountDTO[] = [];
+  private acceptedCandidatesMonthly: MonthlyCountDTO[] = [];
 
   totalAcceptedCandidates: number = 0;
-
   totalOffers: number = 0;
   totalCandidates: number = 0;
-  activeOffers: number = 0;
   averageCandidatesPerOffer: number = 0;
   currentYear: number = new Date().getFullYear();
+
+  private readonly monthLabels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+  private readonly chartColors = {
+    acceptedCandidates: { backgroundColor: 'rgba(59, 130, 246, 0.55)', borderColor: '#2563eb' },
+    offers: { backgroundColor: 'rgba(229, 70, 70, 0.1)', borderColor: '#dc2626', pointBackgroundColor: 'rgb(229, 70, 70)', pointBorderColor: '#ffffff' },
+    candidates: { backgroundColor: 'rgba(13, 148, 137, 0.55)', borderColor: '#0d9488' }
+  };
+
+  public acceptedCandidatesChartData!: ChartData<'bar'>;
+  public acceptedCandidatesChartOptions!: ChartConfiguration<'bar'>['options'];
+  public offersChartData!: ChartData<'line'>;
+  public offersChartOptions!: ChartConfiguration<'line'>['options'];
+  public candidatesChartData!: ChartData<'bar'>;
+  public candidatesChartOptions!: ChartConfiguration<'bar'>['options'];
 
   constructor(
     private adminService: AdminService,
     private offerService: OfferService,
-  ) { }
+    private cdr: ChangeDetectorRef
+  ) { 
+    this.acceptedCandidatesChartData = this.createBarChartData('Candidatos Aceptados', this.chartColors.acceptedCandidates);
+    this.acceptedCandidatesChartOptions = this.getBaseBarChartOptions('#2563eb');
+    
+    this.offersChartData = this.createLineChartData('Ofertas Publicadas', this.chartColors.offers);
+    this.offersChartOptions = this.getBaseLineChartOptions('#4f46e5');
+    
+    this.candidatesChartData = this.createBarChartData('Candidatos Registrados', this.chartColors.candidates);
+    this.candidatesChartOptions = this.getBaseBarChartOptions('#10b981');
+  }
 
-  public acceptedCandidatesChartData: ChartData<'bar'> = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    datasets: [{
-      data: Array(12).fill(0),
-      label: 'Candidatos Aceptados',
-      backgroundColor: 'rgba(59, 130, 246, 0.55)',
-      borderColor: '#2563eb',
-      borderWidth: 2,
-      borderRadius: 8,
-      borderSkipped: false,
-    }]
-  };
-
-  public acceptedCandidatesChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          color: '#374151',
-          font: {
-            size: 14,
-            weight: 'bold'
+  private getBaseBarChartOptions(borderColor: string): ChartConfiguration<'bar'>['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#374151',
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
           }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: borderColor,
+          borderWidth: 1,
+          cornerRadius: 8,
+          displayColors: false
         }
       },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#2563eb',
-        borderWidth: 1,
-        cornerRadius: 8,
-        displayColors: false
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          color: '#6b7280',
-          font: {
-            size: 12
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#6b7280',
+            font: {
+              size: 12
+            }
           }
-        }
-      },
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(107, 114, 128, 0.1)'
         },
-        ticks: {
-          stepSize: 1,
-          precision: 0,
-          color: '#6b7280',
-          font: {
-            size: 12
-          }
-        }
-      }
-    }
-  };
-
-  public offersChartData: ChartData<'line'> = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    datasets: [{
-      data: Array(12).fill(0),
-      label: 'Ofertas Publicadas',
-      borderColor: '#dc2626',
-      backgroundColor: 'rgba(229, 70, 70, 0.1)',
-      fill: true,
-      tension: 0.4,
-      pointBackgroundColor: 'rgb(229, 70, 70)',
-      pointBorderColor: '#ffffff',
-      pointBorderWidth: 2,
-      pointRadius: 6,
-      pointHoverRadius: 8
-    }]
-  };
-
-  public offersChartOptions: ChartConfiguration<'line'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          color: '#374151',
-          font: {
-            size: 14,
-            weight: 'bold'
-          }
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#4f46e5',
-        borderWidth: 1,
-        cornerRadius: 8,
-        displayColors: false
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          color: '#6b7280',
-          font: {
-            size: 12
-          }
-        }
-      },
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(107, 114, 128, 0.1)'
-        },
-        ticks: {
-          stepSize: 1,
-          precision: 0,
-          color: '#6b7280',
-          font: {
-            size: 12
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(107, 114, 128, 0.1)'
+          },
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            color: '#6b7280',
+            font: {
+              size: 12
+            }
           }
         }
       }
-    }
-  };
+    };
+  }
 
-
-  public candidatesChartData: ChartData<'bar'> = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    datasets: [{
-      data: Array(12).fill(0),
-      label: 'Candidatos Registrados',
-      backgroundColor: 'rgba(13, 148, 137, 0.55)',
-      borderColor: '#0d9488',
-      borderWidth: 2,
-      borderRadius: 8,
-      borderSkipped: false,
-    }]
-  };
-
-  public candidatesChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          color: '#374151',
-          font: {
-            size: 14,
-            weight: 'bold'
+  private getBaseLineChartOptions(borderColor: string): ChartConfiguration<'line'>['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#374151',
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
           }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: borderColor,
+          borderWidth: 1,
+          cornerRadius: 8,
+          displayColors: false
         }
       },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#10b981',
-        borderWidth: 1,
-        cornerRadius: 8,
-        displayColors: false
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          color: '#6b7280',
-          font: {
-            size: 12
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#6b7280',
+            font: {
+              size: 12
+            }
           }
-        }
-      },
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(107, 114, 128, 0.1)'
         },
-        ticks: {
-          stepSize: 1,
-          precision: 0,
-          color: '#6b7280',
-          font: {
-            size: 12
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(107, 114, 128, 0.1)'
+          },
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            color: '#6b7280',
+            font: {
+              size: 12
+            }
           }
         }
       }
-    }
-  };
+    };
+  }
+
+  private createBarChartData(label: string, colors: ChartColors): ChartData<'bar'> {
+    return {
+      labels: this.monthLabels,
+      datasets: [{
+        data: Array(12).fill(0),
+        label: label,
+        backgroundColor: colors.backgroundColor,
+        borderColor: colors.borderColor,
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    };
+  }
+
+  private createLineChartData(label: string, colors: ChartColors): ChartData<'line'> {
+    return {
+      labels: this.monthLabels,
+      datasets: [{
+        data: Array(12).fill(0),
+        label: label,
+        borderColor: colors.borderColor,
+        backgroundColor: colors.backgroundColor,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: colors.pointBackgroundColor,
+        pointBorderColor: colors.pointBorderColor,
+        pointBorderWidth: 2,
+        pointRadius: 6,
+        pointHoverRadius: 8
+      }]
+    };
+  }
 
   public offersStatusChartData: ChartData<'doughnut'> = {
     labels: ['Ofertas Activas', 'Ofertas con Candidatos', 'Ofertas Sin Candidatos'],
@@ -294,7 +253,7 @@ export class AdminDashboardComponent implements OnInit {
     cutout: '60%'
   };
 
-  
+
 
   ngOnInit(): void {
     this.loadCandidatesData();
@@ -302,34 +261,61 @@ export class AdminDashboardComponent implements OnInit {
     this.loadAcceptedCandidatesMonthly();
   }
 
+  private calculateTotalForCurrentYear(data: MonthlyCountDTO[]): number {
+    return data
+      .filter(item => item.year === this.currentYear)
+      .reduce((acc, item) => acc + item.count, 0);
+  }
 
+   
+  private updateBarChartData(data: MonthlyCountDTO[], chartType: 'candidates' | 'acceptedCandidates'): void {
+    const monthlyCounts = Array(12).fill(0);
+    data.forEach(item => {
+      if (item.year === this.currentYear && item.month >= 1 && item.month <= 12) {
+        monthlyCounts[item.month - 1] = item.count;
+      }
+    });
+    
+    if (chartType === 'candidates') {
+      this.candidatesChartData = this.createBarChartData('Candidatos Registrados', this.chartColors.candidates);
+      this.candidatesChartData.datasets[0].data = monthlyCounts;
+    } else {
+      this.acceptedCandidatesChartData = this.createBarChartData('Candidatos Aceptados', this.chartColors.acceptedCandidates);
+      this.acceptedCandidatesChartData.datasets[0].data = monthlyCounts;
+    }
+    
+  }
 
+  private updateLineChartData(data: MonthlyCountDTO[]): void {
+    const monthlyCounts = Array(12).fill(0);
+    data.forEach(item => {
+      if (item.year === this.currentYear && item.month >= 1 && item.month <= 12) {
+        monthlyCounts[item.month - 1] = item.count;
+      }
+    });
+  
+    this.offersChartData = this.createLineChartData('Ofertas Publicadas', this.chartColors.offers);
+    this.offersChartData.datasets[0].data = monthlyCounts;
+  }
+  
   private loadCandidatesData(): void {
     this.adminService.getCandidatesOffers().subscribe({
-      next: (candidates: Candidate[]) => {
-        if (!candidates || candidates.length === 0) {
-          console.warn('No se encontraron candidatos');
-          return;
-        }
+      next: (candidates: MonthlyCountDTO[]) => {
         this.candidates = candidates;
-        console.log('Candidatos cargados:', this.candidates);
-        this.totalCandidates = candidates.length;
-        this.updateCandidatesChart();
+        this.totalCandidates = this.calculateTotalForCurrentYear(candidates);
+        this.updateBarChartData(candidates, 'candidates');
       },
       error: (error) => {
-        console.error('Error al cargar los candidatos:', error);
-      }
+        console.error('Error al cargar los candidatos por mes:', error);}
     });
   }
 
   private loadAcceptedCandidatesMonthly(): void {
     this.adminService.getMonthlyAcceptedCandidates().subscribe({
-      next: (monthlyData: MonthlyClosedOffersDTO[]) => {
+      next: (monthlyData: MonthlyCountDTO[]) => {
         this.acceptedCandidatesMonthly = monthlyData;
-        this.totalAcceptedCandidates = monthlyData
-          .filter(item => item.year === this.currentYear)
-          .reduce((acc, item) => acc + item.count, 0);
-        this.updateAcceptedCandidatesChart();
+        this.totalAcceptedCandidates = this.calculateTotalForCurrentYear(monthlyData);
+        this.updateBarChartData(monthlyData, 'acceptedCandidates');
       },
       error: (error) => {
         console.error('Error al cargar los candidatos aceptados por mes:', error);
@@ -337,104 +323,16 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  private updateAcceptedCandidatesChart(): void {
-    const currentYear = new Date().getFullYear();
-    const monthlyCounts = Array(12).fill(0);
-    this.acceptedCandidatesMonthly.forEach(item => {
-      if (item.year === currentYear && item.month >= 1 && item.month <= 12) {
-        monthlyCounts[item.month - 1] = item.count;
-      }
-    });
-    this.acceptedCandidatesChartData = {
-      ...this.acceptedCandidatesChartData,
-      datasets: [{
-        ...this.acceptedCandidatesChartData.datasets[0],
-        data: monthlyCounts
-      }]
-    };
-  }
-
   private loadPublicationsData(): void {
-    this.offerService.getAllOffers().subscribe({
-      next: (publications: ExtendedOffer[]) => {
-        if (!publications || publications.length === 0) {
-          console.warn('No se encontraron publicaciones');
-          return;
-        }
-        this.offers = publications;
-        this.totalOffers = publications.length;
-        this.calculateStatistics();
-        this.updateOffersChart();
-        this.updateOffersStatusChart();
+    this.offerService.getMetricsOffer().subscribe({
+      next: (monthlyData: MonthlyCountDTO[]) => {
+        this.offers = monthlyData;
+        this.totalOffers = this.calculateTotalForCurrentYear(monthlyData);
+        this.updateLineChartData(monthlyData);
       },
       error: (error) => {
-        console.error('Error al cargar las publicaciones:', error);
+        console.error('Error al cargar las ofertas por mes:', error);
       }
     });
   }
-
-  private calculateStatistics(): void {
-    this.activeOffers = this.offers.length;
-  }
-
-  private updateCandidatesChart(): void {
-    const currentYear = new Date().getFullYear();
-    const monthlyData = this.getDataByMonth(this.candidates, currentYear);
-
-    this.candidatesChartData = {
-      ...this.candidatesChartData,
-      datasets: [{
-        ...this.candidatesChartData.datasets[0],
-        data: monthlyData.map(data => data.count)
-      }]
-    };
-  }
-
-  private updateOffersChart(): void {
-    const currentYear = new Date().getFullYear();
-    const monthlyData = this.getDataByMonth(this.offers, currentYear);
-
-    this.offersChartData = {
-      ...this.offersChartData,
-      datasets: [{
-        ...this.offersChartData.datasets[0],
-        data: monthlyData.map(data => data.count)
-      }]
-    };
-  }
-
-  private updateOffersStatusChart(): void {
-    const offersWithCandidates = this.offers.filter(offer =>
-      offer.candidatesCount && offer.candidatesCount > 0
-    ).length;
-    const offersWithoutCandidates = this.totalOffers - offersWithCandidates;
-
-    this.offersStatusChartData = {
-      ...this.offersStatusChartData,
-      datasets: [{
-        ...this.offersStatusChartData.datasets[0],
-        data: [this.totalOffers, offersWithCandidates, offersWithoutCandidates]
-      }]
-    };
-  }
-
-  private getDataByMonth(data: Array<Candidate | ExtendedOffer>, year: number): { month: number; count: number; }[] {
-    const monthlyData = Array.from({ length: 12 }, (_, i) => ({
-      month: i,
-      count: 0
-    }));
-
-    data.forEach(item => {
-      const date = new Date(item.dateAdded ?? new Date());
-      if (date.getFullYear() === year) {
-        const month = date.getMonth();
-        monthlyData[month].count++;
-      }
-    });
-
-    return monthlyData;
-  }
-
-
-
 }

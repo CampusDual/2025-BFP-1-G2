@@ -94,15 +94,6 @@ public class OfferService implements IOfferService {
         Collections.reverse(offers);
     }
 
-    @Override
-    public List<OfferDTO> getAllOffers(){
-        List<Offer> offers = offerDao.findAllActive();
-        List<OfferDTO> dtos = offers.stream()
-                .map(offer -> buildOfferDTO(offer, false))
-                .collect(Collectors.toList());
-        sortOffersByDate(dtos);
-        return dtos;
-    }
 
     @Override
     public Page<OfferDTO> queryAllOffers(
@@ -421,15 +412,41 @@ public class OfferService implements IOfferService {
         offerDao.saveAndFlush(offer);
         return true;
     }
+
     @Override
-    public List<MonthlyClosedOffersDTO> getMonthlyClosedOffersWithAcceptedCandidates() {
-        List<Object[]> results = userOfferDao.countAcceptedCandidatesByMonth();
-        return results.stream()
-                .map(obj -> new MonthlyClosedOffersDTO(
+    public List<MonthlyCountDTO> getMetricsOffer(){
+        return offerDao.countActiveOffersByMonth().stream()
+                .map(obj -> new MonthlyCountDTO(
                         (int) obj[0], // mes
                         (int) obj[1], // año
                         (long) obj[2] // conteo
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MonthlyCountDTO> getMonthlyClosedOffersWithAcceptedCandidates() {
+        List<Object[]> results = userOfferDao.countAcceptedCandidatesByMonth();
+        return results.stream()
+                .map(obj -> new MonthlyCountDTO(
+                        (int) obj[0], // mes
+                        (int) obj[1], // año
+                        (long) obj[2] // conteo
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public Double getAverageHiringTimeByCompanyId(int companyId) {
+        List<Object[]> results = offerDao.findOfferCreationAndFirstHireDateByCompanyId(companyId);
+        List<Long> days = new ArrayList<>();
+        for (Object[] row : results) {
+            Date creation = (Date) row[1];
+            Date firstHire = (Date) row[2];
+            if (creation != null && firstHire != null) {
+                long diffMillis = firstHire.getTime() - creation.getTime();
+                days.add(diffMillis / (1000 * 60 * 60 * 24));
+            }
+        }
+        return days.isEmpty() ? null : days.stream().mapToLong(Long::longValue).average().orElse(0);
     }
 }

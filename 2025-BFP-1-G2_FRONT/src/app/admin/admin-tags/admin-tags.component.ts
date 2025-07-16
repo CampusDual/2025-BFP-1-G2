@@ -4,12 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl, Validators } from '@angular/forms';
 import { MatChipEditedEvent } from '@angular/material/chips';
 import { ChartConfiguration, ChartData } from 'chart.js';
-
-export interface Tag {
-  id?: number;
-  name: string;
-  count?: number;
-}
+import { Tag } from '../../models/tag.model';
 
 @Component({
   selector: 'app-admin-tags',
@@ -213,6 +208,5 @@ export class AdminTagsComponent {
 
   }
 }
-export interface Tag {
-}
+
 

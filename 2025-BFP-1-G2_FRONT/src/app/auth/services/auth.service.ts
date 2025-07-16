@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap, of, catchError, shareReplay, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { Candidate } from 'src/app/detailed-card/detailed-card.component';
-import { Tag } from 'src/app/admin/admin-tags/admin-tags.component';
-import { Company } from 'src/app/services/company.service';
+import { Candidate } from 'src/app/models/candidate.model';
+import { Tag } from 'src/app/models/tag.model';
+import { Company } from 'src/app/models/company.model';
 
 export interface User {
   id: number;

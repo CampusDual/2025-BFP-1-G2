@@ -160,6 +160,7 @@ public class TagService implements ITagService {
     }
 
     @Override
+    @Transactional
     public int updateCandidateTags(List<Integer> tagIds, String name) {
         User user = userDao.findByLogin(name);
         if (user == null) {

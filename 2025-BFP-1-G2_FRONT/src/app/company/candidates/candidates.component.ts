@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { OfferService } from '../../services/offer.service';
 import { ChatService } from '../../services/chat.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Candidate } from 'src/app/detailed-card/detailed-card.component';
+import { Candidate } from 'src/app/models/candidate.model';
 import { AuthService } from 'src/app/auth/services/auth.service';
 
 type SortColumn = 'name' | 'date' | 'status';

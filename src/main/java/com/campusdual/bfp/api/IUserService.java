@@ -23,7 +23,7 @@ public interface IUserService {
 
     List<CompanyDTO> getAllCompanies();
 
-    List<CandidateDTO> getAllCandidates();
+    List<MonthlyCountDTO> getAllCandidates();
 
     int addCompany(CompanyDTO companyDTO);
 

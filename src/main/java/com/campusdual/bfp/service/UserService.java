@@ -4,9 +4,7 @@ import com.campusdual.bfp.api.IUserService;
 import com.campusdual.bfp.exception.*;
 import com.campusdual.bfp.model.*;
 import com.campusdual.bfp.model.dao.*;
-import com.campusdual.bfp.model.dto.CandidateDTO;
-import com.campusdual.bfp.model.dto.CandidateEducationDTO;
-import com.campusdual.bfp.model.dto.CompanyDTO;
+import com.campusdual.bfp.model.dto.*;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateEducationMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CandidateMapper;
 import com.campusdual.bfp.model.dto.dtomapper.CompanyMapper;
@@ -25,12 +23,12 @@ import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
 import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
-import com.campusdual.bfp.model.dto.CandidateExperienceDTO;
-import com.campusdual.bfp.model.dto.dtomapper.CandidateEducationMapper;
-import com.campusdual.bfp.model.dto.CandidateEducationDTO;
 
 @Service
 @Lazy
@@ -122,6 +120,7 @@ public class UserService implements UserDetailsService, IUserService {
         Candidate candidate = CandidateMapper.INSTANCE.toEntity(candidateDTO);
         id = this.registerNewUser(candidateDTO.getLogin(), candidateDTO.getPassword(), candidateDTO.getEmail(), "ROLE_CANDIDATE");
         candidate.setUser(this.userDao.findUserById(id));
+        candidate.setDateAdded(new java.util.Date());
         this.candidateDao.saveAndFlush(candidate);
         if (candidateDTO.getTagIds() != null) {
             for (Integer tagId : candidateDTO.getTagIds()) {
@@ -194,7 +193,7 @@ public class UserService implements UserDetailsService, IUserService {
         return candidateDTO;
     }
 
-    public CompanyDTO getCompanyDetails(String username){
+    public CompanyDTO getCompanyDetails(String username) {
         User user = this.userDao.findByLogin(username);
         if (user == null) {
             return null;
@@ -235,17 +234,15 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
-    public List<CandidateDTO> getAllCandidates() {
-        List<Candidate> candidates = this.candidateDao.findAll();
-        List<CandidateDTO> candidateDTOs = CandidateMapper.INSTANCE.toDTOList(candidates);
-        for (int i = 0; i < candidates.size(); i++) {
-            Candidate candidate = candidates.get(i);
-            CandidateDTO candidateDTO = candidateDTOs.get(i);
-            candidateDTO.setAllDates(userOfferDao.findDatesByUserId(candidate.getUser().getId()).stream()
-                    .map(date -> new java.text.SimpleDateFormat("dd/MM/yyyy").format(date))
-                    .toArray(String[]::new));
-        }
-        return candidateDTOs;
+    public List<MonthlyCountDTO> getAllCandidates() {
+        List<Object[]> candidates = this.candidateDao.countRegisteredCandidatesByMonth();
+        return candidates.stream()
+                .map(obj -> new MonthlyCountDTO(
+                        (int) obj[0], // mes
+                        (int) obj[1], // año
+                        (long) obj[2] // conteo
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override

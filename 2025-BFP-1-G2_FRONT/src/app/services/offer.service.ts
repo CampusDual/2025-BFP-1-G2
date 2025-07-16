@@ -1,51 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Candidate } from '../detailed-card/detailed-card.component';
-import { Tag } from '../admin/admin-tags/admin-tags.component';
+import { Candidate } from '../models/candidate.model';
 import { environment } from '../../environments/environment';
-
-export interface PageResponse<T> {
-  content: T[];
-  pageable: {
-    sort: any;
-    pageNumber: number;
-    pageSize: number;
-    offset: number;
-    paged: boolean;
-    unpaged: boolean;
-  };
-  totalElements: number;
-  totalPages: number;
-  last: boolean;
-  first: boolean;
-  numberOfElements: number;
-  size: number;
-  number: number;
-  sort: any;
-  empty: boolean;
-}
-
-export interface Offer {
-  id?: number;
-  title: string;
-  description: string;
-  location?: string;
-  dateAdded?: Date;
-  dateToString?: string;
-  tags?: Tag[];
-  valid?: Boolean;
-  companyId?: number;
-  companyName?: string;
-  email?: string;
-  logo?: string;
-  status?: string;
-  candidateValid?: boolean;
-  candidates?: Candidate[];
-  isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
-  applied?: boolean;
-  bookmarked?: boolean;
-}
+import { MonthlyCountDTO } from '../models/metrics.model';
+import { PageResponse } from '../models/page-response.model';
+import { Offer } from '../models/offer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,8 +20,8 @@ export class OfferService {
     return this.http.post(`${this.baseUrl}/add`, offer, { responseType: 'text' });
   }
 
-  getAllOffers(): Observable<Offer[]> {
-    return this.http.get<Offer[]>(`${this.baseUrl}/getAll`);
+  getMetricsOffer(): Observable<MonthlyCountDTO[]> {
+    return this.http.get<MonthlyCountDTO[]>(`${this.baseUrl}/getAll`);
   }
 
   getOffers(searchTerm: string, tagIds: number[], page: number, size: number): Observable<PageResponse<Offer>> {
@@ -141,5 +101,9 @@ export class OfferService {
     const params = new HttpParams().set('status', status);
     return this.http.put(`${this.baseUrl}/status/${offerId}`, null, { params, responseType: 'text' });
   }
+
+getAverageHiringTime() {
+  return this.http.get<number>(`${this.baseUrl}/company/average-hiring-time`);
+}
 
 }
