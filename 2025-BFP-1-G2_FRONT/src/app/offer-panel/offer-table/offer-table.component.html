@@ -1,29 +1,30 @@
 <div class="offers-container">
   <div class="offers-header">
-    <h2 class="page-title">
-      <mat-icon>work</mat-icon>
-      Ofertas
-    </h2>
+    <div class="title-grid">
+      <h2 class="page-title">
+        <mat-icon>work</mat-icon>
+        Ofertas
+      </h2>
 
-    <div class="company-hiring-stats" *ngIf="isCompany && averageHiringTime !==null">
-  <div class="hiring-card">
-      <div class="hiring-info">
-        <mat-icon class="hiring-icon">trending_up</mat-icon>
-        <div>
-          <div class="hiring-title">Contrataciones</div>
-          <div class="hiring-value" *ngIf="averageHiringTime !== null && averageHiringTime >= 0">
-            Tiempo medio hasta contratación: <span class="hiring-number">{{ averageHiringTime | number:'1.0-2' }} días</span>
-          </div>
-          <div class="hiring-value" *ngIf="averageHiringTime === null">
-            No hay contrataciones aún.
+      <div class="company-hiring-stats" *ngIf="isCompany && averageHiringTime !==null">
+        <div class="hiring-card">
+          <div class="hiring-info">
+            <mat-icon class="hiring-icon">trending_up</mat-icon>
+            <div>
+              <div class="hiring-title">Contrataciones</div>
+              <div class="hiring-value" *ngIf="averageHiringTime !== null && averageHiringTime >= 0">
+                Tiempo medio hasta contratación: <span class="hiring-number">{{ averageHiringTime | number:'1.0-2' }}
+                  días</span>
+              </div>
+              <div class="hiring-value" *ngIf="averageHiringTime === null">
+                No hay contrataciones aún.
+              </div>
+            </div>
           </div>
         </div>
       </div>
-  </div>
-</div>
 
-</div>
-
+    </div>
     <div class="search-and-filters-section">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Buscar ofertas</mat-label>
@@ -37,22 +38,16 @@
       <mat-form-field appearance="outline" class="tags-search-field" *ngIf="availableTags.length > 0">
         <mat-label>Áreas de interés</mat-label>
         <mat-chip-grid #chipGrid aria-label="Selección de áreas">
-          <mat-chip-row *ngFor="let tag of selectedTags" [removable]="true" (removed)="removeTag(tag)">
-                {{tag.name}}
+          <mat-chip-row *ngFor="let tag of selectedTags" [removable]="true" (removed)="removeTagFilter(tag)">
+            {{tag.name}}
             <button matChipRemove type="button">
               <mat-icon>cancel</mat-icon>
             </button>
           </mat-chip-row>
 
-          <input
-            placeholder="Añadir área..."
-            [formControl]="tagSearchControl"
-            [matAutocomplete]="auto"
-            [matChipInputFor]="chipGrid"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            (matChipInputTokenEnd)="addTagFromInput($event)"
-            (focus)="onSearchFocus()"
-          />
+          <input placeholder="Añadir área..." [formControl]="tagSearchControl" [matAutocomplete]="auto"
+            [matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (focus)="onSearchFocus()"
+            (matChipInputTokenEnd)="onTagSelected($event)" />
         </mat-chip-grid>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTagSelected($event)">
           <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
@@ -122,8 +117,8 @@
         </div>
       </div>
     </div>
-
   </div>
+
 
   <mat-divider></mat-divider>
   <div class="pagination-container" *ngIf="!isLoading && totalPages > 1">
@@ -191,7 +186,7 @@
   </div>
 
   <app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
-    [showNavigation]="true" [availableTags]="availableTags"  (onClose)="closeDetailedCard()"
+    [showNavigation]="true" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
     (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)"
     (onChipClick)="onChipClickHandler($event)">
   </app-detailed-card>
@@ -211,6 +206,3 @@
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
-
-
-</div>

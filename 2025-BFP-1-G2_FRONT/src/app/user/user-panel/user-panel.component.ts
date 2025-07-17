@@ -4,7 +4,6 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
 import { AuthService } from "../../auth/services/auth.service";
 import { ImageCompressionService } from "../../services/image-compression.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -152,10 +151,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       }
     });
   }
-  private _filterTags(value: string | null): Tag[] {
-    const filterValue = (value || '').toLowerCase();
-    return this.avaliableTags.filter(tag => tag.name.toLowerCase().includes(filterValue));
-  }
+
   ngOnDestroy() {
     if (this.typingInterval) {
       clearInterval(this.typingInterval);
@@ -180,9 +176,10 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   getTagsFormControl(): FormControl<Tag[]> {
     return this.tagsControl;
   }
+
   private _filterTags(value: string | null): Tag[] {
     const filterValue = (value || '').toLowerCase();
-    return this.availableTags.filter(tag => tag.name.toLowerCase().includes(filterValue));
+    return this.avaliableTags.filter(tag => tag.name.toLowerCase().includes(filterValue));
   }
 
 
@@ -215,7 +212,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     const input = event.input;
     const value = event.value;
     if ((value || '').trim()) {
-      const foundTag = this.availableTags.find(tag => tag.name.toLowerCase() === value.trim().toLowerCase());
+      const foundTag = this.avaliableTags.find(tag => tag.name.toLowerCase() === value.trim().toLowerCase());
       if (foundTag && this.selectedTags.length < 10 && !this.selectedTags.some(t => t.id === foundTag.id)) {
         this.selectedTags.push(foundTag);
         this.tagSearchControl.setValue('');
@@ -244,10 +241,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       map((value: string | null) => this._filterTags(value))
     );
   }
-
-
-
-
 
 
 

@@ -37,7 +37,7 @@
           <mat-chip *ngFor="let tag of myTags" color="primary">{{ tag.name }}</mat-chip>
         </div>
         <ng-container *ngIf="isEditMode">
-          <mat-form-field appearance="outline" class="tags-search-field" style="width:100%;" *ngIf="availableTags.length > 0">
+          <mat-form-field appearance="outline" class="tags-search-field" style="width:100%;" *ngIf="avaliableTags.length > 0">
             <mat-label>Áreas de interés</mat-label>
             <mat-chip-grid #chipGrid aria-label="Selección de áreas">
               <mat-chip-row *ngFor="let tag of selectedTags" [removable]="true" (removed)="removeTag(tag)">

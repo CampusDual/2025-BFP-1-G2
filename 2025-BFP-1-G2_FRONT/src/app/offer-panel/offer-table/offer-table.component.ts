@@ -10,10 +10,10 @@ import { Tag } from 'src/app/models/tag.model';
 import { TagService } from 'src/app/services/tag.service';
 import { Offer } from 'src/app/models/offer.model';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipsModule } from '@angular/material/chips';
+import { DetailedCardService } from 'src/app/services/detailed-card.service';
+import { DetailedCardComponent } from 'src/app/detailed-card/detailed-card.component';
 
 @Component({
   selector: 'app-offer-table',
@@ -349,15 +349,6 @@ export class OfferTableComponent implements OnDestroy {
         data: { offer: offer }
       });
 
-      if (offer.candidates && offer.candidates.length > 0) {
-        actions.push({
-          label: 'Ver candidatos' + ` (${offer.candidates.length})`,
-          action: 'viewCandidates',
-          color: 'primary',
-          icon: 'people',
-          data: { offerId: offer.id, offerTitle: offer.title }
-        });
-      }
 
     } else if (this.isCandidate) {
 
