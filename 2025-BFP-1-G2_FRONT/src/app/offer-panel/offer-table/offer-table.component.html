@@ -36,30 +36,35 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="tags-search-field" *ngIf="availableTags.length > 0">
-        <mat-label>Buscar áreas para filtrar</mat-label>
-        <input matInput [formControl]="tagSearchControl" [matAutocomplete]="auto"
-          placeholder="Escribe para buscar áreas..." (focus)="onSearchFocus()">
-        <mat-icon matSuffix>search</mat-icon>
+        <mat-label>Áreas de interés</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Selección de áreas">
+          <mat-chip-row *ngFor="let tag of selectedTags" [removable]="true" (removed)="removeTag(tag)">
+                {{tag.name}}
+            <button matChipRemove type="button">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
 
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTagSelected($event)" class="chips-autocomplete">
-          <mat-option *ngFor="let tag of filteredTags | async" [value]="tag" class="chip-option">
+          <input
+            placeholder="Añadir área..."
+            [formControl]="tagSearchControl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addTagFromInput($event)"
+            (focus)="onSearchFocus()"
+          />
+        </mat-chip-grid>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTagSelected($event)">
+          <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
             {{tag.name}}
           </mat-option>
-
           <mat-option *ngIf="(filteredTags | async)?.length === 0 && tagSearchControl.value" disabled>
             <em>No se encontraron áreas que coincidan</em>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
 
-      <div class="selected-tags-chips" *ngIf="tagsFilterControl.value && tagsFilterControl.value.length > 0">
-        <mat-chip-set>
-          <mat-chip *ngFor="let tag of tagsFilterControl.value" removable (removed)="removeTagFilter(tag)">
-            {{tag.name}}
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip>
-        </mat-chip-set>
-      </div>
       <div class="view-selectors-container">
         <div class="offer-selectors" *ngIf="isCandidate">
           <button mat-raised-button [color]="currentOfferView === 'recommended' ? 'primary' : ''"
@@ -91,7 +96,7 @@
           </button>
         </div>
         <div class="offer-selectors" *ngIf="isCompany">
-          <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : ''" class="selector-button"
+          <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : undefined" class="selector-button"
             (click)="setOfferStatus('active')" matBadge="{{ activeOfferCount }}" matBadgePosition="after"
             matBadgeSize="small" [matBadgeHidden]="activeOfferCount === 0"
             [class.selected]="currentOfferStatus === 'active'">

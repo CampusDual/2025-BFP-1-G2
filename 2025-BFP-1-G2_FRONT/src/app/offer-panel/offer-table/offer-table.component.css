@@ -151,6 +151,9 @@ app-offer-card {
 
 .tags-search-field {
   grid-area: 1 / 2 / 2 / 3;
+  min-width: 250px;
+  max-width: 100%;
+  height: auto
 }
 
 .selected-tags-chips {
@@ -322,7 +325,7 @@ app-offer-card {
 
 .filter-chips {
   display: grid;
-  grid-template-columns: 1fr, 1fr;
+  grid-template-columns: 1fr;
   align-items: center;
   padding: 20px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -388,8 +391,8 @@ app-offer-card {
 
   .tags-search-field {
     max-width: none;
+    height: auto;
   }
-
   .view-selectors-container {
     margin-top: 12px;
   }

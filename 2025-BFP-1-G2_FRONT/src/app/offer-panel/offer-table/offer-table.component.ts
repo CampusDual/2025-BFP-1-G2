@@ -8,8 +8,10 @@ import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detail
 import { Tag } from 'src/app/models/tag.model';
 import { TagService } from 'src/app/services/tag.service';
 import { Offer } from 'src/app/models/offer.model';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-offer-table',
@@ -17,6 +19,7 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent implements OnDestroy {
+
 
   offers: Offer[] = [];
   searchTerm: string = '';
@@ -29,10 +32,8 @@ export class OfferTableComponent implements OnDestroy {
   availableTags: Tag[] = [];
   selectedTags: Tag[] = [];
   selectedTagIds: number[] = [];
-  selectedCandidatures: any[] = [];
-  tagsFilterControl = new FormControl<Tag[]>([]);
-  tagSearchControl = new FormControl('');
   filteredTags: Observable<Tag[]>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   bookmarkedOfferCount: number = 0;
   recomendedOfferCount: number = 0;
   appliedOfferCount: number = 0;
@@ -41,7 +42,6 @@ export class OfferTableComponent implements OnDestroy {
   archivedOfferCount: number = 0;
   firstFetch = true;
   currentOfferView: 'all' | 'recommended' | 'applied' | 'bookmarks' = 'all';
-  bookmarkedOffers: number[] = [];
   currentOfferStatus: 'draft' | 'archived' | 'active' = 'active';
   averageHiringTime: number | null = null;
 
@@ -51,6 +51,7 @@ export class OfferTableComponent implements OnDestroy {
   currentPage: number = 0;
   pageSize: number = 8;
   hasNoOffers: boolean = false;
+  tagSearchControl: FormControl = new FormControl('');
   constructor(
     private offerService: OfferService,
     private authService: AuthService,
@@ -61,15 +62,9 @@ export class OfferTableComponent implements OnDestroy {
   ) {
     this.loadAllTags();
     this.loadUserRole();
-    this.filteredTags = combineLatest([
-      this.tagSearchControl.valueChanges.pipe(startWith('')),
-      this.tagsFilterControl.valueChanges.pipe(startWith([]))
-    ]).pipe(
-      map(([searchValue]) => {
-        const currentTags = this.tagsFilterControl.value || [];
-        this.selectedTagIds = currentTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
-        return this._filterTags(searchValue || '');
-      })
+    this.filteredTags = this.tagSearchControl.valueChanges.pipe(
+      startWith(''), // Forzar string, nunca null
+      map((searchValue) => this._filterTags(searchValue || ''))
     );
   }
 
@@ -88,7 +83,7 @@ export class OfferTableComponent implements OnDestroy {
       this.offerService.getAverageHiringTime().subscribe(avg => {
         this.averageHiringTime = avg;
       });
-    
+
   }
 
 
@@ -504,38 +499,44 @@ export class OfferTableComponent implements OnDestroy {
 
   private _filterTags(value: string): Tag[] {
     const filterValue = value.toLowerCase();
-    const currentTags = this.tagsFilterControl.value || [];
-
-    this.selectedTagIds = currentTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
-
     return this.availableTags.filter(tag =>
       tag.name.toLowerCase().includes(filterValue) &&
-      !this.selectedTagIds.includes(tag.id!)
+      !this.selectedTags.some(t => t.id === tag.id)
     );
   }
 
   onTagSelected(event: any) {
     const selectedTag = event.option.value;
-    const currentTags = this.tagsFilterControl.value || [];
-
-    if (!currentTags.find(tag => tag.id === selectedTag.id)) {
-      const updatedTags = [...currentTags, selectedTag];
-      this.tagsFilterControl.setValue(updatedTags);
-
-      this.selectedTagIds = updatedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+    if (!this.selectedTags.find(tag => tag.id === selectedTag.id)) {
+      this.selectedTags.push(selectedTag);
+      this.selectedTagIds = this.selectedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+      this.movePage(0);
     }
-
-    this.filteredTags = combineLatest([
-      this.tagSearchControl.valueChanges.pipe(startWith('')),
-      this.tagsFilterControl.valueChanges.pipe(startWith([]))
-    ]).pipe(
-      map(([searchValue]) => this._filterTags(searchValue || ''))
-    );
-
     this.tagSearchControl.setValue('');
-    this.movePage(0);
   }
 
+  addTagFromInput(event: any) {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      const foundTag = this.availableTags.find(tag => tag.name.toLowerCase() === value.trim().toLowerCase());
+      if (foundTag && !this.selectedTags.some(t => t.id === foundTag.id)) {
+        this.selectedTags.push(foundTag);
+        this.selectedTagIds = this.selectedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+        this.movePage(0);
+      }
+    }
+    if (input) {
+      input.value = '';
+    }
+    this.tagSearchControl.setValue('');
+  }
+
+  removeTag(tagToRemove: Tag) {
+    this.selectedTags = this.selectedTags.filter(tag => tag.id !== tagToRemove.id);
+    this.selectedTagIds = this.selectedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+    this.movePage(0);
+  }
   onChipClickHandler(event: { tag: Tag }) {
     this.clearFilters();
     this.closeDetailedCard();
@@ -548,11 +549,13 @@ export class OfferTableComponent implements OnDestroy {
     }
   }
 
-  removeTagFilter(tagToRemove: Tag) {
-    const currentTags = this.tagsFilterControl.value || [];
-    const updatedTags = currentTags.filter(tag => tag.id !== tagToRemove.id);
-    this.tagsFilterControl.setValue(updatedTags);
-    this.selectedTagIds = updatedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+  clearFilters() {
+    this.searchTerm = '';
+    this.lastSearchTerm = '';
+    this.selectedTagIds = [];
+    this.selectedTags = [];
+    this.tagSearchControl.setValue('');
+    this.hasNoOffers = false;
     this.movePage(0);
   }
 
@@ -563,7 +566,7 @@ export class OfferTableComponent implements OnDestroy {
     this.firstFetch = true;
     this.searchTerm = '';
     this.lastSearchTerm = '';
-    this.tagsFilterControl.setValue([]);
+    this.selectedTags = [];
     this.tagSearchControl.setValue('');
     this.currentOfferView = view;
     this.loadCandidateOffers(0);
@@ -576,7 +579,7 @@ export class OfferTableComponent implements OnDestroy {
     this.firstFetch = true;
     this.searchTerm = '';
     this.lastSearchTerm = '';
-    this.tagsFilterControl.setValue([]);
+    this.selectedTags = [];
     this.tagSearchControl.setValue('');
     this.currentOfferStatus = status;
     this.loadCompanyOffers(0);
@@ -777,36 +780,6 @@ export class OfferTableComponent implements OnDestroy {
     });
   }
 
-  isTagSelected(tag: Tag, form: FormGroup): boolean {
-    const selectedTags = form.get('tags')?.value || [];
-    return selectedTags.some((t: Tag) => t.id === tag.id);
-  }
-
-  toggleTag(tag: Tag, form: FormGroup): void {
-    const tagsControl = form.get('tags');
-    if (!tagsControl) return;
-
-    const currentTags = tagsControl.value || [];
-    const isSelected = this.isTagSelected(tag, form);
-
-    if (isSelected) {
-      const updatedTags = currentTags.filter((t: Tag) => t.id !== tag.id);
-      tagsControl.setValue(updatedTags);
-    } else {
-      if (currentTags.length < 5) {
-        const updatedTags = [...currentTags, tag];
-        tagsControl.setValue(updatedTags);
-      } else {
-        this.snackBar.open('Máximo 5 tags permitidos', 'Cerrar', { duration: 2000 });
-      }
-    }
-  }
-
-  getSelectedTagsCount(form: FormGroup): number {
-    const selectedTags = form.get('tags')?.value || [];
-    return selectedTags.length;
-  }
-
   private disableBodyScroll(): void {
     document.body.style.overflow = 'hidden';
     document.body.style.height = '100vh';
@@ -864,18 +837,6 @@ export class OfferTableComponent implements OnDestroy {
       }
     }
   }
-
-  clearFilters() {
-    this.searchTerm = '';
-    this.lastSearchTerm = '';
-    this.selectedTagIds = [];
-    this.tagsFilterControl.setValue([]);
-    this.tagSearchControl.setValue('');
-    this.hasNoOffers = false;
-    this.movePage(0);
-  }
-
-
 
 
 }
