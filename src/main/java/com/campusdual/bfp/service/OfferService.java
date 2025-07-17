@@ -191,25 +191,6 @@ public class OfferService implements IOfferService {
         return dtos;
     }
 
-    @Override
-    public List<CandidateDTO> getCompanyOffersCandidates(int offerID) {
-        List<Integer> userIds = userOfferDao.findUserIdsByOfferId(offerID);
-        List<CandidateDTO> candidateDTOS = new ArrayList<>();
-        for (Integer userId : userIds) {
-            User user = userDao.findUserById(userId);
-            if (user != null) {
-                Candidate candidate = candidateDao.findCandidateByUser(user);
-                if (candidate != null) {
-                    UserOffer userOffer = userOfferDao.findByUserIdAndOfferId(userId, offerID);
-                    CandidateDTO candidateDTO = CandidateMapper.INSTANCE.toDTO(candidate);
-                    candidateDTO.setDateAdded(new java.text.SimpleDateFormat("dd/MM/yyyy").format(userOffer.getDate()));
-                    candidateDTO.setValid(userOffer.isValid());
-                    candidateDTOS.add(candidateDTO);
-                }
-            }
-        }
-        return candidateDTOS;
-    }
 
     @Override
     public void updateCandidateValidity(int offerID, CandidateDTO candidateDTO) {
@@ -448,5 +429,22 @@ public class OfferService implements IOfferService {
             }
         }
         return days.isEmpty() ? null : days.stream().mapToLong(Long::longValue).average().orElse(0);
+    }
+
+    @Override
+    public List<OfferDTO> getSearchableOffers(String username){
+        User user = userDao.findByLogin(username);
+        if (user == null) throw new UserNotFoundException("Usuario no encontrado");
+        Company company = companyDao.findCompanyByUser(user);
+        if (company == null) throw new CompanyNotFoundException("Empresa no encontrada");
+        List<Offer> offers = offerDao.findOfferByCompanyId(company.getId());
+        return offers.stream()
+                .map(offer ->{
+                    OfferDTO dto = new OfferDTO();
+                    dto.setId(offer.getId());
+                    dto.setTitle(offer.getTitle());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -31,7 +31,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin-top: 20px;
 }
 
 
@@ -50,8 +49,7 @@
 }
 
 .chart-card {
-    height: 500px;
-    margin-bottom: 20px;
+    height: 400px;
 }
 
 
@@ -69,17 +67,6 @@
     font-size: 24px;
 }
 
-.tags-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 16px;
-}
-
-.tags-display {
-    margin-bottom: 16px;
-}
 
 .mat-chip-listbox {
     display: flex;
@@ -143,7 +130,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .stat-card {
@@ -223,7 +210,7 @@
 
 .chart-container {
     position: relative;
-    height: 400px;
+    height: 300px;
     padding: 16px;
     flex: 1;
 }

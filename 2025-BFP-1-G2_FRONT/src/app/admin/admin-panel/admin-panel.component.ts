@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DetailedCardData } from "../../detailed-card/detailed-card.component";
+import { DetailedCardData } from 'src/app/models/detailed-card-data.model';
 import { CompanyService } from 'src/app/services/company.service';
 import { Company } from 'src/app/models/company.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -119,13 +119,6 @@ export class AdminPanelComponent {
     return form;
   }
 
-  openDetailedCard(companyIndex: number) {
-    this.isAddingNewCompany = false;
-    this.createDetailedCardData();
-    this.currentDetailIndex = companyIndex;
-    this.showDetailedCard = true;
-  }
-
   closeDetailedCard() {
     this.showDetailedCard = false;
     this.isAddingNewCompany = false;
@@ -134,43 +127,6 @@ export class AdminPanelComponent {
 
   addCompany() {
     this.isAddingNewCompany = true;
-
-    const newCompanyForm = this.createCompanyForm();
-    newCompanyForm.reset({
-      name: '',
-      email: '',
-      description: '',
-      sector: '',
-      address: '',
-      url: 'https://',
-      employeeCount: '',
-      foundedDate: '',
-      logo: ''
-    });
-
-    this.detailedCardData = [{
-      id: 0,
-      title: '',
-      editableTitle: '',
-      titleLabel: 'Nombre de la Empresa',
-      subtitle: '',
-      subtitleLabel: 'Email Corporativo',
-      content: '',
-      contentLabel: 'Descripción de la Empresa',
-      editable: true,
-      form: newCompanyForm,
-      metadata: {
-        logo: '',
-        sector: '',
-        ubicacion: '',
-        web: 'https://',
-        empleados: '',
-        fundación: ''
-      }
-    }];
-
-    this.currentDetailIndex = 0;
-    this.showDetailedCard = true;
   }
 
   onSaveCompany(editedData: DetailedCardData) {

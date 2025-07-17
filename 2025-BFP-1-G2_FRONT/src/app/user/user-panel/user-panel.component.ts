@@ -1,11 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { AuthService } from "../../auth/services/auth.service";
 import { ImageCompressionService } from "../../services/image-compression.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TagService } from 'src/app/services/tag.service';
 import { Tag } from 'src/app/models/tag.model';
+import { CandidateService } from 'src/app/services/candidate.service';
+import { filter, Subscription } from 'rxjs';
+import { DetailedCardService } from 'src/app/services/detailed-card.service';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -15,6 +22,8 @@ import { Tag } from 'src/app/models/tag.model';
 })
 export class UserPanelComponent implements OnInit, OnDestroy {
 
+  private routerSub: Subscription;
+  showBackButton = false;
 
   userName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   userSurname1 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
@@ -74,12 +83,27 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   avaliableTags: Tag[] = [];
   myTags: Tag[] = [];
+  selectedTags: Tag[] = [];
+  tagSearchControl = new FormControl('');
+  filteredTags!: Observable<Tag[]>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
+    private candidateService: CandidateService,
     private imageCompressionService: ImageCompressionService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
-    private tagService: TagService) { }
+    private tagService: TagService,
+    private detailedCardService: DetailedCardService,
+    private router: Router,
+    private routeLocation: Location) {
+    this.routerSub = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateBackButtonState();
+      });
+  }
 
   ngOnInit(): void {
     this.userNameInput = this.route.snapshot.paramMap.get('userName') || '';
@@ -106,6 +130,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.tagService.getCandidateTagsByUsername(this.userNameInput).subscribe({
       next: (tags) => {
         this.myTags = tags;
+        this.selectedTags = [...tags];
+        this.tagsControl.setValue(tags);
         console.log('Candidate tags loaded successfully', tags);
       },
       error: (error: any) => {
@@ -115,6 +141,10 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.tagService.getAllTags().subscribe({
       next: (tags) => {
         this.avaliableTags = tags;
+        this.filteredTags = this.tagSearchControl.valueChanges.pipe(
+          startWith(''),
+          map((value: string | null) => this._filterTags(value))
+        );
       },
       error: (error: any) => {
         console.error('Error fetching tags', error);
@@ -122,10 +152,36 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnDestroy() {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
+  }
+
+  private updateBackButtonState() {
+    this.showBackButton = this.detailedCardService.hasState();
+  }
+  goBack() {
+    this.routeLocation.back();
+
+    setTimeout(() => {
+      this.detailedCardService.requestRestore();
+    }, 100);
+  }
+
 
   getTagsFormControl(): FormControl<Tag[]> {
     return this.tagsControl;
   }
+
+  private _filterTags(value: string | null): Tag[] {
+    const filterValue = (value || '').toLowerCase();
+    return this.avaliableTags.filter(tag => tag.name.toLowerCase().includes(filterValue));
+  }
+
 
   getSelectedTagsCount(): number {
     return this.myTags.length;
@@ -152,8 +208,44 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
 
+  addTagFromInput(event: any): void {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      const foundTag = this.avaliableTags.find(tag => tag.name.toLowerCase() === value.trim().toLowerCase());
+      if (foundTag && this.selectedTags.length < 10 && !this.selectedTags.some(t => t.id === foundTag.id)) {
+        this.selectedTags.push(foundTag);
+        this.tagSearchControl.setValue('');
+      }
+    }
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  onTagSelected(event: any): void {
+    const tag: Tag = event.option.value;
+    if (tag && this.selectedTags.length < 10 && !this.selectedTags.some(t => t.id === tag.id)) {
+      this.selectedTags.push(tag);
+      this.tagSearchControl.setValue('');
+    }
+  }
+
+  removeTag(tag: Tag): void {
+    this.selectedTags = this.selectedTags.filter(t => t.id !== tag.id);
+  }
+
+  onSearchFocus(): void {
+    this.filteredTags = this.tagSearchControl.valueChanges.pipe(
+      startWith(this.tagSearchControl.value || ''),
+      map((value: string | null) => this._filterTags(value))
+    );
+  }
+
+
+
   loadUserData(): void {
-    this.authService.getCandidateDetails().subscribe({
+    this.candidateService.getCandidateDetails().subscribe({
       next: (user: any) => {
         this.userName.setValue(user.name);
         this.userSurname1.setValue(user.surname1);
@@ -174,22 +266,34 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
-        this.experiences = (user.experiences || []).map((exp: any) => ({
-          id: exp.id || exp.experienceId, // <-- AÑADIDO
-          jobTitle: exp.jobTitle || '',
-          companyName: exp.companyName || '',
-          startDate: exp.startDate || '',
-          endDate: exp.endDate || '',
-          responsibilities: exp.responsibilities || ''
-        }));
-        this.educations = (user.educations || []).map((edu: any) => ({
-          id: edu.id || edu.educationId,
-          degree: edu.degree || '',
-          institution: edu.institution || '',
-          startDate: edu.startDate || '',
-          endDate: edu.endDate || '',
-          description: edu.description || ''
-        }));
+        this.experiences = (user.experiences || [])
+          .map((exp: any) => ({
+            id: exp.id || exp.experienceId,
+            jobTitle: exp.jobTitle || '',
+            companyName: exp.companyName || '',
+            startDate: exp.startDate || '',
+            endDate: exp.endDate || '',
+            responsibilities: exp.responsibilities || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateA - dateB;
+          });
+        this.educations = (user.educations || [])
+          .map((edu: any) => ({
+            id: edu.id || edu.educationId,
+            degree: edu.degree || '',
+            institution: edu.institution || '',
+            startDate: edu.startDate || '',
+            endDate: edu.endDate || '',
+            description: edu.description || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateB - dateA;
+          });
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.tagsControl.setValue(user.tags || []);
         this.fullName = parts.join(' ');
@@ -204,7 +308,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   loadSpecificCandidateData(): void {
-    this.authService.getSpecificCandidateDetails(this.userNameInput).subscribe({
+    this.candidateService.getSpecificCandidateDetails(this.userNameInput).subscribe({
       next: (user: any) => {
         this.userName.setValue(user.name);
         this.userSurname1.setValue(user.surname1);
@@ -225,22 +329,34 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.personalWebsiteUrl.setValue(user.personalWebsiteUrl);
         this.cvPdfBase64.setValue(user.cvPdfBase64 || '');
         this.logoImageBase64.setValue(user.logoImageBase64 || '');
-        this.experiences = (user.experiences || []).map((exp: any) => ({
-          id: exp.id || exp.experienceId, // <-- AÑADIDO
-          jobTitle: exp.jobTitle || '',
-          companyName: exp.companyName || '',
-          startDate: exp.startDate || '',
-          endDate: exp.endDate || '',
-          responsibilities: exp.responsibilities || ''
-        }));
-        this.educations = (user.educations || []).map((edu: any) => ({
-          id: edu.id || edu.educationId,
-          degree: edu.degree || '',
-          institution: edu.institution || '',
-          startDate: edu.startDate || '',
-          endDate: edu.endDate || '',
-          description: edu.description || ''
-        }));
+        this.experiences = (user.experiences || [])
+          .map((exp: any) => ({
+            id: exp.id || exp.experienceId,
+            jobTitle: exp.jobTitle || '',
+            companyName: exp.companyName || '',
+            startDate: exp.startDate || '',
+            endDate: exp.endDate || '',
+            responsibilities: exp.responsibilities || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateB - dateA;
+          });
+        this.educations = (user.educations || [])
+          .map((edu: any) => ({
+            id: edu.id || edu.educationId,
+            degree: edu.degree || '',
+            institution: edu.institution || '',
+            startDate: edu.startDate || '',
+            endDate: edu.endDate || '',
+            description: edu.description || ''
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.endDate || a.startDate).getTime();
+            const dateB = new Date(b.endDate || b.startDate).getTime();
+            return dateB - dateA;
+          });
         const parts = [user.name, user.surname1, user.surname2].filter(Boolean);
         this.fullName = parts.join(' ');
         this.isLoading = false;
@@ -355,12 +471,13 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     console.log('Datos que se envían al backend:', updatedData);
 
     // Actualizar datos del usuario
-    this.authService.updateCandidateDetails(updatedData).subscribe({
-      next: (response) => {
+    this.candidateService.updateCandidateDetails(updatedData).subscribe({
+      next: () => {
         // Actualizar tags del candidato
         const tagIds = this.myTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
         this.tagService.updateCandidateTags(tagIds).subscribe({
           next: () => {
+            this.myTags = [...this.selectedTags];
             this.isEditMode = false;
             this.isSaving = false;
             const parts = [this.userName.value, this.userSurname1.value, this.userSurname2.value].filter(Boolean);
@@ -384,7 +501,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   cancelEdit(): void {
     this.isEditMode = false;
     // Recargar solo los datos básicos del usuario, sin experiencia ni educación
-    this.authService.getCandidateDetails().subscribe({
+    this.candidateService.getCandidateDetails().subscribe({
       next: (user: any) => {
         this.userName.setValue(user.name);
         this.userSurname1.setValue(user.surname1);
@@ -519,11 +636,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    if (this.typingInterval) {
-      clearInterval(this.typingInterval);
-    }
-  }
+
 
   openAddExperienceForm(): void {
     this.showAddExperienceForm = true;
@@ -718,6 +831,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       }
     }
     this.currentEducationIndex = activeIndex;
+  }
+
+
+  hasOverflowLeft(carousel: HTMLElement): boolean {
+    const container = carousel.querySelector('.carousel-cards') as HTMLElement;
+    if (!container) return false;
+    return container.scrollLeft > 0;
+  }
+
+  hasOverflowRight(carousel: HTMLElement): boolean {
+    const container = carousel.querySelector('.carousel-cards') as HTMLElement;
+    if (!container) return false;
+    return Math.ceil(container.scrollLeft + container.clientWidth) < container.scrollWidth;
   }
 
 }

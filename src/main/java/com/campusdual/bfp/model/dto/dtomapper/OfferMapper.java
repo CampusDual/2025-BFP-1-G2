@@ -7,7 +7,6 @@ import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dto.OfferDTO;
 import org.mapstruct.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper
@@ -44,10 +43,6 @@ public interface OfferMapper {
                         .ifPresent(dto::setCandidateValid);
                 dto.setBookmarked(offerDao.isOfferBookmarkedByUserIdAndOfferId(user.getId(), offer.getId()));
             }
-        }else{
-            dto.setCandidates(offerDao.findCandidatesByOfferId(offer.getId()).stream()
-                    .map(CandidateMapper.INSTANCE::toDTO)
-                    .collect(Collectors.toList()));
         }
         dto.setTags(offerDao.findTagsByOfferId(offer.getId()).stream()
                 .map(TagMapper.INSTANCE::toTagDTO)

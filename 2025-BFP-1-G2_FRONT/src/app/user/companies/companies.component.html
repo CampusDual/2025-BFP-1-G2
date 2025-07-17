@@ -48,7 +48,7 @@
         <h3 class="company-name">{{ company.name }}</h3>
         <p class="company-location" *ngIf="company.address">
           <mat-icon>location_on</mat-icon>
-          A Coruña
+          {{ company.address }}
         </p>
           <p class="company-description">{{ company.description | slice:0:120 }}{{ (company.description.length || 0) > 120 ? '...' : '' }}</p>      </div>
 
@@ -59,7 +59,7 @@
         </div>
       </div>
 
-      <div class="company-actions"> 
+      <div class="company-actions">
         <button mat-raised-button color="primary" routerLink="/company/{{company.name}}">
           <mat-icon>visibility</mat-icon>
           Ver detalles

@@ -14,7 +14,6 @@ import {MatTableModule} from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatChipsModule } from '@angular/material/chips';
 import {  MatListModule} from "@angular/material/list";
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
@@ -24,7 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ChatButtonComponent } from './chat-button/chat-button.component';
 import { ChatPanelComponent } from './chat-panel/chat-panel.component';
-
+import { MatChipsModule } from '@angular/material/chips';
 
 export interface Offer {
   id: number;
@@ -70,7 +69,7 @@ export interface Offer {
     MatSnackBarModule,
     SharedModule,
     MatProgressSpinnerModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
 })
 export class OfferPanelModule { }

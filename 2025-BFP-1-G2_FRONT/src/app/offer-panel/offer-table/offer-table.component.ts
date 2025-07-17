@@ -1,15 +1,19 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
+import { DetailedCardAction } from 'src/app/models/detailed-card-data.model';
+import { DetailedCardData } from 'src/app/models/detailed-card-data.model';
 import { Tag } from 'src/app/models/tag.model';
 import { TagService } from 'src/app/services/tag.service';
 import { Offer } from 'src/app/models/offer.model';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { DetailedCardService } from 'src/app/services/detailed-card.service';
+import { DetailedCardComponent } from 'src/app/detailed-card/detailed-card.component';
 
 @Component({
   selector: 'app-offer-table',
@@ -17,7 +21,9 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent implements OnDestroy {
+  @ViewChild(DetailedCardComponent) detailedCard!: DetailedCardComponent;
 
+  private restoreSubscription: Subscription ;
   offers: Offer[] = [];
   searchTerm: string = '';
   lastSearchTerm: string = '';
@@ -33,6 +39,7 @@ export class OfferTableComponent implements OnDestroy {
   tagsFilterControl = new FormControl<Tag[]>([]);
   tagSearchControl = new FormControl('');
   filteredTags: Observable<Tag[]>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   bookmarkedOfferCount: number = 0;
   recomendedOfferCount: number = 0;
   appliedOfferCount: number = 0;
@@ -57,7 +64,8 @@ export class OfferTableComponent implements OnDestroy {
     private snackBar: MatSnackBar,
     private router: Router,
     private formBuilder: FormBuilder,
-    private tagService: TagService
+    private tagService: TagService,
+    private detailedCardService: DetailedCardService
   ) {
     this.loadAllTags();
     this.loadUserRole();
@@ -71,6 +79,19 @@ export class OfferTableComponent implements OnDestroy {
         return this._filterTags(searchValue || '');
       })
     );
+    this.restoreSubscription = this.detailedCardService.restoreState$.subscribe(
+      (savedData) => {
+        if (this.detailedCard) {
+          this.detailedCard.restoreState(savedData);
+          this.showDetailedCard = true;
+          this.disableBodyScroll();
+        }
+      }
+    );
+    this.offerService.getAverageHiringTime().subscribe(avg => {
+      this.averageHiringTime = avg;
+    });
+
   }
 
   loadAllTags() {
@@ -83,12 +104,6 @@ export class OfferTableComponent implements OnDestroy {
       }
     });
   }
-
-    ngOnInit() {
-      this.offerService.getAverageHiringTime().subscribe(avg => {
-        this.averageHiringTime = avg;
-      });
-    }
 
 
   loadUserRole() {
@@ -200,8 +215,7 @@ export class OfferTableComponent implements OnDestroy {
 
 
   movePage(operation: number) {
-    this.currentPage = 0;
-    this.firstFetch = true;
+
     this.currentDetailIndex = 0;
     if (this.isCompany) {
       this.loadCompanyOffers(operation);
@@ -223,7 +237,6 @@ export class OfferTableComponent implements OnDestroy {
       contentLabel: 'Descripción de la oferta',
       metadata: this.getMetadataForOffer(offer),
       actions: this.getActionsForOffer(offer),
-      candidates: offer.candidates,
       editable: this.isCompany,
       form: this.isCompany ? this.createOfferForm(offer) : undefined,
       tags: offer.tags || [],
@@ -335,15 +348,6 @@ export class OfferTableComponent implements OnDestroy {
         data: { offer: offer }
       });
 
-      if (offer.candidates && offer.candidates.length > 0) {
-        actions.push({
-          label: 'Ver candidatos' + ` (${offer.candidates.length})`,
-          action: 'viewCandidates',
-          color: 'primary',
-          icon: 'people',
-          data: { offerId: offer.id, offerTitle: offer.title }
-        });
-      }
 
     } else if (this.isCandidate) {
 
@@ -817,6 +821,9 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.restoreSubscription) {
+      this.restoreSubscription.unsubscribe();
+    }
     this.enableBodyScroll();
   }
 
@@ -873,8 +880,4 @@ export class OfferTableComponent implements OnDestroy {
     this.hasNoOffers = false;
     this.movePage(0);
   }
-
-
-
-
 }

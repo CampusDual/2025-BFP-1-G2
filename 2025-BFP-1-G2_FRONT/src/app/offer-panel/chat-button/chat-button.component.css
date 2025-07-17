@@ -58,8 +58,10 @@
   position: absolute;
   bottom: 80px;
   right: 0;
-  width: 400px;
-  height: 600px;
+  width: min(400px, 90vw);
+  height: min(600px, 80vh);
+  max-width: 500px;
+  max-height: 700px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
@@ -81,9 +83,9 @@
 /* Responsive */
 @media (max-width: 768px) {
   .chat-panel {
-    width: calc(100vw - 48px);
-    height: calc(100vh - 120px);
-    right: -12px;
+    width: min(100vw - 32px, 450px);
+    height: min(85vh, 650px);
+    right: -8px;
   }
 }
 
@@ -94,13 +96,14 @@
   }
   
   .chat-fab {
-    width: 56px;
-    height: 56px;
+    width: clamp(48px, 12vw, 56px);
+    height: clamp(48px, 12vw, 56px);
   }
   
   .chat-panel {
-    width: calc(100vw - 32px);
-    height: calc(100vh - 100px);
-    right: -8px;
+    width: calc(100vw - 24px);
+    height: min(90vh, 600px);
+    right: -4px;
+    bottom: clamp(60px, 15vw, 80px);
   }
 }

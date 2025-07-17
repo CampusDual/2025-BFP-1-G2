@@ -1,4 +1,12 @@
 <div class="user-panel" *ngIf="!isLoading">
+    <button mat-icon-button
+            class="back-button"
+            *ngIf="showBackButton"
+            (click)="goBack()"
+            matTooltip="Volver a la oferta"
+            aria-label="Volver">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
   <div class="profile-header">
     <div class="profile-avatar" [ngClass]="{'edit-mode': isEditMode}">
       <img *ngIf="getProfileImage()" [src]="getProfileImage()" [alt]="fullName" class="avatar-image"
@@ -28,22 +36,43 @@
         <div *ngIf="!isEditMode" class="tags-container">
           <mat-chip *ngFor="let tag of myTags" color="primary">{{ tag.name }}</mat-chip>
         </div>
-        <div *ngIf="isEditMode" class="tags-container">
-          <mat-chip-listbox #tagListbox [multiple]="true" aria-label="Selecciona hasta 10 tags">
-            <mat-chip-option *ngFor="let tag of avaliableTags"
-              [selected]="isTagSelected(tag)"
-              (click)="toggleTagSelection(tag)"
-              [disabled]="!isTagSelected(tag) && getSelectedTagsCount() >= 10">
-              {{ tag.name }}
-            </mat-chip-option>
-          </mat-chip-listbox>
-          <div class="error-message" *ngIf="getSelectedTagsCount() > 10">
+        <ng-container *ngIf="isEditMode">
+          <mat-form-field appearance="outline" class="tags-search-field" style="width:100%;" *ngIf="avaliableTags.length > 0">
+            <mat-label>Áreas de interés</mat-label>
+            <mat-chip-grid #chipGrid aria-label="Selección de áreas">
+              <mat-chip-row *ngFor="let tag of selectedTags" [removable]="true" (removed)="removeTag(tag)">
+                {{tag.name}}
+                <button matChipRemove type="button">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+              <input
+                placeholder="Añadir área..."
+                [formControl]="tagSearchControl"
+                [matAutocomplete]="auto"
+                [matChipInputFor]="chipGrid"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addTagFromInput($event)"
+                (focus)="onSearchFocus()"
+                style="flex:1; min-width:180px;"
+              />
+            </mat-chip-grid>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTagSelected($event)">
+              <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                {{tag.name}}
+              </mat-option>
+              <mat-option *ngIf="(filteredTags | async)?.length === 0 && tagSearchControl.value" disabled>
+                <em>No se encontraron áreas que coincidan</em>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <div class="error-message" *ngIf="selectedTags.length > 10">
             <small>Solo puedes seleccionar hasta 10 tags.</small>
           </div>
-        </div>
+        </ng-container>
       </div>
     </div>
-      
+
 
     <div class="edit-controls" *ngIf="isCandidate && !isEditMode">
       <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
@@ -172,7 +201,9 @@
     <div *ngIf="experiences.length > 0; else noExperience">
       <div class="experience-carousel">
         <div class="carousel-wrapper scrollable-carousel" #experienceCarousel>
-          <button class="carousel-arrow" (click)="scrollExperienceCarousel(-1, experienceCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollExperienceCarousel(-1, experienceCarousel)"
+            [ngClass]="{'hide-left-arrow': !hasOverflowLeft(experienceCarousel)}">
             <mat-icon>chevron_left</mat-icon>
           </button>
           <div class="carousel-cards" (scroll)="onExperienceCarouselScroll(experienceCarousel)">
@@ -195,11 +226,12 @@
               </button>
             </div>
           </div>
-          <button class="carousel-arrow" (click)="scrollExperienceCarousel(1, experienceCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollExperienceCarousel(1, experienceCarousel)"
+            [ngClass]="{'hide-right-arrow': !hasOverflowRight(experienceCarousel)}">
             <mat-icon>chevron_right</mat-icon>
           </button>
         </div>
-        <!-- Eliminados los dots y todo el código relacionado -->
       </div>
     </div>
     <ng-template #noExperience>
@@ -218,7 +250,9 @@
     <div *ngIf="educations.length > 0; else noEducation">
       <div class="experience-carousel">
         <div class="carousel-wrapper scrollable-carousel" #educationCarousel>
-          <button class="carousel-arrow" (click)="scrollEducationCarousel(-1, educationCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollEducationCarousel(-1, educationCarousel)"
+            [ngClass]="{'hide-left-arrow': !hasOverflowLeft(educationCarousel)}">
             <mat-icon>chevron_left</mat-icon>
           </button>
           <div class="carousel-cards" (scroll)="onEducationCarouselScroll(educationCarousel)">
@@ -241,7 +275,9 @@
               </button>
             </div>
           </div>
-          <button class="carousel-arrow" (click)="scrollEducationCarousel(1, educationCarousel)">
+          <button class="carousel-arrow" 
+            (click)="scrollEducationCarousel(1, educationCarousel)"
+            [ngClass]="{'hide-right-arrow': !hasOverflowRight(educationCarousel)}">
             <mat-icon>chevron_right</mat-icon>
           </button>
         </div>

@@ -15,6 +15,8 @@ export class ChatPanelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   @ViewChild('messageInput') messageInput!: ElementRef;
 
+  public static openConversation: (conversation: ChatConversation) => void;
+
   conversations: ChatConversation[] = [];
   activeConversation: ChatConversation | null = null;
   messages: Message[] = [];
@@ -35,17 +37,20 @@ export class ChatPanelComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(
     private chatService: ChatService,
     private authService: AuthService
-  ) { }
+  ) { 
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
     this.checkUserRole();
     this.subscribeToUpdates();
-    // loadData() se llama desde checkUserRole() después de obtener los roles
+    ChatPanelComponent.openConversation = (conversation: ChatConversation) => this.openConversation(conversation);
+
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    
   }
 
   ngAfterViewChecked(): void {
@@ -71,7 +76,7 @@ export class ChatPanelComponent implements OnInit, OnDestroy, AfterViewChecked {
         console.error('Error fetching user roles:', error);
         this.isCandidate = false;
         this.isCompany = false;
-        this.isLoading = false; // Desactivar loading en caso de error
+        this.isLoading = false; 
       }
     });
 
@@ -114,6 +119,7 @@ export class ChatPanelComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
   openConversation(conversation: ChatConversation): void {
+    this.currentView = 'chat';
     this.chatService.setActiveConversation(conversation);
   }
 

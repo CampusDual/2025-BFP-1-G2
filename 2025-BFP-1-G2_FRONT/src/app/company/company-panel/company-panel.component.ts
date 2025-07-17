@@ -4,8 +4,9 @@ import { ImageCompressionService } from "../../services/image-compression.servic
 import { CompanyService } from "../../services/company.service";
 import { Company } from 'src/app/models/company.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, ROUTES} from '@angular/router';
 import { AuthService } from 'src/app/auth/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-company-panel',
@@ -31,28 +32,27 @@ export class CompanyPanelComponent implements OnInit {
   isLoading: boolean = true;
   isEditMode: boolean = false;
   isSaving: boolean = false;
+  isCreatingNewCompany: boolean = false;
   isCompany: boolean = false;
+  isAdmin: boolean = false;
   constructor(
     private companyService: CompanyService,
     private imageCompressionService: ImageCompressionService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
+    private router: Router,
     protected authService: AuthService) { }
 
   ngOnInit(): void {
-
     this.route.paramMap.subscribe(params => {
       const companyName = params.get('companyName');
       if (companyName) {
         this.companyNameInput = companyName;
+        this.loadCompanyData();
         this.authService.hasRole('ROLE_COMPANY').subscribe({
           next: (hasRole: boolean) => {
             if (hasRole) {
               this.isCompany = true;
-              this.loadCompanyData();
-            }
-            else {
-              this.loadSpecificCompanyData();
             }
           },
           error: (error: any) => {
@@ -60,11 +60,17 @@ export class CompanyPanelComponent implements OnInit {
             this.isLoading = false;
           }
         });
+      } else {
+        if (this.authService.getRolesCached().includes('ROLE_ADMIN')) {
+          this.isAdmin = true;
+          this.isCreatingNewCompany = true;
+          this.loadEmptyCompanyData();
+        }
       }
     });
   }
 
-  loadSpecificCompanyData() {
+  loadCompanyData() {
     this.companyService.getCompanyByName(this.companyNameInput).subscribe({
       next: (company: any) => {
         this.myCompany = company;
@@ -87,27 +93,19 @@ export class CompanyPanelComponent implements OnInit {
     });
   }
 
-  loadCompanyData(): void {
-    this.companyService.getMyCompany().subscribe({
-      next: (company: any) => {
-        this.myCompany = company;
-        this.companyName.setValue(this.myCompany?.name || '');
-        this.description.setValue(this.myCompany?.description || '');
-        this.companyEmail.setValue(this.myCompany?.email || '');
-        this.phone.setValue(this.myCompany?.phone || '');
-        this.address.setValue(company.address || '');
-        this.url.setValue(company.url || '');
-        this.logo.setValue(company.logo || '');
-        const fullDate = company.foundedDate  || '';
-        const year = fullDate ? new Date(fullDate).getFullYear().toString() : '';
-        this.foundedDate.setValue(year);
-        this.isLoading = false;
-      },
-      error: (error: any) => {
-        console.error('Error fetching user data', error);
-        this.isLoading = false;
-      }
-    });
+
+  loadEmptyCompanyData(): void {
+      this.isLoading = true;
+      this.myCompany = null;
+      this.companyName.setValue('');
+      this.description.setValue('');
+      this.companyEmail.setValue('');
+      this.phone.setValue('');
+      this.address.setValue('');
+      this.url.setValue('');
+      this.logo.setValue('');
+      this.foundedDate.setValue('');
+      this.isLoading = false;
   }
 
   openLink(url: string | null): void {
@@ -161,12 +159,19 @@ export class CompanyPanelComponent implements OnInit {
       foundedDate: this.foundedDate.value ? `${this.foundedDate.value}-01-01` : undefined
     };
 
+    if (this.isCreatingNewCompany) {
+      this.createCompany(companyData);
+    }
+    else if (this.isEditMode) {
+      this.updateCompany(companyData);
+    }
+  }
+
+  updateCompany(companyData: Company): void {
     this.companyService.updateCompany(companyData).subscribe({
       next: () => {
         console.log('Datos actualizados correctamente');
-        if(this.authService.getRolesCached().includes("ROLE_COMPANY")) {
-          this.loadCompanyData();
-        }
+        this.loadCompanyData();
         this.isEditMode = false;
         this.isSaving = false;
         this.snackbar.open('Datos actualizados correctamente', 'Cerrar', { duration: 3000 });
@@ -182,9 +187,35 @@ export class CompanyPanelComponent implements OnInit {
     });
   }
 
+  createCompany(companyData: Company): void {
+    this.companyService.createCompany(companyData).subscribe({
+      next: () => {
+        console.log('Empresa creada correctamente');
+        this.snackbar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
+        this.isCreatingNewCompany = false;
+        this.loadEmptyCompanyData();
+        this.isEditMode = false;
+        this.router.navigate(['/company/profile/' + companyData.name]);
+      },
+      error: (error) => {
+        console.error('Error al crear la empresa:', error);
+        this.snackbar.open('Error al crear la empresa', 'Cerrar', { panelClass: 'mat-error' });
+      },
+      complete: () => {
+        this.isSaving = false;
+      }
+    });
+  }
+
+
   cancelEdit(): void {
-    this.isEditMode = false;
-    this.loadCompanyData();
+    if(this.isEditMode){
+      this.loadCompanyData();
+      this.isEditMode = false;
+    }else if (this.isCreatingNewCompany) {
+      this.loadEmptyCompanyData();
+      this.isCreatingNewCompany = false;
+    }
   }
 
   hasFormErrors(): boolean {

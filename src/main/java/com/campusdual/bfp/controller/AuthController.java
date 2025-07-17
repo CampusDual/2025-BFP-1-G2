@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -124,23 +123,6 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/candidateDetails")
-    public ResponseEntity<CandidateDTO> getCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        CandidateDTO candidateDetails = userService.getCandidateDetails(username);
-        if (candidateDetails == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(candidateDetails);
-    }
-
     @GetMapping("/companyDetails")
     public ResponseEntity<CompanyDTO> getCompanyDetails(Principal principal) {
 
@@ -149,84 +131,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(companyDetails);
-    }
-
-
-    @GetMapping("/candidateDetails/{username}")
-        public ResponseEntity<CandidateDTO> getSpecificCandidateDetails(@PathVariable String username) {
-        CandidateDTO candidateDetails = userService.getCandidateDetails(username);
-        if (candidateDetails == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(candidateDetails);
-    }
-
-    @PutMapping("/candidateDetails/edit")
-    public ResponseEntity<CandidateDTO> editCandidateDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                             @RequestBody CandidateDTO candidateDTO) {
-        if (candidateDTO == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        CandidateDTO updatedCandidate = userService.updateCandidateDetails(username, candidateDTO);
-        if (updatedCandidate == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(updatedCandidate);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/listCandidates")
-    public ResponseEntity<List<MonthlyCountDTO>> listCandidates(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith(AuthController.authHeader)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        List<MonthlyCountDTO> candidatos = userService.getAllCandidates();
-        return ResponseEntity.ok(candidatos);
-    }
-
-    @DeleteMapping("/candidateDetails/experience/{id}")
-    public ResponseEntity<Void> deleteExperience(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                 @PathVariable Long id) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        userService.deleteCandidateExperience(id, username);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/candidateDetails/experience")
-    public ResponseEntity<CandidateExperienceDTO> createExperience(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CandidateExperienceDTO experienceDTO) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        CandidateExperienceDTO created = userService.createCandidateExperience(username, experienceDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
-
-    @DeleteMapping("/candidateDetails/education/{id}")
-    public ResponseEntity<Void> deleteEducation(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                @PathVariable Long id) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        userService.deleteCandidateEducation(id, username);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/candidateDetails/education")
-    public ResponseEntity<CandidateEducationDTO> createEducation(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CandidateEducationDTO educationDTO) {
-        String token = authHeader.substring(7);
-        String username = jwtUtils.getUsernameFromToken(token);
-        CandidateEducationDTO created = userService.createCandidateEducation(username, educationDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 }

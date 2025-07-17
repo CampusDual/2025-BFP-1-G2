@@ -44,11 +44,12 @@ public class SecurityConfig {
                 .authorizeRequests()
                 // Rutas públicas
                 .antMatchers("/api/auth/**", "/test/all", "/public/**").permitAll()
-                .antMatchers("/api/auth/candidateDetails/{username}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/offer/getAll/paginated").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
 
+                // Rutas de candidatos
+                .antMatchers("/api/candidate/{username}").permitAll()
 
                 // Tags - candidatos (CANDIDATE)
                 .antMatchers(HttpMethod.GET, "/api/tags/candidate").hasRole("CANDIDATE")
@@ -75,6 +76,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/api/offer/delete/**").hasRole("COMPANY")
                 .antMatchers(HttpMethod.DELETE, "/api/offer/bookmark/**").hasRole("CANDIDATE")
                 .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/offer/company/average-hiring-time").permitAll()
 
                 // Chat
                 .antMatchers(HttpMethod.POST, "/api/chat/send").permitAll()

@@ -25,9 +25,7 @@
         <mat-icon *ngIf="offer.status === 'PUBLISHED' || offer.status === 'ACTIVE'">visibility</mat-icon>
         <mat-icon *ngIf="offer.status === 'DRAFT'">edit</mat-icon>
         <mat-icon *ngIf="offer.status === 'ARCHIVED'">archive</mat-icon>
-        {{ offer.status === 'PUBLISHED' || offer.status === 'ACTIVE' ? 'Publicada' :
-           offer.status === 'DRAFT' ? 'Borrador' :
-           offer.status === 'ARCHIVED' ? 'Archivada' : offer.status }}
+
       </mat-chip>
     </div>
 

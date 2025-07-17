@@ -28,7 +28,12 @@ export class RegisterComponent implements OnInit {
 
   login = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
   email = new FormControl('', [Validators.required, Validators.email]);
-  password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
+  password = new FormControl('', [
+    Validators.required,
+    Validators.minLength(8),
+    Validators.maxLength(20),
+    Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,20}$')
+  ]);
   confirmPassword = new FormControl('', [Validators.required]);
   name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   surname1 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
@@ -258,7 +263,7 @@ export class RegisterComponent implements OnInit {
     }
     return '';
   }
-    
+
   getLoginErrorMessage(): string {
     if (this.login.hasError('required')) {
       return 'Debes introducir un nombre de usuario';
@@ -297,10 +302,13 @@ export class RegisterComponent implements OnInit {
       return 'Debes introducir una contraseña';
     }
     if (this.password.hasError('minlength')) {
-      return 'La contraseña debe tener al menos 6 caracteres';
+      return 'La contraseña debe tener al menos 8 caracteres';
     }
     if (this.password.hasError('maxlength')) {
       return 'La contraseña no puede tener más de 20 caracteres';
+    }
+    if (this.password.hasError('pattern')) {
+      return 'La contraseña debe tener al menos una mayúscula, una minúscula y un número';
     }
     return '';
   }

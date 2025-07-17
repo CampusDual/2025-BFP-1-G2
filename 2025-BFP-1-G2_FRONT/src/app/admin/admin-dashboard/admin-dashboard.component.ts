@@ -3,6 +3,7 @@ import { AdminService } from '../../services/admin.service';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { OfferService } from "../../services/offer.service";
 import { MonthlyCountDTO } from 'src/app/models/metrics.model';
+import { CandidateService } from 'src/app/services/candidate.service';
 
 
 interface ChartColors {
@@ -46,7 +47,7 @@ export class AdminDashboardComponent implements OnInit {
   public candidatesChartOptions!: ChartConfiguration<'bar'>['options'];
 
   constructor(
-    private adminService: AdminService,
+    private candidateService: CandidateService,
     private offerService: OfferService,
     private cdr: ChangeDetectorRef
   ) { 
@@ -299,7 +300,7 @@ export class AdminDashboardComponent implements OnInit {
   }
   
   private loadCandidatesData(): void {
-    this.adminService.getCandidatesOffers().subscribe({
+    this.candidateService.getCandidatesOffers().subscribe({
       next: (candidates: MonthlyCountDTO[]) => {
         this.candidates = candidates;
         this.totalCandidates = this.calculateTotalForCurrentYear(candidates);
@@ -311,7 +312,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private loadAcceptedCandidatesMonthly(): void {
-    this.adminService.getMonthlyAcceptedCandidates().subscribe({
+    this.offerService.getMonthlyAcceptedCandidates().subscribe({
       next: (monthlyData: MonthlyCountDTO[]) => {
         this.acceptedCandidatesMonthly = monthlyData;
         this.totalAcceptedCandidates = this.calculateTotalForCurrentYear(monthlyData);

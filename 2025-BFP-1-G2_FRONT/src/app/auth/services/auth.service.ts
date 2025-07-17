@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap, of, catchError, shareReplay, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { Candidate } from 'src/app/models/candidate.model';
 import { Tag } from 'src/app/models/tag.model';
 import { Company } from 'src/app/models/company.model';
+import { CandidateService } from 'src/app/services/candidate.service';
 
 export interface User {
   id: number;
@@ -49,16 +49,15 @@ export class AuthService {
   private rolesCache: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   public roles$ = this.rolesCache.asObservable();
   
-  private candidateDetailsCache: Observable<Candidate> | null = null;
   private companyDetailsCache: Observable<any> | null = null;
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private candidateService: CandidateService
   ) {
     console.log('AuthService: Initializing...');
     
-    // Verificar y cargar roles al inicializar si hay un token válido
     if (this.isLoggedIn()) {
       console.log('AuthService: Token found on initialization, loading user roles...');
       this.loadUserRoles().subscribe({
@@ -158,7 +157,7 @@ export class AuthService {
     this.authStatusSubject.next(false);
     this.userNameSubject.next('');
     this.rolesCache.next([]);
-    this.candidateDetailsCache = null;
+    this.candidateService.deleteCandidateDetails();
     this.companyDetailsCache = null;
   }
 
@@ -242,27 +241,7 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  getCandidateDetails(): Observable<Candidate> {
-    if (!this.candidateDetailsCache) {
-      this.candidateDetailsCache = this.http.get<Candidate>(`${this.baseUrl}/candidateDetails`).pipe(
-        shareReplay(1)
-      );
-    }
-    return this.candidateDetailsCache;
-  }
-
-  getSpecificCandidateDetails(username: string): Observable<Candidate> {
-    return this.http.get<Candidate>(`${this.baseUrl}/candidateDetails/${username}`);
-  }
-
-  updateCandidateDetails(candidateData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/candidateDetails/edit`, candidateData).pipe(
-      tap(() => {
-        this.candidateDetailsCache = null;
-      })
-    );
-  }
-
+  
 
   getCompanyDetails(): Observable<Company> {
     if (!this.companyDetailsCache) {

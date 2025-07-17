@@ -1,6 +1,7 @@
 package com.campusdual.bfp.api;
 
 import com.campusdual.bfp.model.dto.*;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
@@ -38,7 +39,11 @@ public interface IUserService {
 
     CandidateExperienceDTO createCandidateExperience(String username, CandidateExperienceDTO experienceDTO);
 
-    void deleteCandidateEducation(Long id, String username);
+    Integer deleteCandidateEducation(Long id, String username);
 
     CandidateEducationDTO createCandidateEducation(String username, CandidateEducationDTO educationDTO);
+
+    Page<CandidateDTO> getCandidatesFromMyOffers(Integer offerId, int page, int size);
+
+    Page<CandidateDTO> getRecomendedCandidatesFromMyOffer(Integer offerId, int page, int size);
 }

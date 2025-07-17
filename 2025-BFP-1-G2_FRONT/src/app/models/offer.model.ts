@@ -17,7 +17,6 @@ export interface Offer {
   logo?: string;
   status?: string;
   candidateValid?: boolean;
-  candidates?: Candidate[];
   isValid?: 'VALID' | 'INVALID' | 'PENDING' | null;
   applied?: boolean;
   bookmarked?: boolean;

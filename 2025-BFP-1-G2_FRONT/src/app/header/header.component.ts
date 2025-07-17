@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from "../auth/services/auth.service";
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-header',
@@ -9,21 +10,19 @@ import {  Subscription } from 'rxjs';
 })
 export class HeaderComponent {
   @Input() drawer!: any;
+  showBackButton = false;
   username: string = '';
   private sub: Subscription;
   animatedName: string = '';
-  private typingInterval: any;
   showCursor: boolean = true;
 
+  constructor(
+    protected authService: AuthService,
 
-  constructor(protected authService: AuthService) {
+  ) {
     this.sub = this.authService.userName$.subscribe(name => {
       this.username = name;
     });
-  }
 
-  ngOnDestroy() {
-    this.sub.unsubscribe();
   }
-
 }

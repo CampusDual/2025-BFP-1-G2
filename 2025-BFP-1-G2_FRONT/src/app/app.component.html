@@ -1,12 +1,8 @@
 <body [ngClass]="{ 'login-bg': !showHeader }">
   <div class="content" [ngClass]="{ 'no-header': !showHeader }">
     <app-header *ngIf="showHeader" [drawer]="drawer"></app-header>
-    <mat-drawer-container autosize>
-      <mat-drawer #drawer mode="side">
-        <div class="nav-item" *ngIf="isAdmin" routerLink="/offers/portal" (click)="drawer.close()">
-          <mat-icon>home</mat-icon>
-          <span>Inicio</span>
-        </div>
+      <mat-drawer-container class="container" autosize>
+      <mat-drawer #drawer class="drawer" mode="side" opened>
         <div class="nav-item" *ngIf="isCandidate" routerLink="/user/profile/{{userName}}" (click)="drawer.close()">
           <mat-icon>person</mat-icon>
           <span>Perfil Profesional</span>
@@ -33,7 +29,7 @@
         </div>
         <div class="nav-item" *ngIf="isAdmin" routerLink="/admin" (click)="drawer.close()">
           <mat-icon>admin_panel_settings</mat-icon>
-          <span>Administrar empresas</span>
+          <span>Empresas</span>
         </div>
         <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/dashboard" (click)="drawer.close()">
           <mat-icon>analytics</mat-icon>
@@ -41,17 +37,17 @@
         </div>
         <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/tags" (click)="drawer.close()">
           <mat-icon>label</mat-icon>
-          <span>Administrar Etiquetas</span>
+          <span>Etiquetas</span>
         </div>
       </mat-drawer>
       <mat-drawer-content>
 
         <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
             #outlet="outlet"></router-outlet></div>
-        <app-footer *ngIf="showFooter"></app-footer>
+
       </mat-drawer-content>
     </mat-drawer-container>
-    
+
     <app-chat-button *ngIf="isCandidate||isCompany"></app-chat-button>
   </div>
 </body>
