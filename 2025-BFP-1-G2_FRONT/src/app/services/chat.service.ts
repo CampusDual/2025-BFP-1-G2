@@ -6,6 +6,9 @@ import { Message, ChatConversation } from '../models/chat.models';
 import { AuthService } from '../auth/services/auth.service';
 import { Candidate } from '../models/candidate.model';
 import { Company } from '../models/company.model';
+import { CandidateService } from './candidate.service';
+import { ChatButtonComponent } from '../offer-panel/chat-button/chat-button.component';
+import { ChatPanelComponent } from '../offer-panel/chat-panel/chat-panel.component';
 
 @Injectable({
     providedIn: 'root'
@@ -27,7 +30,8 @@ export class ChatService {
 
     constructor(
         private http: HttpClient,
-        private authService: AuthService
+        private authService: AuthService,
+        private candidateService: CandidateService
     ) {
         this.initializeUserInfo();
         interval(50000).subscribe(() => {
@@ -42,7 +46,7 @@ export class ChatService {
             next: (roles) => {
                 if (roles.includes('ROLE_CANDIDATE')) {
                     this.currentUserType = 'CANDIDATE';
-                    this.authService.getCandidateDetails().subscribe({
+                    this.candidateService.getCandidateDetails().subscribe({
                         next: (candidate: Candidate) => {
                             this.currentUserId = candidate.id;
                             console.log('Chat initialized for candidate:', this.currentUserId);
@@ -80,14 +84,14 @@ export class ChatService {
             senderType: this.currentUserType
         };
         return this.http.post<Message>(`${this.baseUrl}/send`, messageDTO);
-    }   
+    }
 
     getConversations(): Observable<ChatConversation[]> {
         if (!this.currentUserId || !this.currentUserType) {
             console.warn('User ID or type not available for loading conversations');
             return new Observable(observer => observer.next([]));
         }
-        
+
         const params = new HttpParams().set('userType', this.currentUserType);
         return this.http.get<ChatConversation[]>(`${this.baseUrl}/conversations`, { params });
     }
@@ -114,7 +118,7 @@ export class ChatService {
             console.warn('User ID or type not available for loading messages');
             return new Observable(observer => observer.next([]));
         }
-        
+
         const params = new HttpParams().set('userType', this.currentUserType);
         console.log(`Fetching messages for user ${this.currentUserId} with other user ${otherUserId}`);
         return this.http.get<Message[]>(`${this.baseUrl}/conversation/${otherUserId}`, { params });
@@ -136,11 +140,9 @@ export class ChatService {
         this.getMessages(otherUserId).subscribe({
             next: (messages) => {
                 this.messagesSubject.next(messages);
-                // Marcar mensajes como leídos y actualizar el contador
                 this.markMessagesAsRead(otherUserId).subscribe({
                     next: (markedCount) => {
                         console.log(`Marked ${markedCount} messages as read`);
-                        // Recargar conversaciones para actualizar el contador de no leídos
                         this.refreshConversations();
                     },
                     error: (error) => {
@@ -177,8 +179,13 @@ export class ChatService {
         return this.http.put<number>(`${this.baseUrl}/markread/${otherUserId}`, null, { params });
     }
 
-    findConversation(candidateId: number, companyId: number): Observable<ChatConversation> {
-        return this.http.get<ChatConversation>(`${this.baseUrl}/conversation/find/${candidateId}/${companyId}`);
+    findConversation(candidateId: number): Observable<ChatConversation | null> {
+        if (!this.currentUserType) {
+            console.warn('User ID or type not available for finding conversation');
+            return new Observable(observer => observer.next(null));
+        }
+        const params = new HttpParams().set('userType', this.currentUserType);
+        return this.http.get<ChatConversation>(`${this.baseUrl}/conversation/find/${candidateId}`, { params });
     }
 
     startConversation(candidateId: number): void {
@@ -187,19 +194,21 @@ export class ChatService {
             return;
         }
 
-        this.findConversation(candidateId, this.currentUserId).subscribe({
+        this.findConversation(candidateId).subscribe({
             next: (conversation) => {
+                ChatButtonComponent.openChat();
                 this.setActiveConversation(conversation);
                 this.loadConversations();
             },
             error: (error) => {
                 if (error.status === 404) {
-                    this.sendMessage(candidateId, 'Hola, me interesa conocer más sobre tu perfil profesional.').subscribe({
+                    this.sendMessage(candidateId, '').subscribe({
                         next: () => {
                             this.loadConversations();
                             setTimeout(() => {
-                                this.findConversation(candidateId, this.currentUserId!).subscribe({
+                                this.findConversation(candidateId).subscribe({
                                     next: (newConversation) => {
+                                        ChatButtonComponent.openChat();
                                         this.setActiveConversation(newConversation);
                                     }
                                 });
@@ -263,14 +272,14 @@ export class ChatService {
                 resolve();
                 return;
             }
-            
+
             const checkInterval = setInterval(() => {
                 if (this.isUserInitialized()) {
                     clearInterval(checkInterval);
                     resolve();
                 }
             }, 100);
-            
+
             // Timeout después de 10 segundos
             setTimeout(() => {
                 clearInterval(checkInterval);

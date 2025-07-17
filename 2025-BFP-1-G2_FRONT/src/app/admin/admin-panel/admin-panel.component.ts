@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DetailedCardData } from "../../detailed-card/detailed-card.component";
+import { DetailedCardData } from 'src/app/models/detailed-card-data.model';
 import { CompanyService } from 'src/app/services/company.service';
 import { Company } from 'src/app/models/company.model';
 import { MatSnackBar } from '@angular/material/snack-bar';

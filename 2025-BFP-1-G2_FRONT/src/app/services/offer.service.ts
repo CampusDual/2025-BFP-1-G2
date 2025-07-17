@@ -33,6 +33,10 @@ export class OfferService {
     return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/getAll/paginated`, { params });
   }
 
+  getOffersSearchable(): Observable<Offer[]> {
+    return this.http.get<Offer[]>(`${this.baseUrl}/searchable`);
+  }
+
   deleteOffer(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/delete/${id}`, { responseType: 'text' });
   }
@@ -41,9 +45,6 @@ export class OfferService {
   }
   applyToOffer(id: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/apply?offerId=${id}`, {}, { responseType: "text" });
-  }
-  getCandidates(offerId: number): Observable<Candidate[]> {
-    return this.http.get<Candidate[]>(`${this.baseUrl}/candidates/${offerId}`);
   }
   updateCandidateStatus(offerId: number, candidate: Candidate): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${offerId}`, candidate, { responseType: 'text' });
@@ -73,7 +74,7 @@ export class OfferService {
     return this.http.get<PageResponse<Offer>>(`${this.baseUrl}/company`, { params });
   }
 
-   getCompanyOffersCount(status: string): Observable<number> {
+  getCompanyOffersCount(status: string): Observable<number> {
     const params = new HttpParams()
       .set('status', status)
     return this.http.get<number>(`${this.baseUrl}/count/company`, { params });
@@ -105,5 +106,9 @@ export class OfferService {
 getAverageHiringTime() {
   return this.http.get<number>(`${this.baseUrl}/company/average-hiring-time`);
 }
+
+  getMonthlyAcceptedCandidates(): Observable<MonthlyCountDTO[]> {
+    return this.http.get<MonthlyCountDTO[]>(`${this.baseUrl}/metrics/monthly-closed-offers`);
+  }
 
 }

@@ -27,15 +27,15 @@
           <mat-icon>add_add</mat-icon>
           <span>Añadir Ofertas</span>
         </div>
-                <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/dashboard">
-          <mat-icon>analytics</mat-icon>
-          <span>Dashboard</span>
-        </div>
-        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin">
+        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin" (click)="drawer.close()">
           <mat-icon>admin_panel_settings</mat-icon>
           <span>Empresas</span>
         </div>
-        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/tags">
+        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/dashboard" (click)="drawer.close()">
+          <mat-icon>analytics</mat-icon>
+          <span>Dashboard</span>
+        </div>
+        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/tags" (click)="drawer.close()">
           <mat-icon>label</mat-icon>
           <span>Etiquetas</span>
         </div>

@@ -1,6 +1,5 @@
 <div class="offers-container">
   <div class="offers-header">
-    <div class="title-grid">
     <h2 class="page-title">
       <mat-icon>work</mat-icon>
       Ofertas
@@ -59,6 +58,7 @@
           <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
             {{tag.name}}
           </mat-option>
+
           <mat-option *ngIf="(filteredTags | async)?.length === 0 && tagSearchControl.value" disabled>
             <em>No se encontraron áreas que coincidan</em>
           </mat-option>
@@ -96,7 +96,7 @@
           </button>
         </div>
         <div class="offer-selectors" *ngIf="isCompany">
-          <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : undefined" class="selector-button"
+          <button mat-raised-button [color]="currentOfferStatus === 'active' ? 'primary' : ''" class="selector-button"
             (click)="setOfferStatus('active')" matBadge="{{ activeOfferCount }}" matBadgePosition="after"
             matBadgeSize="small" [matBadgeHidden]="activeOfferCount === 0"
             [class.selected]="currentOfferStatus === 'active'">
@@ -191,7 +191,7 @@
   </div>
 
   <app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
-    [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
+    [showNavigation]="true" [availableTags]="availableTags"  (onClose)="closeDetailedCard()"
     (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)"
     (onChipClick)="onChipClickHandler($event)">
   </app-detailed-card>

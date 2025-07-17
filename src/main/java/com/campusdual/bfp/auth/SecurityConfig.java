@@ -44,11 +44,12 @@ public class SecurityConfig {
                 .authorizeRequests()
                 // Rutas públicas
                 .antMatchers("/api/auth/**", "/test/all", "/public/**").permitAll()
-                .antMatchers("/api/auth/candidateDetails/{username}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/offer/getAll/paginated").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/tags/list").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/company/getAll").permitAll()
 
+                // Rutas de candidatos
+                .antMatchers("/api/candidate/{username}").permitAll()
 
                 // Tags - candidatos (CANDIDATE)
                 .antMatchers(HttpMethod.GET, "/api/tags/candidate").hasRole("CANDIDATE")

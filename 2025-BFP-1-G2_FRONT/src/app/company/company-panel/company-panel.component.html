@@ -24,9 +24,10 @@
       </h1>
     </div>
 
-    <div class="edit-controls" *ngIf="(authService.getRolesCached().includes('ROLE_COMPANY') ||
-                  authService.getRolesCached().includes('ROLE_ADMIN')) && !isCreatingNewCompany && !isEditMode">
-      <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
+    <div class="edit-controls" *ngIf=" authService.getRolesCached().includes('ROLE_COMPANY') ||
+                  authService.getRolesCached().includes('ROLE_ADMIN')  &&
+                   !isEditMode">
+      <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil" [disabled]="isEditMode || isSaving">
         <mat-icon>edit</mat-icon>
       </button>
     </div>

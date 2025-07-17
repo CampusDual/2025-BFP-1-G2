@@ -11,8 +11,10 @@ export interface Candidate {
   phoneNumber: string;
   date: string;
   Linkedin?: string;
+  location?: string;
   dateAdded: string;
   valid: boolean | null;
   logoImageBase64?: string;
   tagIds?: Tag[];
+  coincidences?: string[];
 }

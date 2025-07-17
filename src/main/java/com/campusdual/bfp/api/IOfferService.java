@@ -23,8 +23,6 @@ public interface IOfferService {
 
     List<OfferDTO> getCompanyOffers(String name);
 
-    List<CandidateDTO> getCompanyOffersCandidates(int offerID);
-
     void updateCandidateValidity(int offerID, CandidateDTO candidateDTO);
 
     int getCadidateOffersCount(String listType, String name);
@@ -42,4 +40,6 @@ public interface IOfferService {
     Double getAverageHiringTimeByCompanyId(int companyId);
 
     List<MonthlyCountDTO> getMetricsOffer();
+
+    List<OfferDTO> getSearchableOffers(String username);
 }

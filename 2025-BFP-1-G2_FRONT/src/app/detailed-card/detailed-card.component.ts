@@ -4,31 +4,15 @@ import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from "@angular/mater
 import { MatDatepicker } from "@angular/material/datepicker";
 import { Tag } from '../models/tag.model';
 import { Candidate } from '../models/candidate.model';
-
-export interface DetailedCardData {
-  id: number | string;
-  title: string;
-  editableTitle?: string;
-  titleLabel?: string;
-  subtitle?: string;
-  subtitleLabel?: string;
-  content: string;
-  contentLabel?: string;
-  editable?: boolean;
-  form?: FormGroup;
-  metadata?: { [key: string]: any };
-  candidates?: any[];
-  actions?: DetailedCardAction[];
-  tags?: Tag[];
-}
-
-export interface DetailedCardAction {
-  label: string;
-  action: string;
-  color?: string;
-  icon?: string;
-  data?: any;
-}
+import { PageResponse } from '../models/page-response.model';
+import { AuthService } from '../auth/services/auth.service';
+import { CandidateService } from '../services/candidate.service';
+import { ChatService } from '../services/chat.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { OfferService } from '../services/offer.service';
+import { DetailedCardAction, DetailedCardData } from '../models/detailed-card-data.model';
+import { NavigationStateService } from '../services/navigation-state.service';
 
 const YEAR_FORMATS = {
   parse: {
@@ -53,6 +37,7 @@ export class CustomDateAdapter extends NativeDateAdapter {
   }
 }
 
+
 @Component({
   selector: 'app-detailed-card',
   templateUrl: './detailed-card.component.html',
@@ -62,18 +47,12 @@ export class CustomDateAdapter extends NativeDateAdapter {
     { provide: MAT_DATE_FORMATS, useValue: YEAR_FORMATS },
   ],
 })
-export class DetailedCardComponent implements OnInit, AfterViewInit {
-  onChipClickHandler(tag: Tag) {
-    this.onChipClick.emit({ tag: tag });
-    console.log('Chip clicked from detailed card:', tag);
-  }
-
+export class DetailedCardComponent implements OnInit {
 
   @Input() isVisible: boolean = false;
   @Input() data: DetailedCardData[] = [];
   @Input() currentIndex: number = 0;
   @Input() showNavigation: boolean = true;
-  @Input() cardType: 'company' | 'offer' | 'candidate' | 'generic' = 'generic';
   @Input() editMode: boolean = false;
   @Input() availableTags: Tag[] = [];
 
@@ -84,8 +63,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   @Output() onChipClick = new EventEmitter<{ tag: Tag }>();
 
   @ViewChild('foundedDatePicker') foundedDatePicker!: MatDatepicker<Date>;
-  @ViewChild('navigationDotsWrapper', { static: false }) navigationDotsWrapper!: ElementRef<HTMLDivElement>;
-  @ViewChild('navigationDots', { static: false }) navigationDots!: ElementRef<HTMLDivElement>;
   startYear = new Date();
 
   currentItem: DetailedCardData | null = null;
@@ -95,9 +72,36 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   addingNewItem: boolean = false;
   maxDate: Date = new Date();
   minDate: Date = new Date(1800, 0, 1);
+  selectedTabIndex: number = 0;
+  isCompany: boolean = false;
+  recommendedCandidates: Candidate[] = [];
+  candidates: Candidate[] = [];
+
+  // Pagination properties for recommended candidates
+  currentRecommendedPage: number = 0;
+  totalRecommendedPages: number = 0;
+  totalRecommendedElements: number = 0;
+  isLoadingRecommended: boolean = false;
+
+  // Pagination properties for regular candidates
+  currentCandidatesPage: number = 0;
+  totalCandidatesPages: number = 0;
+  totalCandidatesElements: number = 0;
+  candidatesPageSize: number = 4;
+  isLoadingCandidates: boolean = false;
+
+  constructor(private authService: AuthService,
+    private candidateService: CandidateService,
+    private chatService: ChatService,
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private offerService: OfferService,
+    private navigationStateService: NavigationStateService
+  ) { }
 
   ngOnInit() {
     this.updateCurrentItem();
+    this.checkUserType();
   }
 
   ngOnChanges() {
@@ -111,6 +115,94 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openChatWithCandidate(candidate: Candidate): void {
+    if (candidate.login) {
+      this.candidateService.getSpecificCandidateDetails(candidate.login).
+        subscribe({
+          next: (candidate) => {
+            this.chatService.startConversation(candidate.id);
+          },
+          error: (error) => {
+            this.snackBar.open('Error: No se pudo obtener el ID del candidato', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+    }
+  }
+
+  navigateToCandidate(username: string) {
+    this.saveCurrentState();
+    this.router.navigate(['/user/profile/', username]);
+  }
+  private saveCurrentState() {
+    const state = {
+      component: 'detailed-card',
+      data: {
+        currentItem: this.currentItem,
+        currentIndex: this.currentIndex,
+        selectedTabIndex: this.selectedTabIndex,
+        data: this.data,
+        isVisible: this.isVisible,
+        editMode: this.editMode,
+        availableTags: this.availableTags,
+        showNavigation: this.showNavigation,
+        // Pagination states
+        currentCandidatesPage: this.currentCandidatesPage,
+        currentRecommendedPage: this.currentRecommendedPage,
+        totalCandidatesPages: this.totalCandidatesPages,
+        totalRecommendedPages: this.totalRecommendedPages,
+        totalCandidatesElements: this.totalCandidatesElements,
+        totalRecommendedElements: this.totalRecommendedElements,
+        candidates: this.candidates,
+        recommendedCandidates: this.recommendedCandidates,
+        // Edit states
+        isEditing: this.isEditing,
+        addingNewItem: this.addingNewItem,
+        editedItem: this.editedItem
+      },
+      route: this.router.url,
+      params: {},
+      queryParams: {}
+    };
+
+    this.navigationStateService.saveState(state);
+  }
+
+  restoreState(savedData: any) {
+    this.navigationStateService.clearState();
+    this.currentItem = savedData.currentItem;
+    this.currentIndex = savedData.currentIndex;
+    this.selectedTabIndex = savedData.selectedTabIndex;
+    this.data = savedData.data;
+    this.isVisible = savedData.isVisible;
+    this.editMode = savedData.editMode;
+    this.availableTags = savedData.availableTags;
+    this.showNavigation = savedData.showNavigation;
+    
+    // Restore pagination states
+    this.currentCandidatesPage = savedData.currentCandidatesPage;
+    this.currentRecommendedPage = savedData.currentRecommendedPage;
+    this.totalCandidatesPages = savedData.totalCandidatesPages;
+    this.totalRecommendedPages = savedData.totalRecommendedPages;
+    this.totalCandidatesElements = savedData.totalCandidatesElements;
+    this.totalRecommendedElements = savedData.totalRecommendedElements;
+    this.candidates = savedData.candidates;
+    this.recommendedCandidates = savedData.recommendedCandidates;
+    
+    // Restore edit states
+    this.isEditing = savedData.isEditing;
+    this.addingNewItem = savedData.addingNewItem;
+    this.editedItem = savedData.editedItem;
+  }
+
+
+  onChipClickHandler(tag: Tag) {
+    this.onChipClick.emit({ tag: tag });
+    console.log('Chip clicked from detailed card:', tag);
+  }
+
   updateCurrentItem() {
     if (this.data.length > 0) {
       if (this.currentIndex < 0) {
@@ -120,15 +212,61 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
       }
 
       this.currentItem = this.data[this.currentIndex];
+      this.currentCandidatesPage = 0;
+      this.currentRecommendedPage = 0;
+      if (this.authService.isCompanyCached()) {
+        this.loadCandidates(this.currentItem.id, 0);
+        this.loadRecommendedCandidates(this.currentItem.id, 0);
+      }
       this.editedItem = { ...this.currentItem };
 
       this.addingNewItem = this.currentItem.id === 0 && !this.currentItem.title;
       this.isEditing = this.addingNewItem;
       this.panelOpenState = false;
-      setTimeout(() => {
-        this.scrollToActiveDot();
-      }, 50);
+
     }
+  }
+
+  loadCandidates(id: number, page: number = 0) {
+    this.isLoadingCandidates = true;
+    this.candidateService.getCandidatesByOffer(id, page, this.candidatesPageSize).subscribe({
+      next: (response: PageResponse<Candidate>) => {
+        this.candidates = response.content;
+        this.totalCandidatesPages = response.totalPages;
+        this.totalCandidatesElements = response.totalElements;
+        this.currentCandidatesPage = response.number;
+        this.isLoadingCandidates = false;
+      },
+      error: (error) => {
+        console.error('Error loading candidates:', error);
+        this.snackBar.open('Error al cargar candidatos', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        this.isLoadingCandidates = false;
+      }
+    });
+  }
+
+  loadRecommendedCandidates(id: number, page: number = 0) {
+    this.isLoadingRecommended = true;
+    this.candidateService.getRecommendedCandidates(id, page, this.candidatesPageSize).subscribe({
+      next: (response: PageResponse<Candidate>) => {
+        this.recommendedCandidates = response.content;
+        this.totalRecommendedPages = response.totalPages;
+        this.totalRecommendedElements = response.totalElements;
+        this.currentRecommendedPage = response.number;
+        this.isLoadingRecommended = false;
+      },
+      error: (error) => {
+        console.error('Error loading recommended candidates:', error);
+        this.snackBar.open('Error al cargar candidatos recomendados', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        this.isLoadingRecommended = false;
+      }
+    });
   }
 
   startEdit() {
@@ -213,7 +351,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
       this.currentIndex--;
       this.updateCurrentItem();
       this.onNavigate.emit(this.currentIndex);
-      this.scrollToActiveDot();
     }
   }
 
@@ -223,7 +360,6 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
       this.currentIndex++;
       this.updateCurrentItem();
       this.onNavigate.emit(this.currentIndex);
-      this.scrollToActiveDot();
     }
   }
 
@@ -239,7 +375,7 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     if (this.addingNewItem) {
       return 'Nueva empresa';
     }
-    return `${this.currentIndex + 1} de ${this.data.length}`;
+    return `${this.currentIndex + 1}`;
   }
 
   get hasFewItems(): boolean {
@@ -254,40 +390,59 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
   }
 
   aceptCandidate(candidate: Candidate) {
-    if (this.currentItem && this.currentItem.candidates && this.currentItem.candidates.length > 0) {
-      this.onAction.emit({
-        action: 'accept',
-        data: {
-          candidate: candidate,
-          offerId: this.currentItem.id
-        }
-      });
-    }
+    const lastOption = candidate.valid;
+    candidate.valid = true;
+    this.offerService.updateCandidateStatus(this.currentItem?.id!, candidate).subscribe({
+      next: () => {
+        this.snackBar.open('Candidato aceptado exitosamente', 'Cerrar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error accepting candidate:', error);
+        this.snackBar.open('Error al aceptar candidato', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        candidate.valid = lastOption;
+      }
+    });
   }
 
   rejectCandidate(candidate: Candidate) {
-    if (this.currentItem && this.currentItem.candidates && this.currentItem.candidates.length > 0) {
-      this.onAction.emit({
-        action: 'reject',
-        data: {
-          candidate: candidate,
-          offerId: this.currentItem.id
-        }
-      });
-    }
+    const lastOption = candidate.valid;
+    candidate.valid = false;
+    this.offerService.updateCandidateStatus(this.currentItem?.id!, candidate).subscribe({
+      next: () => {
+        this.snackBar.open('Candidato rechazado exitosamente', 'Cerrar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error rejecting candidate:', error);
+        this.snackBar.open('Error al rechazar candidato', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        candidate.valid = lastOption;
+      }
+    });
   }
 
   deleteOptionCandidate(candidate: Candidate) {
-    if (this.currentItem && this.currentItem.candidates && this.currentItem.candidates.length > 0) {
-      this.onAction.emit({
-        action: 'deleteOption',
-        data: {
-          candidate: candidate,
-          offerId: this.currentItem.id
-        }
-      });
-    }
+    const lastOption = candidate.valid;
+    candidate.valid = null;
+    this.offerService.updateCandidateStatus(this.currentItem?.id!, candidate).subscribe({
+      next: () => {
+        this.snackBar.open('Candidato actualizado', 'Cerrar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error deleting candidate option:', error);
+        this.snackBar.open('Error al actualizar candidato', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        candidate.valid = lastOption;
+      }
+    });
   }
+
   yearSelected(normalizedYear: Date) {
     const ctrl = this.currentItem?.form?.get('foundedDate');
     if (ctrl) {
@@ -354,90 +509,92 @@ export class DetailedCardComponent implements OnInit, AfterViewInit {
     return tag1 && tag2 ? tag1.id === tag2.id : tag1 === tag2;
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.initializeDotsNavigation();
-    }, 200);
-  }
-
-  private initializeDotsNavigation(): void {
-    if (!this.navigationDots?.nativeElement) return;
-
-    const dotsContainer = this.navigationDots.nativeElement;
-
-    dotsContainer.style.display = 'flex';
-    dotsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    dotsContainer.style.willChange = 'transform';
-    this.scrollToActiveDot();
-  }
-
   navigateToIndex(index: number): void {
     if (index >= 0 && index < this.data.length && index !== this.currentIndex) {
       this.currentIndex = index;
       this.updateCurrentItem();
       this.onNavigate.emit(this.currentIndex);
-      this.scrollToActiveDot();
     }
   }
 
-  private scrollToActiveDot(): void {
-    if (!this.navigationDots?.nativeElement || !this.navigationDotsWrapper?.nativeElement) return;
-
-    const dotsContainer = this.navigationDots.nativeElement;
-    const wrapper = this.navigationDotsWrapper.nativeElement;
-
-    const activeDot = dotsContainer.children[this.currentIndex] as HTMLElement;
-
-    if (!activeDot) return;
-
-    const wrapperWidth = wrapper.offsetWidth;
-    const dotsContainerWidth = dotsContainer.scrollWidth;
-
-    // Si hay menos de 30 elementos, usar centrado y no aplicar scroll
-    if (this.hasFewItems) {
-      dotsContainer.style.transform = 'translateX(0px)';
-      dotsContainer.style.justifyContent = 'center';
-      this.updateContentIndicators(0, 0);
-      return;
+  checkUserType(): void {
+    this.authService.isCompany().subscribe(isCompany => {
+      this.isCompany = isCompany;
+    });
+  }
+  getStatusClass(status: boolean): string {
+    switch (status) {
+      case true:
+        return 'status-approved';
+      case false:
+        return 'status-rejected';
+      case null:
+        return 'status-pending';
+      default:
+        return '';
     }
+  }
 
-    if (dotsContainerWidth <= wrapperWidth) {
-      dotsContainer.style.transform = 'translateX(0px)';
-      dotsContainer.style.justifyContent = 'center';
-      this.updateContentIndicators(0, 0);
-      return;
+  getStatusText(status: boolean): string {
+    switch (status) {
+      case true:
+        return 'Aprobado';
+      case false:
+        return 'Rechazado';
+      case null:
+        return 'Pendiente';
+      default:
+        return '';
     }
-
-    dotsContainer.style.justifyContent = 'flex-start';
-    const dotPosition = activeDot.offsetLeft;
-    const dotWidth = activeDot.offsetWidth;
-
-    const idealPosition = dotPosition - (wrapperWidth / 2) + (dotWidth / 2);
-    const maxScroll = dotsContainerWidth - wrapperWidth;
-    const targetScroll = Math.max(0, Math.min(idealPosition, maxScroll));
-
-    dotsContainer.style.transform = `translateX(-${targetScroll}px)`;
-    dotsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-
-    setTimeout(() => {
-      this.updateContentIndicators(targetScroll, maxScroll);
-    }, 300);
   }
 
-  private updateContentIndicators(currentScroll: number, maxScroll: number): void {
-    if (!this.navigationDotsWrapper?.nativeElement) return;
-
-    const wrapper = this.navigationDotsWrapper.nativeElement;
-
-    const hasContentLeft = currentScroll > 10;
-
-    const hasContentRight = currentScroll < (maxScroll - 10);
-
-    wrapper.classList.toggle('has-content-left', hasContentLeft);
-    wrapper.classList.toggle('has-content-right', hasContentRight);
+  getTogglePosition(valid: boolean | null): number {
+    if (valid === true) return 0;
+    if (valid === null) return 1;
+    if (valid === false) return 2;
+    return 0;
   }
 
-
-  onDotsScroll(): void {
+  onToggleChange(candidate: any, newValue: boolean | null): void {
+    if (newValue === null) {
+      this.deleteOptionCandidate(candidate);
+    } else if (newValue === true) {
+      this.aceptCandidate(candidate);
+    } else if (newValue === false) {
+      this.rejectCandidate(candidate);
+    }
   }
+
+  // Pagination methods for regular candidates
+  moveCandidatesPage(direction: number): void {
+    const newPage = this.currentCandidatesPage + direction;
+    if (newPage >= 0 && newPage < this.totalCandidatesPages) {
+      this.loadCandidates(this.currentItem?.id!, newPage);
+    }
+  }
+
+  canNavigateCandidatesPrevious(): boolean {
+    return this.currentCandidatesPage > 0;
+  }
+
+  canNavigateCandidatesNext(): boolean {
+    return this.currentCandidatesPage < this.totalCandidatesPages - 1;
+  }
+
+  // Pagination methods for recommended candidates
+  moveRecommendedPage(direction: number): void {
+    const newPage = this.currentRecommendedPage + direction;
+    if (newPage >= 0 && newPage < this.totalRecommendedPages) {
+      this.loadRecommendedCandidates(this.currentItem?.id!, newPage);
+    }
+  }
+
+  canNavigateRecommendedPrevious(): boolean {
+    return this.currentRecommendedPage > 0;
+  }
+
+  canNavigateRecommendedNext(): boolean {
+    return this.currentRecommendedPage < this.totalRecommendedPages - 1;
+  }
+
 }

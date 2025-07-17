@@ -116,16 +116,6 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
-    @GetMapping(value = "/candidates/{OfferID}")
-    public ResponseEntity<List<CandidateDTO>> getCandidatesFromOffer(
-            @PathVariable("OfferID") int offerID) {
-        if (offerID <= 0) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        List<CandidateDTO> candidates = offerService.getCompanyOffersCandidates(offerID);
-        return ResponseEntity.ok(candidates);
-    }
 
     @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping(value = "/update/{OfferID}")
@@ -230,6 +220,12 @@ public class OfferController {
     public ResponseEntity<List<MonthlyCountDTO>> getMonthlyClosedOffersWithAcceptedCandidates() {
         List<MonthlyCountDTO> metrics = offerService.getMonthlyClosedOffersWithAcceptedCandidates();
         return ResponseEntity.ok(metrics);
+    }
+
+    @GetMapping("/searchable")
+    public ResponseEntity<List<OfferDTO>> getSearchableOffers(Principal principal) {
+        List<OfferDTO> offers = offerService.getSearchableOffers(principal.getName());
+        return ResponseEntity.ok(offers);
     }
 
     @GetMapping("/company/average-hiring-time")

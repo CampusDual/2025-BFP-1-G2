@@ -22,17 +22,6 @@
       </tr>
     </tbody>
   </table>
-<app-detailed-card
-  [isVisible]="showDetailedCard"
-  [data]="detailedCardData"
-  [currentIndex]="currentDetailIndex"
-  [showNavigation]="true"
-  [editMode]="true"
-  [cardType]="'company'"
-  (onClose)="closeDetailedCard()"
-  (onAction)="onDetailedCardAction($event)"
-  (onSave)="onSaveCompany($event)">
-</app-detailed-card>
 
 <button mat-fab class="add-company" aria-label="Añadir empresa"  routerLink="/company/new/" (click)="addCompany()" >
   <mat-icon>add</mat-icon>

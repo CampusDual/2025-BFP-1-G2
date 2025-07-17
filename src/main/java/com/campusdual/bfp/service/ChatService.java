@@ -36,20 +36,21 @@ public class ChatService implements IChatService {
     private ChatConversationDao chatConversationDao;
 
     public MessageDTO sendMessage(MessageDTO messageDTO) {
-
-        Message message = MessageMapper.INSTANCE.toEntity(messageDTO);
-        message.setTimestamp(LocalDateTime.now());
-        message.setRead(false);
-
         ChatConversation conversation = getOrCreateConversation(
                 messageDTO.getSenderId(),
                 messageDTO.getReceiverId(),
                 messageDTO.getSenderType()
         );
+        if  (messageDTO.getContent() == null || messageDTO.getContent().isEmpty()) {
+            chatConversationDao.save(conversation);
+            return messageDTO;
+        }
 
+        Message message = MessageMapper.INSTANCE.toEntity(messageDTO);
+        message.setTimestamp(LocalDateTime.now());
+        message.setRead(false);
         message.setConversation(conversation);
-        message = messageDao.save(message);
-
+        messageDao.save(message);
         conversation.setLastActivity(LocalDateTime.now());
         chatConversationDao.save(conversation);
 
