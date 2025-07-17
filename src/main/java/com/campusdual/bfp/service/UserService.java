@@ -12,6 +12,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,9 +26,7 @@ import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
@@ -55,8 +56,7 @@ public class UserService implements UserDetailsService, IUserService {
     @Autowired
     private CompanyDao companyDao;
 
-    @Autowired
-    private UserOfferDao userOfferDao;
+
     @Autowired
     private TagDao tagDao;
 
@@ -327,8 +327,7 @@ public class UserService implements UserDetailsService, IUserService {
         // Guardar cambios
         this.userDao.saveAndFlush(user);
         this.candidateDao.saveAndFlush(candidate);
-
-        return CandidateMapper.INSTANCE.toDTO(candidate);
+        return CandidateMapper.INSTANCE.toDTO(candidate, null, null);
     }
 
 
@@ -356,18 +355,17 @@ public class UserService implements UserDetailsService, IUserService {
         CandidateExperience experience = CandidateExperienceMapper.INSTANCE.toEntity(experienceDTO);
         experience.setCandidate(candidate);
         candidate.getExperiences().add(experience);
-        candidateDao.saveAndFlush(candidate); // Guarda cascada
+        candidateDao.saveAndFlush(candidate);
 
         CandidateExperience savedExperience = experience;
         if (experience.getId() == null && candidate.getExperiences() != null && !candidate.getExperiences().isEmpty()) {
             savedExperience = candidate.getExperiences().get(candidate.getExperiences().size() - 1);
         }
-
         return CandidateExperienceMapper.INSTANCE.toDTO(savedExperience);
     }
 
     @Transactional
-    public void deleteCandidateEducation(Long educationId, String username) {
+    public Integer deleteCandidateEducation(Long educationId, String username) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
         Candidate candidate = candidateDao.findCandidateByUser(user);
@@ -377,7 +375,7 @@ public class UserService implements UserDetailsService, IUserService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Educación no encontrada"));
         candidate.getEducations().remove(toDelete);
-        candidateDao.saveAndFlush(candidate);
+        return candidateDao.saveAndFlush(candidate).getCandidateId();
     }
 
     @Transactional
@@ -398,5 +396,24 @@ public class UserService implements UserDetailsService, IUserService {
         }
 
         return CandidateEducationMapper.INSTANCE.toDTO(savedEducation);
+    }
+
+    public Page<CandidateDTO> getCandidatesFromMyOffers(Integer offerId, int page, int size) {
+        return candidateDao.findAppliedCandidatesFromOffer(offerId, PageRequest.of(page, size))
+                .map(candidate -> CandidateMapper.INSTANCE.toDTO(candidate, offerId, offerDao));
+    }
+
+    public Page<CandidateDTO> getRecomendedCandidatesFromMyOffer(
+            Integer offerId,
+            int page,
+            int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Candidate> results = candidateDao.findCandidatesByOfferTags(offerId, pageable);
+        return results.map(candidate -> {
+            CandidateDTO candidateDTO = CandidateMapper.INSTANCE.toDTO(candidate, offerId, offerDao);
+            List<String> tagNames = candidateDao.findTagsNamesByCandidateIdAndOfferId(candidate.getCandidateId(), offerId);
+            candidateDTO.setCoincidences(tagNames);
+            return candidateDTO;
+        });
     }
 }

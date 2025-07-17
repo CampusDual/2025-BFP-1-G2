@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./chat-button.component.css']
 })
 export class ChatButtonComponent implements OnInit, OnDestroy {
+  public static openChat: () => void; 
   unreadCount = 0;
   isChatOpen = false;
   isCandidate = false;
@@ -18,17 +19,22 @@ export class ChatButtonComponent implements OnInit, OnDestroy {
   constructor(
     private chatService: ChatService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.checkUserRole();
     this.subscribeToChatUpdates();
-    // loadInitialData() se llama desde checkUserRole() después de obtener los roles
+    ChatButtonComponent.openChat = () => this.toggleChat();
+
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+        ChatButtonComponent.openChat = () => {};
+
   }
+
+ 
 
   private checkUserRole(): void {
     const rolesSub = this.authService.roles$.subscribe({
@@ -47,7 +53,7 @@ export class ChatButtonComponent implements OnInit, OnDestroy {
         this.isCompany = false;
       }
     });
-    
+
     this.subscriptions.push(rolesSub);
   }
 

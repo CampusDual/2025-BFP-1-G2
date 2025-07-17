@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { OfferTableComponent } from '../../offer-panel/offer-table/offer-table.component';
 
@@ -10,7 +10,7 @@ import { OfferTableComponent } from '../../offer-panel/offer-table/offer-table.c
 export class OffersComponent implements OnInit {
   @ViewChild(OfferTableComponent) offerTableComponent!: OfferTableComponent;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {

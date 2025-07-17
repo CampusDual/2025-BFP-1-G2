@@ -1,15 +1,18 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { DetailedCardData, DetailedCardAction } from "../../detailed-card/detailed-card.component";
+import { DetailedCardAction } from 'src/app/models/detailed-card-data.model';
+import { DetailedCardData } from 'src/app/models/detailed-card-data.model';
 import { Tag } from 'src/app/models/tag.model';
 import { TagService } from 'src/app/services/tag.service';
 import { Offer } from 'src/app/models/offer.model';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { DetailedCardComponent } from 'src/app/detailed-card/detailed-card.component';
+import { DetailedCardService } from 'src/app/services/detailed-card.service';
 
 @Component({
   selector: 'app-offer-table',
@@ -17,7 +20,9 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./offer-table.component.css']
 })
 export class OfferTableComponent implements OnDestroy {
+  @ViewChild(DetailedCardComponent) detailedCard!: DetailedCardComponent;
 
+  private restoreSubscription: Subscription ;
   offers: Offer[] = [];
   searchTerm: string = '';
   lastSearchTerm: string = '';
@@ -56,7 +61,8 @@ export class OfferTableComponent implements OnDestroy {
     private snackBar: MatSnackBar,
     private router: Router,
     private formBuilder: FormBuilder,
-    private tagService: TagService
+    private tagService: TagService,
+    private detailedCardService: DetailedCardService
   ) {
     this.loadAllTags();
     this.loadUserRole();
@@ -70,7 +76,17 @@ export class OfferTableComponent implements OnDestroy {
         return this._filterTags(searchValue || '');
       })
     );
+    this.restoreSubscription = this.detailedCardService.restoreState$.subscribe(
+      (savedData) => {
+        if (this.detailedCard) {
+          this.detailedCard.restoreState(savedData);
+          this.showDetailedCard = true;
+          this.disableBodyScroll();
+        }
+      }
+    );
   }
+
 
   loadAllTags() {
     this.tagService.getAllTags().subscribe({
@@ -216,7 +232,6 @@ export class OfferTableComponent implements OnDestroy {
       contentLabel: 'Descripción de la oferta',
       metadata: this.getMetadataForOffer(offer),
       actions: this.getActionsForOffer(offer),
-      candidates: offer.candidates,
       editable: this.isCompany,
       form: this.isCompany ? this.createOfferForm(offer) : undefined,
       tags: offer.tags || [],
@@ -810,6 +825,9 @@ export class OfferTableComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.restoreSubscription) {
+      this.restoreSubscription.unsubscribe();
+    }
     this.enableBodyScroll();
   }
 

@@ -27,8 +27,7 @@ public class ChatController {
      */
     @PostMapping("/send")
     public ResponseEntity<MessageDTO> sendMessage(@RequestBody MessageDTO messageDTO) {
-        MessageDTO sentMessage = chatService.sendMessage(messageDTO);
-        return ResponseEntity.ok(sentMessage);
+        return ResponseEntity.ok(chatService.sendMessage(messageDTO));
     }
 
     /**

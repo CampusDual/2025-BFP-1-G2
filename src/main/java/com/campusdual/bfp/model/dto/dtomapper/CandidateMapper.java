@@ -1,9 +1,9 @@
 package com.campusdual.bfp.model.dto.dtomapper;
 
 import com.campusdual.bfp.model.Candidate;
+import com.campusdual.bfp.model.dao.OfferDao;
 import com.campusdual.bfp.model.dto.CandidateDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -17,7 +17,17 @@ public interface CandidateMapper {
     @Mapping(source = "cvPdfBase64", target = "cvPdfBase64")
     @Mapping(source = "logoImageBase64", target = "logoImageBase64")
     @Mapping(source = "experiences", target = "experiences")
-    CandidateDTO toDTO(Candidate candidate);
+    CandidateDTO toDTO(Candidate candidate,
+                       @Context Integer offerId,
+                       @Context OfferDao offerDao);
+
+    @AfterMapping
+    default void mapCandidateInfo(@MappingTarget CandidateDTO dto, Candidate candidate,
+                                  @Context Integer offerId,
+                                  @Context OfferDao offerDao) {
+        offerDao.getAppliedByUserIdAndOfferId(candidate.getUser().getId(), offerId)
+                .ifPresent(dto::setValid);
+    }
 
     List<CandidateDTO> toDTOList(List<Candidate> candidates);
 

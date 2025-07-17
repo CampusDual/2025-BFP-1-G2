@@ -119,7 +119,6 @@
     <p>Cargando ofertas...</p>
   </div>
 
-  <!-- Mensaje cuando no hay ofertas -->
   <div class="no-offers-container" *ngIf="!isLoading && hasNoOffers">
     <div class="no-offers-content">
       <mat-icon class="no-offers-icon">search_off</mat-icon>
@@ -161,7 +160,7 @@
   </div>
 
   <app-detailed-card [isVisible]="showDetailedCard" [data]="detailedCardData" [currentIndex]="currentDetailIndex"
-    [showNavigation]="true" [cardType]="'offer'" [availableTags]="availableTags" (onClose)="closeDetailedCard()"
+    [showNavigation]="true" [availableTags]="availableTags"  (onClose)="closeDetailedCard()"
     (onAction)="onDetailedCardAction($event)" (onSave)="onDetailedCardSave($event)"
     (onChipClick)="onChipClickHandler($event)">
   </app-detailed-card>

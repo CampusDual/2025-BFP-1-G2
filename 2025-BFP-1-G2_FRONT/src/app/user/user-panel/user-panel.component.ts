@@ -1,11 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AuthService } from "../../auth/services/auth.service";
 import { ImageCompressionService } from "../../services/image-compression.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TagService } from 'src/app/services/tag.service';
 import { Tag } from 'src/app/models/tag.model';
+import { CandidateService } from 'src/app/services/candidate.service';
+import { filter, Subscription } from 'rxjs';
+import { DetailedCardService } from 'src/app/services/detailed-card.service';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -15,6 +19,8 @@ import { Tag } from 'src/app/models/tag.model';
 })
 export class UserPanelComponent implements OnInit, OnDestroy {
 
+  private routerSub: Subscription;
+  showBackButton = false;
 
   userName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   userSurname1 = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
@@ -75,11 +81,22 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   avaliableTags: Tag[] = [];
   myTags: Tag[] = [];
 
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
+    private candidateService: CandidateService,
     private imageCompressionService: ImageCompressionService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
-    private tagService: TagService) { }
+    private tagService: TagService,
+    private detailedCardService: DetailedCardService,
+    private router: Router,
+    private routeLocation: Location) {
+    this.routerSub = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateBackButtonState();
+      });
+  }
 
   ngOnInit(): void {
     this.userNameInput = this.route.snapshot.paramMap.get('userName') || '';
@@ -122,6 +139,26 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnDestroy() {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
+  }
+
+  private updateBackButtonState() {
+    this.showBackButton = this.detailedCardService.hasState();
+  }
+  goBack() {
+    this.routeLocation.back();
+
+    setTimeout(() => {
+      this.detailedCardService.requestRestore();
+    }, 100);
+  }
+
 
   getTagsFormControl(): FormControl<Tag[]> {
     return this.tagsControl;
@@ -153,7 +190,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
 
   loadUserData(): void {
-    this.authService.getCandidateDetails().subscribe({
+    this.candidateService.getCandidateDetails().subscribe({
       next: (user: any) => {
         this.userName.setValue(user.name);
         this.userSurname1.setValue(user.surname1);
@@ -204,7 +241,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   loadSpecificCandidateData(): void {
-    this.authService.getSpecificCandidateDetails(this.userNameInput).subscribe({
+    this.candidateService.getSpecificCandidateDetails(this.userNameInput).subscribe({
       next: (user: any) => {
         this.userName.setValue(user.name);
         this.userSurname1.setValue(user.surname1);
@@ -355,8 +392,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     console.log('Datos que se envían al backend:', updatedData);
 
     // Actualizar datos del usuario
-    this.authService.updateCandidateDetails(updatedData).subscribe({
-      next: (response) => {
+    this.candidateService.updateCandidateDetails(updatedData).subscribe({
+      next: () => {
         // Actualizar tags del candidato
         const tagIds = this.myTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
         this.tagService.updateCandidateTags(tagIds).subscribe({
@@ -384,7 +421,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   cancelEdit(): void {
     this.isEditMode = false;
     // Recargar solo los datos básicos del usuario, sin experiencia ni educación
-    this.authService.getCandidateDetails().subscribe({
+    this.candidateService.getCandidateDetails().subscribe({
       next: (user: any) => {
         this.userName.setValue(user.name);
         this.userSurname1.setValue(user.surname1);
@@ -519,11 +556,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    if (this.typingInterval) {
-      clearInterval(this.typingInterval);
-    }
-  }
+
 
   openAddExperienceForm(): void {
     this.showAddExperienceForm = true;

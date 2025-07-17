@@ -24,6 +24,7 @@ public class CandidateDTO extends SignupDTO {
     private String logoImageBase64;
     private String[] allDates;
     private int[] tagIds;
+    private List<String> coincidences;
     private List<CandidateExperienceDTO> experiences;
     private List<CandidateEducationDTO> educations;
 
@@ -189,5 +190,13 @@ public class CandidateDTO extends SignupDTO {
 
     public void setEducations(List<CandidateEducationDTO> educations) {
         this.educations = educations;
+    }
+
+    public List<String> getCoincidences() {
+        return coincidences;
+    }
+
+    public void setCoincidences(List<String> coincidences) {
+        this.coincidences = coincidences;
     }
 }

@@ -88,6 +88,16 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
+.back-button {
+  position: absolute;
+  left: 24px;
+  top: 36px;
+  transform: translateY(-50%);
+  background-color: var(--primary-color);
+  color: white;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
 
 .avatar-image, .avatar-placeholder {
   width: 100%;

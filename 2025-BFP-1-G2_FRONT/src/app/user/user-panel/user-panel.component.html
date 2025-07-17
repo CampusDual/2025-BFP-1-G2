@@ -1,4 +1,12 @@
 <div class="user-panel" *ngIf="!isLoading">
+    <button mat-icon-button
+            class="back-button"
+            *ngIf="showBackButton"
+            (click)="goBack()"
+            matTooltip="Volver a la oferta"
+            aria-label="Volver">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
   <div class="profile-header">
     <div class="profile-avatar" [ngClass]="{'edit-mode': isEditMode}">
       <img *ngIf="getProfileImage()" [src]="getProfileImage()" [alt]="fullName" class="avatar-image"
@@ -43,7 +51,7 @@
         </div>
       </div>
     </div>
-      
+
 
     <div class="edit-controls" *ngIf="isCandidate && !isEditMode">
       <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil">
@@ -199,7 +207,6 @@
             <mat-icon>chevron_right</mat-icon>
           </button>
         </div>
-        <!-- Eliminados los dots y todo el código relacionado -->
       </div>
     </div>
     <ng-template #noExperience>

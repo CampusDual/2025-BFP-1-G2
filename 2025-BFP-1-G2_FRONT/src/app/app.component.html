@@ -15,6 +15,10 @@
           <mat-icon>person</mat-icon>
           <span>Perfil Empresa</span>
         </div>
+        <div class="nav-item" *ngIf="isCompany" routerLink="/company/candidates" (click)="drawer.close()">
+          <mat-icon>contacts_product</mat-icon>
+          <span>Candidatos</span>
+        </div>
         <div class="nav-item" *ngIf="isCandidate" routerLink="/offers/portal" (click)="drawer.close()">
           <mat-icon>work</mat-icon>
           <span>Ofertas</span>
@@ -47,7 +51,7 @@
       <mat-drawer-content>
 
         <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
-            #outlet="outlet"></router-outlet></div>
+            #outlet="outlet" #dynamicContainer></router-outlet></div >
         <app-footer *ngIf="showFooter"></app-footer>
       </mat-drawer-content>
     </mat-drawer-container>
