@@ -55,7 +55,6 @@
   border: 2px solid transparent;
   position: relative;
   overflow: hidden;
-  /* Altura fija para todas las cards */
   height: 520px;
   display: flex;
   flex-direction: column;
@@ -243,23 +242,6 @@
   box-shadow: 0 4px 8px rgba(var(--primary-color-rgb, 63, 81, 181), 0.3);
 }
 
-/* Status-based card styles */
-
-/* Todas las cards blancas normales */
-.offer-card-published,
-.offer-card-draft,
-.offer-card-archived {
-  border: 2px solid #e0e0e0;
-  background: #fff;
-  opacity: 1;
-}
-.offer-card-published::before,
-.offer-card-draft::before,
-.offer-card-archived::before {
-  background: linear-gradient(90deg, #e0e0e0, #f5f5f5);
-  opacity: 1;
-}
-
 /* Status chip styles */
 .offer-status {
   position: absolute;
@@ -362,26 +344,26 @@
     min-height: 400px;
     padding: 16px;
   }
-  
+
   .offer-logo {
     width: 60px;
     height: 60px;
     margin-bottom: 16px;
   }
-  
+
   .offer-name {
     font-size: 1.2rem;
   }
-  
+
   .offer-description {
     max-height: 100px;
     font-size: 0.9rem;
   }
-  
+
   .offer-tags {
     max-height: 60px;
   }
-  
+
   .offer-stats {
     gap: 12px;
     margin: 16px 0;

@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from "../../auth/services/auth.service";
 import { ImageCompressionService } from "../../services/image-compression.service";
@@ -73,7 +76,12 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   showAddEducationForm: boolean = false;
 
   avaliableTags: Tag[] = [];
+  availableTags: Tag[] = [];
   myTags: Tag[] = [];
+  selectedTags: Tag[] = [];
+  tagSearchControl = new FormControl('');
+  filteredTags!: Observable<Tag[]>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(private authService: AuthService,
     private imageCompressionService: ImageCompressionService,
@@ -106,6 +114,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.tagService.getCandidateTagsByUsername(this.userNameInput).subscribe({
       next: (tags) => {
         this.myTags = tags;
+        this.selectedTags = [...tags];
+        this.tagsControl.setValue(tags);
         console.log('Candidate tags loaded successfully', tags);
       },
       error: (error: any) => {
@@ -115,6 +125,11 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.tagService.getAllTags().subscribe({
       next: (tags) => {
         this.avaliableTags = tags;
+        this.availableTags = tags;
+        this.filteredTags = this.tagSearchControl.valueChanges.pipe(
+          startWith(''),
+          map((value: string | null) => this._filterTags(value))
+        );
       },
       error: (error: any) => {
         console.error('Error fetching tags', error);
@@ -122,34 +137,49 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  getTagsFormControl(): FormControl<Tag[]> {
-    return this.tagsControl;
+  private _filterTags(value: string | null): Tag[] {
+    const filterValue = (value || '').toLowerCase();
+    return this.availableTags.filter(tag => tag.name.toLowerCase().includes(filterValue));
   }
 
-  getSelectedTagsCount(): number {
-    return this.myTags.length;
-  }
-
-  getSelectedTags(): Tag[] {
-    return this.myTags;
-  }
-
-  isTagSelected(tag: Tag): boolean {
-    return this.myTags.some(t => t.id === tag.id);
-  }
-
-  toggleTagSelection(tag: Tag): void {
-    const index = this.myTags.findIndex(t => t.id === tag.id);
-    if (index > -1) {
-      // Deselect
-      this.myTags.splice(index, 1);
-    } else {
-      if (this.myTags.length < 10) {
-        this.myTags.push(tag);
+  addTagFromInput(event: any): void {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
+      const foundTag = this.availableTags.find(tag => tag.name.toLowerCase() === value.trim().toLowerCase());
+      if (foundTag && this.selectedTags.length < 10 && !this.selectedTags.some(t => t.id === foundTag.id)) {
+        this.selectedTags.push(foundTag);
+        this.tagSearchControl.setValue('');
       }
     }
+    if (input) {
+      input.value = '';
+    }
   }
+
+  onTagSelected(event: any): void {
+    const tag: Tag = event.option.value;
+    if (tag && this.selectedTags.length < 10 && !this.selectedTags.some(t => t.id === tag.id)) {
+      this.selectedTags.push(tag);
+      this.tagSearchControl.setValue('');
+    }
+  }
+
+  removeTag(tag: Tag): void {
+    this.selectedTags = this.selectedTags.filter(t => t.id !== tag.id);
+  }
+
+  onSearchFocus(): void {
+    this.filteredTags = this.tagSearchControl.valueChanges.pipe(
+      startWith(this.tagSearchControl.value || ''),
+      map((value: string | null) => this._filterTags(value))
+    );
+  }
+
+
+
+
+
 
 
   loadUserData(): void {
@@ -382,9 +412,10 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.authService.updateCandidateDetails(updatedData).subscribe({
       next: (response) => {
         // Actualizar tags del candidato
-        const tagIds = this.myTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
+        const tagIds = this.selectedTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
         this.tagService.updateCandidateTags(tagIds).subscribe({
           next: () => {
+            this.myTags = [...this.selectedTags];
             this.isEditMode = false;
             this.isSaving = false;
             const parts = [this.userName.value, this.userSurname1.value, this.userSurname2.value].filter(Boolean);

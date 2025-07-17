@@ -117,11 +117,12 @@
         </div>
       </mat-tab>
       <mat-tab label="Descripción">
-        <div class="info-item-text">
+        <div class="info-item-text description-with-logo">
           <span class="label"></span>
           <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ description.value || 'No especificado' }}</span>
           <textarea class="edit-input-description" *ngIf="isEditMode || isCreatingNewCompany" [formControl]="description"
             [class.error]="description.invalid && description.touched" placeholder="Descripcion" rows="9"></textarea>
+          <img *ngIf="getProfileImage() && !(isEditMode || isCreatingNewCompany)" [src]="getProfileImage()" alt="Logo de la empresa" class="background-logo" />
         </div>
         <div *ngIf="(isEditMode || isCreatingNewCompany) && description.invalid && description.touched" class="error-message">
           <small *ngIf="description.errors?.['required']">Descripcion es requerido</small>
