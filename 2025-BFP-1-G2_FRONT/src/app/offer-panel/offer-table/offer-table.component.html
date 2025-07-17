@@ -36,19 +36,15 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="tags-search-field" *ngIf="availableTags.length > 0">
-        <mat-label>Áreas de interés</mat-label>
-        <mat-chip-grid #chipGrid aria-label="Selección de áreas">
-          <mat-chip-row *ngFor="let tag of selectedTags" [removable]="true" (removed)="removeTagFilter(tag)">
+        <mat-chip-set>
+          <mat-chip *ngFor="let tag of tagsFilterControl.value" removable (removed)="removeTagFilter(tag)">
             {{tag.name}}
-            <button matChipRemove type="button">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </mat-chip-row>
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-set>
+        <input matInput [formControl]="tagSearchControl" [matAutocomplete]="auto"
+          placeholder="Escribe para buscar áreas..." (focus)="onSearchFocus()">
 
-          <input placeholder="Añadir área..." [formControl]="tagSearchControl" [matAutocomplete]="auto"
-            [matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (focus)="onSearchFocus()"
-            (matChipInputTokenEnd)="onTagSelected($event)" />
-        </mat-chip-grid>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTagSelected($event)">
           <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
             {{tag.name}}
@@ -58,6 +54,7 @@
             <em>No se encontraron áreas que coincidan</em>
           </mat-option>
         </mat-autocomplete>
+
       </mat-form-field>
 
       <div class="view-selectors-container">
@@ -118,8 +115,6 @@
       </div>
     </div>
   </div>
-
-
   <mat-divider></mat-divider>
   <div class="pagination-container" *ngIf="!isLoading && totalPages > 1">
     <button mat-raised-button color="primary" (click)="movePage(-1)" [disabled]="currentPage === 0">

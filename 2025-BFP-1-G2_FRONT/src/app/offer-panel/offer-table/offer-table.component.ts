@@ -215,8 +215,7 @@ export class OfferTableComponent implements OnDestroy {
 
 
   movePage(operation: number) {
-    this.currentPage = 0;
-    this.firstFetch = true;
+
     this.currentDetailIndex = 0;
     if (this.isCompany) {
       this.loadCompanyOffers(operation);

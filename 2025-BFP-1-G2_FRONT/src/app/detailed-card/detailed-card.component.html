@@ -323,7 +323,6 @@
       <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
         <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva
           oferta</mat-card-title>
-        <mat-card-title *ngIf="!isEditing">{{ currentItem.title }}</mat-card-title>
 
         <mat-card-header>
 
@@ -415,7 +414,6 @@
       </mat-card>
 
       <mat-card *ngIf="currentItem && !currentItem.editable">
-        <mat-card-title>{{ currentItem.title }}</mat-card-title>
         <mat-card-header>
           <mat-card-subtitle *ngIf="currentItem.subtitle">
             {{ currentItem.subtitle }}

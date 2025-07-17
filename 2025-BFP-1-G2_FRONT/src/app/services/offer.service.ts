@@ -55,7 +55,6 @@ export class OfferService {
   }
   getAppliedOffersCount(): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=applied`);
-
   }
   getRecommendedOffersCount(): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/count/candidate?listType=recommended`);
