@@ -4,6 +4,8 @@ import { AuthService } from './auth/services/auth.service';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { CompanyService } from './services/company.service';
+import { ViewChild } from '@angular/core';
+import { MatDrawer } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-root',
@@ -22,17 +24,17 @@ export class AppComponent implements OnInit, OnDestroy {
   companyName?: string;
   private authSubscription?: Subscription;
   private routerSubscription?: Subscription;
+  @ViewChild('drawer') drawer!: MatDrawer;
 
   constructor(
     protected authService: AuthService,
     private router: Router,
-    private companyService: CompanyService 
+    private companyService: CompanyService
   ) { }
 
   ngOnInit() {
     console.log('AppComponent: Initializing...');
-    
-    // Suscribirse al estado de autenticación
+
     this.authSubscription = this.authService.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         console.log('AppComponent: Auth status changed:', isAuthenticated);
@@ -44,7 +46,6 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Suscribirse a cambios de ruta
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event) => {
@@ -55,7 +56,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.showFooter = !isLoginOrRegister;
       });
 
-    // Verificar estado inicial
     this.checkAuthStatus();
     const initialUrl = this.router.url;
     const isLoginOrRegister = initialUrl.includes('/login') || initialUrl === '/auth/login' || initialUrl === '/login' || initialUrl.includes('/register') || initialUrl === '/auth/register' || initialUrl === '/register';
@@ -83,9 +83,13 @@ export class AppComponent implements OnInit, OnDestroy {
   checkAuthStatus() {
     const isAuth = this.authService.isLoggedIn();
     console.log('AppComponent: Checking auth status:', isAuth);
-    
+
     if (isAuth) {
       this.loadUserRole();
+        if (this.isAdmin) {
+          this.drawer.open();
+        }
+        else { this.drawer.close();}
     } else {
       this.resetUserState();
     }
@@ -93,17 +97,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   loadUserRole() {
     console.log('AppComponent: Loading user roles...');
-    
-    // Primero verificar si hay roles en caché
+
     const cachedRoles = this.authService.getRolesCached();
-    
+
     if (cachedRoles.length > 0) {
       console.log('AppComponent: Using cached roles:', cachedRoles);
       this.updateRoleFlags(cachedRoles);
       this.loadUserData();
     } else {
       console.log('AppComponent: No cached roles, subscribing to roles observable...');
-      
+
       this.authService.ensureRolesLoaded().subscribe({
         next: (roles) => {
           console.log('AppComponent: Roles loaded from observable:', roles);
