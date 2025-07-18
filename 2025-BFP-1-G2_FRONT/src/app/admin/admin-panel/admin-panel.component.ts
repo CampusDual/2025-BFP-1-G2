@@ -198,6 +198,23 @@ export class AdminPanelComponent {
     }
   }
 
+  deleteCompany(companyId: number) {
+    if (confirm(`¿Estás seguro de que quieres eliminar la empresa con ID ${companyId}?`)) {
+      this.companyService.deleteCompany(companyId).subscribe({
+        next: () => {
+          this.snackBar.open('Empresa eliminada correctamente', 'Cerrar', { duration: 3000 });
+          this.loadCompanies();
+        },
+        error: () => {
+          this.snackBar.open('Error al eliminar la empresa', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'error-snackbar'
+          });
+        }
+      });
+    }
+  }
+
   onDetailedCardAction(event: { action: string, data: any }) {
     const { action, data } = event;
     switch (action) {
