@@ -11,6 +11,7 @@
         <th>Sitio web</th>
         <th>Dirección</th>
         <th>Año de fundación</th>
+        <th>Eliminar</th>
       </tr>
     </thead>
     <tbody>
@@ -24,6 +25,9 @@
         </td>
         <td>{{ company.address }}</td>
         <td>{{ company.foundedDate | date:'yyyy' }}</td>
+        <td><button mat-icon-button (click)="deleteCompany(company.id)" (click)="$event.stopPropagation()">
+            <mat-icon>delete</mat-icon>
+          </button></td>
       </tr>
     </tbody>
   </table>
