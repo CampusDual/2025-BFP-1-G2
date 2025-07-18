@@ -61,7 +61,7 @@
         <div class="offer-selectors" *ngIf="isCandidate">
           <button mat-raised-button [color]="currentOfferView === 'recommended' ? 'primary' : ''"
             class="selector-button" (click)="setOfferView('recommended')" matBadge="{{ recomendedOfferCount }}"
-            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="recomendedOfferCount === 0">
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="true">
             <mat-icon>star</mat-icon>
             Recomendadas
           </button>

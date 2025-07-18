@@ -55,6 +55,8 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/tags/candidate").hasRole("CANDIDATE")
                 .antMatchers(HttpMethod.PUT, "/api/tags/candidate").hasRole("CANDIDATE")
                 .antMatchers(HttpMethod.DELETE, "/api/tags/candidate/{tagId}").hasRole("CANDIDATE")
+                .antMatchers(HttpMethod.DELETE, "/api/candidate/experience/{id}").hasRole("CANDIDATE")
+                .antMatchers(HttpMethod.DELETE, "/api/candidate/education/{id}").hasRole("CANDIDATE")
 
 
                 // Tags - administración
@@ -86,6 +88,8 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/chat/conversations/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/chat/conversation/find/{candidateId}/{companyId}").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/chat/markread/{otherUserId}").permitAll()
+
+
 
 
                 .anyRequest().authenticated()

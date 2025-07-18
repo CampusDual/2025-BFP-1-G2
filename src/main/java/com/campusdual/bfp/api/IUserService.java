@@ -35,7 +35,7 @@ public interface IUserService {
     CandidateDTO updateCandidateDetails(String username, CandidateDTO candidateDTO);
 
 
-    void deleteCandidateExperience(Long id, String username);
+    Integer deleteCandidateExperience(Long id, String username);
 
     CandidateExperienceDTO createCandidateExperience(String username, CandidateExperienceDTO experienceDTO);
 

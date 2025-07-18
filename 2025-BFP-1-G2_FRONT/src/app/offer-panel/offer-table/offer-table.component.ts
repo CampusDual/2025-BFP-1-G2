@@ -11,7 +11,7 @@ import { TagService } from 'src/app/services/tag.service';
 import { Offer } from 'src/app/models/offer.model';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { COMMA, ENTER, O } from '@angular/cdk/keycodes';
 import { DetailedCardService } from 'src/app/services/detailed-card.service';
 import { DetailedCardComponent } from 'src/app/detailed-card/detailed-card.component';
 
@@ -215,7 +215,12 @@ export class OfferTableComponent implements OnDestroy {
 
 
   movePage(operation: number) {
-
+    this.currentPage += operation;
+    if (this.currentPage < 0 || operation === 0) {
+      this.currentPage = 0; 
+    } else if (this.currentPage >= this.totalPages) {
+      this.currentPage = this.totalPages - 1; 
+    }
     this.currentDetailIndex = 0;
     if (this.isCompany) {
       this.loadCompanyOffers(operation);

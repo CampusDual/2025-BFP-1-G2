@@ -35,6 +35,8 @@ public class CompanyService implements ICompanyService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private OfferTagsDao offerTagsDao;
 
     public List<CompanyDTO> getAllCompanies() {
         return companyDao.findAll().stream()
@@ -84,9 +86,11 @@ public class CompanyService implements ICompanyService {
         }
         List<Offer> offers = offerDao.findOfferByCompanyId(id);
         if (!offers.isEmpty()) {
+            for (Offer offer : offers) {
+                offerTagsDao.deleteAll(offerTagsDao.findByOfferId(offer.getId()));
+            }
             offerDao.deleteAll(offers);
         }
-
         this.companyDao.deleteById(id);
 
         if (company.getUser() != null) {

@@ -474,7 +474,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.candidateService.updateCandidateDetails(updatedData).subscribe({
       next: () => {
         // Actualizar tags del candidato
-        const tagIds = this.myTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
+        const tagIds = this.selectedTags.map(tag => tag.id).filter((id): id is number => typeof id === 'number');
         this.tagService.updateCandidateTags(tagIds).subscribe({
           next: () => {
             this.myTags = [...this.selectedTags];
