@@ -959,6 +959,15 @@
   outline: none;
   font-weight: 500;
 }
+
+.no-links {
+    display: flex;
+    color: var(--secondary-color);
+    h5{
+        font-size: 1.2rem;
+        text-align: justify;
+    }
+}
 /* Responsive para móviles */
 @media (max-width: 768px) {
   .user-panel {
