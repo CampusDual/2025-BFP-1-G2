@@ -1,4 +1,9 @@
-<table class="custom-table">
+  <h2 class="page-title">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Empresas
+      </h2>
+<div class="companies-table-container">
+  <table class="custom-table">
     <thead>
       <tr>
         <th>Nombre</th>
@@ -9,7 +14,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let company of companies; let i = index" routerLink="/company/profile/{{company.name}}">
+      <tr *ngFor="let company of companies" class="company-row" routerLink="/company/profile/{{company.name}}">
         <td>{{ company.name.charAt(0).toUpperCase() + company.name.substring(1) }}</td>
         <td>{{ company.email }}</td>
         <td>
@@ -22,6 +27,7 @@
       </tr>
     </tbody>
   </table>
+</div>
 
 <button mat-fab class="add-company" aria-label="Añadir empresa"  routerLink="/company/new/" (click)="addCompany()" >
   <mat-icon>add</mat-icon>

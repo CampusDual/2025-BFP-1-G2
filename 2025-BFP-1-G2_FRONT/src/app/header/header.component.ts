@@ -15,6 +15,8 @@ export class HeaderComponent {
   private sub: Subscription;
   animatedName: string = '';
   showCursor: boolean = true;
+  isCandidate: boolean = false;
+  isCompany: boolean = false;
 
   constructor(
     protected authService: AuthService,
@@ -23,6 +25,7 @@ export class HeaderComponent {
     this.sub = this.authService.userName$.subscribe(name => {
       this.username = name;
     });
-
+    this.isCandidate = this.authService.isCandidateCached();
+    this.isCompany = this.authService.isCompanyCached();
   }
 }
