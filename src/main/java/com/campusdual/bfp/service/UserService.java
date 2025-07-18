@@ -323,12 +323,13 @@ public class UserService implements UserDetailsService, IUserService {
         // Guardar cambios
         this.userDao.saveAndFlush(user);
         this.candidateDao.saveAndFlush(candidate);
+
         return candidateDTO;
     }
 
 
     @Transactional
-    public void deleteCandidateExperience(Long experienceId, String username) {
+    public Integer deleteCandidateExperience(Long experienceId, String username) {
         User user = userDao.findByLogin(username);
         if (user == null) throw new UserNotFoundException("Usuario no encontrado");
         Candidate candidate = candidateDao.findCandidateByUser(user);
@@ -338,7 +339,7 @@ public class UserService implements UserDetailsService, IUserService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Experiencia no encontrada"));
         candidate.getExperiences().remove(toDelete);
-        candidateDao.saveAndFlush(candidate);
+        return candidateDao.saveAndFlush(candidate).getCandidateId();
     }
 
     @Transactional

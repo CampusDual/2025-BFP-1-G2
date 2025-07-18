@@ -11,10 +11,6 @@ import { PageResponse } from '../models/page-response.model';
 })
 export class CandidateService {
 
-
-
-
-
     private candidateDetailsCache: Observable<Candidate> | null = null;
 
     deleteCandidateDetails() {

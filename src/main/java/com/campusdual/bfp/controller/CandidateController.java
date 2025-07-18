@@ -57,10 +57,9 @@ public class CandidateController {
     }
 
     @DeleteMapping("/experience/{id}")
-    public ResponseEntity<Void> deleteExperience(Principal principal,
+    public ResponseEntity<Integer> deleteExperience(Principal principal,
                                                  @PathVariable Long id) {
-        userService.deleteCandidateExperience(id, principal.getName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(userService.deleteCandidateExperience(id, principal.getName()));
     }
 
     @PostMapping("/experience")
