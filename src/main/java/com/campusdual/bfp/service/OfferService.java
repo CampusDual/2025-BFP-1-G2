@@ -227,7 +227,7 @@ public class OfferService implements IOfferService {
             case "applied":
                 return offerDao.getAppliedOffersCount(user.getId());
             case "recommended":
-                return offerDao.getRecommendedOffersCount(user.getId());
+                return offerDao.getRecommendedOffersCount(offerDao.findCandidateTagIdsByUserId(user.getId()));
             case "all":
                 return offerDao.getActiveOffersCount();
             default:

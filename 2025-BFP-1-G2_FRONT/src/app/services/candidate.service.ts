@@ -29,7 +29,7 @@ export class CandidateService {
         return this.http.get<MonthlyCountDTO[]>(`${this.baseUrl}/list`);
     }
 
-    
+
 
     getCandidateDetails(): Observable<Candidate> {
         if (!this.candidateDetailsCache) {
@@ -64,5 +64,22 @@ export class CandidateService {
                 this.candidateDetailsCache = null;
             })
         );
+    }
+
+
+    deleteExperience(experienceId: number): Observable<any> {
+        return this.http.delete(`${this.baseUrl}/experience/${experienceId}`);
+    }
+
+    createExperience(experience: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}/experience`, experience);
+    }
+
+    deleteEducation(educationId: number): Observable<any> {
+        return this.http.delete(`${this.baseUrl}/education/${educationId}`);
+    }
+
+    createEducation(education: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}/education`, education);
     }
 }

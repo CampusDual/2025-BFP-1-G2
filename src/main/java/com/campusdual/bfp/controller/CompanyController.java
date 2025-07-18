@@ -79,12 +79,12 @@ public class CompanyController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteCompany(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteCompany(@PathVariable Integer id) {
         try {
             companyService.deleteCompany(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 

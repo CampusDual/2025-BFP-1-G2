@@ -25,7 +25,7 @@
         </td>
         <td>{{ company.address }}</td>
         <td>{{ company.foundedDate | date:'yyyy' }}</td>
-        <td><button mat-icon-button (click)="deleteCompany(company.id)" (click)="$event.stopPropagation()">
+        <td><button mat-icon-button (click)="deleteCompany(company)" (click)="$event.stopPropagation()">
             <mat-icon>delete</mat-icon>
           </button></td>
       </tr>

@@ -192,7 +192,7 @@
       </mat-tab>
       <mat-tab label="Información Profesional">
         <div class="info-section" [ngClass]="{'edit-mode': isEditMode}">
-          <div *ngIf="experiences.length > 0; else noExperience">
+          <div *ngIf="!isEditMode">
             <div class="experience-carousel">
               <div class="carousel-wrapper scrollable-carousel" #experienceCarousel>
                 <button class="carousel-arrow" (click)="scrollExperienceCarousel(-1, experienceCarousel)"
@@ -229,12 +229,24 @@
               </div>
             </div>
           </div>
-          <ng-template #noExperience>
-            <p>No hay experiencias profesionales registradas.</p><br><br>
-          </ng-template>
-          <div *ngIf="isEditMode" class="add-experience-btn-container">
-            <button mat-mini-fab color="primary" (click)="openAddExperienceForm()">
+          <div *ngIf="isEditMode && experiences.length <= 0"  class="no-content-container">
+            <mat-icon class="no-content-icon">work_off</mat-icon>
+            <p class="no-content-text">No hay experiencias profesionales registradas</p>
+            <button *ngIf="isEditMode" mat-raised-button color="primary" class="add-content-btn"
+              (click)="openAddExperienceForm()">
               <mat-icon>add</mat-icon>
+              Añadir primera experiencia
+            </button>
+          </div>
+
+
+          <!-- Panel para añadir más experiencias cuando ya hay algunas y estoy editando -->
+          <div *ngIf="isEditMode && experiences.length > 0" class="no-content-container">
+            <mat-icon class="no-content-icon">add_circle_outline</mat-icon>
+            <p class="no-content-text">¿Quieres añadir otra experiencia?</p>
+            <button mat-raised-button color="primary" class="add-content-btn" (click)="openAddExperienceForm()">
+              <mat-icon>add</mat-icon>
+              Añadir nueva experiencia
             </button>
           </div>
         </div>
@@ -279,11 +291,24 @@
             </div>
           </div>
           <ng-template #noEducation>
-            <p>No hay formación registrada.</p><br><br>
+            <div class="no-content-container">
+              <mat-icon class="no-content-icon">school_off</mat-icon>
+              <p class="no-content-text">No hay formación registrada</p>
+              <button *ngIf="isEditMode" mat-raised-button color="primary" class="add-content-btn"
+                (click)="openAddEducationForm()">
+                <mat-icon>add</mat-icon>
+                Añadir primera formación
+              </button>
+            </div>
           </ng-template>
-          <div *ngIf="isEditMode" class="add-experience-btn-container">
-            <button mat-mini-fab color="primary" (click)="openAddEducationForm()">
+
+          <!-- Panel para añadir más formación cuando ya hay algunas y estoy editando -->
+          <div *ngIf="isEditMode && educations.length > 0" class="no-content-container add-more-container">
+            <mat-icon class="no-content-icon">add_circle_outline</mat-icon>
+            <p class="no-content-text">¿Quieres añadir otra formación?</p>
+            <button mat-raised-button color="primary" class="add-content-btn" (click)="openAddEducationForm()">
               <mat-icon>add</mat-icon>
+              Añadir nueva formación
             </button>
           </div>
         </div>

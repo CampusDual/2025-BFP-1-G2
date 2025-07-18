@@ -2,6 +2,7 @@ package com.campusdual.bfp.service;
 
 import com.campusdual.bfp.api.ICompanyService;
 import com.campusdual.bfp.model.Company;
+import com.campusdual.bfp.model.Offer;
 import com.campusdual.bfp.model.User;
 import com.campusdual.bfp.model.dao.*;
 import com.campusdual.bfp.model.dto.CompanyDTO;
@@ -74,14 +75,27 @@ public class CompanyService implements ICompanyService {
         this.companyDao.saveAndFlush(company);
         return companyDTO;
     }
-
     public void deleteCompany(Integer id) {
         Company company = this.companyDao.findById(id)
                 .orElseThrow(() -> new CompanyNotFoundException("Empresa no encontrada"));
-        this.userRoleDao.delete(userRoleDao.findUserRoleByUserId(company.getUser().getId()));
-        this.offerDao.deleteAllByCompanyId(id);
+
+        if (companyDao.hasOffers(id)){
+            throw new CompanyHasOffersException("No se puede eliminar la empresa porque tiene ofertas activas asociadas");
+        }
+        List<Offer> offers = offerDao.findOfferByCompanyId(id);
+        if (!offers.isEmpty()) {
+            offerDao.deleteAll(offers);
+        }
+
         this.companyDao.deleteById(id);
-        this.userDao.delete(company.getUser());
+
+        if (company.getUser() != null) {
+            var userRole = userRoleDao.findUserRoleByUserId(company.getUser().getId());
+            if (userRole != null) {
+                this.userRoleDao.delete(userRole);
+            }
+            this.userDao.delete(company.getUser());
+        }
     }
 
     public List<CompanyDTO> searchCompanies(String searchTerm) {

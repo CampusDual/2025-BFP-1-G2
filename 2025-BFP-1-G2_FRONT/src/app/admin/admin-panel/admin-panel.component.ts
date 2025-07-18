@@ -4,6 +4,7 @@ import { CompanyService } from 'src/app/services/company.service';
 import { Company } from 'src/app/models/company.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CdkPortal } from '@angular/cdk/portal';
 
 
 @Component({
@@ -198,15 +199,15 @@ export class AdminPanelComponent {
     }
   }
 
-  deleteCompany(companyId: number) {
-    if (confirm(`¿Estás seguro de que quieres eliminar la empresa con ID ${companyId}?`)) {
-      this.companyService.deleteCompany(companyId).subscribe({
+  deleteCompany(company: Company) {
+     if (confirm(`¿Estás seguro de que quieres eliminar la empresa ${company.name}?`)) {
+      this.companyService.deleteCompany(company.id).subscribe({
         next: () => {
           this.snackBar.open('Empresa eliminada correctamente', 'Cerrar', { duration: 3000 });
           this.loadCompanies();
         },
-        error: () => {
-          this.snackBar.open('Error al eliminar la empresa', 'Cerrar', {
+        error: (error) => {
+          this.snackBar.open(error.error, 'Cerrar', {
             duration: 3000,
             panelClass: 'error-snackbar'
           });
