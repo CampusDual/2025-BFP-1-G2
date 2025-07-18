@@ -71,7 +71,9 @@
     <main class="main-content" (click)="collapseSidebar()"
        [ngClass]="{ 'no-header': !showHeader }">
       <app-header *ngIf="showHeader"></app-header>
-      <router-outlet></router-outlet>
+      <div class="content-container">
+        <router-outlet></router-outlet>
+      </div>
     </main>
 
     <app-chat-button *ngIf="isCandidate || isCompany"></app-chat-button>

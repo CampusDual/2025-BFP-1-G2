@@ -6,13 +6,13 @@
   grid-template-columns: 60px 1fr; 
   grid-template-rows: 1fr; 
   grid-template-areas: 
-    "sidebar main";
+    "sidebar appMain";
   transition: grid-template-columns 0.3s ease;
 }
 
 .app-layout.no-sidebar {
   grid-template-areas: 
-    "main main";
+    "appMain appMain";
 }
 
 .app-layout.sidebar-expanded {
@@ -101,7 +101,7 @@ app-header {
 
 /* Main Content */
 .main-content {
-  grid-area: main;
+  grid-area: appMain;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color:  #f1f1f1 #3e3e3e;
@@ -112,6 +112,7 @@ app-header {
   grid-template-areas:
     "header"
     "main";
+    align-items: center;   
 }
 
 .main-content .no-header {
@@ -120,10 +121,11 @@ app-header {
     "main";
 }
 
-router-outlet {
+.content-container {
   grid-area: main;
-
 }
+
+
 
 .login-bg {
   background:
