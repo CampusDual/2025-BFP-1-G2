@@ -5,13 +5,14 @@
     grid-column-gap: 16px;
     padding: 24px;
     gap: 16px;
-    height: 100%;
+    height: calc(100vh - 150px); 
 }
 
 .chart-container {
     padding: 16px;
     height: 100%;
 }
+
 .chart-card {
     grid-area: 1 / 2 / 2 / 3;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -19,7 +20,8 @@
     background: rgba(255, 255, 255, 0.95);
     transition: all 0.3s ease;
     display: flex;
-    flex-direction: column;;
+    flex-direction: column;
+    height: 400px;
 }
 
 .tags-card {
@@ -30,6 +32,7 @@
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    height: 400px;
 }
 
 .tags-card {

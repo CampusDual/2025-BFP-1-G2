@@ -91,12 +91,12 @@
 .back-button {
   position: absolute;
   left: 24px;
-  top: 36px;
-  transform: translateY(-50%);
+  top: 111px;
+
   background-color: var(--primary-color);
   color: white;
   transition: all 0.3s ease;
-  z-index: 10;
+  z-index: 10000;
 }
 
 .avatar-image, .avatar-placeholder {

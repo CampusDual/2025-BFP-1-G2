@@ -14,6 +14,7 @@ import { MatDrawer } from '@angular/material/sidenav';
 })
 
 export class AppComponent implements OnInit, OnDestroy {
+
   showFiller = false;
   isCompany = false;
   isCandidate = false;
@@ -22,6 +23,8 @@ export class AppComponent implements OnInit, OnDestroy {
   showFooter = true;
   userName?: string;
   companyName?: string;
+  sidebarExpanded = false;
+  isLoggedIn = false;
   private authSubscription?: Subscription;
   private routerSubscription?: Subscription;
   @ViewChild('drawer') drawer!: MatDrawer;
@@ -40,6 +43,8 @@ export class AppComponent implements OnInit, OnDestroy {
         console.log('AppComponent: Auth status changed:', isAuthenticated);
         if (isAuthenticated) {
           this.loadUserRole();
+          this.loadUserData();
+          this.loadUserRole();
         } else {
           this.resetUserState();
         }
@@ -53,6 +58,7 @@ export class AppComponent implements OnInit, OnDestroy {
         const url = (event as NavigationEnd).urlAfterRedirects || (event as NavigationEnd).url;
         const isLoginOrRegister = url.includes('/login') || url === '/auth/login' || url === '/login' || url.includes('/register') || url === '/auth/register' || url === '/register';
         this.showHeader = !isLoginOrRegister;
+        this.isLoggedIn = this.authService.isLoggedIn();
         this.showFooter = !isLoginOrRegister;
       });
 
@@ -61,6 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const isLoginOrRegister = initialUrl.includes('/login') || initialUrl === '/auth/login' || initialUrl === '/login' || initialUrl.includes('/register') || initialUrl === '/auth/register' || initialUrl === '/register';
     this.showHeader = !isLoginOrRegister;
     this.showFooter = !isLoginOrRegister;
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   private resetUserState() {
@@ -86,10 +93,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (isAuth) {
       this.loadUserRole();
-        if (this.isAdmin) {
-          this.drawer.open();
-        }
-        else { this.drawer.close();}
+      this.isLoggedIn = true;
     } else {
       this.resetUserState();
     }
@@ -166,4 +170,18 @@ export class AppComponent implements OnInit, OnDestroy {
   getRouterOutletState(outlet: RouterOutlet) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }
+
+   toggleSidebar() {
+    this.sidebarExpanded = !this.sidebarExpanded;
+  }
+
+  expandSidebar() {
+    this.sidebarExpanded = true;
+  }
+
+  collapseSidebar() {
+      this.sidebarExpanded = false;
+    
+  }
+
 }

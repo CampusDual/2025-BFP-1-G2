@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { AuthService } from "../auth/services/auth.service";
 import { Subscription } from 'rxjs';
 
@@ -15,6 +15,8 @@ export class HeaderComponent {
   private sub: Subscription;
   animatedName: string = '';
   showCursor: boolean = true;
+    @Output() toggleSidebar = new EventEmitter<void>();
+
 
   constructor(
     protected authService: AuthService,
@@ -24,5 +26,10 @@ export class HeaderComponent {
       this.username = name;
     });
 
+  }
+
+
+  onToggleSidebar() {
+    this.toggleSidebar.emit();
   }
 }

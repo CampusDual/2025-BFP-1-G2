@@ -1,53 +1,79 @@
 <body [ngClass]="{ 'login-bg': !showHeader }">
-  <div class="content" [ngClass]="{ 'no-header': !showHeader }">
-    <app-header *ngIf="showHeader" [drawer]="drawer"></app-header>
-      <mat-drawer-container class="container" autosize>
-      <mat-drawer #drawer class="drawer" mode="side" opened>
-        <div class="nav-item" *ngIf="isCandidate" routerLink="/user/profile/{{userName}}" (click)="drawer.close()">
-          <mat-icon>person</mat-icon>
-          <span>Perfil Profesional</span>
-        </div>
-        <div class="nav-item" *ngIf="isCompany" routerLink="/company/profile/{{companyName}}" (click)="drawer.close()">
-          <mat-icon>person</mat-icon>
-          <span>Perfil Empresa</span>
-        </div>
-        <div class="nav-item" *ngIf="isCandidate" routerLink="/offers/portal" (click)="drawer.close()">
-          <mat-icon>work</mat-icon>
-          <span>Ofertas</span>
-        </div>
-        <div class="nav-item" *ngIf="isCandidate" routerLink="/user/companies" (click)="drawer.close()">
-          <mat-icon>business</mat-icon>
-          <span>Empresas</span>
-        </div>
-        <div class="nav-item" *ngIf="isCompany" routerLink="/company/myoffers" (click)="drawer.close()">
-          <mat-icon>business_center</mat-icon>
-          <span>Mis ofertas</span>
-        </div>
-        <div class="nav-item" *ngIf="isCompany" (click)="navigateToAddOffer(); drawer.close()">
-          <mat-icon>add_add</mat-icon>
-          <span>Añadir Ofertas</span>
-        </div>
-        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin" (click)="drawer.close()">
-          <mat-icon>admin_panel_settings</mat-icon>
-          <span>Empresas</span>
-        </div>
-        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/dashboard" (click)="drawer.close()">
-          <mat-icon>analytics</mat-icon>
-          <span>Dashboard</span>
-        </div>
-        <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/tags" (click)="drawer.close()">
-          <mat-icon>label</mat-icon>
-          <span>Etiquetas</span>
-        </div>
-      </mat-drawer>
-      <mat-drawer-content>
+  <div class="app-layout"
+    [ngClass]="{'sidebar-expanded': sidebarExpanded, 'no-sidebar': !authService.isLoggedIn() }">
+    <nav class="sidebar" *ngIf="authService.isLoggedIn()">
 
-        <div [@fadeAnimation]="getRouterOutletState(outlet)" (click)="drawer.close()" class="main"><router-outlet
-            #outlet="outlet"></router-outlet></div>
+      <div class="nav-menu-item" (click)="toggleSidebar()">
+        <mat-icon>menu</mat-icon>
 
-      </mat-drawer-content>
-    </mat-drawer-container>
+      </div>
 
-    <app-chat-button *ngIf="isCandidate||isCompany"></app-chat-button>
+      <div class="nav-item" *ngIf="isCandidate" routerLink="/user/profile/{{userName}}" routerLinkActive="active"
+        [matTooltip]="!sidebarExpanded ? 'Perfil Profesional' : ''" [matTooltipPosition]="'right'"
+        (click)="collapseSidebar()">
+        <mat-icon>person</mat-icon>
+        <span class="nav-text">Perfil Profesional</span>
+      </div>
+
+      <div class="nav-item" *ngIf="isCompany" routerLink="/company/profile/{{companyName}}" routerLinkActive="active"
+        [matTooltip]="!sidebarExpanded ? 'Perfil Empresa' : ''" [matTooltipPosition]="'right'"
+        (click)="collapseSidebar()">
+        <mat-icon>person</mat-icon>
+        <span class="nav-text">Perfil Empresa</span>
+      </div>
+
+      <div class="nav-item" *ngIf="isCandidate" routerLink="/offers/portal" routerLinkActive="active"
+        [matTooltip]="!sidebarExpanded ? 'Ofertas' : ''" [matTooltipPosition]="'right'" (click)="collapseSidebar()">
+        <mat-icon>work</mat-icon>
+        <span class="nav-text">Ofertas</span>
+      </div>
+
+      <div class="nav-item" *ngIf="isCandidate" routerLink="/user/companies" routerLinkActive="active"
+        [matTooltip]="!sidebarExpanded ? 'Empresas' : ''" [matTooltipPosition]="'right'" (click)="collapseSidebar()">
+        <mat-icon>business</mat-icon>
+        <span class="nav-text">Empresas</span>
+      </div>
+
+      <div class="nav-item" *ngIf="isCompany" routerLink="/company/myoffers" routerLinkActive="active"
+        [matTooltip]="!sidebarExpanded ? 'Mis ofertas' : ''" [matTooltipPosition]="'right'" (click)="collapseSidebar()">
+        <mat-icon>business_center</mat-icon>
+        <span class="nav-text">Mis ofertas</span>
+      </div>
+
+      
+      <div class="nav-item" *ngIf="isCompany" (click)="navigateToAddOffer(); collapseSidebar()"
+        [matTooltip]="!sidebarExpanded ? 'Añadir Ofertas' : ''" 
+        [matTooltipPosition]="'right'">
+        <mat-icon>add_add</mat-icon>
+        <span class="nav-text">Añadir Ofertas</span>
+      </div>
+
+      <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/companies" routerLinkActive="active"
+        [matTooltip]="!sidebarExpanded ? 'Empresas' : ''" [matTooltipPosition]="'right'" (click)="collapseSidebar()">
+        <mat-icon>admin_panel_settings</mat-icon>
+        <span class="nav-text">Empresas</span>
+      </div>
+
+      <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/dashboard" routerLinkActive="active"
+        [matTooltip]="!sidebarExpanded ? 'Dashboard' : ''" [matTooltipPosition]="'right'" (click)="collapseSidebar()">
+        <mat-icon>analytics</mat-icon>
+        <span class="nav-text">Dashboard</span>
+      </div>
+
+      <div class="nav-item" *ngIf="isAdmin" routerLink="/admin/tags" routerLinkActive="active"
+        (click)="collapseSidebar()" [matTooltip]="!sidebarExpanded ? 'Etiquetas' : ''" [matTooltipPosition]="'right'">
+        <mat-icon>label</mat-icon>
+        <span class="nav-text">Etiquetas</span>
+      </div>
+    </nav>
+
+
+    <main class="main-content" (click)="collapseSidebar()"
+       [ngClass]="{ 'no-header': !showHeader }">
+      <app-header *ngIf="showHeader"></app-header>
+      <router-outlet></router-outlet>
+    </main>
+
+    <app-chat-button *ngIf="isCandidate || isCompany"></app-chat-button>
   </div>
 </body>
