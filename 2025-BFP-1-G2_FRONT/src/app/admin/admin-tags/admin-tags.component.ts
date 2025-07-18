@@ -132,12 +132,12 @@ export class AdminTagsComponent {
       );
       if (!exists) {
         this.tagService.createTag({ name: value }).subscribe({
-          next: (newTag: Tag) => {
-            this.tags.push({ name: value });
+          next: () => {
             this.tag.reset();
             this.matSnackBar.open('Etiqueta añadida exitosamente', 'Cerrar', {
               duration: 3000
             });
+            this.loadTags(); // Recarga el array de tags desde el backend
           },
           error: (error) => {
             console.error('Error al crear la etiqueta:', error);

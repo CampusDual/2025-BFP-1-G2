@@ -1,23 +1,24 @@
 <mat-toolbar color="primary">
 
-  <button class="menuButton" *ngIf=" authService.isLoggedIn()" mat-icon-button (click)="drawer.toggle()">
-    <mat-icon>menu</mat-icon>
-  </button>
   <button *ngIf="!authService.isLoggedIn()" mat-icon-button routerLink="/offers/portal">
     <mat-icon>home</mat-icon>
   </button>
 
   <img src="https://media.timtul.com/media/web_clustertic/logo-clustertic_20190412075104.png" alt="Logo">
 
-  <span class="spacer"></span>
-  <span *ngIf="authService.isLoggedIn()" class="username-header">
-    <mat-icon style="margin-right: 5px; font-size: 22px; vertical-align: middle;">account_circle</mat-icon>
-    {{ username }}
-  </span>
 
-  <button mat-icon-button *ngIf="authService.isLoggedIn()" routerLink="/offers/portal"  (click)="authService.logout()" class="logout-button">
-    <mat-icon >logout</mat-icon>
+  <button [matMenuTriggerFor]="menu"  class="logout-button">
+    <span *ngIf="authService.isLoggedIn()" class="username-header">
+      <mat-icon style="margin-right: 5px; font-size: 22px; vertical-align: middle;">account_circle</mat-icon>
+        {{ username }}
+    </span>
   </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngIf="isCandidate" routerLink="/user/profile/{{username}}">Mi perfil</button>
+      <button mat-menu-item *ngIf="isCompany" routerLink="/company/profile/{{username}}">Mi perfil</button>
+      <button mat-menu-item routerLink="/offers/portal" (click)="authService.logout()">Salir</button>
+    </mat-menu>
+    
   <button mat-icon-button *ngIf="!authService.isLoggedIn()" routerLink="/login" class="logout-button">
     <mat-icon>account_circle</mat-icon>
   </button>

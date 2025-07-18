@@ -1,4 +1,5 @@
 .company-panel {
+
   max-width: 90%;
   margin: auto;
   padding: 5px;
@@ -7,7 +8,7 @@
   margin-bottom:0;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 170px);
+  min-height: calc(100vh - 75px);
 }
 
 .profile-header {
@@ -958,6 +959,15 @@
   text-align: justify;
   outline: none;
   font-weight: 500;
+}
+
+.no-links {
+    display: flex;
+    color: var(--secondary-color);
+    h5{
+        font-size: 1.2rem;
+        text-align: justify;
+    }
 }
 /* Responsive para móviles */
 @media (max-width: 768px) {

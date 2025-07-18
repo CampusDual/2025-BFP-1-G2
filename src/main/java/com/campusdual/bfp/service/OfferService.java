@@ -227,7 +227,7 @@ public class OfferService implements IOfferService {
             case "applied":
                 return offerDao.getAppliedOffersCount(user.getId());
             case "recommended":
-                return offerDao.getRecommendedOffersCount(user.getId());
+                return offerDao.getRecommendedOffersCount(offerDao.findCandidateTagIdsByUserId(user.getId()));
             case "all":
                 return offerDao.getActiveOffersCount();
             default:
@@ -381,10 +381,10 @@ public class OfferService implements IOfferService {
             case "active":
                 offer.setActive(true);
                 break;
-            case "draft":
+            case "archived":
                 offer.setActive(false);
                 break;
-            case "archived":
+            case "draft":
                 offer.setActive(null);
                 break;
             default:

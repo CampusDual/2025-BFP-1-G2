@@ -29,6 +29,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { MatChipsModule } from '@angular/material/chips';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { MatMenu } from '@angular/material/menu';
 registerLocaleData(localeEs, 'es');
 
 
@@ -62,7 +63,8 @@ registerLocaleData(localeEs, 'es');
     MatTableModule,
     MatNativeDateModule,
     NgChartsModule,
-    MatChipsModule
+    MatChipsModule,
+    MatMenuModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}

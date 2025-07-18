@@ -6,7 +6,7 @@ import { AdminTagsComponent } from './admin-tags/admin-tags.component';
 import {CompanyPanelComponent} from "../company/company-panel/company-panel.component";
 
 const routes: Routes = [
-  { path: '', component: AdminPanelComponent },
+  { path: 'companies', component: AdminPanelComponent },  
   { path: 'dashboard', component: AdminDashboardComponent },
   { path: 'tags', component: AdminTagsComponent },
   { path: 'new', component: CompanyPanelComponent },

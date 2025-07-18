@@ -20,5 +20,10 @@ public interface CompanyDao extends JpaRepository<Company, Integer> {
 
     Company findByName(String name);
 
+    @Query("SELECT COUNT(o) > 0 FROM Company c " +
+            "JOIN Offer o ON o.company.id = :id " +
+            "WHERE o.active = true")
+    boolean hasOffers(Integer id);
+
 
 }

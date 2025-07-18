@@ -1,4 +1,9 @@
-<table class="custom-table">
+  <h2 class="page-title">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Empresas
+      </h2>
+<div class="companies-table-container">
+  <table class="custom-table">
     <thead>
       <tr>
         <th>Nombre</th>
@@ -6,10 +11,11 @@
         <th>Sitio web</th>
         <th>Dirección</th>
         <th>Año de fundación</th>
+        <th>Eliminar</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let company of companies; let i = index" routerLink="/company/profile/{{company.name}}">
+      <tr *ngFor="let company of companies" class="company-row" routerLink="/company/profile/{{company.name}}">
         <td>{{ company.name.charAt(0).toUpperCase() + company.name.substring(1) }}</td>
         <td>{{ company.email }}</td>
         <td>
@@ -19,9 +25,13 @@
         </td>
         <td>{{ company.address }}</td>
         <td>{{ company.foundedDate | date:'yyyy' }}</td>
+        <td><button mat-icon-button (click)="deleteCompany(company)" (click)="$event.stopPropagation()">
+            <mat-icon>delete</mat-icon>
+          </button></td>
       </tr>
     </tbody>
   </table>
+</div>
 
 <button mat-fab class="add-company" aria-label="Añadir empresa"  routerLink="/company/new/" (click)="addCompany()" >
   <mat-icon>add</mat-icon>

@@ -653,7 +653,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       return;
     }
     console.log('JSON enviado al backend (nueva experiencia):', this.newExperience);
-    this.authService.createExperience(this.newExperience).subscribe({
+    this.candidateService.createExperience(this.newExperience).subscribe({
       next: (createdExp: any) => {
         console.log('Respuesta del backend (experiencia creada):', createdExp);
         const normalizedExp = {
@@ -686,7 +686,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       return;
     }
     console.log('JSON enviado al backend (nueva educación):', this.newEducation);
-    this.authService.createEducation(this.newEducation).subscribe({
+    this.candidateService.createEducation(this.newEducation).subscribe({
       next: (createdEdu: any) => {
         console.log('Respuesta del backend (educación creada):', createdEdu);
         const normalizedEdu = {
@@ -731,7 +731,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.snackbar.open('No se puede eliminar: falta el id de la experiencia', 'Cerrar', { duration: 2500 });
         return;
       }
-      this.authService.deleteExperience(experienceId).subscribe({
+      this.candidateService.deleteExperience(experienceId).subscribe({
         next: () => {
           this.experiences.splice(index, 1);
           if (this.currentExperienceIndex >= this.experiences.length) {
@@ -755,7 +755,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         this.snackbar.open('No se puede eliminar: falta el id de la formación', 'Cerrar', { duration: 2500 });
         return;
       }
-      this.authService.deleteEducation(educationId).subscribe({
+      this.candidateService.deleteEducation(educationId).subscribe({
         next: () => {
           this.educations.splice(index, 1);
           this.snackbar.open('Formación eliminada correctamente', 'Cerrar', { duration: 2000 });

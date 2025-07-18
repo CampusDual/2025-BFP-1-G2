@@ -4,10 +4,13 @@ import com.campusdual.bfp.model.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import org.springframework.data.domain.Pageable;
+
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,8 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
     @Query("SELECT o FROM Offer o WHERE o.company.id = :companyId")
     List<Offer> findOfferByCompanyId(@Param("companyId") int companyId);
 
+    @Modifying
+    @Transactional
     @Query("DELETE FROM Offer o WHERE o.company.id = :companyId")
     int deleteAllByCompanyId(@Param("companyId") int companyId);
 
@@ -118,13 +123,13 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
             "ORDER BY o.dateAdded DESC")
     Page<Offer> findAppliedOffersBySearchTerm(int userId, @Param("searchTerm") String searchTerm, Pageable pageable);
 
+
     @Query("SELECT COUNT(o) FROM Offer o " +
             "JOIN OfferTags ot ON ot.offer.id = o.id " +
-            "JOIN CandidateTags ct ON ct.tag.id = ot.tag.id " +
-            "JOIN Candidate c ON c.id = ct.candidate.id " +
-            "WHERE c.user.id = :userId AND " +
-            "o.active = true ")
-    Integer getRecommendedOffersCount(int userId);
+            "WHERE o.active = true AND ot.tag.id IN :tagIds " +
+            "GROUP BY o.id " +
+            "ORDER BY COUNT(ot.tag.id)  DESC")
+    Integer getRecommendedOffersCount(List<Long> tagIds);
 
     @Query("SELECT DISTINCT ot.tag.id FROM OfferTags ot " +
             "JOIN CandidateTags ct ON ct.tag.id = ot.tag.id " +

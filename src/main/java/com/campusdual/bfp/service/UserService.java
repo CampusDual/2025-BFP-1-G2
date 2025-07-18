@@ -287,7 +287,6 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     @Transactional
     public CandidateDTO updateCandidateDetails(String username, CandidateDTO candidateDTO) {
-        // Validaciones iniciales
         if (candidateDTO == null) {
             throw new IllegalArgumentException("Los datos del candidato no pueden ser nulos");
         }
@@ -302,7 +301,6 @@ public class UserService implements UserDetailsService, IUserService {
             throw new CandidateNotFoundException("Candidato no encontrado");
         }
 
-        // Validar duplicados solo si el login/email han cambiado
         if (!user.getLogin().equals(candidateDTO.getLogin())) {
             User existingUser = this.userDao.findByLogin(candidateDTO.getLogin());
             if (existingUser != null) {
@@ -316,8 +314,6 @@ public class UserService implements UserDetailsService, IUserService {
                 throw new DuplicateEmailException("El email ya está en uso");
             }
         }
-
-        // Actualizar datos del candidato
         BeanUtils.copyProperties(candidateDTO, candidate, "id", "user");
 
         // Actualizar datos del usuario
@@ -327,7 +323,7 @@ public class UserService implements UserDetailsService, IUserService {
         // Guardar cambios
         this.userDao.saveAndFlush(user);
         this.candidateDao.saveAndFlush(candidate);
-        return CandidateMapper.INSTANCE.toDTO(candidate, null, null);
+        return candidateDTO;
     }
 
 
