@@ -605,6 +605,7 @@ mat-chip-option[disabled] ::ng-deep span {
   flex: 1;
   overflow-y: auto;
   margin-top: 8px;
+  min-height: 100vh;
 }
 
 .custom-table {
