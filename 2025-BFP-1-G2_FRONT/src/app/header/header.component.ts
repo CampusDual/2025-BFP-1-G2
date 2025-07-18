@@ -17,6 +17,8 @@ export class HeaderComponent {
   showCursor: boolean = true;
     @Output() toggleSidebar = new EventEmitter<void>();
 
+  isCandidate: boolean = false;
+  isCompany: boolean = false;
 
   constructor(
     protected authService: AuthService,
@@ -25,6 +27,8 @@ export class HeaderComponent {
     this.sub = this.authService.userName$.subscribe(name => {
       this.username = name;
     });
+    this.isCandidate = this.authService.isCandidateCached();
+    this.isCompany = this.authService.isCompanyCached();
 
   }
 

@@ -24,9 +24,8 @@
       </h1>
     </div>
 
-    <div class="edit-controls" *ngIf=" authService.getRolesCached().includes('ROLE_COMPANY') ||
-                  authService.getRolesCached().includes('ROLE_ADMIN')  &&
-                   !isEditMode">
+    <div class="edit-controls" *ngIf="(authService.getRolesCached().includes('ROLE_COMPANY') && !isEditMode) ||
+                  (authService.getRolesCached().includes('ROLE_ADMIN') && !isEditMode && !isCreatingNewCompany)">
       <button class="edit-btn" (click)="toggleEditMode()" title="Editar perfil" [disabled]="isEditMode || isSaving">
         <mat-icon>edit</mat-icon>
       </button>
@@ -140,15 +139,18 @@
               <input class="edit-input" type="url" [formControl]="url" [class.error]="url.invalid && url.touched"
                 placeholder="URL del sitio web">
             </div>
+            <div *ngIf="(isEditMode || isCreatingNewCompany) && url.invalid && url.touched" class="error-message">
+              <small *ngIf="url.errors?.['pattern']">Introduce un formato valido (https://ejemplo.com)</small>
+            </div>
           </div>
 
           <div class="social-links" *ngIf="!isEditMode && !isCreatingNewCompany">
-            <button *ngIf="url.value" class="social-btn website-btn" (click)="openLink(url.value!)">
+            <button *ngIf="url.value" class="social-btn website-btn" (click)="openLink(url.value)">
               <mat-icon>public</mat-icon>
               <span>Sitio Web</span>
             </button>
             <div *ngIf="!url.value" class="no-links">
-              <p>No hay enlaces configurados</p>
+              <h5>No hay enlaces configurados</h5>
             </div>
           </div>
         </div>

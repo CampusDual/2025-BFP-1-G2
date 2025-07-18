@@ -4,6 +4,20 @@
     grid-template-rows: auto;
     gap: 24px;
     padding: 24px;
+    padding-top:0;
+    padding-bottom:0;
+    max-height: calc(100vh - 75px);
+}
+
+.page-title {
+  padding-left: 24px;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 2rem;
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
 .div1 {

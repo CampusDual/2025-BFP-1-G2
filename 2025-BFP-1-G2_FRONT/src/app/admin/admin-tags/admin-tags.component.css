@@ -4,8 +4,20 @@
     grid-template-rows: 1fr;
     grid-column-gap: 16px;
     padding: 24px;
+    padding-top: 0;
     gap: 16px;
     height: calc(100vh - 150px); 
+}
+
+.page-title {
+  padding-left: 24px;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 2rem;
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
 .chart-container {

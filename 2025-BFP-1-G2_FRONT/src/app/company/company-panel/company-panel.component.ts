@@ -23,7 +23,7 @@ export class CompanyPanelComponent implements OnInit {
   companyEmail = new FormControl('', [Validators.required, Validators.email]);
   phone = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
   address = new FormControl('', [Validators.maxLength(100)]);
-  url = new FormControl('');
+  url = new FormControl('', [Validators.pattern('^https?:\\/\\/([\\w.-]+)\\.([a-z]{2,})([\\/\\w.-]*)*\\/?$')]);
   logo = new FormControl('');
   foundedDate = new FormControl('', [Validators.pattern('^(19|20)\\d{2}$')]);
   isUploadingLogo: boolean = false;
@@ -193,7 +193,6 @@ export class CompanyPanelComponent implements OnInit {
         console.log('Empresa creada correctamente');
         this.snackbar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
         this.isCreatingNewCompany = false;
-        this.loadEmptyCompanyData();
         this.isEditMode = false;
         this.router.navigate(['/company/profile/' + companyData.name]);
       },
@@ -220,7 +219,7 @@ export class CompanyPanelComponent implements OnInit {
 
   hasFormErrors(): boolean {
     return this.companyName.invalid || this.companyEmail.invalid || this.phone.invalid ||
-      this.address.invalid;
+      this.address.invalid || this.url.invalid;
   }
 
   async onLogoFileSelected(event: any): Promise<void> {
