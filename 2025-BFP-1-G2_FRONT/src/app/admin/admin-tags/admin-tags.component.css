@@ -6,6 +6,7 @@
     padding: 24px;
     padding-top: 0;
     gap: 16px;
+    height: calc(100vh - 75px);
 }
 
 .page-title {

@@ -381,10 +381,10 @@ public class OfferService implements IOfferService {
             case "active":
                 offer.setActive(true);
                 break;
-            case "draft":
+            case "archived":
                 offer.setActive(false);
                 break;
-            case "archived":
+            case "draft":
                 offer.setActive(null);
                 break;
             default:
