@@ -57,11 +57,11 @@
 
       </mat-form-field>
 
-      <div class="view-selectors-container">
+      <div *ngIf="authService.isLoggedIn()" class="view-selectors-container">
         <div class="offer-selectors" *ngIf="isCandidate">
           <button mat-raised-button [color]="currentOfferView === 'recommended' ? 'primary' : ''"
             class="selector-button" (click)="setOfferView('recommended')" matBadge="{{ recomendedOfferCount }}"
-            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="true">
+            matBadgePosition="after" matBadgeSize="small" [matBadgeHidden]="recomendedOfferCount === 0">
             <mat-icon>star</mat-icon>
             Recomendadas
           </button>
@@ -135,11 +135,6 @@
     <p>Cargando ofertas...</p>
   </div>
 
-
-
-
-
-  <!-- Mensaje cuando no hay ofertas -->
   <div class="no-offers-container" *ngIf="!isLoading && hasNoOffers">
     <div class="no-offers-content">
       <mat-icon class="no-offers-icon">search_off</mat-icon>
@@ -201,3 +196,4 @@
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
+</div>

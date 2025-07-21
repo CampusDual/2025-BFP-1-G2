@@ -5,7 +5,7 @@ import { OfferTableComponent } from './offer-table/offer-table.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'portal', pathMatch: 'full'},
-  {path: 'portal', component: OfferTableComponent},
+  {path: 'portal', component: OfferTableComponent},   
   {path: 'auth', loadChildren : () => import('../auth/auth.module').then(m => m.AuthModule)},
 ];
 

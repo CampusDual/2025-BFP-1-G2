@@ -11,49 +11,49 @@
                 <mat-label>Nombre de usuario</mat-label>
                 <input matInput placeholder="usuario123" [formControl]="login" required>
                 <mat-icon matPrefix class="field-icon">person</mat-icon>
-                <mat-error *ngIf="login.invalid"></mat-error>
+                <mat-error *ngIf="login.invalid">{{ getLoginErrorMessage() }}</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="decorated-field">
                 <mat-label>Nombre</mat-label>
                 <input matInput placeholder="Nombre" [formControl]="name" required>
                 <mat-icon matPrefix class="field-icon">badge</mat-icon>
-                <mat-error *ngIf="name.invalid"></mat-error>
+                <mat-error *ngIf="name.invalid">{{ getNameErrorMessage() }}</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="decorated-field">
                 <mat-label>Primer apellido</mat-label>
                 <input matInput placeholder="Apellido 1" [formControl]="surname1" required>
                 <mat-icon matPrefix class="field-icon">family_restroom</mat-icon>
-                <mat-error *ngIf="surname1.invalid"></mat-error>
+                <mat-error *ngIf="surname1.invalid">{{ getSurname1ErrorMessage() }}</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="decorated-field">
                 <mat-label>Segundo apellido</mat-label>
                 <input matInput placeholder="Apellido 2" [formControl]="surname2" required>
                 <mat-icon matPrefix class="field-icon">family_restroom</mat-icon>
-                <mat-error *ngIf="surname2.invalid"></mat-error>
+                <mat-error *ngIf="surname2.invalid">{{ getSurname2ErrorMessage() }}</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="decorated-field">
                 <mat-label>Email</mat-label>
                 <input matInput placeholder="correo@dominio.es" [formControl]="email" required>
                 <mat-icon matPrefix class="field-icon">email</mat-icon>
-                <mat-error *ngIf="email.invalid"></mat-error>
+                <mat-error *ngIf="email.invalid">{{ getEmailErrorMessage() }}</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="decorated-field">
                 <mat-label>Teléfono</mat-label>
                 <input matInput placeholder="123456789" [formControl]="phoneNumber" required>
                 <mat-icon matPrefix class="field-icon">phone</mat-icon>
-                <mat-error *ngIf="phoneNumber.invalid"></mat-error>
+                <mat-error *ngIf="phoneNumber.invalid">{{ getPhoneNumberErrorMessage() }}</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="decorated-field">
                 <mat-label>Contraseña</mat-label>
                 <input matInput type="password" placeholder="Contraseña" [formControl]="password" required>
                 <mat-icon matPrefix class="field-icon">lock</mat-icon>
-                <mat-error *ngIf="password.invalid"></mat-error>
+                <mat-error *ngIf="password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="decorated-field">
@@ -62,6 +62,7 @@
                   required>
                 <mat-icon matPrefix class="field-icon">lock_outline</mat-icon>
                 <mat-error *ngIf="confirmPassword.invalid || password.value !== confirmPassword.value">
+                  {{ getConfirmPasswordErrorMessage() }}
                 </mat-error>
               </mat-form-field>
             </div>

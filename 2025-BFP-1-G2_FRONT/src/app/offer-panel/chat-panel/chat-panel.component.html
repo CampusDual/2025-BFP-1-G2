@@ -39,17 +39,13 @@
     </div>
   </div>
 
-  <!-- Contenido del panel -->
   <div class="chat-content">
-    <!-- Vista de conversaciones -->
     <div class="conversations-view" *ngIf="currentView === 'conversations'">
-      <!-- Loading state -->
       <div class="loading-container" *ngIf="isLoading || isLoadingConversations">
         <mat-spinner diameter="40"></mat-spinner>
         <p>{{ loadingMessage }}</p>
       </div>
-
-      <!-- Lista de conversaciones -->
+      
       <div class="conversations-list" *ngIf="!isLoading && !isLoadingConversations">
         <div 
           class="conversation-item" 
@@ -70,7 +66,7 @@
           <div class="conversation-details">
             <div class="conversation-header">
               <h4 class="contact-name">{{ getContactName(conversation) }}</h4>
-              <span class="conversation-time">{{ (conversation.lastActivity | date:'short') }}</span>
+              <span class="conversation-time">{{ (conversation.lastActivity | date: 'dd-MM-yyyy HH:mm') }}</span>
             </div>
             
             <div class="conversation-preview">
@@ -124,7 +120,7 @@
                 {{ message.content }}
               </div>
               <div class="message-time">
-                {{(message.timestamp | date:'short')}}
+                {{(message.timestamp | date: 'dd-MM-yyyy HH:mm')}}
               </div>
             </div>
           </div>

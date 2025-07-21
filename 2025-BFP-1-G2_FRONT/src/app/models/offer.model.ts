@@ -1,4 +1,3 @@
-import { Candidate } from './candidate.model';
 import { Tag } from './tag.model';
 
 

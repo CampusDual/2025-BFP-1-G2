@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DetailedCardAction } from 'src/app/models/detailed-card-data.model';
 import { DetailedCardData } from 'src/app/models/detailed-card-data.model';
@@ -11,7 +11,7 @@ import { TagService } from 'src/app/services/tag.service';
 import { Offer } from 'src/app/models/offer.model';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { COMMA, ENTER, O } from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { DetailedCardService } from 'src/app/services/detailed-card.service';
 import { DetailedCardComponent } from 'src/app/detailed-card/detailed-card.component';
 
@@ -23,7 +23,7 @@ import { DetailedCardComponent } from 'src/app/detailed-card/detailed-card.compo
 export class OfferTableComponent implements OnDestroy {
   @ViewChild(DetailedCardComponent) detailedCard!: DetailedCardComponent;
 
-  private restoreSubscription: Subscription ;
+  private restoreSubscription: Subscription;
   offers: Offer[] = [];
   searchTerm: string = '';
   lastSearchTerm: string = '';
@@ -60,12 +60,13 @@ export class OfferTableComponent implements OnDestroy {
   hasNoOffers: boolean = false;
   constructor(
     private offerService: OfferService,
-    private authService: AuthService,
+    protected authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
     private formBuilder: FormBuilder,
     private tagService: TagService,
-    private detailedCardService: DetailedCardService
+    private detailedCardService: DetailedCardService,
+    private route: ActivatedRoute
   ) {
     this.loadAllTags();
     this.loadUserRole();
@@ -98,6 +99,18 @@ export class OfferTableComponent implements OnDestroy {
     this.tagService.getAllTags().subscribe({
       next: (tags: Tag[]) => {
         this.availableTags = tags;
+        this.route.queryParams.forEach(params => {
+          const tagId = params['tagId'];
+          if (tagId) {
+            const foundTag = this.availableTags.find(t => t.id === +tagId);
+            if (foundTag) {
+              console.log('Found tag from route:', foundTag);
+              this.onTagSelected({ option: { value: foundTag } });
+            }
+          } else {
+            this.movePage(0);
+          }
+        });
       },
       error: (error: any) => {
         console.error('Error fetching available tags', error);
@@ -109,15 +122,12 @@ export class OfferTableComponent implements OnDestroy {
   loadUserRole() {
     if (this.authService.getRolesCached().includes('ROLE_COMPANY')) {
       this.isCompany = true;
-      this.loadCompanyOffers();
     } else if (this.authService.getRolesCached().includes('ROLE_CANDIDATE')) {
       this.isCandidate = true;
-      this.loadCandidateOffers(0);
     }
     else {
       this.isCompany = false;
       this.isCandidate = false;
-      this.loadOffers(0);
     }
   }
 
@@ -215,12 +225,6 @@ export class OfferTableComponent implements OnDestroy {
 
 
   movePage(operation: number) {
-    this.currentPage += operation;
-    if (this.currentPage < 0 || operation === 0) {
-      this.currentPage = 0; 
-    } else if (this.currentPage >= this.totalPages) {
-      this.currentPage = this.totalPages - 1; 
-    }
     this.currentDetailIndex = 0;
     if (this.isCompany) {
       this.loadCompanyOffers(operation);
@@ -246,6 +250,7 @@ export class OfferTableComponent implements OnDestroy {
       form: this.isCompany ? this.createOfferForm(offer) : undefined,
       tags: offer.tags || [],
       availableTags: this.isCompany ? this.availableTags : [],
+      logo: offer.logo || '',
     }));
     this.currentDetailIndex = offerIndex;
     this.showDetailedCard = true;
@@ -392,7 +397,7 @@ export class OfferTableComponent implements OnDestroy {
       }
       else {
         actions.push({
-          label: 'Aplicar a oferta',
+          label: 'Inscribirse a la oferta',
           action: 'apply',
           color: 'primary',
           icon: 'send',
@@ -402,7 +407,7 @@ export class OfferTableComponent implements OnDestroy {
 
     } else {
       actions.push({
-        label: 'Iniciar sesión para aplicar',
+        label: 'Inicia sesión para inscribirte',
         action: 'loginToApply',
         color: 'primary',
         icon: 'login',
@@ -532,7 +537,6 @@ export class OfferTableComponent implements OnDestroy {
 
       this.selectedTagIds = updatedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
     }
-
     this.filteredTags = combineLatest([
       this.tagSearchControl.valueChanges.pipe(startWith('')),
       this.tagsFilterControl.valueChanges.pipe(startWith([]))
@@ -541,11 +545,11 @@ export class OfferTableComponent implements OnDestroy {
     );
 
     this.tagSearchControl.setValue('');
+    this.currentPage = 0;
     this.movePage(0);
   }
 
   onChipClickHandler(event: { tag: Tag }) {
-    this.clearFilters();
     this.closeDetailedCard();
     this.onTagSelected({ option: { value: event.tag } });
   }
@@ -561,6 +565,7 @@ export class OfferTableComponent implements OnDestroy {
     const updatedTags = currentTags.filter(tag => tag.id !== tagToRemove.id);
     this.tagsFilterControl.setValue(updatedTags);
     this.selectedTagIds = updatedTags.map(tag => tag.id).filter((id): id is number => id !== undefined);
+    this.currentPage = 0;
     this.movePage(0);
   }
 
@@ -674,11 +679,14 @@ export class OfferTableComponent implements OnDestroy {
 
   toggleBookmark(offerId: number) {
     const isCurrentlyBookmarked = this.offers.some(offer => offer.id === offerId && offer.bookmarked);
-
     if (isCurrentlyBookmarked) {
       this.offerService.removeBookmark(offerId).subscribe({
-        next: (response) => {
+        next: () => {
           this.snackBar.open('Oferta eliminada de guardados', 'Cerrar', { duration: 2000 });
+          this.setBookmarkedOffersCount();
+          if (this.currentOfferView === 'bookmarks') {
+            this.movePage(0);
+          }
           this.offers = this.offers.map(offer => {
             if (offer.id === offerId) {
               return { ...offer, bookmarked: false };
@@ -697,8 +705,9 @@ export class OfferTableComponent implements OnDestroy {
       });
     } else {
       this.offerService.addBookmark(offerId).subscribe({
-        next: (response) => {
+        next: () => {
           this.snackBar.open('Oferta guardada correctamente', 'Cerrar', { duration: 2000 });
+          this.setBookmarkedOffersCount();
           this.offers = this.offers.map(offer => {
             if (offer.id === offerId) {
               return { ...offer, bookmarked: true };

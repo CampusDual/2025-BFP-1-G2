@@ -126,10 +126,8 @@ public interface OfferDao extends JpaRepository<Offer, Integer> {
 
     @Query("SELECT COUNT(o) FROM Offer o " +
             "JOIN OfferTags ot ON ot.offer.id = o.id " +
-            "WHERE o.active = true AND ot.tag.id IN :tagIds " +
-            "GROUP BY o.id " +
-            "ORDER BY COUNT(ot.tag.id)  DESC")
-    Integer getRecommendedOffersCount(List<Long> tagIds);
+            "WHERE o.active = true AND ot.tag.id IN :tagIds ")
+    Integer getRecommendedOffersCount(List<Long> tagIds);   
 
     @Query("SELECT DISTINCT ot.tag.id FROM OfferTags ot " +
             "JOIN CandidateTags ct ON ct.tag.id = ot.tag.id " +

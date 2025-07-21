@@ -1,4 +1,8 @@
 <div class="company-panel" *ngIf="!isLoading">
+  <button mat-icon-button class="back-button" *ngIf="!isCompany" (click)="goBack()" matTooltip="Volver a la oferta"
+    aria-label="Volver">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
   <div class="profile-header">
     <div class="profile-company" [ngClass]="{'edit-mode': isEditMode || isCreatingNewCompany}">
       <img *ngIf="getProfileImage()" [src]="getProfileImage()" [alt]="fullName" class="avatar-placeholder"

@@ -16,28 +16,30 @@ import { MatTabsModule } from '@angular/material/tabs';
 
 import { DetailedCardComponent } from '../detailed-card/detailed-card.component';
 import {MatMenuModule} from "@angular/material/menu";
+import { MatDividerModule } from "@angular/material/divider";
 
 @NgModule({
   declarations: [
     DetailedCardComponent
   ],
     imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatCardModule,
-        MatButtonModule,
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatChipsModule,
-        MatExpansionModule,
-        MatTabsModule,
-        MatMenuModule
-    ],
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatChipsModule,
+    MatExpansionModule,
+    MatTabsModule,
+    MatMenuModule,
+    MatDividerModule
+],
   exports: [
     DetailedCardComponent
   ]

@@ -10,9 +10,6 @@ export class AuthGuard implements CanActivate {
     }
 
     canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-        console.log('AuthGuard: Checking route:', route.routeConfig?.path);
-
-
         if (!this.auth.isLoggedIn()) {
             if (route.routeConfig?.path === 'offers') {
                 console.log('AuthGuard: Allowing public access to offers route');
@@ -30,26 +27,25 @@ export class AuthGuard implements CanActivate {
             return true;
         }
 
-        console.log('AuthGuard: Checking roles for route access:', expectedRoles);
 
         return this.auth.ensureRolesLoaded().pipe(
             switchMap((roles) => {
-                console.log('AuthGuard: Roles loaded:', roles);
-
+                
                 if (roles.length === 0) {
                     console.log('AuthGuard: No roles found after loading, denying access');
                     this.router.navigate(['/auth/login']);
                     return of(false);
                 }
-
                 const hasRequiredRole = roles.some(role => expectedRoles.includes(role));
-
+                if(route.routeConfig?.path === 'offers' && roles.includes('ROLE_COMPANY')) {
+                    this.router.navigate(['/company/myoffers'], { queryParams: route.queryParams });
+                    return of(true);
+                }
                 if (!hasRequiredRole) {
                     console.log('AuthGuard: Access denied, insufficient roles. User roles:', roles, 'Required:', expectedRoles);
                     this.router.navigate(['/auth/login']);
                     return of(false);
                 }
-
                 console.log('AuthGuard: Access granted, user has required roles');
                 return of(true);
             }),

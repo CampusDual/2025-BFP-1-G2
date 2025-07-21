@@ -4,9 +4,11 @@ import { ImageCompressionService } from "../../services/image-compression.servic
 import { CompanyService } from "../../services/company.service";
 import { Company } from 'src/app/models/company.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {ActivatedRoute, ROUTES} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-company-panel',
@@ -16,6 +18,8 @@ import { Router } from '@angular/router';
 
 
 export class CompanyPanelComponent implements OnInit {
+
+
   companyNameInput: string = '';
   myCompany: Company | null = null;
   companyName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
@@ -41,7 +45,9 @@ export class CompanyPanelComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router,
-    protected authService: AuthService) { }
+    protected authService: AuthService,
+    private routeLocation: Location) {
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -81,7 +87,7 @@ export class CompanyPanelComponent implements OnInit {
         this.address.setValue(company.address || '');
         this.url.setValue(company.url || '');
         this.logo.setValue(company.logo || '');
-        const fullDate = company.foundedDate  || '';
+        const fullDate = company.foundedDate || '';
         const year = fullDate ? new Date(fullDate).getFullYear().toString() : '';
         this.foundedDate.setValue(year);
         this.isLoading = false;
@@ -95,17 +101,21 @@ export class CompanyPanelComponent implements OnInit {
 
 
   loadEmptyCompanyData(): void {
-      this.isLoading = true;
-      this.myCompany = null;
-      this.companyName.setValue('');
-      this.description.setValue('');
-      this.companyEmail.setValue('');
-      this.phone.setValue('');
-      this.address.setValue('');
-      this.url.setValue('');
-      this.logo.setValue('');
-      this.foundedDate.setValue('');
-      this.isLoading = false;
+    this.isLoading = true;
+    this.myCompany = null;
+    this.companyName.setValue('');
+    this.description.setValue('');
+    this.companyEmail.setValue('');
+    this.phone.setValue('');
+    this.address.setValue('');
+    this.url.setValue('');
+    this.logo.setValue('');
+    this.foundedDate.setValue('');
+    this.isLoading = false;
+  }
+
+  goBack(): void {
+    this.routeLocation.back();
   }
 
   openLink(url: string | null): void {
@@ -208,11 +218,11 @@ export class CompanyPanelComponent implements OnInit {
 
 
   cancelEdit(): void {
-    if(this.isEditMode){
+    if (this.isEditMode) {
       this.loadCompanyData();
       this.isEditMode = false;
-    }else if (this.isCreatingNewCompany) {
-      this.loadEmptyCompanyData();
+    } else if (this.isCreatingNewCompany) {
+      this.routeLocation.back();
       this.isCreatingNewCompany = false;
     }
   }

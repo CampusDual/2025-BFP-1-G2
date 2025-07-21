@@ -209,15 +209,17 @@ export class RegisterComponent implements OnInit {
     }
   }
 
+   
+
   getNameErrorMessage(): string {
-    if (this.name.hasError('required')) {
-      return 'Debes introducir tu nombre';
-    }
     if (this.name.hasError('minlength')) {
       return 'El nombre debe tener al menos 3 caracteres';
     }
     if (this.name.hasError('maxlength')) {
       return 'El nombre no puede tener más de 30 caracteres';
+    }
+    if (this.name.hasError('required')) {
+      return 'Debes introducir tu nombre';
     }
     return '';
   }
@@ -269,10 +271,10 @@ export class RegisterComponent implements OnInit {
       return 'Debes introducir un nombre de usuario';
     }
     if (this.login.hasError('minlength')) {
-      return 'El nombre de usuario debe tener al menos 3 caracteres';
+      return 'Debe tener al menos 3 caracteres';
     }
     if (this.login.hasError('maxlength')) {
-      return 'El nombre de usuario no puede tener más de 50 caracteres';
+      return 'No puede tener más de 50 caracteres';
     }
     return '';
   }
