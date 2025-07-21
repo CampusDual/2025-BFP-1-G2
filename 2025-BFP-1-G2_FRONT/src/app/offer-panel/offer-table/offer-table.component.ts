@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { OfferService } from "../../services/offer.service";
 import { AuthService } from "../../auth/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -11,7 +11,7 @@ import { TagService } from 'src/app/services/tag.service';
 import { Offer } from 'src/app/models/offer.model';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { COMMA, ENTER, O } from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { DetailedCardService } from 'src/app/services/detailed-card.service';
 import { DetailedCardComponent } from 'src/app/detailed-card/detailed-card.component';
 
@@ -681,7 +681,7 @@ export class OfferTableComponent implements OnDestroy {
     const isCurrentlyBookmarked = this.offers.some(offer => offer.id === offerId && offer.bookmarked);
     if (isCurrentlyBookmarked) {
       this.offerService.removeBookmark(offerId).subscribe({
-        next: (response) => {
+        next: () => {
           this.snackBar.open('Oferta eliminada de guardados', 'Cerrar', { duration: 2000 });
           this.setBookmarkedOffersCount();
           if (this.currentOfferView === 'bookmarks') {
@@ -705,7 +705,7 @@ export class OfferTableComponent implements OnDestroy {
       });
     } else {
       this.offerService.addBookmark(offerId).subscribe({
-        next: (response) => {
+        next: () => {
           this.snackBar.open('Oferta guardada correctamente', 'Cerrar', { duration: 2000 });
           this.setBookmarkedOffersCount();
           this.offers = this.offers.map(offer => {

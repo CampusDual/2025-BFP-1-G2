@@ -223,7 +223,8 @@ mat-card {
   padding: 16px;
   margin: 0;
   border-radius: 0 0 16px 16px;
-  scrollbar-color: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) white;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
