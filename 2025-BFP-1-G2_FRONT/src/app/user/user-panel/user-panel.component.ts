@@ -164,13 +164,15 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   private updateBackButtonState() {
     this.showBackButton = this.detailedCardService.hasState();
   }
+
   goBack() {
     this.routeLocation.back();
-
     setTimeout(() => {
       this.detailedCardService.requestRestore();
     }, 100);
   }
+
+  
 
 
   getTagsFormControl(): FormControl<Tag[]> {

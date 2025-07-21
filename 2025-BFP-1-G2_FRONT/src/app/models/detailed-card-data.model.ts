@@ -17,7 +17,10 @@ export interface DetailedCardData {
   candidates?: any[];
   actions?: DetailedCardAction[];
   tags?: Tag[];
-}export interface DetailedCardAction {
+  logo?: string;
+}
+
+export interface DetailedCardAction {
   label: string;
   action: string;
   color?: string;

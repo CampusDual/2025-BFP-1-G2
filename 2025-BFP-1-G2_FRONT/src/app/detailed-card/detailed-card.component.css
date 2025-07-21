@@ -9,7 +9,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  overflow-y: auto;
+  overflow: hidden;
   animation: fadeIn 0.3s ease-out;
   display: flex;
 }
@@ -114,7 +114,6 @@
 .navigation-fixed-header {
   background: white;
   border-radius: 8px 8px 0 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 0;
   flex-shrink: 0;
   display: flex;
@@ -144,14 +143,6 @@
   justify-content: center;
   flex-shrink: 0;
   overflow: visible;
-}
-
-.card-content-wrapper {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  min-height: 0;
 }
 
 .navigation-header {
@@ -186,23 +177,57 @@
 }
 
 .card-content-wrapper {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.227);
   flex-grow: 1;
   display: flex;
+  border-radius: 0 0 16px 16px;
   flex-direction: column;
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) white;
-  overflow: auto;
+  overflow: hidden;
 }
+
+.company-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #f0f0f0;
+  left: 0;
+  transition: border-color 0.3s ease;
+}
+
+.company-card:hover .company-logo {
+  border-color: var(--primary-color);
+}
+
+.company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+}
+
 
 mat-card {
   padding: 16px;
   margin: 0;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 16px 16px;
   scrollbar-color: none;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: auto;
 }
 
 mat-card-title {
@@ -542,14 +567,22 @@ mat-chip-option[disabled] ::ng-deep span {
   flex-direction: column;
   background: white;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) white;
+  border-radius: 0 0 16px 16px;
+  overflow-y: auto;
 }
 
 .tabs-container ::ng-deep .mat-tab-group {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
+
 
 .tabs-container ::ng-deep .mat-tab-header {
   border-bottom: 1px solid #e0e0e0;
@@ -577,12 +610,14 @@ mat-chip-option[disabled] ::ng-deep span {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .tabs-container ::ng-deep .mat-tab-body {
   flex: 1;
   display: flex;
   flex-direction: column;
+
 }
 
 .tabs-container ::ng-deep .mat-tab-body-content {
@@ -598,14 +633,14 @@ mat-chip-option[disabled] ::ng-deep span {
   flex-direction: column;
   padding: 16px;
   overflow-y: auto;
+
 }
 
 /* Estilos para las tablas de candidatos */
 .candidates-table-container {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
   margin-top: 8px;
-  min-height: 100vh;
 }
 
 .custom-table {

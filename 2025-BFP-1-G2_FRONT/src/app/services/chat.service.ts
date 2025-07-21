@@ -8,7 +8,6 @@ import { Candidate } from '../models/candidate.model';
 import { Company } from '../models/company.model';
 import { CandidateService } from './candidate.service';
 import { ChatButtonComponent } from '../offer-panel/chat-button/chat-button.component';
-import { ChatPanelComponent } from '../offer-panel/chat-panel/chat-panel.component';
 
 @Injectable({
     providedIn: 'root'
@@ -34,9 +33,10 @@ export class ChatService {
         private candidateService: CandidateService
     ) {
         this.initializeUserInfo();
-        interval(50000).subscribe(() => {
+        interval(10000).subscribe(() => {
             if (this.conversationsSubject.value.length > 0 && this.currentUserId) {
                 this.refreshConversations();
+                console.log("actualizando")
             }
         });
     }

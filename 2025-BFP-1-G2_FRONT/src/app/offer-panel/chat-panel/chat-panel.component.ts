@@ -112,7 +112,6 @@ export class ChatPanelComponent implements OnInit, OnDestroy, AfterViewChecked {
   private loadData(): void {
     if (this.isCandidate || this.isCompany) {
       this.isLoadingConversations = true;
-      // Esperar a que el usuario se inicialice completamente antes de cargar conversaciones
       this.chatService.waitForUserInitialization().then(() => {
         this.chatService.loadConversations();
       });

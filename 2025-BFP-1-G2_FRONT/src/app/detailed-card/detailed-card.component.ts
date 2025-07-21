@@ -48,6 +48,12 @@ export class CustomDateAdapter extends NativeDateAdapter {
   ],
 })
 export class DetailedCardComponent implements OnInit {
+  formatContent(description: string) {
+    return description.replace(/\n/g, '<br>');
+  }
+    onImageError(event: any) {
+    event.target.style.display = 'none';
+  }
 
   @Input() isVisible: boolean = false;
   @Input() data: DetailedCardData[] = [];
@@ -180,7 +186,7 @@ export class DetailedCardComponent implements OnInit {
     this.editMode = savedData.editMode;
     this.availableTags = savedData.availableTags;
     this.showNavigation = savedData.showNavigation;
-    
+
     // Restore pagination states
     this.currentCandidatesPage = savedData.currentCandidatesPage;
     this.currentRecommendedPage = savedData.currentRecommendedPage;
@@ -190,7 +196,7 @@ export class DetailedCardComponent implements OnInit {
     this.totalRecommendedElements = savedData.totalRecommendedElements;
     this.candidates = savedData.candidates;
     this.recommendedCandidates = savedData.recommendedCandidates;
-    
+
     // Restore edit states
     this.isEditing = savedData.isEditing;
     this.addingNewItem = savedData.addingNewItem;

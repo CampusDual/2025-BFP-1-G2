@@ -63,12 +63,13 @@ public class ChatService implements IChatService {
         if (user == null) throw new IllegalArgumentException("Usuario no encontrado: " + userName);
         if (userType == MessageDTO.SenderType.CANDIDATE) {
             Candidate candidate = candidateDao.findCandidateByUser(user);
-            Company company = companyDao.findById(otherUserId)
+            companyDao.findById(otherUserId)
                     .orElseThrow(() -> new IllegalArgumentException("Empresa no encontrada con ID: " + otherUserId));
             if (candidate == null) {
                 throw new IllegalArgumentException("No existe candidato para el usuario: " + userName);
             }
-            return MessageMapper.INSTANCE.toDtoList(chatConversationDao.findByCandidateAndCompany(candidate, company).getMessages());
+            List<Message> messages = chatConversationDao.findConversationMessages((long) user.getId(), (long) otherUserId);
+            return MessageMapper.INSTANCE.toDtoList(messages);
         } else {
             Company company = companyDao.findCompanyByUser(user);
             User candidateUser = userDao.findUserById(otherUserId);
@@ -76,7 +77,8 @@ public class ChatService implements IChatService {
             if (candidate == null) {
                 throw new IllegalArgumentException("No existe candidato para el usuario: " + userName);
             }
-            return MessageMapper.INSTANCE.toDtoList(chatConversationDao.findByCandidateAndCompany(candidate, company).getMessages());
+            List<Message> messages = chatConversationDao.findConversationMessages((long) company.getId(), (long) otherUserId);
+            return MessageMapper.INSTANCE.toDtoList(messages);
         }
     }
 

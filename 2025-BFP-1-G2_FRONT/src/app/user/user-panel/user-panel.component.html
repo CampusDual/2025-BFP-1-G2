@@ -30,11 +30,11 @@
       <p class="profile-title" *ngIf="professionalTitle.value">{{ professionalTitle.value }}</p>
       <div class="info-tags">
         <div *ngIf="!isEditMode" class="tags-container">
-          <mat-chip *ngFor="let tag of myTags" color="primary">{{ tag.name }}</mat-chip>
+          <mat-chip *ngFor="let tag of myTags" color="primary" routerLink="/offers/portal"  [queryParams]="{tagId: tag.id}">{{ tag.name }}</mat-chip>
         </div>
         <ng-container *ngIf="isEditMode">
-          <mat-form-field appearance="outline" class="tags-search-field" style="width:100%;"
-            *ngIf="avaliableTags.length > 0">
+            <mat-form-field appearance="outline" class="tags-search-field" style="width:100%;"
+              *ngIf="avaliableTags.length > 0">
             <mat-label>Áreas de interés</mat-label>
             <mat-chip-grid #chipGrid aria-label="Selección de áreas">
               <mat-chip-row *ngFor="let tag of selectedTags" [removable]="true" (removed)="removeTag(tag)">

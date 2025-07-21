@@ -1,5 +1,5 @@
 <div class="detailed-overlay" *ngIf="isVisible">
-  <div class="detailed-container" (click)="$event.stopPropagation()" >
+  <div class="detailed-container" (click)="$event.stopPropagation()">
     <div class="header-actions">
       <button mat-icon-button class="close-button" (click)="close()" aria-label="Cerrar">
         <mat-icon>close</mat-icon>
@@ -18,7 +18,7 @@
       </button>
     </div>
 
-    <div class="navigation-fixed-header" *ngIf="showNavigation && data.length > 1 && !addingNewItem">
+    <div class="navigation-fixed-header" *ngIf="showNavigation && data.length > 0 && !addingNewItem">
       <mat-card-title *ngIf="!isEditing">{{ currentItem!.title.toUpperCase() }}</mat-card-title>
       <div class="navigation-controls">
         <button mat-icon-button [disabled]="!canNavigatePrevious" (click)="navigatePrevious()" aria-label="Anterior">
@@ -37,137 +37,104 @@
     <div class="tabs-container" *ngIf="isCompany">
       <mat-tab-group *ngIf="!addingNewItem" [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="Detalles">
-          <div class="tab-content">
-            <div class="card-content-wrapper">
-              <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
-                <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva oferta</mat-card-title>
-                <mat-card-header>
-                  <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
-                    <mat-label>{{currentItem.titleLabel}}</mat-label>
-                    <input matInput formControlName="title">
-                    <mat-error *ngIf="currentItem.form?.get('title')?.hasError('required')">
-                      El título es obligatorio
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('title')?.hasError('minlength')">
-                      Mínimo 3 caracteres
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('title')?.hasError('maxlength')">
-                      Máximo 100 caracteres
-                    </mat-error>
-                  </mat-form-field>
+          <div class="card-content-wrapper">
+            <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
+              <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva oferta</mat-card-title>
+              <mat-card-header>
+                <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
+                  <mat-label>{{currentItem.titleLabel}}</mat-label>
+                  <input matInput formControlName="title">
+                  <mat-error *ngIf="currentItem.form?.get('title')?.hasError('required')">
+                    El título es obligatorio
+                  </mat-error>
+                  <mat-error *ngIf="currentItem.form?.get('title')?.hasError('minlength')">
+                    Mínimo 3 caracteres
+                  </mat-error>
+                  <mat-error *ngIf="currentItem.form?.get('title')?.hasError('maxlength')">
+                    Máximo 100 caracteres
+                  </mat-error>
+                </mat-form-field>
 
-                  <mat-card-subtitle *ngIf="currentItem.subtitle && currentItem.subtitle && !isEditing">
-                    {{ currentItem.subtitle }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content
-                  [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-                  <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
-
-                  <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
-                    <mat-label>{{currentItem.contentLabel}}</mat-label>
-                    <textarea matInput formControlName="description" rows="3"></textarea>
-                    <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
-                      La descripción es obligatoria
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
-                      Mínimo 10 caracteres
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
-                      Máximo 500 caracteres
-                    </mat-error>
-                  </mat-form-field>
-
-                  <div *ngIf="isEditing && currentItem.form" class="tags-section">
-                    <h4>Tags de la oferta (máximo 5)</h4>
-                    <p class="tags-subtitle">Selecciona hasta 5 tags.</p>
-
-                    <div class="selected-tags-count">
-                      Tags seleccionados: {{getSelectedTagsCount(currentItem.form)}} / 5
+                <mat-card-subtitle *ngIf="currentItem.subtitle && !isEditing">
+                  <div class="company-logo">
+                    <img *ngIf="currentItem.logo" [src]="currentItem.logo" [alt]="currentItem.subtitle + ' logo'"
+                      (error)="onImageError($event)">
+                    <div *ngIf="!currentItem.logo" class="logo-placeholder">
+                      <mat-icon>business</mat-icon>
                     </div>
+                  </div>
+                  <br>
+                  {{ currentItem.subtitle }}
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content
+                [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
+                <div *ngIf="!isEditing" [innerHTML]="formatContent(currentItem.content)"></div>
 
+                <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
+                  <mat-label>{{currentItem.contentLabel}}</mat-label>
+                  <textarea matInput formControlName="description" rows="3"></textarea>
+                  <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
+                    La descripción es obligatoria
+                  </mat-error>
+                  <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
+                    Mínimo 10 caracteres
+                  </mat-error>
+                  <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
+                    Máximo 500 caracteres
+                  </mat-error>
+                </mat-form-field>
+
+                <div *ngIf="isEditing && currentItem.form" class="tags-section">
+                  <h4>Tags de la oferta (máximo 5)</h4>
+                  <p class="tags-subtitle">Selecciona hasta 5 tags.</p>
+
+                  <div class="selected-tags-count">
+                    Tags seleccionados: {{getSelectedTagsCount(currentItem.form)}} / 5
+                  </div>
+
+                  <div class="tags-container">
+                    <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl(currentItem.form)"
+                      [compareWith]="compareTagsById" (selectionChange)="onChipSelectionChange($event)"
+                      (keydown)="onChipKeydown($event)">
+                      <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
+                        [class.chip-selected]="isTagSelected(tag, currentItem.form)"
+                        [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
+                        [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
+                        (keydown)="onChipKeydown($event)">
+                        {{tag.name}}
+                      </mat-chip-option>
+                    </mat-chip-listbox>
+                  </div>
+                </div>
+
+                <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
+                  <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
+                    <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{
+                    item.value }}
+                  </div>
+                  <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing"
+                    class="tags-section-static">
+                    <h4>Areas de la oferta</h4>
                     <div class="tags-container">
-                      <mat-chip-listbox class="tags-listbox" multiple
-                        [formControl]="getTagsFormControl(currentItem.form)" [compareWith]="compareTagsById"
-                        (selectionChange)="onChipSelectionChange($event)" (keydown)="onChipKeydown($event)">
-                        <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
-                          [class.chip-selected]="isTagSelected(tag, currentItem.form)"
-                          [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
-                          [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
-                          (keydown)="onChipKeydown($event)">
+                      <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
+                        <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags"
+                          (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
                           {{tag.name}}
-                        </mat-chip-option>
+                        </mat-chip>
                       </mat-chip-listbox>
                     </div>
                   </div>
-
-                  <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
-                    <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-                      <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{
-                      item.value }}
-                    </div>
-                    <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing"
-                      class="tags-section-static">
-                      <h4>Areas de la oferta</h4>
-                      <div class="tags-container">
-                        <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                          <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags"
-                            (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
-                            {{tag.name}}
-                          </mat-chip>
-                        </mat-chip-listbox>
-                      </div>
-                    </div>
-                  </div>
-                </mat-card-content>
-                <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
-                  <button *ngFor="let action of currentItem.actions" mat-raised-button
-                    [color]="action.color || 'primary'" (click)="executeAction(action)">
-                    <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-                    {{ action.label }}
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-
-              <mat-card *ngIf="currentItem && !currentItem.editable">
-                <mat-card-title>{{ currentItem.title }}</mat-card-title>
-                <mat-card-header>
-                  <mat-card-subtitle *ngIf="currentItem.subtitle">
-                    {{ currentItem.subtitle }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-
-                <mat-card-content
-                  [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-                  <div [innerHTML]="currentItem.content"></div>
-                  <div class="metadata" *ngIf="currentItem.metadata">
-                    <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing "
-                      class="tags-section-static">
-                      <h4>Areas de la oferta</h4>
-                      <div class="tags-container">
-                        <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                          <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags"
-                            (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
-                            {{tag.name}}
-                          </mat-chip>
-                        </mat-chip-listbox>
-                      </div>
-                    </div>
-                    <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-                      <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
-                    </div>
-                  </div>
-                </mat-card-content>
-
-                <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
-                  <button *ngFor="let action of currentItem.actions" mat-raised-button
-                    [color]="action.color || 'primary'" (click)="executeAction(action)">
-                    <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-                    {{ action.label }}
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
+                <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
+                  (click)="executeAction(action)">
+                  <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
+                  {{ action.label }}
+                </button>
+              </mat-card-actions>
+            </mat-card>
           </div>
         </mat-tab>
 
@@ -280,7 +247,8 @@
                       </div>
                     </td>
                     <td>
-                      <button mat-icon-button color="primary" matTooltip="Ver perfil" (click)="navigateToCandidate(candidate.login)">
+                      <button mat-icon-button color="primary" matTooltip="Ver perfil"
+                        (click)="navigateToCandidate(candidate.login)">
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button color="primary" matTooltip="Abrir chat"
@@ -317,246 +285,28 @@
           </div>
         </mat-tab>
       </mat-tab-group>
-      <div *ngIf="addingNewItem" label="Detalles">
-          <div class="tab-content">
-            <div class="card-content-wrapper">
-              <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
-                <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva oferta</mat-card-title>
-                <mat-card-header>
-                  <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
-                    <mat-label>{{currentItem.titleLabel}}</mat-label>
-                    <input matInput formControlName="title">
-                    <mat-error *ngIf="currentItem.form?.get('title')?.hasError('required')">
-                      El título es obligatorio
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('title')?.hasError('minlength')">
-                      Mínimo 3 caracteres
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('title')?.hasError('maxlength')">
-                      Máximo 100 caracteres
-                    </mat-error>
-                  </mat-form-field>
-
-                  <mat-card-subtitle *ngIf="currentItem.subtitle && currentItem.subtitle && !isEditing">
-                    {{ currentItem.subtitle }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content
-                  [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-                  <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
-
-                  <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
-                    <mat-label>{{currentItem.contentLabel}}</mat-label>
-                    <textarea matInput formControlName="description" rows="3"></textarea>
-                    <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
-                      La descripción es obligatoria
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
-                      Mínimo 10 caracteres
-                    </mat-error>
-                    <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
-                      Máximo 500 caracteres
-                    </mat-error>
-                  </mat-form-field>
-
-                  <div *ngIf="isEditing && currentItem.form" class="tags-section">
-                    <h4>Tags de la oferta (máximo 5)</h4>
-                    <p class="tags-subtitle">Selecciona hasta 5 tags.</p>
-
-                    <div class="selected-tags-count">
-                      Tags seleccionados: {{getSelectedTagsCount(currentItem.form)}} / 5
-                    </div>
-
-                    <div class="tags-container">
-                      <mat-chip-listbox class="tags-listbox" multiple
-                        [formControl]="getTagsFormControl(currentItem.form)" [compareWith]="compareTagsById"
-                        (selectionChange)="onChipSelectionChange($event)" (keydown)="onChipKeydown($event)">
-                        <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
-                          [class.chip-selected]="isTagSelected(tag, currentItem.form)"
-                          [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
-                          [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
-                          (keydown)="onChipKeydown($event)">
-                          {{tag.name}}
-                        </mat-chip-option>
-                      </mat-chip-listbox>
-                    </div>
-                  </div>
-
-                  <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
-                    <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-                      <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{
-                      item.value }}
-                    </div>
-                    <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing"
-                      class="tags-section-static">
-                      <h4>Areas de la oferta</h4>
-                      <div class="tags-container">
-                        <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                          <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags"
-                            (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
-                            {{tag.name}}
-                          </mat-chip>
-                        </mat-chip-listbox>
-                      </div>
-                    </div>
-                  </div>
-                </mat-card-content>
-                <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
-                  <button *ngFor="let action of currentItem.actions" mat-raised-button
-                    [color]="action.color || 'primary'" (click)="executeAction(action)">
-                    <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-                    {{ action.label }}
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-
-              <mat-card *ngIf="currentItem && !currentItem.editable">
-                <mat-card-title>{{ currentItem.title }}</mat-card-title>
-                <mat-card-header>
-                  <mat-card-subtitle *ngIf="currentItem.subtitle">
-                    {{ currentItem.subtitle }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-
-                <mat-card-content
-                  [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-                  <div [innerHTML]="currentItem.content"></div>
-                  <div class="metadata" *ngIf="currentItem.metadata">
-                    <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing "
-                      class="tags-section-static">
-                      <h4>Areas de la oferta</h4>
-                      <div class="tags-container">
-                        <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                          <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags"
-                            (click)="onChipClickHandler(tag)" (keydown)="onChipKeydown($event)">
-                            {{tag.name}}
-                          </mat-chip>
-                        </mat-chip-listbox>
-                      </div>
-                    </div>
-                    <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-                      <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
-                    </div>
-                  </div>
-                </mat-card-content>
-
-                <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
-                  <button *ngFor="let action of currentItem.actions" mat-raised-button
-                    [color]="action.color || 'primary'" (click)="executeAction(action)">
-                    <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-                    {{ action.label }}
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </div>
-        </div>
     </div>
-
-    <div class="card-content-wrapper" *ngIf="!isCompany">
-      <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
-        <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva
-          oferta</mat-card-title>
-
+    <div class="card-content-wrapper" *ngIf="!isCompany ">
+      <mat-card *ngIf="currentItem">
         <mat-card-header>
 
-          <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
-            <mat-label>{{currentItem.titleLabel}}</mat-label>
-            <input matInput formControlName="title">
-            <mat-error *ngIf="currentItem.form?.get('title')?.hasError('required')">
-              El título es obligatorio
-            </mat-error>
-            <mat-error *ngIf="currentItem.form?.get('title')?.hasError('minlength')">
-              Mínimo 3 caracteres
-            </mat-error>
-            <mat-error *ngIf="currentItem.form?.get('title')?.hasError('maxlength')">
-              Máximo 100 caracteres
-            </mat-error>
-          </mat-form-field>
-
-          <mat-card-subtitle *ngIf="currentItem.subtitle && currentItem.subtitle && !isEditing">
-            {{ currentItem.subtitle }}
-          </mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content
-          [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-          <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
-
-          <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
-            <mat-label>{{currentItem.contentLabel}}</mat-label>
-            <textarea matInput formControlName="description" rows="3"></textarea>
-            <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
-              La descripción es obligatoria
-            </mat-error>
-            <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
-              Mínimo 10 caracteres
-            </mat-error>
-            <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
-              Máximo 500 caracteres
-            </mat-error>
-          </mat-form-field>
-
-          <div *ngIf="isEditing && currentItem.form" class="tags-section">
-            <h4>Tags de la oferta (máximo 5)</h4>
-            <p class="tags-subtitle">Selecciona hasta 5 tags.</p>
-
-            <div class="selected-tags-count">
-              Tags seleccionados: {{getSelectedTagsCount(currentItem.form)}} / 5
-            </div>
-
-            <div class="tags-container">
-              <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl(currentItem.form)"
-                [compareWith]="compareTagsById" (selectionChange)="onChipSelectionChange($event)"
-                (keydown)="onChipKeydown($event)">
-                <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
-                  [class.chip-selected]="isTagSelected(tag, currentItem.form)"
-                  [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
-                  [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
-                  (keydown)="onChipKeydown($event)">
-                  {{tag.name}}
-                </mat-chip-option>
-              </mat-chip-listbox>
-            </div>
-          </div>
-
-
-
-          <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
-            <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
-              <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
-            </div>
-            <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing" class="tags-section-static">
-              <h4>Areas de la oferta</h4>
-              <div class="tags-container">
-                <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
-                  <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)"
-                    (keydown)="onChipKeydown($event)">
-                    {{tag.name}}
-                  </mat-chip>
-                </mat-chip-listbox>
+          <mat-card-subtitle *ngIf="currentItem.subtitle">
+            <div class="company-logo">
+              <img *ngIf="currentItem.logo" [src]="currentItem.logo" [alt]="currentItem.subtitle + ' logo'"
+                (error)="onImageError($event)">
+              <div *ngIf="!currentItem.logo" class="logo-placeholder">
+                <mat-icon>business</mat-icon>
               </div>
             </div>
-          </div>
-        </mat-card-content>
-        <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
-          <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
-            (click)="executeAction(action)">
-            <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-            {{ action.label }}
-          </button>
-        </mat-card-actions>
-      </mat-card>
-
-      <mat-card *ngIf="currentItem && !currentItem.editable">
-        <mat-card-header>
-          <mat-card-subtitle *ngIf="currentItem.subtitle">
+            <br>
             {{ currentItem.subtitle }}
           </mat-card-subtitle>
+
         </mat-card-header>
 
         <mat-card-content
           [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
-          <div [innerHTML]="currentItem.content"></div>
+          <div [innerHTML]="formatContent(currentItem.content)"></div>
           <div class="metadata" *ngIf="currentItem.metadata">
             <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing " class="tags-section-static">
               <h4>Areas de la oferta</h4>
@@ -583,6 +333,138 @@
           </button>
         </mat-card-actions>
       </mat-card>
+    </div>
+    <div *ngIf="addingNewItem" label="Detalles">
+      <div class="tab-content">
+        <div class="card-content-wrapper">
+          <mat-card *ngIf="currentItem && currentItem.editable" [formGroup]="currentItem.form!">
+            <mat-card-title *ngIf="addingNewItem" class="add-title">Añadir nueva oferta</mat-card-title>
+            <mat-card-header>
+              <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
+                <mat-label>{{currentItem.titleLabel}}</mat-label>
+                <input matInput formControlName="title">
+                <mat-error *ngIf="currentItem.form?.get('title')?.hasError('required')">
+                  El título es obligatorio
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('title')?.hasError('minlength')">
+                  Mínimo 3 caracteres
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('title')?.hasError('maxlength')">
+                  Máximo 100 caracteres
+                </mat-error>
+              </mat-form-field>
+
+              <mat-card-subtitle *ngIf="currentItem.subtitle && currentItem.subtitle && !isEditing">
+                {{ currentItem.subtitle }}
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content
+              [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
+              <div *ngIf="!isEditing" [innerHTML]="currentItem.content"></div>
+
+              <mat-form-field *ngIf="isEditing" appearance="outline" class="edit-field">
+                <mat-label>{{currentItem.contentLabel}}</mat-label>
+                <textarea matInput formControlName="description" rows="3"></textarea>
+                <mat-error *ngIf="currentItem.form?.get('description')?.hasError('required')">
+                  La descripción es obligatoria
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('description')?.hasError('minlength')">
+                  Mínimo 10 caracteres
+                </mat-error>
+                <mat-error *ngIf="currentItem.form?.get('description')?.hasError('maxlength')">
+                  Máximo 500 caracteres
+                </mat-error>
+              </mat-form-field>
+
+              <div *ngIf="isEditing && currentItem.form" class="tags-section">
+                <h4>Tags de la oferta (máximo 5)</h4>
+                <p class="tags-subtitle">Selecciona hasta 5 tags.</p>
+
+                <div class="selected-tags-count">
+                  Tags seleccionados: {{getSelectedTagsCount(currentItem.form)}} / 5
+                </div>
+
+                <div class="tags-container">
+                  <mat-chip-listbox class="tags-listbox" multiple [formControl]="getTagsFormControl(currentItem.form)"
+                    [compareWith]="compareTagsById" (selectionChange)="onChipSelectionChange($event)"
+                    (keydown)="onChipKeydown($event)">
+                    <mat-chip-option *ngFor="let tag of availableTags" [value]="tag"
+                      [class.chip-selected]="isTagSelected(tag, currentItem.form)"
+                      [class.chip-unselected]="!isTagSelected(tag, currentItem.form)"
+                      [disabled]="getSelectedTagsCount(currentItem.form) >= 5 && !isTagSelected(tag, currentItem.form)"
+                      (keydown)="onChipKeydown($event)">
+                      {{tag.name}}
+                    </mat-chip-option>
+                  </mat-chip-listbox>
+                </div>
+              </div>
+
+              <div class="metadata" *ngIf="currentItem.metadata && !isEditing">
+                <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
+                  <strong *ngIf="item && item.key && item.value">{{ item.key.toUpperCase() }}:</strong> {{
+                  item.value }}
+                </div>
+                <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing" class="tags-section-static">
+                  <h4>Areas de la oferta</h4>
+                  <div class="tags-container">
+                    <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
+                      <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)"
+                        (keydown)="onChipKeydown($event)">
+                        {{tag.name}}
+                      </mat-chip>
+                    </mat-chip-listbox>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+            <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
+              <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
+                (click)="executeAction(action)">
+                <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
+                {{ action.label }}
+              </button>
+            </mat-card-actions>
+          </mat-card>
+
+          <mat-card *ngIf="currentItem && !currentItem.editable">
+            <mat-card-title>{{ currentItem.title }}</mat-card-title>
+            <mat-card-header>
+              <mat-card-subtitle *ngIf="currentItem.subtitle">
+                {{ currentItem.subtitle }}
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content
+              [ngClass]="{'invisible': panelOpenState && currentItem.candidates && currentItem.candidates.length > 0}">
+              <div [innerHTML]="currentItem.content"></div>
+              <div class="metadata" *ngIf="currentItem.metadata">
+                <div *ngIf="currentItem.tags && currentItem.tags.length > 0 && !isEditing " class="tags-section-static">
+                  <h4>Areas de la oferta</h4>
+                  <div class="tags-container">
+                    <mat-chip-listbox class="tags-listbox" (keydown)="onChipKeydown($event)">
+                      <mat-chip class="chip-info" *ngFor="let tag of currentItem.tags" (click)="onChipClickHandler(tag)"
+                        (keydown)="onChipKeydown($event)">
+                        {{tag.name}}
+                      </mat-chip>
+                    </mat-chip-listbox>
+                  </div>
+                </div>
+                <div *ngFor="let item of currentItem.metadata | keyvalue" class="metadata-item">
+                  <strong>{{ item.key.toUpperCase() }}:</strong> {{ item.value }}
+                </div>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions *ngIf="currentItem.actions && currentItem.actions.length > 0 && !isEditing">
+              <button *ngFor="let action of currentItem.actions" mat-raised-button [color]="action.color || 'primary'"
+                (click)="executeAction(action)">
+                <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
+                {{ action.label }}
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
     </div>
   </div>
 </div>
