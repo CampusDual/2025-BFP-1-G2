@@ -24,7 +24,6 @@ export class CompanyPanelComponent implements OnInit {
   myCompany: Company | null = null;
   companyName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
   companyPassword = new FormControl('', [
-    Validators.required,
     Validators.minLength(8),
     Validators.maxLength(20),
     Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,20}$')
