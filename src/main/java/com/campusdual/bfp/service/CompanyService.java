@@ -75,22 +75,19 @@ public class CompanyService implements ICompanyService {
         if (user == null || ((user.getId() != (company.getUser().getId())) && !isAdmin)) {
             throw new UnauthorizedOperationException("No tienes permiso para modificar esta empresa");
         }
-        if (companyDTO.getPassword() != null ) {
-            if (isAdmin){
-                throw new UnauthorizedOperationException("No tienes permiso para modificar la contraseña de la empresa");
-            }else{
-                userService.updateCompany(companyDTO);
-            }
+        if (companyDTO.getPassword() != null || companyDTO.getPassword().isEmpty() && !isAdmin) {
+            userService.updateCompany(companyDTO);
         }
         BeanUtils.copyProperties(companyDTO, "id", "user", "userId", "login");
         this.companyDao.saveAndFlush(company);
         return companyDTO;
     }
+
     public void deleteCompany(Integer id) {
         Company company = this.companyDao.findById(id)
                 .orElseThrow(() -> new CompanyNotFoundException("Empresa no encontrada"));
 
-        if (companyDao.hasOffers(id)){
+        if (companyDao.hasOffers(id)) {
             throw new CompanyHasOffersException("No se puede eliminar la empresa porque tiene ofertas activas asociadas");
         }
         List<Offer> offers = offerDao.findOfferByCompanyId(id);
