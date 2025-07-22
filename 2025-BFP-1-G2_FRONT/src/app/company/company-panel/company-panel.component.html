@@ -12,8 +12,8 @@
       </div>
 
       <div *ngIf="(authService.getRolesCached().includes('ROLE_COMPANY') ||
-                  authService.getRolesCached().includes('ROLE_ADMIN')) && (isEditMode || isCreatingNewCompany)" class="edit-overlay"
-        (click)="openFileSelector()">
+                  authService.getRolesCached().includes('ROLE_ADMIN')) && (isEditMode || isCreatingNewCompany)"
+        class="edit-overlay" (click)="openFileSelector()">
         <div class="edit-overlay-content">
           <mat-icon>edit</mat-icon>
           <span>Cambiar foto</span>
@@ -62,22 +62,46 @@
             <div class="info-item">
               <mat-icon>person</mat-icon>
               <span class="label">Nombre:</span>
-              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ companyName.value || 'No especificado' }}</span>
-              <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="text" [formControl]="companyName"
-                placeholder="Ingrese su nombre">
-              <div *ngIf="(isEditMode || isCreatingNewCompany) && companyName.invalid && companyName.touched" class="error-message">
+              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ companyName.value || 'No especificado'
+                }}</span>
+              <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="text"
+                [formControl]="companyName" placeholder="Ingrese su nombre">
+              <div *ngIf="(isEditMode || isCreatingNewCompany) && companyName.invalid && companyName.touched"
+                class="error-message">
                 <small *ngIf="companyName.errors?.['required']">El nombre es requerido</small>
                 <small *ngIf="companyName.errors?.['minlength']">Mínimo 3 caracteres</small>
                 <small *ngIf="companyName.errors?.['maxlength']">Máximo 30 caracteres</small>
               </div>
             </div>
+            <div class="info-item" *ngIf="isEditMode && isCompany">
+              <mat-icon>lock</mat-icon>
+              <span class="label">Contraseña:</span>
+              <div class="password-field">
+                <input class="edit-input" type="{{ showPassword ? 'text' : 'password' }}"
+                  [formControl]="companyPassword" placeholder="Cambiar contraseña">
+                <button type="button" class="toggle-password-btn" (click)="showPassword = !showPassword"
+                  [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                  <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </div>
+
+              <div *ngIf="(isEditMode || isCreatingNewCompany) && companyPassword.invalid && companyPassword.touched"
+                class="error-message">
+                <small *ngIf="companyPassword.errors?.['minlength']">Mínimo 8 caracteres</small>
+                <small *ngIf="companyPassword.errors?.['maxlength']">Máximo 20 caracteres</small>
+                <small *ngIf="companyPassword.errors?.['pattern']">La contraseña debe tener al menos una mayúscula, una minúscula y un número</small>
+              </div>
+
+            </div>
             <div class="info-item">
               <mat-icon>email</mat-icon>
               <span class="label">Email:</span>
               <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ companyEmail.value }}</span>
-              <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="email" [formControl]="companyEmail"
-                [class.error]="companyEmail.invalid && companyEmail.touched" placeholder="Ingrese su email">
-              <div *ngIf="(isEditMode || isCreatingNewCompany) && companyEmail.invalid && companyEmail.touched" class="error-message">
+              <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="email"
+                [formControl]="companyEmail" [class.error]="companyEmail.invalid && companyEmail.touched"
+                placeholder="Ingrese su email">
+              <div *ngIf="(isEditMode || isCreatingNewCompany) && companyEmail.invalid && companyEmail.touched"
+                class="error-message">
                 <small *ngIf="companyEmail.errors?.['required']">El email es requerido</small>
                 <small *ngIf="companyEmail.errors?.['email']">Formato de email inválido</small>
               </div>
@@ -85,12 +109,14 @@
             <div class="info-item">
               <mat-icon>phone</mat-icon>
               <span class="label">Teléfono:</span>
-              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ phone.value || 'No especificado' }}</span>
+              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ phone.value || 'No especificado'
+                }}</span>
               <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="tel" [formControl]="phone"
                 [class.error]="phone.invalid && phone.touched" placeholder="Ingrese su teléfono">
               <div *ngIf="(isEditMode || isCreatingNewCompany) && phone.invalid && phone.touched" class="error-message">
                 <small *ngIf="phone.errors?.['required']">El teléfono es requerido</small>
-                <small *ngIf="phone.errors?.['minlength'] || phone.errors?.['maxlength']">Debe tener exactamente 9 dígitos</small>
+                <small *ngIf="phone.errors?.['minlength'] || phone.errors?.['maxlength']">Debe tener exactamente 9
+                  dígitos</small>
                 <small *ngIf="phone.errors?.['pattern']">Solo se permiten números</small>
               </div>
             </div>
@@ -98,23 +124,28 @@
             <div class="info-item">
               <mat-icon>location_on</mat-icon>
               <span class="label">Ubicación:</span>
-              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ address.value || 'No especificada' }}</span>
+              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ address.value || 'No especificada'
+                }}</span>
               <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="text" [formControl]="address"
                 [class.error]="address.invalid && address.touched" placeholder="Ingrese su ubicación">
             </div>
             <div class="info-item">
               <mat-icon>date_range</mat-icon>
               <span class="label">Fecha de Fundación:</span>
-              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ foundedDate.value || 'No especificado' }}</span>
-              <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="text" [formControl]="foundedDate"
-                [class.error]="foundedDate.invalid && foundedDate.touched" placeholder="AAAA" maxlength="4">
+              <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ foundedDate.value || 'No
+                especificado' }}</span>
+              <input class="edit-input" *ngIf="isEditMode || isCreatingNewCompany" type="text"
+                [formControl]="foundedDate" [class.error]="foundedDate.invalid && foundedDate.touched"
+                placeholder="AAAA" maxlength="4">
             </div>
 
-            <div *ngIf="(isEditMode || isCreatingNewCompany) && foundedDate.invalid && foundedDate.touched" class="error-message">
+            <div *ngIf="(isEditMode || isCreatingNewCompany) && foundedDate.invalid && foundedDate.touched"
+              class="error-message">
               <small *ngIf="foundedDate.errors?.['pattern']">Ingrese un año válido (1900-2099)</small>
             </div>
 
-            <div *ngIf="(isEditMode || isCreatingNewCompany) && address.invalid && address.touched" class="error-message">
+            <div *ngIf="(isEditMode || isCreatingNewCompany) && address.invalid && address.touched"
+              class="error-message">
               <small *ngIf="address.errors?.['maxlength']">Máximo 100 caracteres</small>
             </div>
           </div>
@@ -123,12 +154,16 @@
       <mat-tab label="Descripción">
         <div class="info-item-text description-with-logo">
           <span class="label"></span>
-          <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ description.value || 'No especificado' }}</span>
-          <textarea class="edit-input-description" *ngIf="isEditMode || isCreatingNewCompany" [formControl]="description"
-            [class.error]="description.invalid && description.touched" placeholder="Descripcion" rows="9"></textarea>
-          <img *ngIf="getProfileImage() && !(isEditMode || isCreatingNewCompany)" [src]="getProfileImage()" alt="Logo de la empresa" class="background-logo" />
+          <span class="value" *ngIf="!isEditMode && !isCreatingNewCompany">{{ description.value || 'No especificado'
+            }}</span>
+          <textarea class="edit-input-description" *ngIf="isEditMode || isCreatingNewCompany"
+            [formControl]="description" [class.error]="description.invalid && description.touched"
+            placeholder="Descripcion" rows="9"></textarea>
+          <img *ngIf="getProfileImage() && !(isEditMode || isCreatingNewCompany)" [src]="getProfileImage()"
+            alt="Logo de la empresa" class="background-logo" />
         </div>
-        <div *ngIf="(isEditMode || isCreatingNewCompany) && description.invalid && description.touched" class="error-message">
+        <div *ngIf="(isEditMode || isCreatingNewCompany) && description.invalid && description.touched"
+          class="error-message">
           <small *ngIf="description.errors?.['required']">Descripcion es requerido</small>
           <small *ngIf="description.errors?.['minlength']">Mínimo 100 caracteres</small>
           <small *ngIf="description.errors?.['maxlength']">Máximo 1000 caracteres</small>

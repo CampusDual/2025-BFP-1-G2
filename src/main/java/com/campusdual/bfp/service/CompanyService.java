@@ -58,7 +58,7 @@ public class CompanyService implements ICompanyService {
         if (user != null) {
             throw new CompanyAlreadyExistsException("Empresa ya registrada");
         }
-        userService.registerNewUser(companyDTO.getName(), "changeMe", companyDTO.getEmail(), "ROLE_COMPANY");
+        userService.registerNewUser(companyDTO.getName(), "changeme", companyDTO.getEmail(), "ROLE_COMPANY");
         Company company = CompanyMapper.INSTANCE.toEntity(companyDTO);
         company.setUser(this.userDao.findByLogin(companyDTO.getName()));
         return CompanyMapper.INSTANCE.toDTO(this.companyDao.saveAndFlush(company));
@@ -75,7 +75,14 @@ public class CompanyService implements ICompanyService {
         if (user == null || ((user.getId() != (company.getUser().getId())) && !isAdmin)) {
             throw new UnauthorizedOperationException("No tienes permiso para modificar esta empresa");
         }
-        BeanUtils.copyProperties(companyDTO, company, "id", "user", "userId", "login");
+        if (companyDTO.getPassword() != null ) {
+            if (isAdmin){
+                throw new UnauthorizedOperationException("No tienes permiso para modificar la contraseña de la empresa");
+            }else{
+                userService.updateCompany(companyDTO);
+            }
+        }
+        BeanUtils.copyProperties(companyDTO, "id", "user", "userId", "login");
         this.companyDao.saveAndFlush(company);
         return companyDTO;
     }

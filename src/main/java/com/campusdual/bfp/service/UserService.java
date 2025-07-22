@@ -36,6 +36,9 @@ import com.campusdual.bfp.model.dto.dtomapper.CandidateExperienceMapper;
 public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserDao userDao;
 
     @Autowired
@@ -98,7 +101,7 @@ public class UserService implements UserDetailsService, IUserService {
     public int registerNewUser(String username, String password, String email, String roleName) {
         User user = new User();
         user.setLogin(username);
-        user.setPassword(this.passwordEncoder().encode(password));
+        user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
         User savedUser = this.userDao.saveAndFlush(user);
 
@@ -211,10 +214,6 @@ public class UserService implements UserDetailsService, IUserService {
         return companyDTO;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     public List<CompanyDTO> getAllCompanies() {
@@ -263,13 +262,27 @@ public class UserService implements UserDetailsService, IUserService {
     public int updateCompany(CompanyDTO companyDTO) {
         Company company = this.companyDao.findById(companyDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+
         BeanUtils.copyProperties(companyDTO, company, "user_id");
-        if (!company.getUser().getEmail().equals(companyDTO.getEmail()) || !company.getUser().getLogin().equals(companyDTO.getLogin())) {
-            company.getUser().setEmail(companyDTO.getEmail());
-            company.getUser().setLogin(companyDTO.getLogin());
-            this.userDao.saveAndFlush(company.getUser());
+
+        User user = company.getUser(); // Usar el usuario actual de la empresa
+
+        // Actualizar email y login si han cambiado
+        if (!user.getEmail().equals(companyDTO.getEmail()) ||
+                !user.getLogin().equals(companyDTO.getLogin())) {
+            user.setEmail(companyDTO.getEmail());
+            user.setLogin(companyDTO.getLogin());
         }
+
+        // Actualizar contraseña si se proporciona
+        if (!companyDTO.getPassword().isEmpty()) {
+            user.setPassword(this.passwordEncoder.encode(companyDTO.getPassword()));
+        }
+
+        // Guardar una sola vez
+        this.userDao.saveAndFlush(user);
         this.companyDao.saveAndFlush(company);
+
         return company.getId();
     }
 
