@@ -23,6 +23,12 @@ export class CompanyPanelComponent implements OnInit {
   companyNameInput: string = '';
   myCompany: Company | null = null;
   companyName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]);
+  companyPassword = new FormControl('', [
+    Validators.required,
+    Validators.minLength(8),
+    Validators.maxLength(20),
+    Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,20}$')
+  ]);
   description = new FormControl('', [Validators.maxLength(1000)]);
   companyEmail = new FormControl('', [Validators.required, Validators.email]);
   phone = new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^[0-9]+$')]);
@@ -33,6 +39,7 @@ export class CompanyPanelComponent implements OnInit {
   isUploadingLogo: boolean = false;
   logoFileName: string = '';
   fullName: string = '';
+  showPassword: boolean = false;
   isLoading: boolean = true;
   isEditMode: boolean = false;
   isSaving: boolean = false;
@@ -81,6 +88,7 @@ export class CompanyPanelComponent implements OnInit {
       next: (company: any) => {
         this.myCompany = company;
         this.companyName.setValue(this.myCompany?.name || '');
+        this.companyPassword.setValue('');
         this.description.setValue(this.myCompany?.description || '');
         this.companyEmail.setValue(this.myCompany?.email || '');
         this.phone.setValue(this.myCompany?.phone || '');
@@ -104,6 +112,7 @@ export class CompanyPanelComponent implements OnInit {
     this.isLoading = true;
     this.myCompany = null;
     this.companyName.setValue('');
+    this.companyPassword.setValue('');
     this.description.setValue('');
     this.companyEmail.setValue('');
     this.phone.setValue('');
@@ -149,7 +158,7 @@ export class CompanyPanelComponent implements OnInit {
     this.url.markAsTouched();
     this.logo.markAsTouched();
     this.foundedDate.markAsTouched();
-
+    this.companyPassword.markAsTouched();
     if (this.hasFormErrors()) {
       console.error('Hay errores en el formulario');
       return;
@@ -159,7 +168,9 @@ export class CompanyPanelComponent implements OnInit {
 
     const companyData: Company = {
       id: this.myCompany?.id || 0,
+      login: this.myCompany?.name || '',
       name: this.companyName.value || '',
+      password: this.companyPassword.value || '',
       description: this.description.value || '',
       email: this.companyEmail.value || '',
       phone: this.phone.value || undefined,
@@ -228,7 +239,7 @@ export class CompanyPanelComponent implements OnInit {
   }
 
   hasFormErrors(): boolean {
-    return this.companyName.invalid || this.companyEmail.invalid || this.phone.invalid ||
+    return this.companyName.invalid || this.companyPassword.invalid || this.companyEmail.invalid || this.phone.invalid ||
       this.address.invalid || this.url.invalid;
   }
 
