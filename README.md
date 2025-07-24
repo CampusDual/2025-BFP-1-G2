@@ -27,6 +27,26 @@ Este proyecto ha sido realizado por estudiantes del programa Dual del **IES Wirt
 - **Frontend:** TypeScript, HTML, CSS, SCSS
 - **Frameworks y librerías:** Angular, Spring Boot
 
+## Usuarios de prueba
+
+- **Candidato:**
+
+Usuario: Victor
+
+Contraseña: 123456
+
+- **Empresa:**
+
+Usuario: Softguare
+
+Contraseña: changeMe
+
+- **Administrador:**
+
+Usuario: Admin
+
+Contraseña: changeme
+
 ## Captura de pantalla
 
 La siguiente imagen muestra una vista del portal, con el listado de ofertas de empleo y el menú de navegación lateral:
